@@ -20,13 +20,11 @@ ARG BUILD_CONFIGURATION
 
 WORKDIR /src
 
-COPY ["WebClient.csproj", "WebClient/"]
+COPY ["WebClient.csproj", "/"]
 
-RUN dotnet restore "./WebClient/WebClient.csproj" -p:Configuration=${BUILD_CONFIGURATION} -p:AOT=${AOT} -p:Trim=${TRIM}
+RUN dotnet restore "WebClient.csproj" -p:Configuration=${BUILD_CONFIGURATION} -p:AOT=${AOT} -p:Trim=${TRIM}
 
 COPY . .
-
-WORKDIR "/src/WebClient"
 
 RUN dotnet build "WebClient.csproj" -c $BUILD_CONFIGURATION -p:AOT=${AOT} -p:Trim=${TRIM} -p:ExtraOptimize=${EXTRA_OPTIMIZE} -o /app/build
 
@@ -39,6 +37,7 @@ FROM base AS final
 WORKDIR /app
 ENV ASPNETCORE_URLS=http://+:5000
 EXPOSE 5000
+EXPOSE 5001
 
 COPY --from=publish /app/publish .
 ENTRYPOINT ["./WebClient"]
