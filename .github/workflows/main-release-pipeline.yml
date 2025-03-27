@@ -1,0 +1,70 @@
+name: Main Release WebClient Pipeline
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  AOT: false
+  TRIM: true
+  EXTRA_OPTIMIZE: true
+  BUILD_CONFIGURATION: Release  
+      
+jobs:
+  setup-build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+            fetch-depth: 0
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v4
+        with:
+          global-json-file: global.json
+
+      - name: Restore Dependencies
+        working-directory: "./src/WebClient"
+        run: dotnet restore "WebClient.csproj" -p:Configuration=${${{ env.BUILD_CONFIGURATION }}} -p:AOT=${${{ env.AOT }}} -p:Trim=${${{ env.TRIM }}}
+
+      - name: Build Application
+        working-directory: "./src/WebClient"
+        run: dotnet build "WebClient.csproj" -c ${{ env.BUILD_CONFIGURATION }} -p:AOT=${${{ env.AOT }}} -p:Trim=${${{ env.TRIM }}} -p:ExtraOptimize=${${{ env.EXTRA_OPTIMIZE }}}   
+
+  build-push-image:
+    needs: setup-build-test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+            fetch-depth: 0
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and Push Docker Image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: jonathanperis/blazor-mudblazor-starter:latest
+          platforms: linux/amd64,linux/arm64/v8          
+          build-args: |
+            AOT=${{ env.AOT }}
+            TRIM=${{ env.TRIM }}
+            EXTRA_OPTIMIZE=${{ env.EXTRA_OPTIMIZE }}
+            BUILD_CONFIGURATION=${{ env.BUILD_CONFIGURATION }}
