@@ -20,7 +20,7 @@ ARG BUILD_CONFIGURATION
 
 WORKDIR /src
 
-COPY ["WebClient.csproj", "WebClient/"]
+COPY ["WebClient/WebClient.csproj", "WebClient/"]
 
 RUN dotnet restore "./WebClient/WebClient.csproj" -p:Configuration=${BUILD_CONFIGURATION} -p:AOT=${AOT} -p:Trim=${TRIM}
 
