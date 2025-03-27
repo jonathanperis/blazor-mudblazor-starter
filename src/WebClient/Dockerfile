@@ -39,7 +39,6 @@ FROM base AS final
 WORKDIR /app
 ENV ASPNETCORE_URLS=http://+:5000
 EXPOSE 5000
-EXPOSE 5001
 
 COPY --from=publish /app/publish .
 ENTRYPOINT ["./WebClient"]
