@@ -20,11 +20,13 @@ ARG BUILD_CONFIGURATION
 
 WORKDIR /src
 
-COPY ["WebClient.csproj", "/"]
+COPY ["WebClient.csproj", "WebClient/"]
 
-RUN dotnet restore "WebClient.csproj" -p:Configuration=${BUILD_CONFIGURATION} -p:AOT=${AOT} -p:Trim=${TRIM}
+RUN dotnet restore "./WebClient/WebClient.csproj" -p:Configuration=${BUILD_CONFIGURATION} -p:AOT=${AOT} -p:Trim=${TRIM}
 
 COPY . .
+
+WORKDIR "/src/WebClient"
 
 RUN dotnet build "WebClient.csproj" -c $BUILD_CONFIGURATION -p:AOT=${AOT} -p:Trim=${TRIM} -p:ExtraOptimize=${EXTRA_OPTIMIZE} -o /app/build
 
