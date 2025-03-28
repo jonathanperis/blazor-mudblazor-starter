@@ -100,13 +100,13 @@ Before getting started, ensure you have the following installed:
 
 The application can be run in multiple modes. Choose the one best fitting your setup:
 
-- **Blazor Server Mode:**
+- **Dotnet (requires SDK):**
   ```bash
   dotnet run --project WebClient.csproj
   ```
-- **Blazor WebAssembly Mode:**
+- **Docker:**
   ```bash
-  dotnet run --project WebClient.csproj
+  docker run -d -p 5000:5000 jonathanperis/blazor-mudblazor-starter:latest
   ```
 
 Upon running, open your browser and navigate to `http://localhost:5000` (or the port indicated in your console).
@@ -164,7 +164,7 @@ This template includes support for modern CI/CD pipelines:
 Example Docker commands:
 ```bash
 docker build -t blazor-mudblazor-starter .
-docker run -d -p 80:80 blazor-mudblazor-starter
+docker run -d -p 5000:5000 blazor-mudblazor-starter
 ```
 
 ---
