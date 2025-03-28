@@ -142,7 +142,7 @@ The project embraces a modular approach:
 A brief overview of the repository’s structure:
 
 ```
-/BlazorMudblazorStarter
+/src/WebClient
 │
 ├── /Components          # Reusable UI components built with Mudblazor.
 ├── /wwwroot             # Static assets: CSS, JavaScript, images, etc.
