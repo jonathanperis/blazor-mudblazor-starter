@@ -69,3 +69,14 @@ jobs:
             TRIM=${{ env.TRIM }}
             EXTRA_OPTIMIZE=${{ env.EXTRA_OPTIMIZE }}
             BUILD_CONFIGURATION=${{ env.BUILD_CONFIGURATION }}
+
+  deploy-image-azure:
+    needs: build-push-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy Image to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+            app-name: 'blazor-mudblazor-starter'
+            publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }}
+            images: 'index.docker.io/jonathanperis/blazor-mudblazor-starter:latest'            
