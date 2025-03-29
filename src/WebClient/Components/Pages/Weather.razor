@@ -22,7 +22,7 @@
         </MudTextField>
     </ToolBarContent>
     <Columns>
-        <SelectColumn T="WeatherForecast" StickyLeft />
+        <SelectColumn T="WeatherForecast" />
         <PropertyColumn Property="x => x.Id" Title="Id" Sortable="false" Filterable="false" StickyLeft />
         <PropertyColumn Property="x => x.Date.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.CurrentCulture)" 
                         Title="Date" SortBy="@SortBy"/>
