@@ -23,7 +23,7 @@
     </ToolBarContent>
     <Columns>
         <SelectColumn T="WeatherForecast" />
-        <PropertyColumn Property="x => x.Id" Title="Id" Sortable="false" Filterable="false" StickyLeft />
+        <PropertyColumn Property="x => x.Id" Title="Id" Sortable="false" Filterable="false" />
         <PropertyColumn Property="x => x.Date.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.CurrentCulture)" 
                         Title="Date" SortBy="@SortBy"/>
         <PropertyColumn Property="x => x.TemperatureC" Title="Temp. (C)"/>
@@ -35,7 +35,7 @@
         <PropertyColumn Property="x => x.TemperatureC" Title="Temp. (C) 3" />
         <PropertyColumn Property="x => x.TemperatureF" Title="Temp. (F) 3" />
         <PropertyColumn Property="x => x.Summary" Title="Summary 3"/>        
-        <TemplateColumn CellClass="d-flex justify-end" StickyRight>
+        <TemplateColumn CellClass="d-flex justify-end">
             <CellTemplate>
                 <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="() => EditItem(context.Item)" />
             </CellTemplate>
