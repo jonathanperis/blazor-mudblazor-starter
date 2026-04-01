@@ -14,20 +14,20 @@ env:
   AOT: false
   TRIM: true
   EXTRA_OPTIMIZE: true
-  BUILD_CONFIGURATION: Release  
-      
+  BUILD_CONFIGURATION: Release
+
 jobs:
   setup-build-test:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
             fetch-depth: 0
 
       - name: Setup .NET SDK
-        uses: actions/setup-dotnet@v4
+        uses: actions/setup-dotnet@v5
         with:
           global-json-file: global.json
 
@@ -37,14 +37,14 @@ jobs:
 
       - name: Build Application
         working-directory: "./src/WebClient"
-        run: dotnet build "WebClient.csproj" -c ${{ env.BUILD_CONFIGURATION }} -p:AOT=${${{ env.AOT }}} -p:Trim=${${{ env.TRIM }}} -p:ExtraOptimize=${${{ env.EXTRA_OPTIMIZE }}}   
+        run: dotnet build "WebClient.csproj" -c ${{ env.BUILD_CONFIGURATION }} -p:AOT=${${{ env.AOT }}} -p:Trim=${${{ env.TRIM }}} -p:ExtraOptimize=${${{ env.EXTRA_OPTIMIZE }}}
 
   build-push-image:
     needs: setup-build-test
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
             fetch-depth: 0
 
@@ -68,7 +68,7 @@ jobs:
           file: ./src/WebClient/Dockerfile
           push: true
           tags: ghcr.io/jonathanperis/blazor-mudblazor-starter:latest
-          platforms: linux/amd64,linux/arm64/v8          
+          platforms: linux/amd64,linux/arm64/v8
           build-args: |
             AOT=${{ env.AOT }}
             TRIM=${{ env.TRIM }}
@@ -84,4 +84,4 @@ jobs:
         with:
             app-name: 'blazor-mudblazor-starter'
             publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE  }}
-            images: 'ghcr.io/jonathanperis/blazor-mudblazor-starter:latest'            
+            images: 'ghcr.io/jonathanperis/blazor-mudblazor-starter:latest'
