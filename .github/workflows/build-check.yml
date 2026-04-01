@@ -1,0 +1,82 @@
+name: Build Check
+
+on:
+  pull_request:
+    branches:
+      - main
+
+env:
+  AOT: false
+  TRIM: false
+  EXTRA_OPTIMIZE: false
+  BUILD_CONFIGURATION: Debug
+
+jobs:
+  setup-build-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET SDK
+        uses: actions/setup-dotnet@v5
+        with:
+          global-json-file: global.json
+
+      - name: Restore Dependencies
+        working-directory: "./src/WebClient"
+        run: dotnet restore "WebClient.csproj" -p:Configuration=${${{ env.BUILD_CONFIGURATION }}} -p:AOT=${${{ env.AOT }}} -p:Trim=${${{ env.TRIM }}}
+
+      - name: Build Application
+        working-directory: "./src/WebClient"
+        run: dotnet build "WebClient.csproj" -c ${{ env.BUILD_CONFIGURATION }} -p:AOT=${${{ env.AOT }}} -p:Trim=${${{ env.TRIM }}} -p:ExtraOptimize=${${{ env.EXTRA_OPTIMIZE }}}
+
+  container-test:
+    needs: setup-build-test
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build Docker Image
+        uses: docker/build-push-action@v7
+        with:
+          context: ./src/
+          file: ./src/WebClient/Dockerfile
+          push: false
+          tags: blazor-mudblazor-starter:pr-test
+          build-args: |
+            AOT=${{ env.AOT }}
+            TRIM=${{ env.TRIM }}
+            EXTRA_OPTIMIZE=${{ env.EXTRA_OPTIMIZE }}
+            BUILD_CONFIGURATION=${{ env.BUILD_CONFIGURATION }}
+
+      - name: Run Container and Test Healthcheck
+        run: |
+          docker run -d --name blazor-test -p 5030:5030 blazor-mudblazor-starter:pr-test
+          sleep 10
+          for i in {1..20}; do
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5030/healthz)
+            echo "Attempt $i: Status $STATUS"
+            if [ "$STATUS" -eq 200 ]; then
+              echo "Healthcheck passed with status $STATUS"
+              docker stop blazor-test
+              exit 0
+            else
+              echo "Healthcheck attempt $i failed with status $STATUS. Retrying in 5 seconds..."
+              sleep 5
+            fi
+          done
+          echo "Healthcheck failed after 20 attempts."
+          docker logs blazor-test
+          docker stop blazor-test
+          exit 1
