@@ -56,6 +56,7 @@ jobs:
           context: ./src/
           file: ./src/WebClient/Dockerfile
           push: false
+          load: true
           tags: blazor-mudblazor-starter:pr-test
           build-args: |
             AOT=${{ env.AOT }}
@@ -83,3 +84,4 @@ jobs:
           docker logs blazor-test
           docker stop blazor-test
           exit 1
+
