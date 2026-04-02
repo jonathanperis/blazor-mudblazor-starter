@@ -5,24 +5,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>blazor-mudblazor-starter - Documentation</title>
   <meta name="description" content="Blazor Server starter template with MudBlazor Material Design components — .NET 9, Docker, and Azure CI/CD ready">
-  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #0e1117;
-      --sidebar-bg: #1a1f2e;
-      --text-primary: #e2e8f0;
-      --text-muted: #94a3b8;
-      --text-body: #e2e8f0;
-      --accent: #7e57c2;
-      --accent-hover: #9575cd;
-      --accent-highlight: #7ccdfd;
-      --accent-dim: rgba(126,87,194,0.1);
-      --surface: #1a1f2e;
-      --surface-hover: #22293e;
-      --code-bg: var(--surface);
+      --bg: #0a0a0a;
+      --sidebar-bg: #111111;
+      --text-primary: #ededed;
+      --text-muted: #888888;
+      --text-body: #c8c8c8;
+      --accent: #7c6af7;
+      --accent-hover: #9b8df9;
+      --code-bg: #1e1e2e;
       --code-text: #cdd6f4;
-      --border: #2d3748;
-      --code-border: var(--border);
+      --border: #1f1f2e;
+      --code-border: #2a2a3e;
       --sidebar-width: 260px;
     }
 
@@ -30,15 +25,13 @@
     
     html {
       scroll-behavior: smooth;
-      font-family: 'DM Mono', monospace;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
     
     body {
       margin: 0;
       padding: 0;
       background: var(--bg);
-      background-image: radial-gradient(ellipse at 30% 20%, rgba(126,87,194,0.05) 0%, transparent 50%),
-                        radial-gradient(ellipse at 70% 80%, rgba(124,205,253,0.04) 0%, transparent 50%);
       color: var(--text-primary);
       display: flex;
     }
@@ -63,7 +56,6 @@
     }
 
     .repo-title {
-      font-family: 'DM Mono', monospace;
       font-size: 18px;
       font-weight: 700;
       margin: 0 0 4px;
@@ -84,16 +76,14 @@
     }
 
     .repo-description {
-      font-family: 'DM Sans', sans-serif;
       font-size: 13px;
       color: var(--text-muted);
       margin: 0 0 16px;
     }
 
     .search-box {
-      font-family: 'DM Sans', sans-serif;
       width: 100%;
-      background: var(--surface);
+      background: #000;
       border: 1px solid var(--border);
       color: var(--text-primary);
       border-radius: 6px;
@@ -124,7 +114,6 @@
     }
 
     .nav-item {
-      font-family: 'DM Sans', sans-serif;
       display: block;
       padding: 8px 12px;
       color: var(--text-muted);
@@ -136,17 +125,16 @@
 
     .nav-item:hover {
       color: var(--text-primary);
-      background: var(--surface-hover);
+      background: rgba(255, 255, 255, 0.05);
     }
 
     .nav-item.active {
       color: var(--accent);
-      background: var(--accent-dim);
+      background: rgba(124, 106, 247, 0.1);
       font-weight: 500;
     }
 
     .sidebar-footer {
-      font-family: 'DM Sans', sans-serif;
       padding: 16px 24px;
       border-top: 1px solid var(--border);
       font-size: 12px;
@@ -158,12 +146,6 @@
       text-decoration: none;
       display: block;
       margin-bottom: 8px;
-    }
-
-    .sidebar-footer a.back-home {
-      color: var(--accent-highlight);
-      margin-bottom: 12px;
-      font-weight: 500;
     }
 
     .sidebar-footer a:hover {
@@ -187,7 +169,6 @@
 
     /* Typography */
     h1 {
-      font-family: 'DM Mono', monospace;
       font-size: 32px;
       font-weight: 700;
       letter-spacing: -0.02em;
@@ -196,7 +177,6 @@
     }
 
     h2 {
-      font-family: 'DM Mono', monospace;
       font-size: 22px;
       font-weight: 600;
       letter-spacing: -0.01em;
@@ -207,7 +187,6 @@
     }
 
     h3 {
-      font-family: 'DM Mono', monospace;
       font-size: 18px;
       font-weight: 600;
       margin: 32px 0 12px;
@@ -215,7 +194,6 @@
     }
 
     p {
-      font-family: 'DM Mono', monospace;
       font-size: 15px;
       line-height: 1.75;
       color: var(--text-body);
@@ -223,7 +201,7 @@
     }
 
     a {
-      color: var(--accent-highlight);
+      color: var(--accent);
       text-decoration: none;
     }
 
@@ -251,7 +229,7 @@
     }
 
     code {
-      font-family: 'DM Mono', monospace;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
       background: var(--code-bg);
       color: var(--code-text);
       border-radius: 4px;
@@ -276,7 +254,7 @@
     }
 
     th {
-      background: var(--sidebar-bg);
+      background: #1a1a2e;
       color: var(--text-primary);
       font-weight: 600;
       border-bottom: 1px solid var(--border);
@@ -288,7 +266,7 @@
     }
 
     tr:nth-child(even) {
-      background: var(--surface);
+      background: rgba(255, 255, 255, 0.02);
     }
     
     tr:last-child td {
@@ -299,7 +277,7 @@
     blockquote {
       margin: 24px 0;
       padding: 12px 20px;
-      background: var(--surface);
+      background: var(--sidebar-bg);
       border-left: 3px solid var(--accent);
       border-radius: 0 6px 6px 0;
       color: var(--text-muted);
@@ -327,7 +305,7 @@
     }
     
     .search-highlight {
-      background: var(--accent-dim);
+      background: rgba(124, 106, 247, 0.3);
       border-radius: 2px;
       padding: 0 2px;
     }
@@ -336,8 +314,8 @@
     .live-cta {
       margin-bottom: 40px;
       padding: 14px 20px;
-      background: rgba(126,87,194,0.07);
-      border: 1px solid rgba(126,87,194,0.22);
+      background: rgba(124, 106, 247, 0.07);
+      border: 1px solid rgba(124, 106, 247, 0.22);
       border-radius: 10px;
     }
 
@@ -354,18 +332,17 @@
       height: 8px;
       border-radius: 50%;
       background: var(--accent);
-      box-shadow: 0 0 8px rgba(126,87,194,0.7);
+      box-shadow: 0 0 8px rgba(124, 106, 247, 0.7);
       flex-shrink: 0;
       animation: pulse-dot 2s ease-in-out infinite;
     }
 
     @keyframes pulse-dot {
-      0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(126,87,194,0.7); }
-      50%       { opacity: 0.7; box-shadow: 0 0 14px rgba(126,87,194,0.4); }
+      0%, 100% { opacity: 1; box-shadow: 0 0 8px rgba(124, 106, 247, 0.7); }
+      50%       { opacity: 0.7; box-shadow: 0 0 14px rgba(124, 106, 247, 0.4); }
     }
 
     .live-cta-text {
-      font-family: 'DM Sans', sans-serif;
       font-size: 14px;
       color: var(--text-muted);
     }
@@ -375,12 +352,12 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
       font-size: 13px;
       font-weight: 600;
       color: var(--accent);
-      background: rgba(126,87,194,0.12);
-      border: 1px solid rgba(126,87,194,0.28);
+      background: rgba(124, 106, 247, 0.12);
+      border: 1px solid rgba(124, 106, 247, 0.28);
       padding: 6px 16px;
       border-radius: 6px;
       text-decoration: none;
@@ -388,10 +365,10 @@
     }
 
     .live-cta-btn:hover {
-      background: rgba(126,87,194,0.22);
+      background: rgba(124, 106, 247, 0.22);
       color: var(--accent-hover);
       text-decoration: none;
-      border-color: rgba(126,87,194,0.5);
+      border-color: rgba(124, 106, 247, 0.5);
     }
 
     /* Mobile */
@@ -491,7 +468,6 @@
 </ul>
     </div>
     <div class="sidebar-footer">
-      <a href="../" class="back-home">← Back to home</a>
       <a href="https://github.com/jonathanperis/blazor-mudblazor-starter" target="_blank" rel="noopener noreferrer">View on GitHub</a>
       <div>Built by Jonathan Peris</div>
     </div>
