@@ -12,6 +12,9 @@ builder.Services.AddRazorComponents()
 builder.Services.AddMudServices();
 builder.Services.AddMudTranslations();
 
+// Add health checks
+builder.Services.AddHealthChecks();
+
 // Send all exceptions to the console
 MudGlobal.UnhandledExceptionHandler = Console.WriteLine;
 
@@ -27,6 +30,8 @@ app.UseHttpsRedirection();
 app.UseAntiforgery();
 
 app.MapStaticAssets();
+
+app.MapHealthChecks("/healthz");
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
