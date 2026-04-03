@@ -12,6 +12,9 @@ builder.Services.AddRazorComponents()
 builder.Services.AddMudServices();
 builder.Services.AddMudTranslations();
 
+// Add Application Insights (connection string from APPLICATIONINSIGHTS_CONNECTION_STRING env var)
+builder.Services.AddApplicationInsightsTelemetry();
+
 // Add health checks
 builder.Services.AddHealthChecks();
 
