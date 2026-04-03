@@ -101,7 +101,7 @@ blazor-mudblazor-starter/
 | `build-check.yml` | Pull requests | .NET build + Docker health check (`/healthz`) |
 | `main-release.yml` | Push to main | Release build + multi-arch GHCR push + Azure deploy |
 | `codeql.yml` | Push/PR + weekly | C# security and quality analysis |
-| `deploy-docs.yml` | Push/wiki edits | Wiki → HTML docs generation to GitHub Pages |
+| `deploy.yml` | Push to main | GitHub Pages deployment |
 
 **Container image:** `ghcr.io/jonathanperis/blazor-mudblazor-starter:latest` (amd64 + arm64)
 
