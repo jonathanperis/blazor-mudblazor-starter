@@ -112,7 +112,7 @@ blazor-mudblazor-starter/
 │   │   ├── build-check.yml         # PR: dotnet build + Docker health check
 │   │   ├── main-release.yml        # Main: Release build + GHCR push + Azure deploy
 │   │   ├── codeql.yml              # Security analysis (C#, weekly + push/PR)
-│   │   └── deploy-docs.yml         # Wiki → HTML docs generation + GitHub Pages
+│   │   └── deploy.yml         # Wiki → HTML docs generation + GitHub Pages
 │   ├── codeql/codeql-config.yml    # CodeQL exclusions (obj/, bin/, generated code)
 │   ├── dependabot.yml              # Weekly updates: NuGet, Docker, Actions
 │   ├── docs-template.html          # Docs site template (dark theme, responsive)
@@ -142,7 +142,7 @@ blazor-mudblazor-starter/
 - C# analysis with `security-and-quality` queries
 - Triggers: push/PR to main + weekly schedule
 
-### Documentation (`deploy-docs.yml`)
+### Documentation (`deploy.yml`)
 - Converts wiki Markdown → single-page HTML docs site
 - Triggers: push to main, wiki edits (Gollum), manual dispatch
 - Deploys to GitHub Pages via `actions/deploy-pages` (GitHub Actions deployment model)
