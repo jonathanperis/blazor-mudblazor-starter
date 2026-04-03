@@ -1,0 +1,1 @@
+- [Architecture](architecture.md) — Blazor Server patterns, MudBlazor dialogs, state persistence, responsive design, build tiers
