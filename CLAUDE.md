@@ -145,7 +145,7 @@ blazor-mudblazor-starter/
 ### Documentation (`deploy-docs.yml`)
 - Converts wiki Markdown → single-page HTML docs site
 - Triggers: push to main, wiki edits (Gollum), manual dispatch
-- Published to GitHub Pages
+- Deploys to GitHub Pages via `actions/deploy-pages` (GitHub Actions deployment model)
 
 ### Dependency Updates (`dependabot.yml`)
 - Weekly: NuGet packages, Docker base images, GitHub Actions versions
