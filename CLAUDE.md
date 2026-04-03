@@ -112,11 +112,9 @@ blazor-mudblazor-starter/
 │   │   ├── build-check.yml         # PR: dotnet build + Docker health check
 │   │   ├── main-release.yml        # Main: Release build + GHCR push + Azure deploy
 │   │   ├── codeql.yml              # Security analysis (C#, weekly + push/PR)
-│   │   └── deploy.yml         # Wiki → HTML docs generation + GitHub Pages
+│   │   └── deploy.yml              # GitHub Pages deployment
 │   ├── codeql/codeql-config.yml    # CodeQL exclusions (obj/, bin/, generated code)
-│   ├── dependabot.yml              # Weekly updates: NuGet, Docker, Actions
-│   ├── docs-template.html          # Docs site template (dark theme, responsive)
-│   └── generate-docs.js            # Node.js wiki-to-HTML converter
+│   └── dependabot.yml              # Weekly updates: NuGet, Docker, Actions
 ├── .claude/memory/                  # In-repo Claude memory (architecture reference)
 ├── .editorconfig                    # UTF-8, LF, 4-space indent (.cs/.razor)
 ├── global.json                      # .NET SDK 9.0.202 pinned
@@ -143,9 +141,8 @@ blazor-mudblazor-starter/
 - Triggers: push/PR to main + weekly schedule
 
 ### Documentation (`deploy.yml`)
-- Converts wiki Markdown → single-page HTML docs site
-- Triggers: push to main, wiki edits (Gollum), manual dispatch
-- Deploys to GitHub Pages via `actions/deploy-pages` (GitHub Actions deployment model)
+- Deploys static `docs/` directory to GitHub Pages via `actions/deploy-pages`
+- Triggers: push to main, manual dispatch
 
 ### Dependency Updates (`dependabot.yml`)
 - Weekly: NuGet packages, Docker base images, GitHub Actions versions
