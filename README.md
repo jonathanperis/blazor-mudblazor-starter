@@ -2,9 +2,9 @@
 
 > Blazor Server starter template with MudBlazor Material Design components -- .NET 9, Docker, and Azure CI/CD ready
 
-[![CI](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/build-check.yml/badge.svg)](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/build-check.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![CI](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/build-check.yml/badge.svg)](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/build-check.yml) [![Release](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/main-release.yml/badge.svg)](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/main-release.yml) [![CodeQL](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/codeql.yml/badge.svg)](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/codeql.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-**[Live demo →](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/)**
+**[Live demo →](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/)** | **[Documentation →](https://jonathanperis.github.io/blazor-mudblazor-starter/)**
 
 ---
 
@@ -96,9 +96,20 @@ blazor-mudblazor-starter/
 
 ## CI/CD
 
-**Pull requests** (`build-check.yml`): Restores, builds the .NET project, then builds a Docker image and runs a container health check against `/healthz`.
+| Workflow | Trigger | Purpose |
+|----------|---------|---------|
+| `build-check.yml` | Pull requests | .NET build + Docker health check (`/healthz`) |
+| `main-release.yml` | Push to main | Release build + multi-arch GHCR push + Azure deploy |
+| `codeql.yml` | Push/PR + weekly | C# security and quality analysis |
+| `deploy-docs.yml` | Push/wiki edits | Wiki → HTML docs generation to GitHub Pages |
 
-**Main branch** (`main-release.yml`): Builds with production optimizations (TRIM=true, EXTRA_OPTIMIZE=true), pushes a multi-arch image to `ghcr.io/jonathanperis/blazor-mudblazor-starter:latest`, and deploys to Azure Web App using a publish profile.
+**Container image:** `ghcr.io/jonathanperis/blazor-mudblazor-starter:latest` (amd64 + arm64)
+
+**Deployment:** Azure Web App (Brazil South) via publish profile
+
+## Dependency Management
+
+Automated weekly updates via [Dependabot](https://docs.github.com/en/code-security/dependabot) for NuGet packages, Docker base images, and GitHub Actions versions.
 
 ## License
 
