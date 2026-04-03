@@ -1,1 +1,2 @@
 - [Architecture](architecture.md) — Blazor Server patterns, MudBlazor dialogs, state persistence, responsive design, build tiers
+- [Sync Main](feedback_sync_main.md) — Always fetch+pull main before creating branches AND before opening PRs
