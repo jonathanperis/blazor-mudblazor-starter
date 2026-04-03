@@ -3,6 +3,7 @@ name: Main Release
 permissions:
   contents: write
   packages: write
+  id-token: write # required for OIDC Azure login
 
 on:
   push:
@@ -75,8 +76,31 @@ jobs:
             EXTRA_OPTIMIZE=${{ env.EXTRA_OPTIMIZE }}
             BUILD_CONFIGURATION=${{ env.BUILD_CONFIGURATION }}
 
-  deploy-image-azure:
+  deploy-infra:
     needs: build-push-image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+
+      - name: Azure Login (OIDC)
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+      - name: Deploy Bicep Infrastructure
+        uses: azure/arm-deploy@v2
+        with:
+          resourceGroupName: github-jonathanperis
+          template: infra/main.bicep
+          parameters: infra/main.bicepparam
+          deploymentMode: Incremental
+          failOnStdErr: false
+
+  deploy-image-azure:
+    needs: deploy-infra
     runs-on: ubuntu-latest
     steps:
       - name: Deploy Image to Azure Web App
