@@ -14,8 +14,10 @@ Production-ready Blazor Server starter template with MudBlazor Material Design c
 | Blazor Server | Interactive server-side rendering |
 | MudBlazor 9.2.0 | Material Design UI components |
 | MudBlazor.Translations 3.3.0 | Multi-language support |
+| Microsoft.ApplicationInsights.AspNetCore 3.1.0 | Telemetry (active in Azure only) |
 | Docker | Multi-arch builds (amd64/arm64) |
 | Azure App Service | Production hosting (Brazil South) |
+| Bicep | Infrastructure as Code (`infra/`) |
 | GitHub Actions | CI/CD (build, test, deploy) |
 | GitHub Pages | Documentation site |
 
@@ -107,10 +109,19 @@ blazor-mudblazor-starter/
 │           ├── AddWeather.razor     # Add dialog (form + validation)
 │           ├── EditWeather.razor    # Edit dialog (pre-filled form)
 │           └── RemoveWeather.razor  # Delete confirmation dialog
+├── infra/
+│   ├── main.bicep                   # Bicep entry point (Log Analytics, App Insights, Plan, Web App)
+│   ├── main.bicepparam              # Production parameter values
+│   ├── main.json                    # Compiled ARM template
+│   └── modules/
+│       ├── logAnalytics.bicep       # Dedicated Log Analytics workspace
+│       ├── appInsights.bicep        # Application Insights (workspace-based)
+│       ├── appServicePlan.bicep     # Linux App Service Plan
+│       └── webApp.bicep             # Container Web App
 ├── .github/
 │   ├── workflows/
 │   │   ├── build-check.yml         # PR: dotnet build + Docker health check
-│   │   ├── main-release.yml        # Main: Release build + GHCR push + Azure deploy
+│   │   ├── main-release.yml        # Main: 6-job pipeline (amd64 → deploy-infra → deploy-image; arm64 → merge-manifest)
 │   │   ├── codeql.yml              # Security analysis (C#, weekly + push/PR)
 │   │   └── deploy.yml              # GitHub Pages deployment
 │   ├── codeql/codeql-config.yml    # CodeQL exclusions (obj/, bin/, generated code)
@@ -132,9 +143,13 @@ blazor-mudblazor-starter/
 3. Run container, health check `/healthz` (20 retries, 5s interval)
 
 ### Main Branch (`main-release.yml`)
-1. Restore + build (.NET Release, TRIM=true, EXTRA_OPTIMIZE=true)
-2. Multi-platform Docker build + push to GHCR (amd64 + arm64)
-3. Deploy to Azure Web App (Brazil South)
+6-job pipeline:
+1. `setup-build-test` — Restore + build (.NET Release, TRIM=true, EXTRA_OPTIMIZE=true)
+2. `build-push-amd64` — Build linux/amd64, push as `:latest`
+3. `deploy-infra` — OIDC login + Bicep deploy (Incremental, `infra/`) — needs amd64
+4. `deploy-image` — Deploy `:latest` to Azure Web App — needs deploy-infra
+5. `build-push-arm64` — Build linux/arm64/v8, push as `:latest-arm64` (parallel, non-blocking for deploy) — needs amd64
+6. `merge-manifest` — Merge amd64 + arm64 digests into `:latest` multi-arch manifest — needs both builds
 
 ### Security (`codeql.yml`)
 - C# analysis with `security-and-quality` queries
