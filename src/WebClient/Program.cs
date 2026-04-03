@@ -12,8 +12,9 @@ builder.Services.AddRazorComponents()
 builder.Services.AddMudServices();
 builder.Services.AddMudTranslations();
 
-// Add Application Insights (connection string from APPLICATIONINSIGHTS_CONNECTION_STRING env var)
-builder.Services.AddApplicationInsightsTelemetry();
+// Add Application Insights when connection string is available (set via Azure App Settings in production)
+if (!string.IsNullOrEmpty(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]))
+    builder.Services.AddApplicationInsightsTelemetry();
 
 // Add health checks
 builder.Services.AddHealthChecks();
