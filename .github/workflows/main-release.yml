@@ -138,7 +138,7 @@ jobs:
           deploymentMode: Incremental
           failOnStdErr: false
 
-  deploy-image-azure:
+  deploy-image:
     needs: deploy-infra
     runs-on: ubuntu-latest
     steps:
