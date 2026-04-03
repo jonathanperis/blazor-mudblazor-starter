@@ -446,6 +446,15 @@
     }
   </style>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-04B93X6HTL"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-04B93X6HTL');
+</script>
 </head>
 <body>
 
@@ -546,7 +555,6 @@
 
 <section id="components" class="doc-section">
   <h1 class="page-title">Components</h1>
-  <h1>Components</h1>
 <h2>Layout Components</h2>
 <h3>MainLayout.razor</h3>
 <p>The root layout component that provides the application shell. Inherits from <code>LayoutComponentBase</code> and implements <code>IBrowserViewportObserver</code> for responsive design.</p>
@@ -719,7 +727,6 @@
 
 <section id="configuration" class="doc-section">
   <h1 class="page-title">Configuration</h1>
-  <h1>Configuration</h1>
 <h2>Application Settings</h2>
 <h3>appsettings.json</h3>
 <pre><code class="language-json">{
@@ -861,7 +868,6 @@ BUILD_CONFIGURATION=Release
 
 <section id="deployment" class="doc-section">
   <h1 class="page-title">Deployment</h1>
-  <h1>Deployment</h1>
 <h2>Docker</h2>
 <h3>Build the Image</h3>
 <p>The Dockerfile uses a multi-stage build with the .NET 9 SDK and ASP.NET runtime images. The build context is the <code>src/</code> directory.</p>
@@ -908,6 +914,8 @@ docker run -p 5000:5000 ghcr.io/jonathanperis/blazor-mudblazor-starter:latest
 </ol>
 <h3>codeql.yml</h3>
 <p>Runs CodeQL security analysis on the codebase.</p>
+<h3>deploy.yml (GitHub Pages)</h3>
+<p>Triggered on push to <code>main</code> or manual dispatch. Deploys the static <code>docs/</code> directory to GitHub Pages using <code>actions/configure-pages</code>, <code>actions/upload-pages-artifact</code>, and <code>actions/deploy-pages</code>.</p>
 <hr>
 <h2>Azure Web App</h2>
 <p>The application is deployed to Azure App Service in the Brazil South region. The deployment uses a container image from GHCR, configured via the Azure Web App publish profile.</p>
@@ -923,7 +931,6 @@ docker run -p 5000:5000 ghcr.io/jonathanperis/blazor-mudblazor-starter:latest
 
 <section id="getting-started" class="doc-section">
   <h1 class="page-title">Getting Started</h1>
-  <h1>Getting Started</h1>
 <h2>Prerequisites</h2>
 <ul>
 <li><a href="https://dotnet.microsoft.com/download/dotnet/9.0">.NET 9 SDK</a> (9.0.202 or later)</li>
@@ -983,13 +990,13 @@ docker run -p 5000:5000 blazor-mudblazor
 
 <section id="project-structure" class="doc-section">
   <h1 class="page-title">Project Structure</h1>
-  <h1>Project Structure</h1>
 <pre><code>blazor-mudblazor-starter/
 ├── .github/
 │   ├── dependabot.yml                  # Dependabot configuration for dependency updates
 │   └── workflows/
 │       ├── build-check.yml             # PR validation: .NET build + Docker build + health check
 │       ├── codeql.yml                  # CodeQL security analysis
+│       ├── deploy.yml                  # GitHub Pages deployment
 │       └── main-release.yml            # Release: optimized build + GHCR push + Azure deploy
 ├── src/
 │   └── WebClient/
@@ -1032,7 +1039,7 @@ docker run -p 5000:5000 blazor-mudblazor
 <h3><code>src/WebClient/Components/Weather/</code></h3>
 <p>Contains MudDialog components used by the Weather page for Add, Edit, and Remove operations. Each dialog uses <code>EditForm</code> with <code>DataAnnotationsValidator</code> for form validation (except RemoveWeather, which is a simple confirmation).</p>
 <h3><code>.github/workflows/</code></h3>
-<p>Contains three GitHub Actions workflows: <code>build-check.yml</code> for PR validation (includes container health check against <code>/healthz</code>), <code>main-release.yml</code> for production releases to GHCR and Azure, and <code>codeql.yml</code> for security analysis.</p>
+<p>Contains four GitHub Actions workflows: <code>build-check.yml</code> for PR validation (includes container health check against <code>/healthz</code>), <code>main-release.yml</code> for production releases to GHCR and Azure, <code>codeql.yml</code> for security analysis, and <code>deploy.yml</code> for GitHub Pages deployment.</p>
 
 </section>
 
