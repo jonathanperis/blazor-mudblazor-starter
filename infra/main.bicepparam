@@ -2,7 +2,6 @@ using './main.bicep'
 
 param location = 'brazilsouth'
 param projectName = 'github-jonathanperis'
-param appServicePlanSku = 'F1'
 param containerImage = 'ghcr.io/jonathanperis/blazor-mudblazor-starter:latest'
 param appServicePlanName = 'github-jonathanperis'
 param webAppName = 'blazor-mudblazor-starter'

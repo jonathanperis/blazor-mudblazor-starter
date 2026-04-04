@@ -4,14 +4,10 @@ param location string = 'brazilsouth'
 @description('Name of the resource group (used for tagging).')
 param projectName string = 'github-jonathanperis'
 
-@description('App Service Plan SKU.')
-@allowed(['F1', 'B1', 'B2', 'B3', 'S1', 'S2', 'S3', 'P1v3', 'P2v3', 'P3v3'])
-param appServicePlanSku string = 'F1'
-
 @description('Container image to deploy (e.g. ghcr.io/org/repo:tag).')
 param containerImage string = 'ghcr.io/jonathanperis/blazor-mudblazor-starter:latest'
 
-@description('Name of the App Service Plan.')
+@description('Name of the App Service Plan (managed by cpnucleo, must already exist).')
 param appServicePlanName string = 'github-jonathanperis'
 
 @description('Name of the Web App.')
@@ -44,15 +40,9 @@ module appInsights 'modules/appInsights.bicep' = {
   }
 }
 
-// ── App Service Plan ─────────────────────────────────────────────────────────
-module appServicePlan 'modules/appServicePlan.bicep' = {
-  name: 'deploy-app-service-plan'
-  params: {
-    location: location
-    appServicePlanName: appServicePlanName
-    sku: appServicePlanSku
-    projectName: projectName
-  }
+// ── App Service Plan (managed by cpnucleo) ───────────────────────────────────
+resource appServicePlan 'Microsoft.Web/serverfarms@2024-04-01' existing = {
+  name: appServicePlanName
 }
 
 // ── Web App ──────────────────────────────────────────────────────────────────
@@ -61,7 +51,7 @@ module webApp 'modules/webApp.bicep' = {
   params: {
     location: location
     webAppName: webAppName
-    appServicePlanId: appServicePlan.outputs.planId
+    appServicePlanId: appServicePlan.id
     containerImage: containerImage
     appInsightsConnectionString: appInsights.outputs.connectionString
     appInsightsInstrumentationKey: appInsights.outputs.instrumentationKey
