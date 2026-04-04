@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.41.2.15936",
-      "templateHash": "7345726088980582692"
+      "templateHash": "7579599088667932441"
     }
   },
   "parameters": {
@@ -23,25 +23,6 @@
         "description": "Name of the resource group (used for tagging)."
       }
     },
-    "appServicePlanSku": {
-      "type": "string",
-      "defaultValue": "F1",
-      "allowedValues": [
-        "F1",
-        "B1",
-        "B2",
-        "B3",
-        "S1",
-        "S2",
-        "S3",
-        "P1v3",
-        "P2v3",
-        "P3v3"
-      ],
-      "metadata": {
-        "description": "App Service Plan SKU."
-      }
-    },
     "containerImage": {
       "type": "string",
       "defaultValue": "ghcr.io/jonathanperis/blazor-mudblazor-starter:latest",
@@ -53,7 +34,7 @@
       "type": "string",
       "defaultValue": "github-jonathanperis",
       "metadata": {
-        "description": "Name of the App Service Plan."
+        "description": "Name of the App Service Plan (managed by cpnucleo, must already exist)."
       }
     },
     "webAppName": {
@@ -242,99 +223,6 @@
     {
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2025-04-01",
-      "name": "deploy-app-service-plan",
-      "properties": {
-        "expressionEvaluationOptions": {
-          "scope": "inner"
-        },
-        "mode": "Incremental",
-        "parameters": {
-          "location": {
-            "value": "[parameters('location')]"
-          },
-          "appServicePlanName": {
-            "value": "[parameters('appServicePlanName')]"
-          },
-          "sku": {
-            "value": "[parameters('appServicePlanSku')]"
-          },
-          "projectName": {
-            "value": "[parameters('projectName')]"
-          }
-        },
-        "template": {
-          "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
-          "contentVersion": "1.0.0.0",
-          "metadata": {
-            "_generator": {
-              "name": "bicep",
-              "version": "0.41.2.15936",
-              "templateHash": "11657269007901833001"
-            }
-          },
-          "parameters": {
-            "location": {
-              "type": "string"
-            },
-            "appServicePlanName": {
-              "type": "string"
-            },
-            "sku": {
-              "type": "string"
-            },
-            "projectName": {
-              "type": "string"
-            }
-          },
-          "variables": {
-            "skuTierMap": {
-              "F1": "Free",
-              "B1": "Basic",
-              "B2": "Basic",
-              "B3": "Basic",
-              "S1": "Standard",
-              "S2": "Standard",
-              "S3": "Standard",
-              "P1v3": "PremiumV3",
-              "P2v3": "PremiumV3",
-              "P3v3": "PremiumV3"
-            }
-          },
-          "resources": [
-            {
-              "type": "Microsoft.Web/serverfarms",
-              "apiVersion": "2024-04-01",
-              "name": "[parameters('appServicePlanName')]",
-              "location": "[parameters('location')]",
-              "kind": "linux",
-              "tags": {
-                "project": "[parameters('projectName')]"
-              },
-              "sku": {
-                "name": "[parameters('sku')]",
-                "tier": "[variables('skuTierMap')[parameters('sku')]]"
-              },
-              "properties": {
-                "reserved": true
-              }
-            }
-          ],
-          "outputs": {
-            "planId": {
-              "type": "string",
-              "value": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
-            },
-            "planName": {
-              "type": "string",
-              "value": "[parameters('appServicePlanName')]"
-            }
-          }
-        }
-      }
-    },
-    {
-      "type": "Microsoft.Resources/deployments",
-      "apiVersion": "2025-04-01",
       "name": "deploy-web-app",
       "properties": {
         "expressionEvaluationOptions": {
@@ -349,7 +237,7 @@
             "value": "[parameters('webAppName')]"
           },
           "appServicePlanId": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deploy-app-service-plan'), '2025-04-01').outputs.planId.value]"
+            "value": "[resourceId('Microsoft.Web/serverfarms', parameters('appServicePlanName'))]"
           },
           "containerImage": {
             "value": "[parameters('containerImage')]"
@@ -455,8 +343,7 @@
         }
       },
       "dependsOn": [
-        "[resourceId('Microsoft.Resources/deployments', 'deploy-app-insights')]",
-        "[resourceId('Microsoft.Resources/deployments', 'deploy-app-service-plan')]"
+        "[resourceId('Microsoft.Resources/deployments', 'deploy-app-insights')]"
       ]
     }
   ],
