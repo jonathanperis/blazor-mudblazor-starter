@@ -138,6 +138,7 @@ jobs:
           template: infra/main.bicep
           parameters: infra/main.bicepparam
           deploymentMode: Incremental
+          deploymentName: blazor-mudblazor-infra
           failOnStdErr: false
 
   deploy-image:
