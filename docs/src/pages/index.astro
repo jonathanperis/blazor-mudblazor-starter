@@ -1,0 +1,25 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Header from '@/components/home/Header.astro';
+import Hero from '@/components/home/Hero.astro';
+import Features from '@/components/home/Features.astro';
+import QuickStart from '@/components/home/QuickStart.astro';
+import Footer from '@/components/home/Footer.astro';
+
+const title = 'blazor-mudblazor-starter | Material Dark Studio';
+const description = 'Production-ready Blazor Server starter template with MudBlazor Material Design components, .NET 9, Docker, and Azure deployment.';
+---
+
+<BaseLayout title={title} description={description}>
+  <div class="container">
+    <Header />
+    
+    <main>
+      <Hero />
+      <Features />
+      <QuickStart />
+    </main>
+    
+    <Footer />
+  </div>
+</BaseLayout>

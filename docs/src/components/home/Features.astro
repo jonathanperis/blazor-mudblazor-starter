@@ -1,0 +1,52 @@
+---
+interface Feature {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+const features: Feature[] = [
+  {
+    icon: '🎨',
+    title: 'MudBlazor',
+    description: 'Full Material Design 3 component library with a pre-configured dark theme and responsive layout ready for your content.'
+  },
+  {
+    icon: '🐳',
+    title: 'Docker',
+    description: 'Multi-stage Dockerfile and docker-compose setup for seamless local development and production readiness.'
+  },
+  {
+    icon: '🚀',
+    title: 'Azure CI/CD',
+    description: 'Pre-configured GitHub Actions workflow for automated deployments to Azure App Service with zero friction.'
+  },
+  {
+    icon: '🔐',
+    title: 'Authentication',
+    description: 'Basic auth scaffolding in place, using ASP.NET Core Identity. Ready for you to plug in your providers and scale.'
+  },
+  {
+    icon: '⚡',
+    title: '.NET 9',
+    description: 'Running on the latest LTS release. Leveraging Minimal APIs, modern C# 13 patterns, and server-side rendering.'
+  },
+  {
+    icon: '🏗',
+    title: 'Clean Structure',
+    description: 'Logical separation of concerns from day one. A scalable project layout designed for real-world enterprise applications.'
+  }
+];
+---
+
+<section class="features">
+  <h2>What's Included</h2>
+  <div class="grid">
+    {features.map(feature => (
+      <div class="card">
+        <h3>{feature.icon} {feature.title}</h3>
+        <p>{feature.description}</p>
+      </div>
+    ))}
+  </div>
+</section>
