@@ -1,0 +1,23 @@
+---
+const badges = ['.NET 9', 'Blazor Server', 'MudBlazor 8.x', 'Docker', 'Azure', 'GitHub Actions', 'C# 13'];
+---
+
+<section class="quickstart">
+  <h2>Quick Start</h2>
+  <div class="code-block">
+    <pre><code><span class="comment"># Clone the starter template</span>
+<span class="command">git clone</span> <span class="arg">https://github.com/jonathanperis/blazor-mudblazor-starter</span>
+
+<span class="comment"># Navigate into the directory</span>
+<span class="command">cd</span> <span class="arg">blazor-mudblazor-starter</span>
+
+<span class="comment"># Run the application</span>
+<span class="command">dotnet run</span></code></pre>
+  </div>
+
+  <div class="badges">
+    {badges.map(badge => (
+      <span class="badge">{badge}</span>
+    ))}
+  </div>
+</section>
