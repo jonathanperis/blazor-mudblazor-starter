@@ -1,0 +1,89 @@
+---
+interface Stat {
+  value: string;
+  label: string;
+}
+
+interface Feature {
+  icon: string;
+  title: string;
+  description: string;
+}
+
+const stats: Stat[] = [
+  { value: 'MudBlazor', label: 'Component Library' },
+  { value: '.NET 9', label: 'Runtime' },
+  { value: 'Azure', label: 'CI/CD Deployment' },
+  { value: 'Multi-arch', label: 'Docker (AMD64 + ARM64)' },
+];
+
+const features: Feature[] = [
+  {
+    icon: '🎨',
+    title: 'MudBlazor',
+    description: 'Full Material Design 3 component library with a pre-configured dark theme and responsive layout ready for your content.'
+  },
+  {
+    icon: '🐳',
+    title: 'Docker',
+    description: 'Multi-stage Dockerfile and docker-compose setup for seamless local development and production readiness.'
+  },
+  {
+    icon: '🚀',
+    title: 'Azure CI/CD',
+    description: 'Pre-configured GitHub Actions workflow for automated deployments to Azure App Service with zero friction.'
+  },
+  {
+    icon: '🔐',
+    title: 'Authentication',
+    description: 'Basic auth scaffolding in place using ASP.NET Core Identity. Ready for you to plug in your providers and scale.'
+  },
+  {
+    icon: '⚡',
+    title: '.NET 9',
+    description: 'Running on the latest release. Leveraging Minimal APIs, modern C# 13 patterns, and server-side rendering.'
+  },
+  {
+    icon: '🏗',
+    title: 'Clean Structure',
+    description: 'Logical separation of concerns from day one. A scalable project layout designed for real-world applications.'
+  },
+];
+---
+
+<section class="dashboard">
+  <div class="stats-grid">
+    {stats.map(stat => (
+      <div class="stat-item">
+        <h3>{stat.value}</h3>
+        <p>{stat.label}</p>
+      </div>
+    ))}
+  </div>
+
+  <div class="features-section">
+    <h3>What's Included</h3>
+    <div class="features-grid">
+      {features.map(f => (
+        <div class="feature-card">
+          <h4>{f.icon} {f.title}</h4>
+          <p>{f.description}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<section class="quickstart-section">
+  <h3>Quick Start</h3>
+  <div class="code-block">
+    <pre><code><span class="comment"># Clone the starter template</span>
+<span class="command">git clone</span> <span class="arg">https://github.com/jonathanperis/blazor-mudblazor-starter</span>
+
+<span class="comment"># Navigate into the directory</span>
+<span class="command">cd</span> <span class="arg">blazor-mudblazor-starter</span>
+
+<span class="comment"># Run the application</span>
+<span class="command">dotnet run</span></code></pre>
+  </div>
+</section>
