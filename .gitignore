@@ -58,3 +58,5 @@ nunit-*.xml
 wiki/
 node_modules/
 package-lock.json
+# Allow the docs Astro project to commit its lockfile
+!docs/package-lock.json
