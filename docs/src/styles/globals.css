@@ -522,7 +522,11 @@ footer {
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
-  padding: 3rem 0;
+  max-width: 1100px;
+  width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 3rem 2rem;
   border-top: 1px dotted var(--border);
   margin-top: 4rem;
   color: var(--text-muted);
