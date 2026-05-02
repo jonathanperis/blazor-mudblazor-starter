@@ -55,7 +55,6 @@ nunit-*.xml
 .DS_Store
 
 # Docs generation
-wiki/
 node_modules/
 package-lock.json
 # Allow the docs Astro project to commit its lockfile
