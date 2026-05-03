@@ -2,7 +2,7 @@
 
 Blazor Server starter template with MudBlazor Material Design components. Built on .NET 9 with Docker multi-arch support and a CI/CD pipeline for GitHub Container Registry and Azure Web App deployment.
 
-**[Live demoL(https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/.md)**
+**[Live demo](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/)**
 
 ---
 
@@ -10,11 +10,11 @@ Blazor Server starter template with MudBlazor Material Design components. Built 
 
 | Page | Description |
 |---|---|
-| [Getting Started](getting_started) | Prerequisites, local run, Docker run |
-| [Project Structure](project_structure) | Directory layout and file descriptions |
-| [Components](components) | Blazor components reference |
-| [Configuration](configuration) | App settings, build flags, environment variables |
-| [Deployment](deployment) | Docker, CI/CD, and Azure deployment |
+| [Getting Started](#getting-started) | Prerequisites, local run, Docker run |
+| [Project Structure](#project-structure) | Directory layout and file descriptions |
+| [Components](#components) | Blazor components reference |
+| [Configuration](#configuration) | App settings, build flags, environment variables |
+| [Deployment](#deployment) | Docker, CI/CD, and Azure deployment |
 
 ## Key Features
 

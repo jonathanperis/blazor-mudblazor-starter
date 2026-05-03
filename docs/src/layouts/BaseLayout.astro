@@ -12,12 +12,14 @@ const {
   description = 'Production-ready Blazor Server starter template with MudBlazor Material Design components, .NET 9, Docker, and Azure deployment. Get your Blazor app running in minutes.'
 } = Astro.props;
 
+const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : `https://jonathanperis.github.io${Astro.url.pathname}`;
+
 const jsonLd = {
   '@context': 'https://schema.org',
-  '@type': 'SoftwareApplication',
+  '@type': 'SoftwareSourceCode',
   'name': 'Blazor MudBlazor Starter',
   'description': description,
-  'url': 'https://jonathanperis.github.io/blazor-mudblazor-starter/',
+  'url': pageUrl,
   'applicationCategory': 'DeveloperApplication',
   'operatingSystem': 'Web',
   'codeRepository': 'https://github.com/jonathanperis/blazor-mudblazor-starter',
@@ -41,14 +43,14 @@ const jsonLd = {
     <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet" />
     <meta name="description" content={description} />
     <meta name="keywords" content="Blazor, MudBlazor, .NET 9, Material Design, Azure, Docker, C#, Blazor Server, starter template" />
-    <link rel="canonical" href="https://jonathanperis.github.io/blazor-mudblazor-starter/" />
+    <link rel="canonical" href={pageUrl} />
     <meta name="theme-color" content="#7e57c2" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
-    <meta property="og:url" content="https://jonathanperis.github.io/blazor-mudblazor-starter/" />
+    <meta property="og:url" content={pageUrl} />
     <meta property="og:site_name" content="blazor-mudblazor-starter" />
     <meta property="og:locale" content="en_US" />
 

@@ -42,7 +42,7 @@ docker build \
   -t blazor-mudblazor -f src/WebClient/Dockerfile src/
 ```
 
-See [Configuration](configuration) for details on each build argument.
+See [Configuration](#configuration) for details on each build argument.
 
 ## Access URLs
 
@@ -51,4 +51,4 @@ See [Configuration](configuration) for details on each build argument.
 | Local (HTTP) | `http://localhost:5000` |
 | Local (HTTPS) | `https://localhost:5001` |
 | Docker container | `http://localhost:5000` |
-| Live demo | [blazor-mudblazor-starterL(https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/.md) |
+| Live demo | [blazor-mudblazor-starter](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/) |
