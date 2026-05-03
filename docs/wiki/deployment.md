@@ -78,7 +78,7 @@ Triggered on push to `main` or manual dispatch. Deploys the static `docs/` direc
 
 The application is deployed to Azure App Service in the Brazil South region. The deployment uses a container image from GHCR, configured via the Azure Web App publish profile.
 
-**Live demo:** [blazor-mudblazor-starterL(https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/.md)
+**Live demo:** [blazor-mudblazor-starter](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/)
 
 ### Azure Deployment Requirements
 
