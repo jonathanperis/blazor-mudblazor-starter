@@ -1,24 +1,100 @@
-﻿@page "/"
+@page "/"
 
-<PageTitle>Home</PageTitle>
+<PageTitle>Blazor MudBlazor Starter</PageTitle>
 
 <Breadcrumb Items="_items" />
 
-<MudCard Class="pa-4 ma-4" Elevation="1">
-    <MudCardHeader>
-        <CardHeaderContent>
-            <MudText Typo="Typo.h6">Hello, world!</MudText>
-        </CardHeaderContent>
-    </MudCardHeader>
-    <MudCardContent>
-        <MudText>Welcome to your new app.</MudText>
-        <MudText Typo="Typo.body2">This template have been written using <MudLink Typo="Typo.body2" Href="https://mudblazor.com/" Target="_blank">MudBlazor!</MudLink></MudText>
-    </MudCardContent>
-</MudCard>
+<MudContainer MaxWidth="MaxWidth.Large" Class="starter-page px-4 pb-8">
+    <MudPaper Class="starter-hero pa-6 pa-md-8" Elevation="2">
+        <MudGrid Spacing="4" Class="align-center">
+            <MudItem xs="12" md="7">
+                <MudStack Spacing="3">
+                    <MudText Typo="Typo.overline" Color="Color.Primary">Blazor Server template</MudText>
+                    <MudText Typo="Typo.h3" HtmlTag="h1" Class="starter-hero-title">
+                        Production-ready Blazor Server starter with MudBlazor
+                    </MudText>
+                    <MudText Typo="Typo.subtitle1" Class="starter-hero-copy">
+                        A clean .NET 9 baseline with MudBlazor 9.2, Docker, Azure deployment,
+                        CI/CD, dark mode, responsive navigation, dialogs, snackbars, and a high-volume DataGrid demo.
+                    </MudText>
+                    <MudStack Row Spacing="2" Class="starter-actions flex-wrap">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Code" Href="https://github.com/jonathanperis/blazor-mudblazor-starter" Target="_blank" rel="noopener noreferrer">
+                            View on GitHub
+                        </MudButton>
+                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Article" Href="https://jonathanperis.github.io/blazor-mudblazor-starter/" Target="_blank" rel="noopener noreferrer">
+                            Read docs
+                        </MudButton>
+                        <MudButton Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Filled.TableView" Href="/weather">
+                            Explore DataGrid demo
+                        </MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudItem>
+            <MudItem xs="12" md="5">
+                <MudPaper Class="starter-command pa-4" Elevation="0">
+                    <MudText Typo="Typo.subtitle2" Class="mb-2">Clone and run</MudText>
+                    <pre><code>git clone https://github.com/jonathanperis/blazor-mudblazor-starter.git
+cd blazor-mudblazor-starter
+dotnet run --project src/WebClient</code></pre>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <MudPaper Class="starter-proof pa-4 mt-4" Elevation="1">
+        <MudStack Row Spacing="1" Class="flex-wrap" AlignItems="AlignItems.Center">
+            <MudText Typo="Typo.subtitle2" Class="mr-2">Included proof:</MudText>
+            @foreach (var chip in _proofChips)
+            {
+                <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small">@chip</MudChip>
+            }
+        </MudStack>
+    </MudPaper>
+
+    <MudGrid Spacing="4" Class="mt-1">
+        <MudItem xs="12" md="5">
+            <MudCard Elevation="1" Class="starter-card h-100">
+                <MudCardContent>
+                    <MudIcon Icon="@Icons.Material.Filled.Verified" Color="Color.Success" Size="Size.Large" Class="mb-3" />
+                    <MudText Typo="Typo.h5" HtmlTag="h2">Production path included</MudText>
+                    <MudText Typo="Typo.body2" Class="mt-2">
+                        Build checks, CodeQL, Dependabot, Docker image publishing, Azure infrastructure, and a health endpoint are already wired.
+                    </MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+        <MudItem xs="12" md="7">
+            <MudCard Elevation="1" Class="starter-card h-100">
+                <MudCardContent>
+                    <MudIcon Icon="@Icons.Material.Filled.TableRows" Color="Color.Primary" Size="Size.Large" Class="mb-3" />
+                    <MudText Typo="Typo.h5" HtmlTag="h2">MudBlazor patterns you can reuse</MudText>
+                    <MudText Typo="Typo.body2" Class="mt-2">
+                        The sample routes demonstrate component state, a responsive shell, persisted theme preference,
+                        CRUD dialogs, virtualized records, search, filters, row selection, context menus, and snackbars.
+                    </MudText>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowForward" Href="/weather" Class="mt-3">
+                        Open the DataGrid route
+                    </MudButton>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    </MudGrid>
+</MudContainer>
 
 @code {
+    private readonly string[] _proofChips =
+    [
+        ".NET 9",
+        "MudBlazor 9.2",
+        "Docker",
+        "GHCR",
+        "Azure App Service",
+        "CodeQL",
+        "GitHub Pages"
+    ];
+
     private readonly List<BreadcrumbItem> _items =
     [
-        new("Home", href: "#", icon: Icons.Material.Filled.Home, disabled: true),
-    ];    
+        new("Overview", href: null, icon: Icons.Material.Filled.Home, disabled: true),
+    ];
 }

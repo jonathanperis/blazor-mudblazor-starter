@@ -1,4 +1,4 @@
-﻿@page "/weather"
+@page "/weather"
 @inject ISnackbar Snackbar
 @inject IDialogService DialogService
 @inject IJSRuntime Js
@@ -7,39 +7,67 @@
 
 <Breadcrumb Items="_items" />
 
-<MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Success" Class="add-item-btn pa-2 ma-0 ml-4" OnClick="@AddItem">Add Item</MudButton>
-<MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Class="remove-item-btn pa-2 ma-0 ml-4" OnClick="@RemoveItem">Remove Item</MudButton>
+<MudContainer MaxWidth="MaxWidth.ExtraLarge" Class="px-4 pb-8">
+    <MudPaper Class="demo-page-header pa-5 mb-4" Elevation="1">
+        <MudGrid Spacing="3" Class="align-center">
+            <MudItem xs="12" md="8">
+                <MudText Typo="Typo.overline" Color="Color.Primary">MudDataGrid showcase</MudText>
+                <MudText Typo="Typo.h4" HtmlTag="h1">DataGrid demo</MudText>
+                <MudText Typo="Typo.body1" Class="mt-2">
+                    69,420 virtualized rows with search, sorting, filters, CRUD dialogs, row selection, paging, and right-click clipboard actions.
+                </MudText>
+            </MudItem>
+            <MudItem xs="12" md="4" Class="d-flex justify-end align-center">
+                <MudStack Row Spacing="1" Class="flex-wrap justify-end">
+                    <MudChip T="string" Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small">Virtualized</MudChip>
+                    <MudChip T="string" Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small">CRUD dialogs</MudChip>
+                    <MudChip T="string" Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small">Right-click copy</MudChip>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+
+    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Dense="true" Class="mb-4">
+        Select rows to enable bulk removal. Right-click any row to copy one line or the selected lines to your clipboard.
+    </MudAlert>
+
+    <MudStack Row Spacing="2" AlignItems="AlignItems.Center" Class="mb-3 flex-wrap">
+        <MudButton StartIcon="@Icons.Material.Filled.Add" Color="Color.Success" Variant="Variant.Filled" Class="add-item-btn" OnClick="@AddItem">Add record</MudButton>
+        <MudButton StartIcon="@Icons.Material.Filled.Delete" Color="Color.Error" Variant="Variant.Outlined" Class="remove-item-btn" OnClick="@RemoveItem" Disabled="@(!_selectedItems.Any())">Remove selected</MudButton>
+        <MudChip T="string" Color="@(_selectedItems.Any() ? Color.Primary : Color.Default)" Variant="Variant.Outlined" Size="Size.Small">@SelectedCountLabel</MudChip>
+    </MudStack>
 
 <MudDataGrid T="WeatherForecast" MultiSelection Items="@_forecasts" SortMode="SortMode.Multiple" Filterable QuickFilter="@QuickFilter"
-             EditMode="DataGridEditMode.Form" Hideable RowClick="@RowClicked" RowContextMenuClick="RowRightClicked" 
+             EditMode="DataGridEditMode.Form" Hideable RowClick="@RowClicked" RowContextMenuClick="RowRightClicked"
              SelectedItemsChanged="@SelectedItemsChanged" Class="pa-4 ma-4" Virtualize HorizontalScrollbar
              EditTrigger="DataGridEditTrigger.Manual" Loading="_loading" FixedHeader Height="30rem" Elevation="1">
     <ToolBarContent>
-        <MudText Typo="Typo.h6">Weather</MudText>
+        <MudStack Spacing="0">
+            <MudText Typo="Typo.h6">Weather records</MudText>
+            <MudText Typo="Typo.caption">@_forecasts.Count.ToString("N0", CultureInfo.CurrentCulture) generated records</MudText>
+        </MudStack>
         <MudSpacer/>
-        <MudTextField @bind-Value="_searchString" Placeholder="Search" Adornment="Adornment.Start" Immediate="true"
+        <MudTextField @bind-Value="_searchString" Placeholder="Search records" Adornment="Adornment.Start" Immediate="true"
                       AdornmentIcon="@Icons.Material.Filled.Search" IconSize="Size.Medium" Class="mt-0">
         </MudTextField>
     </ToolBarContent>
     <Columns>
         <SelectColumn T="WeatherForecast" />
-        <PropertyColumn Property="x => x.Id" Title="Id" Sortable="false" Filterable="false" />
-        <PropertyColumn Property="x => x.Date.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.CurrentCulture)" 
+        <TemplateColumn Title="Record" Sortable="false" Filterable="false">
+            <CellTemplate>
+                <MudText Typo="Typo.body2">@ShortId(context.Item.Id)</MudText>
+            </CellTemplate>
+        </TemplateColumn>
+        <PropertyColumn Property="x => x.Date.ToString(CultureInfo.CurrentCulture.DateTimeFormat.ShortDatePattern, CultureInfo.CurrentCulture)"
                         Title="Date" SortBy="@SortBy"/>
         <PropertyColumn Property="x => x.TemperatureC" Title="Temp. (C)"/>
         <PropertyColumn Property="x => x.TemperatureF" Title="Temp. (F)"/>
         <PropertyColumn Property="x => x.Summary" Title="Summary"/>
-        <PropertyColumn Property="x => x.TemperatureC" Title="Temp. (C) 2" />
-        <PropertyColumn Property="x => x.TemperatureF" Title="Temp. (F) 2" />
-        <PropertyColumn Property="x => x.Summary" Title="Summary 2"/>    
-        <PropertyColumn Property="x => x.TemperatureC" Title="Temp. (C) 3" />
-        <PropertyColumn Property="x => x.TemperatureF" Title="Temp. (F) 3" />
-        <PropertyColumn Property="x => x.Summary" Title="Summary 3"/>        
         <TemplateColumn CellClass="d-flex justify-end">
             <CellTemplate>
-                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" OnClick="() => EditItem(context.Item)" />
+                <MudIconButton Size="@Size.Small" Icon="@Icons.Material.Outlined.Edit" aria-label="Edit weather record" OnClick="() => EditItem(context.Item)" />
             </CellTemplate>
-        </TemplateColumn>   
+        </TemplateColumn>
     </Columns>
     <PagerContent>
         <MudDataGridPager T="WeatherForecast" PageSizeOptions="new[] {10, 25, 50, 100, 500, 1000, 5000}" />
@@ -56,17 +84,28 @@
         Copy selected lines to Clipboard
     </MudMenuItem>
 </MudMenu>
+</MudContainer>
 
 @code {
     private readonly ObservableCollection<WeatherForecast> _forecasts = [];
     private HashSet<WeatherForecast> _selectedItems = [];
-    
+
     private string? _searchString;
     private bool _loading;
 
+    private string SelectedCountLabel => _selectedItems.Count == 1
+        ? "1 selected"
+        : $"{_selectedItems.Count} selected";
+
+    private static string ShortId(Guid id)
+    {
+        var value = id.ToString("N", CultureInfo.InvariantCulture);
+        return $"{value[..8]}...{value[^6..]}";
+    }
+
     private WeatherForecast? _contextRow;
-    private MudMenu _contextMenu = null!;    
-    
+    private MudMenu _contextMenu = null!;
+
     // custom sort by name
     private static Func<WeatherForecast, object> SortBy => x => x.Date;
 
@@ -93,7 +132,7 @@
         _loading = true;
 
         await Task.Yield();
-        
+
         // Simulate asynchronous loading to demonstrate streaming rendering
         await Task.Delay(2000);
 
@@ -110,7 +149,7 @@
                 Summary = summaries[Random.Shared.Next(summaries.Length)]
             });
         }
-        
+
         _loading = false;
     }
 
@@ -130,55 +169,55 @@
     {
         _selectedItems = items;
     }
-    
+
     // private async Task CopyCell()
     // {
     //     if (_contextRow is null) return;
-    //     
+    //
     //     // For the demo, we copy the 'Summary' property of the selected cell.
     //     var cellContent = _contextRow.Summary ?? string.Empty;
     //     await Js.InvokeVoidAsync("navigator.clipboard.writeText", cellContent);
-    //     
+    //
     //     Snackbar.Clear();
     //     Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
     //     Snackbar.Add("Cell copied to Clipboard.", Severity.Success, c => c.SnackbarVariant = Variant.Outlined);
-    // }    
-    
+    // }
+
     private async Task CopyLine()
     {
         if (_contextRow is null) return;
-        
+
         // Create a string with all properties of the current row separated by semicolons.
         var lineContent = $"{_contextRow.Id};{_contextRow.Date.ToShortDateString()};{_contextRow.TemperatureC};{_contextRow.TemperatureF};{_contextRow.Summary}";
         await Js.InvokeVoidAsync("navigator.clipboard.writeText", lineContent);
-        
+
         Snackbar.Clear();
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
-        Snackbar.Add("Line copied to Clipboard.", Severity.Success, c => c.SnackbarVariant = Variant.Outlined);
-    }        
-    
+        Snackbar.Add("Record copied to clipboard.", Severity.Success, c => c.SnackbarVariant = Variant.Outlined);
+    }
+
     private async Task CopySelected()
     {
         if (_contextRow is null || !_selectedItems.Any())
         {
             Snackbar.Clear();
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
-            Snackbar.Add("No Selected lines to copy to Clipboard.", Severity.Info, c => c.SnackbarVariant = Variant.Outlined);
+            Snackbar.Add("Select at least one record to copy.", Severity.Info, c => c.SnackbarVariant = Variant.Outlined);
 
             return;
         }
-        
+
         // Copy each selected row as a line with semicolon separated values
-        var selectedLines = _selectedItems.Select(row => 
+        var selectedLines = _selectedItems.Select(row =>
             $"{row.Id};{row.Date.ToShortDateString()};{row.TemperatureC};{row.TemperatureF};{row.Summary}");
         var allLines = string.Join(Environment.NewLine, selectedLines);
         await Js.InvokeVoidAsync("navigator.clipboard.writeText", allLines);
-        
+
         Snackbar.Clear();
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
-        Snackbar.Add("Selected lines copied to Clipboard.", Severity.Success, c => c.SnackbarVariant = Variant.Outlined);
-    }        
-    
+        Snackbar.Add("Selected records copied to clipboard.", Severity.Success, c => c.SnackbarVariant = Variant.Outlined);
+    }
+
     async Task AddItem()
     {
         var dialog = await DialogService.ShowAsync<AddWeather>("Add Weather", new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true });
@@ -188,9 +227,9 @@
         {
             var item = result.Data.As<WeatherForecast>()!;
             _forecasts.Add(item);
-        }        
+        }
     }
-    
+
     async Task EditItem(WeatherForecast item)
     {
         var parameters = new DialogParameters<EditWeather> { { x => x.Item, item } };
@@ -228,14 +267,14 @@
         {
             Snackbar.Clear();
             Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
-            Snackbar.Add("No Items selected to be removed.", Severity.Info, c => c.SnackbarVariant = Variant.Outlined);
+            Snackbar.Add("Select at least one record to remove.", Severity.Info, c => c.SnackbarVariant = Variant.Outlined);
         }
     }
-    
+
     private readonly List<BreadcrumbItem> _items =
     [
-        new("Home", href: "#", icon: Icons.Material.Filled.Home),
-        new("Weather", href: null, disabled: true)
+        new("Overview", href: "/", icon: Icons.Material.Filled.Home),
+        new("DataGrid demo", href: null, disabled: true)
     ];
 
     public class WeatherForecast
