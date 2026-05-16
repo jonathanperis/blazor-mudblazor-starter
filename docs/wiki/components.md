@@ -4,15 +4,17 @@
 
 ### MainLayout.razor
 
-The root layout component that provides the application shell. Inherits from `LayoutComponentBase` and implements `IBrowserViewportObserver` for responsive design.
+The root layout component that provides the MudBlazor application shell. Inherits from `LayoutComponentBase` and implements `IBrowserViewportObserver` for responsive design.
 
 **Features:**
 - `MudThemeProvider` with bindable dark mode toggle, persisted to localStorage
-- `MudAppBar` with drawer toggle button, app title, dark mode switch, and overflow menu
-- `MudDrawer` with `MudNavMenu` containing links to Home, Counter, and Weather pages
+- Purple `MudAppBar` branded as **MudBlazor Starter**, with drawer toggle, dark mode control, and project overflow menu
+- `MudDrawer` with `MudNavMenu` links labeled **Overview**, **Counter demo**, and **DataGrid demo**
+- Project overflow links for GitHub, documentation, and health check
 - `MudPopoverProvider`, `MudDialogProvider`, and `MudSnackbarProvider` for MudBlazor services
 - Responsive breakpoint detection: displays a `MudToggleIconButton` on small screens and a `MudSwitch` on larger screens
-- All UI state (dark mode, drawer open, screen size) persisted to localStorage and restored on first render
+- Semantic `<main>` wrapper and accessible labels for shell controls
+- UI state (dark mode, drawer open, screen size) persisted to localStorage and restored on first render
 
 **Key behavior:**
 - Subscribes to `IBrowserViewportService` for breakpoint change notifications
@@ -21,7 +23,7 @@ The root layout component that provides the application shell. Inherits from `La
 
 ### Breadcrumb.razor
 
-A reusable breadcrumb navigation component that wraps `MudBreadcrumbs` in a `MudCard`.
+A reusable compact breadcrumb navigation component that wraps `MudBreadcrumbs` in a `MudContainer` instead of a heavy raised card.
 
 **Parameters:**
 
@@ -29,7 +31,7 @@ A reusable breadcrumb navigation component that wraps `MudBreadcrumbs` in a `Mud
 |---|---|---|
 | `Items` | `List<BreadcrumbItem>` | List of breadcrumb items to display |
 
-Uses a custom separator template with `MudIcon` (arrow forward icon). Each page defines its own breadcrumb items and passes them to this component.
+Uses a custom separator template with `MudIcon` (arrow forward icon) and an `aria-label="Breadcrumb"` navigation label. Each page defines its own breadcrumb items and passes them to this component.
 
 ---
 
@@ -39,38 +41,43 @@ Uses a custom separator template with `MudIcon` (arrow forward icon). Each page 
 
 Route: `/`
 
-Landing page that displays a welcome card with a link to the MudBlazor documentation. Uses the `Breadcrumb` component with a single "Home" item.
+Production-oriented starter overview page. It presents a concise hero, proof chips, GitHub/docs/DataGrid CTAs, a clone/run command block, and feature cards that explain the included deployment, documentation, and MudBlazor UI patterns.
 
 ### Counter.razor
 
 Route: `/counter`
 
-Interactive counter demonstration. Displays the current count in a `MudCard` with a "Click me" `MudButton` that increments the value. Demonstrates Blazor's reactive data binding with a simple `_currentCount` field and `IncrementCount` method.
+Interactive **Counter demo** page. Shows a prominent current count value, a primary **Increment count** button, and a **Reset** button that is disabled while the count is zero. Demonstrates Blazor component state and event handling without reading like untouched scaffold filler.
 
 ### Weather.razor
 
 Route: `/weather`
 
-Full-featured data grid page demonstrating CRUD operations, virtualization, and clipboard integration.
+Full-featured **DataGrid demo** page demonstrating CRUD operations, virtualization, row selection, paging, and clipboard integration.
 
 **Features:**
 - `MudDataGrid` with 69,420 generated weather forecast entries
-- Multi-column display: Id, Date, Temperature (C/F), Summary (with duplicate columns for horizontal scroll demo)
+- Header framed as **MudDataGrid showcase** with capability chips for virtualization, CRUD dialogs, and right-click copy
+- Action row with **Add record**, **Remove selected**, and a selected-count chip
+- `Remove selected` stays disabled until at least one row is selected
+- Shortened record IDs via `ShortId(Guid)` to avoid full GUID visual noise
+- Date, Temperature (C/F), and Summary columns without duplicated stress-test columns
 - Multi-selection support with `SelectColumn`
-- Quick filter search across all displayed columns
+- Quick filter search across displayed columns
 - Sortable and filterable columns with `SortMode.Multiple`
 - Virtualized rendering for performance with large datasets
 - Fixed header with configurable page sizes (10, 25, 50, 100, 500, 1000, 5000)
 - Loading state with simulated 2-second delay
 
 **CRUD Operations:**
-- Add: Opens `AddWeather` dialog via `IDialogService`, appends new entry to the collection
-- Edit: Opens `EditWeather` dialog with the selected item, replaces the entry in-place
-- Remove: Opens `RemoveWeather` confirmation dialog, removes all selected items
+- Add: opens `AddWeather` dialog via `IDialogService`, appends a new entry, and shows `Weather record added.`
+- Edit: opens `EditWeather` dialog with the selected item and replaces the entry in-place
+- Remove: opens `RemoveWeather` confirmation dialog and removes all selected items
 
 **Context Menu:**
 - Right-click on a row to copy a single line or all selected lines to the clipboard
-- Clipboard data formatted as semicolon-separated values
+- Clipboard data is formatted as semicolon-separated values
+- Empty-selection snackbar messages explicitly tell the user to select rows first
 
 **Data model** (`WeatherForecast`): Defined as a nested class with `Id` (Guid), `Date` (DateTime), `TemperatureC` (int), `Summary` (string?), and computed `TemperatureF`.
 
@@ -113,8 +120,8 @@ A simple `MudDialog` confirmation prompt. Displays a warning message asking the 
 | `MudLayout`, `MudAppBar`, `MudDrawer`, `MudMainContent` | Application shell structure |
 | `MudThemeProvider` | Material Design theming with dark mode |
 | `MudNavMenu`, `MudNavLink` | Side navigation |
-| `MudBreadcrumbs` | Page navigation breadcrumbs |
-| `MudDataGrid`, `PropertyColumn`, `SelectColumn`, `TemplateColumn` | Weather data table |
+| `MudBreadcrumbs` | Compact page navigation breadcrumbs |
+| `MudDataGrid`, `PropertyColumn`, `SelectColumn`, `TemplateColumn` | DataGrid demo table |
 | `MudDataGridPager` | Data grid pagination |
 | `MudDialog`, `MudDialogProvider` | Modal dialogs for CRUD operations |
 | `MudSnackbar`, `MudSnackbarProvider` | Toast notifications |
@@ -123,5 +130,5 @@ A simple `MudDialog` confirmation prompt. Displays a warning message asking the 
 | `MudCard`, `MudCardHeader`, `MudCardContent`, `MudCardActions` | Content cards |
 | `MudMenu`, `MudMenuItem` | Context menu and overflow menu |
 | `MudSwitch` | Dark mode toggle (large screens) |
-| `MudText`, `MudLink`, `MudSpacer`, `MudDivider`, `MudIcon` | Typography and layout utilities |
+| `MudText`, `MudLink`, `MudSpacer`, `MudDivider`, `MudIcon`, `MudChip` | Typography and layout utilities |
 | `MudPopoverProvider` | Popover rendering |

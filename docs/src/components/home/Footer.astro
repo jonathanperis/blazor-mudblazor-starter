@@ -1,11 +1,17 @@
 ---
+const demoUrl = 'https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/';
+const repoUrl = 'https://github.com/jonathanperis/blazor-mudblazor-starter';
 ---
 
 <footer>
+  <div>
+    <strong>MudBlazor Starter</strong>
+    <p>Blazor Server, MudBlazor, Docker, Azure, and GitHub Pages in one starter.</p>
+  </div>
   <div class="footer-links">
-    <a href="https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/" target="_blank" rel="noopener noreferrer">Live Demo</a>
-    <a href="https://github.com/jonathanperis/blazor-mudblazor-starter">GitHub</a>
+    <a href={demoUrl} target="_blank" rel="noopener noreferrer">Live demo</a>
+    <a href={repoUrl} target="_blank" rel="noopener noreferrer">GitHub</a>
     <a href="./docs/">Documentation</a>
   </div>
-  <div class="credits">by <a href="https://github.com/jonathanperis">jonathanperis</a></div>
+  <div class="credits">by <a href="https://github.com/jonathanperis" target="_blank" rel="noopener noreferrer">jonathanperis</a></div>
 </footer>
