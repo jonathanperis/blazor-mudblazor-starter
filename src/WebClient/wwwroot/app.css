@@ -1,3 +1,106 @@
+:root {
+    color-scheme: light;
+}
+
 .blurry-dialog {
     backdrop-filter: blur(10px);
+}
+
+main {
+    min-height: calc(100vh - 48px);
+    background:
+        radial-gradient(circle at 15% 0%, oklch(0.94 0.025 295 / 0.8), transparent 28rem),
+        oklch(0.975 0.006 285);
+}
+
+.breadcrumb-wrap {
+    color: oklch(0.36 0.045 285);
+}
+
+.starter-breadcrumbs {
+    padding-block: 0.25rem;
+}
+
+.starter-page,
+.demo-page-header {
+    position: relative;
+}
+
+.starter-hero {
+    position: relative;
+    border: 1px solid oklch(0.9 0.018 285);
+    overflow: hidden;
+}
+
+.starter-hero::after {
+    content: "";
+    position: absolute;
+    inset: auto -6rem -9rem auto;
+    width: 22rem;
+    height: 22rem;
+    border-radius: 999px;
+    background: oklch(0.68 0.15 292 / 0.16);
+    pointer-events: none;
+}
+
+.starter-hero-title {
+    max-width: 13ch;
+    letter-spacing: -0.035em;
+    line-height: 0.98;
+}
+
+.starter-hero-copy {
+    max-width: 68ch;
+    color: oklch(0.42 0.035 285);
+}
+
+.starter-actions {
+    gap: 0.75rem;
+}
+
+.starter-command {
+    background: oklch(0.22 0.035 285);
+    color: oklch(0.94 0.01 285);
+    border: 1px solid oklch(0.34 0.045 285);
+}
+
+.starter-command pre {
+    margin: 0;
+    overflow-x: auto;
+    font-size: 0.86rem;
+    line-height: 1.65;
+    white-space: pre-wrap;
+}
+
+.starter-proof,
+.starter-card,
+.demo-page-header,
+.counter-card {
+    border: 1px solid oklch(0.9 0.018 285);
+}
+
+.counter-card {
+    max-width: 34rem;
+    margin-inline: auto;
+}
+
+.counter-value {
+    color: oklch(0.52 0.17 292);
+    letter-spacing: -0.05em;
+}
+
+.counter-copy {
+    max-width: 34ch;
+    color: oklch(0.42 0.035 285);
+}
+
+@media (max-width: 720px) {
+    .starter-hero-title {
+        max-width: none;
+        font-size: clamp(2rem, 11vw, 3rem);
+    }
+
+    .starter-actions .mud-button-root {
+        width: 100%;
+    }
 }

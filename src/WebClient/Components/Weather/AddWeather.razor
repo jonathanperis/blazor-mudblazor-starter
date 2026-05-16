@@ -1,7 +1,7 @@
 @inject ISnackbar Snackbar
 
 <EditForm Model="@_model" OnValidSubmit="OnValidSubmit">
-    <DataAnnotationsValidator/>    
+    <DataAnnotationsValidator/>
     <MudDialog>
         <TitleContent>
             <MudText Typo="Typo.h6">
@@ -29,14 +29,14 @@
     readonly Weather.WeatherForecast _model = new();
 
     private void Cancel() => MudDialog?.Cancel();
-    
+
     private void OnValidSubmit(EditContext context)
     {
         // TODO: Send data to Api.
-       
+
         Snackbar.Clear();
         Snackbar.Configuration.PositionClass = Defaults.Classes.Position.BottomRight;
-        Snackbar.Add("Weather Added Added", Severity.Success, c => c.SnackbarVariant = Variant.Outlined);
+        Snackbar.Add("Weather record added.", Severity.Success, c => c.SnackbarVariant = Variant.Outlined);
         MudDialog?.Close(DialogResult.Ok(_model));
     }
 }
