@@ -19,9 +19,9 @@ blazor-mudblazor-starter/
 │       │   │   ├── MainLayout.razor    # App shell: app bar, drawer, dark mode, responsive breakpoints
 │       │   │   └── Breadcrumb.razor    # Reusable breadcrumb navigation component
 │       │   ├── Pages/
-│       │   │   ├── Home.razor          # Landing page (route: /)
-│       │   │   ├── Counter.razor       # Interactive counter demo (route: /counter)
-│       │   │   ├── Weather.razor       # Virtualized data grid with CRUD (route: /weather)
+│       │   │   ├── Home.razor          # Production starter overview (route: /)
+│       │   │   ├── Counter.razor       # Counter demo with increment/reset state (route: /counter)
+│       │   │   ├── Weather.razor       # DataGrid demo with virtualization and CRUD (route: /weather)
 │       │   │   └── Error.razor         # Error page with request ID display (route: /Error)
 │       │   └── Weather/
 │       │       ├── AddWeather.razor    # MudDialog for adding weather entries
@@ -51,7 +51,7 @@ Contains the application shell. `MainLayout.razor` provides the MudBlazor layout
 
 ### `src/WebClient/Components/Pages/`
 
-Contains routable page components. Each page uses the `Breadcrumb` component for navigation context. The `Weather` page demonstrates a full CRUD workflow with `MudDataGrid`, dialog services, snackbar notifications, and clipboard integration.
+Contains routable page components. Each page uses the compact `Breadcrumb` component for navigation context. `Home` presents the production-ready starter overview, `Counter` demonstrates component state, and the `Weather` route is framed as a DataGrid demo with `MudDataGrid`, dialog services, snackbar notifications, row selection, and clipboard integration.
 
 ### `src/WebClient/Components/Weather/`
 

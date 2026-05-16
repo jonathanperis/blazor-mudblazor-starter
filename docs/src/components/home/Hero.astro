@@ -1,25 +1,62 @@
 ---
+const demoUrl = 'https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/';
+const repoUrl = 'https://github.com/jonathanperis/blazor-mudblazor-starter';
 ---
 
-<section class="hero">
-  <h1>YOUR BLAZOR APP<br><span>STARTS HERE</span></h1>
-  <p class="tagline">
-    Skip the boilerplate. Get a production-ready Blazor Server app with MudBlazor,
-    Docker, and Azure CI/CD out of the box.
-  </p>
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-copy">
+    <p class="eyebrow">MudBlazor starter for real projects</p>
+    <h1 id="hero-title">Production-ready Blazor Server starter with MudBlazor</h1>
+    <p class="tagline">
+      A clean .NET 9 template with Material UI patterns, Docker packaging, GitHub Actions,
+      GHCR publishing, Azure App Service deployment, CodeQL, and GitHub Pages docs already wired together.
+    </p>
 
-  <div class="badges">
-    <span class="badge">.NET 9</span>
-    <span class="badge">Blazor Server</span>
-    <span class="badge">MudBlazor 9.x</span>
-    <span class="badge">Docker</span>
-    <span class="badge">Azure</span>
-    <span class="badge">C# 13</span>
+    <div class="badges" aria-label="Included platform capabilities">
+      <span class="badge">.NET 9</span>
+      <span class="badge">MudBlazor 9.2</span>
+      <span class="badge">Docker</span>
+      <span class="badge">GHCR</span>
+      <span class="badge">Azure App Service</span>
+      <span class="badge">CodeQL</span>
+      <span class="badge">GitHub Pages</span>
+    </div>
+
+    <div class="ctas">
+      <a href={demoUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary">Open live demo</a>
+      <a href="./docs/" class="btn btn-secondary">Read documentation</a>
+      <a href={repoUrl} target="_blank" rel="noopener noreferrer" class="btn btn-text">View on GitHub</a>
+    </div>
   </div>
 
-  <div class="ctas">
-    <a href="https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/" target="_blank" rel="noopener noreferrer" class="btn btn-primary">🔴 See it Live &rarr;</a>
-    <a href="./docs/" class="btn btn-secondary">Documentation &rarr;</a>
-    <a href="https://github.com/jonathanperis/blazor-mudblazor-starter" class="btn btn-secondary">GitHub &rarr;</a>
+  <div class="app-preview" aria-label="Preview of the starter application shell">
+    <div class="preview-appbar">
+      <span class="preview-menu" aria-hidden="true"></span>
+      <strong>MudBlazor Starter</strong>
+      <span class="preview-theme">Dark mode</span>
+    </div>
+    <div class="preview-shell">
+      <aside class="preview-drawer" aria-hidden="true">
+        <span class="active">Overview</span>
+        <span>Counter demo</span>
+        <span>DataGrid demo</span>
+      </aside>
+      <div class="preview-content">
+        <div class="preview-breadcrumb">Home / Overview</div>
+        <div class="preview-paper">
+          <p class="preview-overline">Production starter</p>
+          <h2>Build on a starter that already has the boring parts done.</h2>
+          <div class="preview-actions">
+            <span></span>
+            <span></span>
+          </div>
+        </div>
+        <div class="preview-grid">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
   </div>
 </section>
