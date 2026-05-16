@@ -1,8 +1,8 @@
-# blazor-mudblazor-starter
+# Blazor MudBlazor Starter
 
-Blazor Server starter template with MudBlazor Material Design components. Built on .NET 9 with Docker multi-arch support and a CI/CD pipeline for GitHub Container Registry and Azure Web App deployment.
+Production-ready Blazor Server starter template with MudBlazor Material Design components. Built on .NET 9 with Docker multi-arch support, GHCR publishing, Azure App Service deployment, CodeQL, and GitHub Pages documentation.
 
-**[Live demo](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/)**
+**[Live demo](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/)** · **[GitHub repository](https://github.com/jonathanperis/blazor-mudblazor-starter)**
 
 ---
 
@@ -18,10 +18,10 @@ Blazor Server starter template with MudBlazor Material Design components. Built 
 
 ## Key Features
 
-- Pre-configured MudBlazor layout with app bar, navigation drawer, breadcrumbs, and dark mode toggle
-- Demo pages: Home, Counter, Weather (virtualized data grid with Add/Edit/Remove dialogs)
+- Pre-configured MudBlazor layout with purple app bar, navigation drawer, compact breadcrumbs, project links, and dark mode toggle
+- Productized demo pages: Overview, Counter demo, and DataGrid demo with Add/Edit/Remove dialogs
+- DataGrid showcase with 69,420 virtualized rows, shortened record IDs, row selection, paging, and right-click clipboard copy
 - Multi-architecture Docker image (AMD64 + ARM64) with health check endpoint at `/healthz`
 - Production-optimized builds with AOT, ReadyToRun, and trimming support
 - CI/CD pipeline: PR build checks with container health verification, main branch release to GHCR and Azure
-- Responsive design with breakpoint-aware UI adaptation
-- Right-click context menu with clipboard copy for data grid rows
+- GitHub Pages documentation site with project overview, reference docs, and deployment notes

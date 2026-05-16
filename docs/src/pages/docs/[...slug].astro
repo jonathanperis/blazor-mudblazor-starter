@@ -1,10 +1,10 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import '../../styles/docs.css';
-import { SECTION_CATEGORIES, SECTION_ORDER } from './sidebar.config';
+import { SECTION_CATEGORIES, SECTION_ORDER } from '@/lib/sidebar.config';
 
 const SLUG_LABEL: Record<string, string> = {
-  home: 'Home',
+  home: 'Overview',
   components: 'Components',
   configuration: 'Configuration',
   'getting-started': 'Getting Started',
@@ -54,7 +54,7 @@ export function getStaticPaths() {
   ];
 }
 
-const pageTitle = isRoot ? 'blazor-mudblazor-starter - Documentation' : `${SLUG_LABEL[requestedSlug] ?? requestedSlug} - blazor-mudblazor-starter`;
+const pageTitle = isRoot ? 'Blazor MudBlazor Starter - Documentation' : `${SLUG_LABEL[requestedSlug] ?? requestedSlug} - Blazor MudBlazor Starter`;
 const base = import.meta.env.BASE_URL;
 const docsBase = base.replace(/\/$/, '') + '/docs';
 const backHomeUrl = base.replace(/\/$/, '') + '/';
@@ -67,15 +67,15 @@ const backHomeUrl = base.replace(/\/$/, '') + '/';
       <span></span>
       <span></span>
     </button>
-    <div class="repo-title">blazor-mudblazor-starter</div>
+    <div class="repo-title">MudBlazor Starter</div>
   </div>
 
   <div class="overlay" id="overlay"></div>
 
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-header">
-      <h1 class="repo-title">blazor-mudblazor-starter</h1>
-      <p class="repo-description">Blazor Server starter template with MudBlazor Material Design components — .NET 9, Docker, and Azure CI/CD ready</p>
+      <h1 class="repo-title">MudBlazor Starter</h1>
+      <p class="repo-description">Production-ready Blazor Server starter with MudBlazor — .NET 9, Docker, GHCR, Azure, CodeQL, and GitHub Pages docs</p>
       <input type="text" id="searchInput" class="search-box" placeholder="Search documentation..." aria-label="Search documentation" hidden={!isRoot}>
     </div>
     <div class="sidebar-nav-container">
