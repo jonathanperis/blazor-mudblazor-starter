@@ -1,10 +1,10 @@
-<MudCard Class="pa-0 ma-4" Elevation="1">
-    <MudBreadcrumbs Items="@Items">
+<MudContainer MaxWidth="MaxWidth.Large" Class="breadcrumb-wrap px-4 pt-4">
+    <MudBreadcrumbs Items="@Items" Class="starter-breadcrumbs">
         <SeparatorTemplate>
-            <MudIcon Icon="@Icons.Material.Filled.ArrowForward" Size="Size.Small" />
+            <MudIcon Icon="@Icons.Material.Filled.ChevronRight" Size="Size.Small" />
         </SeparatorTemplate>
     </MudBreadcrumbs>
-</MudCard>
+</MudContainer>
 
 @code {
     [Parameter] public List<BreadcrumbItem> Items { get; set; } = [];

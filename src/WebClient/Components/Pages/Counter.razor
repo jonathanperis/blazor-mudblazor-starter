@@ -1,22 +1,36 @@
-﻿@page "/counter"
+@page "/counter"
 
-<PageTitle>Counter</PageTitle>
+<PageTitle>Counter demo</PageTitle>
 
 <Breadcrumb Items="_items" />
 
-<MudCard Class="pa-4 ma-4" Elevation="1">
-    <MudCardHeader>
-        <CardHeaderContent>
-            <MudText Typo="Typo.h6">Counter</MudText>
-        </CardHeaderContent>
-    </MudCardHeader>
-    <MudCardContent>
-        <MudText>Current count: @_currentCount</MudText>
-    </MudCardContent>
-    <MudCardActions>
-        <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="IncrementCount">Click me</MudButton>
-    </MudCardActions>    
-</MudCard>
+<MudContainer MaxWidth="MaxWidth.Medium" Class="px-4 pb-8">
+    <MudPaper Class="demo-page-header pa-5 mb-4" Elevation="1">
+        <MudText Typo="Typo.h4" HtmlTag="h1">Counter demo</MudText>
+        <MudText Typo="Typo.body1" Class="mt-2">
+            A minimal Blazor Server interaction that updates component state through a MudBlazor button.
+        </MudText>
+    </MudPaper>
+
+    <MudCard Class="counter-card pa-2" Elevation="2">
+        <MudCardContent Class="text-center pa-6">
+            <MudIcon Icon="@Icons.Material.Filled.AddCircleOutline" Color="Color.Primary" Size="Size.Large" Class="mb-3" />
+            <MudText Typo="Typo.subtitle2" Color="Color.Secondary">Current count</MudText>
+            <MudText Typo="Typo.h2" Class="counter-value my-2">@_currentCount</MudText>
+            <MudText Typo="Typo.body2" Class="counter-copy mx-auto">
+                Useful as the smallest possible state-change smoke test for a new Blazor surface.
+            </MudText>
+        </MudCardContent>
+        <MudCardActions Class="justify-center pb-6">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="IncrementCount">
+                Increment count
+            </MudButton>
+            <MudButton Variant="Variant.Text" Color="Color.Default" StartIcon="@Icons.Material.Filled.RestartAlt" OnClick="ResetCount" Disabled="@(_currentCount == 0)">
+                Reset
+            </MudButton>
+        </MudCardActions>
+    </MudCard>
+</MudContainer>
 
 @code {
     private int _currentCount;
@@ -26,9 +40,14 @@
         _currentCount++;
     }
 
+    private void ResetCount()
+    {
+        _currentCount = 0;
+    }
+
     private readonly List<BreadcrumbItem> _items =
     [
-        new("Home", href: "#", icon: Icons.Material.Filled.Home),
-        new("Counter", href: null, disabled: true)
-    ];    
+        new("Overview", href: "/", icon: Icons.Material.Filled.Home),
+        new("Counter demo", href: null, disabled: true)
+    ];
 }

@@ -1,4 +1,4 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 @inject IJSRuntime Js
 @implements IBrowserViewportObserver
 @implements IAsyncDisposable
@@ -14,10 +14,10 @@
 }
 else
 {
-    <MudLayout>
+        <MudLayout>
         <MudAppBar Dense="true" Elevation="3">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle"/>
-            <MudText Typo="Typo.h6" Class="ml-3">BlazorApp</MudText>
+            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle" aria-label="Toggle navigation drawer" />
+            <MudText Typo="Typo.h6" Class="ml-3">MudBlazor Starter</MudText>
             <MudSpacer/>
             @if (IsSmallScreen)
             {
@@ -25,34 +25,35 @@ else
                                      Icon="@Icons.Material.Filled.DarkMode"
                                      Color="@Color.Default"
                                      ToggledIcon="@Icons.Material.Filled.LightMode"
-                                     ToggledColor="@Color.Default" />               
+                                     ToggledColor="@Color.Default"
+                                     aria-label="Toggle dark mode" />
             }
             else
             {
-                <MudSwitch @bind-Value="IsDarkMode" Color="Color.Secondary" Class="ma-4" T="bool" Label="Toggle Light/Dark Mode" />
+                <MudSwitch @bind-Value="IsDarkMode" Color="Color.Secondary" Class="ma-4" T="bool" Label="Dark mode" />
             }
-            <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" AnchorOrigin="@Origin.BottomRight" AriaLabel="Open user menu">
-                <MudMenuItem Label="Preview" Icon="@Icons.Material.Filled.Visibility"/>
-                <MudMenuItem Label="Share" Icon="@Icons.Material.Filled.Share"/>
-                <MudMenuItem Label="Get Link" Icon="@Icons.Material.Filled.Link"/>
-                <MudDivider/>
-                <MudMenuItem Label="Remove" Icon="@Icons.Material.Filled.Delete"/>
+            <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" AnchorOrigin="@Origin.BottomRight" AriaLabel="Open project links">
+                <MudMenuItem Label="GitHub" Icon="@Icons.Material.Filled.Code" Href="https://github.com/jonathanperis/blazor-mudblazor-starter" Target="_blank" rel="noopener noreferrer" />
+                <MudMenuItem Label="Documentation" Icon="@Icons.Material.Filled.Article" Href="https://jonathanperis.github.io/blazor-mudblazor-starter/" Target="_blank" rel="noopener noreferrer" />
+                <MudMenuItem Label="Health check" Icon="@Icons.Material.Filled.HealthAndSafety" Href="/healthz" Target="_blank" />
             </MudMenu>
         </MudAppBar>
         <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always">
             <MudPaper Class="py-3" Elevation="0" Style="background-color: transparent">
                 <MudNavMenu>
-                    <MudNavLink Href="/#" Icon="@Icons.Material.Filled.Home">Home</MudNavLink>
+                    <MudNavLink Href="/" Icon="@Icons.Material.Filled.Home">Overview</MudNavLink>
                     <MudDivider/>
-                    <MudNavLink Href="/counter" Icon="@Icons.Material.Filled.WatchLater">Counter</MudNavLink>
+                    <MudNavLink Href="/counter" Icon="@Icons.Material.Filled.TouchApp">Counter demo</MudNavLink>
                     <MudDivider/>
-                    <MudNavLink Href="/weather" Icon="@Icons.Material.Filled.Cloud">Weather</MudNavLink>
-                    <MudDivider/>                    
+                    <MudNavLink Href="/weather" Icon="@Icons.Material.Filled.TableView">DataGrid demo</MudNavLink>
+                    <MudDivider/>
                 </MudNavMenu>
             </MudPaper>
         </MudDrawer>
         <MudMainContent>
-            @Body
+            <main>
+                @Body
+            </main>
         </MudMainContent>
     </MudLayout>
 }
@@ -60,7 +61,7 @@ else
 @code {
     [Inject]
     private IBrowserViewportService? BrowserViewportService { get; set; }
-    
+
     private readonly MudTheme _theme = new();
     Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
 
@@ -71,44 +72,44 @@ else
     private bool _initialized;
 
     // Public property with getter and setter to persist the theme state.
-    private bool IsDarkMode 
-    { 
-        get => _isDarkMode; 
+    private bool IsDarkMode
+    {
+        get => _isDarkMode;
         set
         {
             if (_isDarkMode == value) return;
-            
+
             _isDarkMode = value;
             _ = SaveSettingAsync("isDarkMode", value);
-        } 
+        }
     }
 
     // Public property for the drawer state.
-    private bool DrawerOpen 
-    { 
-        get => _drawerOpen; 
+    private bool DrawerOpen
+    {
+        get => _drawerOpen;
         set
         {
             if (_drawerOpen == value) return;
-            
+
             _drawerOpen = value;
             _ = SaveSettingAsync("drawerOpen", value);
         }
     }
 
     // Public property with getter and setter to persist the rendered state.
-    private bool IsSmallScreen 
-    { 
-        get => _isSmallScreen; 
+    private bool IsSmallScreen
+    {
+        get => _isSmallScreen;
         set
         {
             if (_isSmallScreen == value) return;
-            
+
             _isSmallScreen = value;
             _ = SaveSettingAsync("isSmallScreen", value);
-        } 
-    }    
-    
+        }
+    }
+
     // Called when the drawer toggle button is clicked.
     void DrawerToggle()
     {
@@ -137,34 +138,34 @@ else
             {
                 _drawerOpen = drawerState;
             }
-            
+
             var smallScreenModeStr = await Js.InvokeAsync<string>("localStorage.getItem", "isSmallScreen");
             if (!string.IsNullOrEmpty(smallScreenModeStr) && bool.TryParse(smallScreenModeStr, out var smallScreenMode))
             {
                 _isSmallScreen = smallScreenMode;
-            }            
+            }
 
             _initialized = true;
             StateHasChanged();
-            
+
             await BrowserViewportService?.SubscribeAsync(this, fireImmediately: true)!;
         }
-        
+
         await base.OnAfterRenderAsync(firstRender);
     }
-    
+
     public async ValueTask DisposeAsync() => await BrowserViewportService?.UnsubscribeAsync(this)!;
-    
+
     ResizeOptions IBrowserViewportObserver.ResizeOptions { get; } = new()
     {
         ReportRate = 250,
         NotifyOnBreakpointOnly = true
-    };   
-    
+    };
+
     Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
     {
         IsSmallScreen = browserViewportEventArgs.Breakpoint is Breakpoint.Sm or Breakpoint.Xs;
 
         return InvokeAsync(StateHasChanged);
-    }    
+    }
 }
