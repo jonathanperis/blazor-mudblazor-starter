@@ -22,6 +22,6 @@ Production-ready Blazor Server starter template with MudBlazor Material Design c
 - Productized demo pages: Overview, Counter demo, and DataGrid demo with Add/Edit/Remove dialogs
 - DataGrid showcase with 69,420 virtualized rows, shortened record IDs, row selection, paging, and right-click clipboard copy
 - Multi-architecture Docker image (AMD64 + ARM64) with health check endpoint at `/healthz`
-- Production-optimized builds with AOT, ReadyToRun, and trimming support
+- Production-optimized builds with optional AOT plus ReadyToRun, trimming, and extra optimization support
 - CI/CD pipeline: PR build checks with container health verification, main branch release to GHCR and Azure
 - GitHub Pages documentation site with project overview, reference docs, and deployment notes

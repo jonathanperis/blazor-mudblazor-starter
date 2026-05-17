@@ -12,7 +12,7 @@ Production-ready Blazor Server starter template with MudBlazor Material Design c
 |-----------|---------|
 | .NET 9 (SDK 9.0.202) | Runtime |
 | Blazor Server | Interactive server-side rendering |
-| MudBlazor 9.2.0 | Material Design UI components |
+| MudBlazor 9.3.0 | Material Design UI components |
 | MudBlazor.Translations 3.3.0 | Multi-language support |
 | Microsoft.ApplicationInsights.AspNetCore 3.1.0 | Telemetry (active in Azure only) |
 | Docker | Multi-arch builds (amd64/arm64) |

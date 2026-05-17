@@ -34,7 +34,7 @@ blazor-mudblazor-starter/
 │       ├── appsettings.Development.json # Development logging overrides
 │       ├── Dockerfile                  # Multi-stage .NET 9 build (AMD64 + ARM64)
 │       ├── Program.cs                  # App entry point, MudBlazor service registration
-│       └── WebClient.csproj            # Project file: .NET 9, MudBlazor 9.2.0, AOT/Trim flags
+│       └── WebClient.csproj            # Project file: .NET 9, MudBlazor 9.3.0, AOT/Trim flags
 ├── .editorconfig                       # Code style settings
 ├── .gitignore                          # Git ignore rules
 ├── global.json                         # .NET SDK version pin (9.0.202, roll-forward: minor)

@@ -18,7 +18,7 @@ A ready-to-use starter template for building interactive web applications with B
 |---|---|---|
 | .NET | 9.0 (SDK 9.0.202) | Runtime and SDK |
 | Blazor Server | - | Interactive server-side rendering |
-| MudBlazor | 9.2.0 | Material Design UI components |
+| MudBlazor | 9.3.0 | Material Design UI components |
 | MudBlazor.Translations | 3.3.0 | Localization support |
 | Docker | Multi-stage | AMD64 + ARM64 container builds |
 | GitHub Actions | - | CI/CD to GHCR + Azure Web App |
@@ -28,7 +28,7 @@ A ready-to-use starter template for building interactive web applications with B
 - Pre-configured MudBlazor layout with app bar, navigation drawer, breadcrumbs, and dark mode toggle
 - Demo pages: Home (landing), Counter (interactive counter), Weather (virtualized data grid with Add/Edit/Remove dialogs)
 - Multi-architecture Docker image (AMD64 + ARM64) with health check endpoint
-- Production-optimized builds with AOT compilation, ReadyToRun, and trimming support
+- Production-optimized builds with optional AOT plus ReadyToRun, trimming, and extra optimization support
 - CI/CD pipeline: PR build checks with container health verification, main branch release to GHCR and Azure Web App
 - Responsive design with breakpoint-aware UI (switch vs toggle for dark mode)
 - Clipboard copy support for data grid rows via right-click context menu
@@ -64,7 +64,7 @@ docker run -p 5000:5000 blazor-mudblazor
 blazor-mudblazor-starter/
 ├── src/WebClient/
 │   ├── Program.cs                  # App entry point, MudBlazor service registration
-│   ├── WebClient.csproj            # .NET 9, MudBlazor 9.2.0, AOT/Trim build flags
+│   ├── WebClient.csproj            # .NET 9, MudBlazor 9.3.0, AOT/Trim build flags
 │   ├── Dockerfile                  # Multi-stage build (AMD64 + ARM64)
 │   ├── appsettings.json            # Base configuration
 │   ├── appsettings.Development.json
@@ -88,7 +88,9 @@ blazor-mudblazor-starter/
 │           └── RemoveWeather.razor # Delete confirmation dialog
 ├── .github/workflows/
 │   ├── build-check.yml             # PR validation: build + Docker + health check
-│   └── main-release.yml            # Release: build + GHCR push + Azure deploy
+│   ├── main-release.yml            # Release: build + GHCR push + Azure deploy
+│   ├── codeql.yml                  # C# security and quality analysis
+│   └── deploy.yml                  # GitHub Pages documentation deployment
 ├── WebClient.sln
 ├── global.json                     # .NET SDK 9.0.202
 └── LICENSE
@@ -101,11 +103,11 @@ blazor-mudblazor-starter/
 | `build-check.yml` | Pull requests | .NET build + Docker health check (`/healthz`) |
 | `main-release.yml` | Push to main | Release build + multi-arch GHCR push + Azure deploy |
 | `codeql.yml` | Push/PR + weekly | C# security and quality analysis |
-| `deploy.yml` | Push to main | GitHub Pages deployment |
+| `deploy.yml` | Push to main + manual dispatch | GitHub Pages deployment |
 
 **Container image:** `ghcr.io/jonathanperis/blazor-mudblazor-starter:latest` (amd64 + arm64)
 
-**Deployment:** Azure Web App (Brazil South) via publish profile
+**Deployment:** Azure App Service (Brazil South) with Bicep infrastructure via Azure OIDC plus image deployment via publish profile
 
 ## Dependency Management
 
