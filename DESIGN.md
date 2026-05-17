@@ -2,7 +2,7 @@
 
 ## Existing System
 
-The application uses MudBlazor 9.2.0 on Blazor Server. The current shell includes:
+The application uses MudBlazor 9.3.0 on Blazor Server. The current shell includes:
 
 - Dense `MudAppBar` with menu button, app title, theme control, and overflow menu.
 - `MudDrawer` with `MudNavMenu` links for Home, Counter, and Weather.
@@ -64,7 +64,7 @@ The home page should become a starter showcase:
 - Clear hero: what the starter is, why it is production-ready, and what to do next.
 - Primary action: view GitHub or documentation.
 - Secondary action: explore Weather demo.
-- Proof strip: .NET 9, MudBlazor 9.2, Docker, Azure, CodeQL, GHCR.
+- Proof strip: .NET 9, MudBlazor 9.3, Docker, Azure, CodeQL, GHCR.
 - Small implementation notes or getting-started command block.
 - Avoid generic “Hello, world!” copy.
 
