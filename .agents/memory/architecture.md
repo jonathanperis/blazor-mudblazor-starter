@@ -26,7 +26,7 @@ Each dialog is a separate component: AddWeather, EditWeather, RemoveWeather.
 
 UI preferences persisted to browser localStorage:
 - `isDarkMode` — dark/light theme toggle
-- `isDrawerOpen` — navigation drawer state
+- `drawerOpen` — navigation drawer state
 - Read on `OnAfterRenderAsync(firstRender: true)`, saved on property change
 
 ## Responsive Design

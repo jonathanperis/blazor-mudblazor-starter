@@ -1,4 +1,4 @@
-# Blazor MudBlazor Starter — Claude Code Guide
+# Blazor MudBlazor Starter — Agent Instructions
 
 Production-ready Blazor Server starter template with MudBlazor Material Design components, .NET 9, Docker, and Azure deployment.
 
@@ -126,7 +126,7 @@ blazor-mudblazor-starter/
 │   │   └── deploy.yml              # GitHub Pages deployment
 │   ├── codeql/codeql-config.yml    # CodeQL exclusions (obj/, bin/, generated code)
 │   └── dependabot.yml              # Weekly updates: NuGet, Docker, Actions
-├── .claude/memory/                  # In-repo Claude memory (architecture reference)
+├── .agents/memory/                  # In-repo agent memory (architecture reference)
 ├── .editorconfig                    # UTF-8, LF, 4-space indent (.cs/.razor)
 ├── global.json                      # .NET SDK 9.0.202 pinned
 ├── WebClient.sln                    # Solution file
