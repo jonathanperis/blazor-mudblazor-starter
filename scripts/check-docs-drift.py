@@ -16,8 +16,12 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 README = ROOT / "README.md"
+AGENTS = ROOT / "AGENTS.md"
+AGENT_MEMORY_DIR = ROOT / ".agents" / "memory"
 WIKI_DIR = ROOT / "docs" / "wiki"
 DOC_FILES = [README, *sorted(WIKI_DIR.glob("*.md"))]
+AGENT_FILES = [AGENTS, *sorted(AGENT_MEMORY_DIR.glob("*.md"))]
+TEXT_FILES = [*DOC_FILES, *AGENT_FILES]
 
 
 def read(path: Path) -> str:
@@ -38,9 +42,9 @@ def require_contains(path: Path, needle: str) -> None:
     require(needle in read(path), f"{path.relative_to(ROOT)} is missing {needle!r}")
 
 
-def require_absent(pattern: str) -> None:
-    regex = re.compile(pattern)
-    for path in DOC_FILES:
+def require_absent(pattern: str, flags: int = 0) -> None:
+    regex = re.compile(pattern, flags)
+    for path in TEXT_FILES:
         for line_no, line in enumerate(read(path).splitlines(), 1):
             if regex.search(line):
                 fail(f"stale phrase in {path.relative_to(ROOT)}:{line_no}: {line}")
@@ -72,9 +76,18 @@ def main() -> None:
     require_contains(ROOT / "docs" / "wiki" / "project-structure.md", f"MudBlazor {mudblazor}")
     require_contains(README, f"SDK {sdk}")
     require_contains(ROOT / "docs" / "wiki" / "configuration.md", f'"version": "{sdk}"')
-    require_contains(ROOT / "CLAUDE.md", f"MudBlazor {mudblazor}")
-    require_contains(ROOT / "CLAUDE.md", f"MudBlazor.Translations {translations}")
-    require_contains(ROOT / "CLAUDE.md", f"Microsoft.ApplicationInsights.AspNetCore {app_insights}")
+    require(AGENTS.exists(), "AGENTS.md must exist for standardized harness instructions")
+    require(AGENT_MEMORY_DIR.exists(), ".agents/memory must exist for standardized agent memory")
+    legacy_word = "cla" + "ude"
+    legacy_root_file = ROOT / (legacy_word.upper() + ".md")
+    legacy_dir = ROOT / ("." + legacy_word)
+    require(not legacy_root_file.exists(), "legacy root harness file must be removed after AGENTS.md migration")
+    require(not legacy_dir.exists(), "legacy dot-directory must be removed after .agents migration")
+
+    require_contains(AGENTS, f"MudBlazor {mudblazor}")
+    require_contains(AGENTS, f"MudBlazor.Translations {translations}")
+    require_contains(AGENTS, f"Microsoft.ApplicationInsights.AspNetCore {app_insights}")
+    require_absent(rf"\.?{legacy_word}", flags=re.I)
 
     require_absent(r"MudBlazor (?:9\.2(?:\.0)?)")
     require_absent(r"Production-optimized builds with AOT(?: compilation)?[, ]")
