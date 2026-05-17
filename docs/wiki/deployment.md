@@ -31,7 +31,7 @@ The container listens on port 5000 (`ASPNETCORE_URLS=http://+:5000`). The entry 
 
 ### Multi-Architecture Support
 
-The release pipeline builds for both `linux/amd64` and `linux/arm64/v8` using Docker Buildx with QEMU emulation. The Dockerfile installs `clang` and `zlib1g-dev` in the SDK stage to support AOT compilation on both architectures.
+The release pipeline builds both `linux/amd64` and `linux/arm64/v8` images. It uses Docker Buildx for both builds, QEMU for the arm64 job, and then merges both digests into the multi-arch `:latest` manifest. The Dockerfile installs `clang` and `zlib1g-dev` in the SDK stage so optional AOT compilation has the native toolchain it needs.
 
 ### Pre-built Image
 
@@ -56,13 +56,19 @@ Triggered on pull requests to `main`. Runs two jobs:
 
 ### main-release.yml (Main Branch)
 
-Triggered on push to `main` or manual dispatch. Runs three sequential jobs:
+Triggered on push to `main` or manual dispatch. The current release flow is split into six jobs:
 
-1. **setup-build-test**: Restores and builds with production settings (`TRIM=true`, `EXTRA_OPTIMIZE=true`, `BUILD_CONFIGURATION=Release`).
+1. **setup-build-test**: Restores and builds with production settings (`AOT=false`, `TRIM=true`, `EXTRA_OPTIMIZE=true`, `BUILD_CONFIGURATION=Release`).
 
-2. **build-push-image**: Sets up QEMU and Docker Buildx, authenticates to GitHub Container Registry, builds the multi-arch image (`linux/amd64`, `linux/arm64/v8`), and pushes to `ghcr.io/jonathanperis/blazor-mudblazor-starter:latest`.
+2. **build-push-amd64**: Sets up Docker Buildx, authenticates to GitHub Container Registry, builds the `linux/amd64` image, and pushes it as `ghcr.io/jonathanperis/blazor-mudblazor-starter:latest`.
 
-3. **deploy-image-azure**: Deploys the GHCR image to Azure Web App using the `azure/webapps-deploy` action with a publish profile stored in `AZURE_WEBAPP_PUBLISH_PROFILE` secret.
+3. **deploy-infra**: Logs in to Azure with OIDC (`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`) and deploys `infra/main.bicep`/`infra/main.bicepparam` with `azure/arm-deploy`.
+
+4. **deploy-image**: Deploys the GHCR `:latest` image to Azure App Service with `azure/webapps-deploy` and the `AZURE_WEBAPP_PUBLISH_PROFILE` secret.
+
+5. **build-push-arm64**: Sets up QEMU and Docker Buildx, builds `linux/arm64/v8`, and pushes it as `:latest-arm64`.
+
+6. **merge-manifest**: Combines the amd64 and arm64 digests into the final multi-arch `:latest` manifest.
 
 ### codeql.yml
 
@@ -70,18 +76,19 @@ Runs CodeQL security analysis on the codebase.
 
 ### deploy.yml (GitHub Pages)
 
-Triggered on push to `main` or manual dispatch. Deploys the static `docs/` directory to GitHub Pages using `actions/configure-pages`, `actions/upload-pages-artifact`, and `actions/deploy-pages`.
+Triggered on push to `main` or manual dispatch. Delegates to the reusable `jonathanperis/.github/.github/workflows/pages-docs-deploy.yml@main` workflow with inherited secrets; that shared workflow builds the Astro docs from `docs/` and publishes the generated Pages artifact.
 
 ---
 
 ## Azure Web App
 
-The application is deployed to Azure App Service in the Brazil South region. The deployment uses a container image from GHCR, configured via the Azure Web App publish profile.
+The application is deployed to Azure App Service in the Brazil South region. The workflow first keeps the Azure resources current with Bicep over OIDC, then deploys the GHCR container image to the Web App with the Azure publish profile.
 
 **Live demo:** [blazor-mudblazor-starter](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/)
 
 ### Azure Deployment Requirements
 
-- An Azure Web App configured for Linux container deployment
+- An Azure App Service configured for Linux container deployment
+- OIDC secrets for infrastructure deployment: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_SUBSCRIPTION_ID`
 - The `AZURE_WEBAPP_PUBLISH_PROFILE` secret set in the GitHub repository settings (download from Azure Portal > Web App > Deployment Center > Manage publish profile)
 - GHCR image access configured on the Azure Web App (the image is public via GitHub Packages)
