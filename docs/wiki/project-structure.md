@@ -3,7 +3,6 @@
 ```
 blazor-mudblazor-starter/
 ├── .github/
-│   ├── dependabot.yml                  # Dependabot configuration for dependency updates
 │   └── workflows/
 │       ├── build-check.yml             # PR validation: .NET build + Docker build + health check
 │       ├── codeql.yml                  # CodeQL security analysis
@@ -38,6 +37,7 @@ blazor-mudblazor-starter/
 ├── .editorconfig                       # Code style settings
 ├── .gitignore                          # Git ignore rules
 ├── global.json                         # .NET SDK version pin (9.0.202, roll-forward: minor)
+├── renovate.json                       # Shared Renovate dependency update preset
 ├── LICENSE                             # MIT license
 ├── README.md                          # Project overview and quick start
 └── WebClient.sln                       # Solution file
@@ -59,4 +59,4 @@ Contains MudDialog components used by the Weather page for Add, Edit, and Remove
 
 ### `.github/workflows/`
 
-Contains four GitHub Actions workflows: `build-check.yml` for PR validation (includes container health check against `/healthz`), `main-release.yml` for production releases to GHCR and Azure, `codeql.yml` for security analysis, and `deploy.yml` for GitHub Pages deployment.
+Contains four GitHub Actions workflows: `build-check.yml` for PR validation (includes container health check against `/healthz`), `main-release.yml` for production releases to GHCR and Azure, `codeql.yml` for security analysis, and `deploy.yml` for GitHub Pages deployment. Dependency updates are configured separately in `renovate.json`, which inherits the shared `github>jonathanperis/.github` preset.

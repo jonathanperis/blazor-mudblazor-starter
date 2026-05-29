@@ -21,7 +21,12 @@ AGENT_MEMORY_DIR = ROOT / ".agents" / "memory"
 WIKI_DIR = ROOT / "docs" / "wiki"
 DOC_FILES = [README, *sorted(WIKI_DIR.glob("*.md"))]
 AGENT_FILES = [AGENTS, *sorted(AGENT_MEMORY_DIR.glob("*.md"))]
-TEXT_FILES = [*DOC_FILES, *AGENT_FILES]
+PUBLIC_COPY_FILES = [
+    ROOT / "src" / "WebClient" / "Components" / "Pages" / "Home.razor",
+    ROOT / "docs" / "src" / "components" / "home" / "Hero.astro",
+    ROOT / "docs" / "src" / "components" / "home" / "Dashboard.astro",
+]
+TEXT_FILES = [*DOC_FILES, *AGENT_FILES, *PUBLIC_COPY_FILES]
 
 
 def read(path: Path) -> str:
@@ -74,6 +79,8 @@ def main() -> None:
 
     require_contains(README, f"MudBlazor | {mudblazor}")
     require_contains(ROOT / "docs" / "wiki" / "project-structure.md", f"MudBlazor {mudblazor}")
+    require_contains(ROOT / "src" / "WebClient" / "Components" / "Pages" / "Home.razor", f"MudBlazor {mudblazor.rsplit('.', 1)[0]}")
+    require_contains(ROOT / "docs" / "src" / "components" / "home" / "Hero.astro", f"MudBlazor {mudblazor.rsplit('.', 1)[0]}")
     require_contains(README, f"SDK {sdk}")
     require_contains(ROOT / "docs" / "wiki" / "configuration.md", f'"version": "{sdk}"')
     require(AGENTS.exists(), "AGENTS.md must exist for standardized harness instructions")
@@ -90,6 +97,17 @@ def main() -> None:
     require_absent(rf"\.?{legacy_word}", flags=re.I)
 
     require_absent(r"MudBlazor (?:9\.2(?:\.0)?)")
+    if not (ROOT / ".github" / "dependabot.yml").exists():
+        require_absent(r"Dependabot", flags=re.I)
+    if not (ROOT / "docker-compose.yml").exists():
+        require_absent(r"docker-compose", flags=re.I)
+    require_absent(r"dependency review|container scanning", flags=re.I)
+    require_contains(ROOT / "README.md", "Renovate")
+    require_contains(ROOT / "docs" / "wiki" / "home.md", "Renovate")
+    require_contains(ROOT / "docs" / "wiki" / "project-structure.md", "renovate.json")
+    require_contains(ROOT / "docs" / "wiki" / "configuration.md", "APPLICATIONINSIGHTS_CONNECTION_STRING")
+    require_contains(ROOT / "docs" / "wiki" / "deployment.md", "Existing App Service Plan")
+    require_contains(ROOT / "docs" / "wiki" / "documentation.md", "Sätteri")
     require_absent(r"Production-optimized builds with AOT(?: compilation)?[, ]")
     require_absent(r"Runs three sequential jobs|build-push-image|deploy-image-azure")
     require_absent(r"actions/configure-pages|actions/upload-pages-artifact")
