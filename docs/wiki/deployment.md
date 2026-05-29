@@ -84,11 +84,30 @@ Triggered on push to `main` or manual dispatch. Delegates to the reusable `jonat
 
 The application is deployed to Azure App Service in the Brazil South region. The workflow first keeps the Azure resources current with Bicep over OIDC, then deploys the GHCR container image to the Web App with the Azure publish profile.
 
+The Bicep entry point creates or updates the Web App, Log Analytics Workspace, and Application Insights instance, but it treats the App Service Plan as an existing shared resource. If that plan is missing, the infrastructure deployment fails before image deployment.
+
 **Live demo:** [blazor-mudblazor-starter](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/)
 
 ### Azure Deployment Requirements
 
-- An Azure App Service configured for Linux container deployment
+- Resource group: `github-jonathanperis`
+- Region: `brazilsouth`
+- Existing App Service Plan: `github-jonathanperis`
+  - The plan is referenced as `existing` in `infra/main.bicep`; this repository does not create it.
+  - The default parameter notes it is a shared plan managed outside this repo.
+- Web App name: `blazor-mudblazor-starter`
 - OIDC secrets for infrastructure deployment: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_SUBSCRIPTION_ID`
 - The `AZURE_WEBAPP_PUBLISH_PROFILE` secret set in the GitHub repository settings (download from Azure Portal > Web App > Deployment Center > Manage publish profile)
 - GHCR image access configured on the Azure Web App (the image is public via GitHub Packages)
+
+### Observability
+
+`infra/main.bicep` provisions Log Analytics and Application Insights, then passes telemetry settings into the Web App module. The app only registers `AddApplicationInsightsTelemetry()` when `APPLICATIONINSIGHTS_CONNECTION_STRING` is present, so local runs stay telemetry-free by default while Azure deployments emit telemetry automatically.
+
+Azure app settings managed by Bicep:
+
+| Setting | Purpose |
+|---|---|
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Enables Application Insights telemetry in `Program.cs` |
+| `APPINSIGHTS_INSTRUMENTATIONKEY` | Compatibility setting for App Service/Application Insights integration |
+| `ApplicationInsightsAgent_EXTENSION_VERSION` | Enables the App Service Application Insights extension (`~3`) |
