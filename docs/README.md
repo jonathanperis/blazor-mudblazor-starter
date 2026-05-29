@@ -13,6 +13,7 @@ Run from this directory (`docs/`):
 | `bun run build` | Build to `./out/` |
 | `bun run preview` | Preview production build locally |
 | `bun run check:drift` | Verify README/wiki source-backed facts against current code and workflows |
+| `bun run check:rendered` | Verify generated Astro HTML routes, anchors, tables, code blocks, and critical links |
 
 ## Environment
 
