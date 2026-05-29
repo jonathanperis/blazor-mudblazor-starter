@@ -110,13 +110,13 @@ blazor-mudblazor-starter/
 │           ├── EditWeather.razor    # Edit dialog (pre-filled form)
 │           └── RemoveWeather.razor  # Delete confirmation dialog
 ├── infra/
-│   ├── main.bicep                   # Bicep entry point (Log Analytics, App Insights, existing Plan, Web App)
+│   ├── main.bicep                   # Bicep entry point (Log Analytics, App Insights, App Service Plan, Web App)
 │   ├── main.bicepparam              # Production parameter values
 │   ├── main.json                    # Compiled ARM template
 │   └── modules/
 │       ├── logAnalytics.bicep       # Dedicated Log Analytics workspace
 │       ├── appInsights.bicep        # Application Insights (workspace-based)
-│       ├── appServicePlan.bicep     # Optional App Service Plan module; main.bicep references an existing shared plan
+│       ├── appServicePlan.bicep     # Linux App Service Plan module used by main.bicep
 │       └── webApp.bicep             # Container Web App
 ├── .github/
 │   ├── workflows/

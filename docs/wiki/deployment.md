@@ -84,7 +84,7 @@ Triggered on push to `main` or manual dispatch. Delegates to the reusable `jonat
 
 The application is deployed to Azure App Service in the Brazil South region. The workflow first keeps the Azure resources current with Bicep over OIDC, then deploys the GHCR container image to the Web App with the Azure publish profile.
 
-The Bicep entry point creates or updates the Web App, Log Analytics Workspace, and Application Insights instance, but it treats the App Service Plan as an existing shared resource. If that plan is missing, the infrastructure deployment fails before image deployment.
+The Bicep entry point creates or updates the App Service Plan, Web App, Log Analytics Workspace, and Application Insights instance. The App Service Plan is provisioned from `infra/modules/appServicePlan.bicep` before the Web App module consumes its resource ID.
 
 **Live demo:** [blazor-mudblazor-starter](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/)
 
@@ -92,9 +92,9 @@ The Bicep entry point creates or updates the Web App, Log Analytics Workspace, a
 
 - Resource group: `github-jonathanperis`
 - Region: `brazilsouth`
-- Existing App Service Plan: `github-jonathanperis`
-  - The plan is referenced as `existing` in `infra/main.bicep`; this repository does not create it.
-  - The default parameter notes it is a shared plan managed outside this repo.
+- App Service Plan: `github-jonathanperis` (`B1`, Linux)
+  - The plan is created or updated by `infra/modules/appServicePlan.bicep`.
+  - `infra/main.bicepparam` controls the plan name and `appServicePlanSku`.
 - Web App name: `blazor-mudblazor-starter`
 - OIDC secrets for infrastructure deployment: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_SUBSCRIPTION_ID`
 - The `AZURE_WEBAPP_PUBLISH_PROFILE` secret set in the GitHub repository settings (download from Azure Portal > Web App > Deployment Center > Manage publish profile)
