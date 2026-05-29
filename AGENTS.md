@@ -110,13 +110,13 @@ blazor-mudblazor-starter/
 │           ├── EditWeather.razor    # Edit dialog (pre-filled form)
 │           └── RemoveWeather.razor  # Delete confirmation dialog
 ├── infra/
-│   ├── main.bicep                   # Bicep entry point (Log Analytics, App Insights, Plan, Web App)
+│   ├── main.bicep                   # Bicep entry point (Log Analytics, App Insights, existing Plan, Web App)
 │   ├── main.bicepparam              # Production parameter values
 │   ├── main.json                    # Compiled ARM template
 │   └── modules/
 │       ├── logAnalytics.bicep       # Dedicated Log Analytics workspace
 │       ├── appInsights.bicep        # Application Insights (workspace-based)
-│       ├── appServicePlan.bicep     # Linux App Service Plan
+│       ├── appServicePlan.bicep     # Optional App Service Plan module; main.bicep references an existing shared plan
 │       └── webApp.bicep             # Container Web App
 ├── .github/
 │   ├── workflows/
@@ -124,8 +124,8 @@ blazor-mudblazor-starter/
 │   │   ├── main-release.yml        # Main: 6-job pipeline (amd64 → deploy-infra → deploy-image; arm64 → merge-manifest)
 │   │   ├── codeql.yml              # Security analysis (C#, weekly + push/PR)
 │   │   └── deploy.yml              # GitHub Pages deployment
-│   ├── codeql/codeql-config.yml    # CodeQL exclusions (obj/, bin/, generated code)
-│   └── dependabot.yml              # Weekly updates: NuGet, Docker, Actions
+│   └── codeql/codeql-config.yml    # CodeQL exclusions (obj/, bin/, generated code)
+├── renovate.json                    # Shared Renovate dependency-update preset
 ├── .agents/memory/                  # In-repo agent memory (architecture reference)
 ├── .editorconfig                    # UTF-8, LF, 4-space indent (.cs/.razor)
 ├── global.json                      # .NET SDK 9.0.202 pinned
@@ -156,11 +156,13 @@ blazor-mudblazor-starter/
 - Triggers: push/PR to main + weekly schedule
 
 ### Documentation (`deploy.yml`)
-- Deploys static `docs/` directory to GitHub Pages via `actions/deploy-pages`
+- Delegates to the reusable `jonathanperis/.github/.github/workflows/pages-docs-deploy.yml@main` workflow
+- Builds the Astro docs site in `docs/` and publishes it to GitHub Pages
 - Triggers: push to main, manual dispatch
 
-### Dependency Updates (`dependabot.yml`)
-- Weekly: NuGet packages, Docker base images, GitHub Actions versions
+### Dependency Updates (`renovate.json`)
+- Inherits the shared `github>jonathanperis/.github` Renovate preset
+- Covers NuGet packages, Docker base images, GitHub Actions versions, and docs tooling
 
 ---
 

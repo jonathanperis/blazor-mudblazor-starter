@@ -42,7 +42,7 @@ docker build \
   -t blazor-mudblazor -f src/WebClient/Dockerfile src/
 ```
 
-See [Configuration](../docs/#configuration) for details on each build argument.
+See [Configuration](/blazor-mudblazor-starter/docs/configuration/) for details on each build argument.
 
 ## Access URLs
 

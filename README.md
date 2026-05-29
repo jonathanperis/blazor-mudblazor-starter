@@ -20,6 +20,7 @@ A ready-to-use starter template for building interactive web applications with B
 | Blazor Server | - | Interactive server-side rendering |
 | MudBlazor | 9.3.0 | Material Design UI components |
 | MudBlazor.Translations | 3.3.0 | Localization support |
+| Application Insights | 3.1.0 | Optional production telemetry when configured |
 | Docker | Multi-stage | AMD64 + ARM64 container builds |
 | GitHub Actions | - | CI/CD to GHCR + Azure Web App |
 
@@ -27,7 +28,7 @@ A ready-to-use starter template for building interactive web applications with B
 
 - Pre-configured MudBlazor layout with app bar, navigation drawer, breadcrumbs, and dark mode toggle
 - Demo pages: Home (landing), Counter (interactive counter), Weather (virtualized data grid with Add/Edit/Remove dialogs)
-- Multi-architecture Docker image (AMD64 + ARM64) with health check endpoint
+- Multi-architecture Docker image (AMD64 + ARM64) with ASP.NET Core `/healthz` endpoint used by CI smoke tests
 - Production-optimized builds with optional AOT plus ReadyToRun, trimming, and extra optimization support
 - CI/CD pipeline: PR build checks with container health verification, main branch release to GHCR and Azure Web App
 - Responsive design with breakpoint-aware UI (switch vs toggle for dark mode)
@@ -93,6 +94,7 @@ blazor-mudblazor-starter/
 │   └── deploy.yml                  # GitHub Pages documentation deployment
 ├── WebClient.sln
 ├── global.json                     # .NET SDK 9.0.202
+├── renovate.json                   # Shared Renovate dependency-update preset
 └── LICENSE
 ```
 
@@ -111,7 +113,7 @@ blazor-mudblazor-starter/
 
 ## Dependency Management
 
-Automated weekly updates via [Dependabot](https://docs.github.com/en/code-security/dependabot) for NuGet packages, Docker base images, and GitHub Actions versions.
+Automated dependency updates are handled by [Renovate](https://docs.renovatebot.com/) via `renovate.json`, which inherits the shared `github>jonathanperis/.github` preset for NuGet packages, Docker base images, GitHub Actions, and docs tooling.
 
 ## License
 

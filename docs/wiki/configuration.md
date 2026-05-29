@@ -32,6 +32,11 @@ Overrides for local development. Currently mirrors the base logging configuratio
 |---|---|---|
 | `ASPNETCORE_ENVIRONMENT` | `Production` | Set to `Development` for local dev (auto-set by launch profiles) |
 | `ASPNETCORE_URLS` | `http://+:5000` | Listening URL (set in Dockerfile for container builds) |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | unset locally; set by Azure Bicep | Enables Application Insights telemetry when present |
+| `APPINSIGHTS_INSTRUMENTATIONKEY` | unset locally; set by Azure Bicep | Legacy instrumentation key exposed for Azure App Service/Application Insights compatibility |
+| `ApplicationInsightsAgent_EXTENSION_VERSION` | unset locally; `~3` in Azure | Enables the Azure App Service Application Insights site extension |
+
+Application Insights is inactive for local development unless you provide `APPLICATIONINSIGHTS_CONNECTION_STRING`. In Azure, the Bicep deployment wires the connection string and instrumentation key into Web App application settings.
 
 ## .NET SDK Version
 
