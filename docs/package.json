@@ -7,15 +7,17 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
-    "check:drift": "python3 ../scripts/check-docs-drift.py"
+    "check:drift": "python3 ../scripts/check-docs-drift.py",
+    "check:rendered": "python3 ../scripts/check-docs-rendered-html.py"
   },
   "dependencies": {
-    "@astrojs/sitemap": "^3",
-    "astro": "^6"
+    "@astrojs/markdown-satteri": "^0.2.1",
+    "@astrojs/sitemap": "^3.7.2",
+    "astro": "^6.4.2"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4",
-    "tailwindcss": "^4",
-    "typescript": "^6"
+    "@tailwindcss/vite": "^4.2.4",
+    "tailwindcss": "^4.2.4",
+    "typescript": "^6.0.3"
   }
 }
