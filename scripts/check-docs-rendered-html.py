@@ -22,6 +22,8 @@ class FeatureParser(HTMLParser):
         self.tags: set[str] = set()
         self.ids: set[str] = set()
         self.hrefs: set[str] = set()
+        self.link_texts: set[str] = set()
+        self._current_link_parts: list[str] | None = None
         self.text_parts: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
@@ -31,10 +33,21 @@ class FeatureParser(HTMLParser):
             self.ids.add(attr["id"] or "")
         if tag == "a" and attr.get("href"):
             self.hrefs.add(attr["href"] or "")
+            self._current_link_parts = []
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag == "a" and self._current_link_parts is not None:
+            text = " ".join(part for part in self._current_link_parts if part).strip()
+            if text:
+                self.link_texts.add(text)
+            self._current_link_parts = None
 
     def handle_data(self, data: str) -> None:
         if data.strip():
-            self.text_parts.append(data.strip())
+            stripped = data.strip()
+            self.text_parts.append(stripped)
+            if self._current_link_parts is not None:
+                self._current_link_parts.append(stripped)
 
     @property
     def text(self) -> str:
@@ -130,8 +143,11 @@ def main() -> None:
     require("APPLICATIONINSIGHTS_CONNECTION_STRING" in deployment.text, "/docs/deployment/ missing Application Insights settings")
 
     documentation = parsed["docs/documentation"]
+    require("Documentation" in documentation.link_texts, "/docs/documentation/ sidebar is missing Documentation link label")
+    require("Astro 7" in documentation.text, "/docs/documentation/ missing Astro 7 note")
+    require("Vite 8" in documentation.text, "/docs/documentation/ missing Vite 8 note")
     require("Sätteri" in documentation.text, "/docs/documentation/ missing Sätteri note")
-    require("bun run check:rendered" in documentation.text, "/docs/documentation/ missing rendered check command")
+    require("npm run check:rendered" in documentation.text, "/docs/documentation/ missing rendered check command")
 
     check_internal_links(parsed)
 

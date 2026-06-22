@@ -8,12 +8,14 @@ Run from this directory (`docs/`):
 
 | Command | Action |
 |---|---|
-| `bun install` | Install dependencies |
-| `bun run dev` | Start dev server |
-| `bun run build` | Build to `./out/` |
-| `bun run preview` | Preview production build locally |
-| `bun run check:drift` | Verify README/wiki source-backed facts against current code and workflows |
-| `bun run check:rendered` | Verify generated Astro HTML routes, anchors, tables, code blocks, and critical links |
+| `bun install` | Install dependencies and update `bun.lock` |
+| `npm run dev` | Start the Astro 7 dev server with Node.js 22.12+ |
+| `npm run build` | Build to `./out/` using Astro 7, Vite 8, and the Rust compiler |
+| `npm run preview` | Preview production build locally with Node.js 22.12+ |
+| `npm run check:drift` | Verify README/wiki source-backed facts against current code and workflows |
+| `npm run check:rendered` | Verify generated Astro HTML routes, anchors, tables, code blocks, and critical links |
+
+Astro 7 requires Node.js 22.12 or newer. Keep Bun for dependency locking, but run Astro commands through `npm run ...` so the configured Node.js 22 runtime is used consistently in local and reusable GitHub Pages builds.
 
 ## Environment
 
