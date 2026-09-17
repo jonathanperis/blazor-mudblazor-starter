@@ -48,10 +48,10 @@ public static class LabCatalog
             "Splitting CSV on commas breaks quoted fields. Unbounded uploads and work that outlives its owner waste server resources.",
             "Export, edit a quoted summary, and import it. Try an invalid row. Start processing and cancel halfway through.", "Labs/Files.razor"),
         new("observability", "Observability and deployment", "/labs/observability", "Intermediate", 20, "API and Docker",
-            "Connect request IDs, structured logs, health checks, and an optional Azure deployment.",
+            "Connect request IDs, structured logs, health checks, and container publishing.",
             "The diagnostics endpoint logs a named event and returns its trace ID. Liveness checks the host; readiness checks SQLite. Application Insights is optional.",
             "A healthy process does not prove that a UI interaction works. Mutable image tags make deployments hard to reproduce.",
-            "Send a diagnostic request, locate its trace ID in console logs, and follow the Docker and immutable-image deployment guide.", "Labs/Observability.razor")
+            "Send a diagnostic request, locate its trace ID in console logs, and follow the Docker guide. Hostinger setup is pending; releases publish images without deploying the app.", "Labs/Observability.razor")
     ];
 
     public static Lab Get(string slug) => All.Single(lab => lab.Slug == slug);

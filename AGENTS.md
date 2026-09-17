@@ -10,7 +10,7 @@ A local-first school/playground project for Blazor Server and MudBlazor. Optimiz
 - `Components/Learning/`: shared frame and callback example.
 - `Features/`: models, API client/endpoints, notebook, identity, localization and learning support.
 - `tests/WebClient.Tests/`: xUnit/bUnit, in-process HTTP, and real SQLite migration tests.
-- `docs/`: Astro 7/Sätteri static guide; `infra/`: optional Azure deployment.
+- `docs/`: Astro 7/Sätteri static guide; `infra/`: historical Azure reference templates, compiled only.
 
 ## Commands
 
@@ -39,7 +39,7 @@ In `docs/`, run `bun install --frozen-lockfile`, `npm run check:drift`, `npm run
 
 ## Delivery
 
-PR checks cover tests, published routes/assets, docs, dependencies, workflows, Bicep and containers. Main validates, publishes both architectures, and optionally deploys an immutable image digest through OIDC. Azure opt-in uses repository variables and the `azure-sandbox` environment; no publish profile is used.
+PR checks cover tests, published routes/assets, docs, dependencies, workflows, Bicep and containers. Main validates and publishes both architectures with an immutable image digest. Hostinger is the intended application host, but its environment is not configured. The release workflow does not deploy the application.
 
 Keep NuGet/Bun lockfiles current. Renovate uses the shared preset. Regenerate `infra/main.json` after Bicep changes. Do not deploy merely to verify a code change.
 

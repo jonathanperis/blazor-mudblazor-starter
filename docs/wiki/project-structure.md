@@ -19,7 +19,7 @@ src/WebClient/
 tests/WebClient.Tests/           bUnit, domain, HTTP and SQLite tests
 scripts/                        docs drift/link checks and HTTP smoke checks
 docs/wiki/                      Markdown learning guide
-infra/                          optional Azure Bicep and generated ARM template
+infra/                          historical Azure Bicep/ARM reference, compiled only
 .config/dotnet-tools.json        pinned EF migration CLI
 renovate.json                   shared dependency-update preset
 ```
