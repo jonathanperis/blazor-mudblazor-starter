@@ -1,12 +1,13 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import '../../styles/docs.css';
-import { SECTION_CATEGORIES, SECTION_ORDER, SLUG_LABEL } from '@/lib/sidebar.config';
+import { PAGE_METADATA, SECTION_CATEGORIES, SECTION_ORDER } from '@/lib/sidebar.config';
 
 const modules = import.meta.glob('../../../wiki/*.md', { eager: true });
 const pages = Object.fromEntries(Object.entries(modules).map(([path, module]) => [path.split('/').pop()!.replace('.md', ''), module])) as Record<string, any>;
 for (const slug of SECTION_ORDER) {
   if (!pages[slug]) throw new Error(`Missing wiki/${slug}.md`);
+  if (!PAGE_METADATA[slug]) throw new Error(`Missing page metadata for ${slug}`);
 }
 for (const slug of Object.keys(pages)) {
   if (!SECTION_ORDER.includes(slug)) throw new Error(`wiki/${slug}.md is missing from the sidebar`);
@@ -20,7 +21,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const href = (id: string) => `${base}/docs/${id === 'home' ? '' : id + '/'}`;
 ---
 
-<BaseLayout title={`${SLUG_LABEL[slug]} · Blazor learning sandbox`}>
+<BaseLayout title={`${PAGE_METADATA[slug].label} · Blazor learning sandbox`} description={PAGE_METADATA[slug].description}>
   <div class="mobile-header">
     <button class="menu-toggle" id="menuToggle" aria-label="Open documentation navigation" aria-controls="sidebar" aria-expanded="false"><span></span><span></span><span></span></button>
     <span class="repo-title">Learning guide</span>
@@ -38,7 +39,7 @@ const href = (id: string) => `${base}/docs/${id === 'home' ? '' : id + '/'}`;
       {SECTION_CATEGORIES.map(category => (
         <div class="sidebar-category-group">
           <div class="sidebar-category">{category.label}</div>
-          <ul>{category.ids.map(id => <li><a class:list={['nav-item', { active: id === slug }]} href={href(id)} aria-current={id === slug ? 'page' : undefined}>{SLUG_LABEL[id]}</a></li>)}</ul>
+          <ul>{category.ids.map(id => <li><a class:list={['nav-item', { active: id === slug }]} href={href(id)} aria-current={id === slug ? 'page' : undefined}>{PAGE_METADATA[id].label}</a></li>)}</ul>
         </div>
       ))}
     </div>
