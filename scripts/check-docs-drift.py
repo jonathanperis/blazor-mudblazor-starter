@@ -77,7 +77,7 @@ def main():
             require(f"npm run {command}" in read(path), f"missing docs command {command}: {path}")
     require(package["dependencies"]["astro"].startswith("^7."), "update the Astro major-version guide")
     require(package["engines"]["node"] == ">=22.12.0", "update documented Node requirements")
-    require("trivy-action" in read(".github/workflows/build-check.yml"), "container scan claim differs from CI")
+    require(all(option in build_checks for option in ["aquasec/trivy:", "--scanners vuln", "--severity HIGH,CRITICAL", "--exit-code 1"]), "container scan claim differs from CI")
     print(f"Source-backed docs checks passed ({len(labs)} labs, {len(wiki)} guide pages)")
 
 
