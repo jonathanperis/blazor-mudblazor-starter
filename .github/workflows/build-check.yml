@@ -99,14 +99,13 @@ jobs:
           python3 scripts/smoke-http.py --base-url http://127.0.0.1:5030
       - name: Scan container dependencies
         if: matrix.ready-to-run == 'false'
-        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
-        with:
-          version: v0.74.0
-          image-ref: learning-sandbox:check
-          format: table
-          exit-code: '1'
-          severity: HIGH,CRITICAL
-          scanners: vuln
+        run: |
+          docker image save --output "$RUNNER_TEMP/learning-sandbox.tar" learning-sandbox:check
+          docker run --rm \
+            -v "$RUNNER_TEMP/learning-sandbox.tar:/scan/image.tar:ro" \
+            aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969 \
+            image --input /scan/image.tar --scanners vuln \
+            --severity HIGH,CRITICAL --exit-code 1 --no-progress
 
   container-test:
     needs: container

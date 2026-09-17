@@ -24,6 +24,8 @@ Both publishing modes keep culture and diagnostics support. `ghcr.io/jonathanper
 
 [`build-check.yml`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/.github/workflows/build-check.yml) runs behavioral tests, locked dependency restore/audit, published-app HTTP smoke checks, documentation type/build/link/drift checks, dependency review, infrastructure compilation, workflow linting, and a Docker matrix for both ReadyToRun values. Trivy scans the default image for high/critical vulnerabilities.
 
+The scan uses the official, digest-pinned Trivy container with a read-only exported image archive. This preserves the repository's action allow-list and avoids requiring a nested third-party setup action or access to the Docker socket.
+
 The existing protected-branch names `setup-build-test` and `container-test` are preserved. The latter requires the complete container matrix to pass.
 
 ## Release flow
