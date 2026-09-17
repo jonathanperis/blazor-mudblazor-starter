@@ -8,7 +8,7 @@ Run from this directory (`docs/`):
 
 | Command | Action |
 |---|---|
-| `bun install` | Install dependencies and update `bun.lock` |
+| `bun install --frozen-lockfile` | Install the locked dependencies |
 | `npm run dev` | Start the Astro 7 dev server with Node.js 22.12+ |
 | `npm run build` | Build to `./out/` using Astro 7, Vite 8, and the Rust compiler |
 | `npm run preview` | Preview production build locally with Node.js 22.12+ |

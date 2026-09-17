@@ -1,0 +1,30 @@
+@page "/labs/auth"
+@using WebClient.Features.Identity
+@inject DemoAuthOptions Options
+
+<LabFrame Slug="auth">
+    <AuthorizeView>
+        <Authorized Context="auth"><MudText Class="mb-3" role="status">Signed in as @auth.User.Identity?.Name.</MudText></Authorized>
+        <NotAuthorized><MudText Class="mb-3" role="status">Current persona: anonymous.</MudText></NotAuthorized>
+    </AuthorizeView>
+    @if (Options.Enabled)
+    {
+        <form method="post" action="/auth/demo" class="lab-form">
+            <AntiforgeryToken />
+            <label for="persona">Local demo persona</label>
+            <select id="persona" name="persona"><option value="student">Student</option><option value="instructor">Instructor</option></select>
+            <button type="submit">Sign in as demo persona</button>
+        </form>
+    }
+    else
+    {
+        <MudAlert Severity="Severity.Info">Demo sign-in is disabled here. Run locally in Development to try it. Learning:EnableDemoAuth is an explicit opt-in outside Development.</MudAlert>
+    }
+    <form method="post" action="/auth/logout" class="lab-form my-3"><AntiforgeryToken /><button type="submit">Sign out</button></form>
+    <MudLink Href="/api/instructor" Target="_blank">Call the instructor-only endpoint</MudLink>
+    <AuthorizeView Policy="Instructor">
+        <Authorized><MudAlert Severity="Severity.Success" Class="mt-3">Your current identity satisfies the instructor policy. The endpoint independently enforces it.</MudAlert></Authorized>
+        <NotAuthorized><MudText Class="mt-3">Expected endpoint response: 401 when anonymous, 403 when a student.</MudText></NotAuthorized>
+    </AuthorizeView>
+    <MudText Class="mt-3">Sign-in and sign-out use full HTTP form posts, antiforgery tokens, and a new circuit after redirect. The notebook workspace is separate from these shared demo personas.</MudText>
+</LabFrame>

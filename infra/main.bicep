@@ -11,6 +11,7 @@ param containerImage string = 'ghcr.io/jonathanperis/blazor-mudblazor-starter:la
 param appServicePlanName string = 'github-jonathanperis'
 
 @description('SKU for the App Service Plan.')
+@allowed(['F1', 'B1', 'B2', 'B3', 'S1', 'S2', 'S3', 'P1v3', 'P2v3', 'P3v3'])
 param appServicePlanSku string = 'B1'
 
 @description('Name of the Web App.')
@@ -63,8 +64,8 @@ module webApp 'modules/webApp.bicep' = {
     appServicePlanId: appServicePlan.outputs.planId
     containerImage: containerImage
     appInsightsConnectionString: appInsights.outputs.connectionString
-    appInsightsInstrumentationKey: appInsights.outputs.instrumentationKey
     projectName: projectName
+    alwaysOn: appServicePlanSku != 'F1'
   }
 }
 

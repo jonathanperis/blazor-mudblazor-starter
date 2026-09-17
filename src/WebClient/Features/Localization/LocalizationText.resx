@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <data name="Greeting" xml:space="preserve"><value>Welcome to the localization lab</value></data>
+  <data name="Amount" xml:space="preserve"><value>Amount</value></data>
+  <data name="Date" xml:space="preserve"><value>Date</value></data>
+  <data name="Message" xml:space="preserve"><value>Your learning goal</value></data>
+  <data name="Submit" xml:space="preserve"><value>Announce goal</value></data>
+  <data name="Announced" xml:space="preserve"><value>Goal: {0}</value></data>
+</root>

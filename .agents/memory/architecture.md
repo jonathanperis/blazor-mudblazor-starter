@@ -1,47 +1,13 @@
----
-name: Blazor Starter Architecture
-description: Blazor Server patterns, MudBlazor service integration, state persistence, responsive design approach
-type: project
----
+# Architecture reference
 
-## Component Architecture
+One .NET 10 Blazor Server host. `LabCatalog` defines routes and teaching metadata; `LabFrame` wraps experiments and error recovery. Feature modules support direct behavior tests.
 
-**MainLayout.razor** is the application shell implementing:
-- `IBrowserViewportObserver` for responsive breakpoint detection
-- `IAsyncDisposable` for cleanup
-- JavaScript interop for localStorage persistence (dark mode, drawer state)
+- Forecasts are deterministic and local to the grid; the read-only API owns a separate seeded dataset.
+- Dialogs edit drafts and commit only after validation/confirmation.
+- Notebook operations use an EF Core context factory, a protected browser workspace, and GUID concurrency tokens. SQLite migrations and data-protection keys live with the configured data directory.
+- Demo cookie personas are Development-only by default. Notebook ownership is independent of persona. Protected endpoints enforce authorization and form endpoints enforce antiforgery.
+- UI preferences persist `isDarkMode` and `drawerOpen`; viewport state is derived from CSS.
+- Supported publishing is framework-dependent, optionally ReadyToRun. Culture and diagnostic support remain enabled.
+- PR validation tests behavior and builds docs/containers; release publishes an immutable multi-arch digest and optionally deploys Azure through OIDC.
 
-**Dialog CRUD Pattern** (demonstrated in Weather page):
-```
-Weather.razor → DialogService.ShowAsync<AddWeather>() → DialogResult.Data.As<T>()
-```
-Each dialog is a separate component: AddWeather, EditWeather, RemoveWeather.
-
-**Data Grid Pattern:**
-- `MudDataGrid<T>` with `Virtualize=true` for 69K+ rows
-- Multi-selection, filtering, sorting, right-click context menu
-- Quick filter across multiple columns
-
-## State Persistence
-
-UI preferences persisted to browser localStorage:
-- `isDarkMode` — dark/light theme toggle
-- `drawerOpen` — navigation drawer state
-- Read on `OnAfterRenderAsync(firstRender: true)`, saved on property change
-
-## Responsive Design
-
-`IBrowserViewportService` triggers `NotifyBrowserViewportChangeAsync`:
-- Small screens (Sm/Xs): Toggle icon button for dark mode
-- Large screens: Full switch control for dark mode
-- Drawer behavior adapts to screen size
-
-## Build Optimization Tiers
-
-| Tier | AOT | TRIM | EXTRA_OPTIMIZE | Use Case |
-|------|-----|------|----------------|----------|
-| Debug | false | false | false | Local development |
-| Release | false | true | true | Production deployment |
-
-TRIM enables ReadyToRun + SingleFile + SelfContained.
-EXTRA_OPTIMIZE strips symbols, debugger, globalization.
+Authoritative commands and boundaries: root `AGENTS.md`, `README.md`, and `docs/wiki/`.

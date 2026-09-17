@@ -5,14 +5,14 @@ import Hero from '@/components/home/Hero.astro';
 import Dashboard from '@/components/home/Dashboard.astro';
 import Footer from '@/components/home/Footer.astro';
 
-const title = 'Blazor MudBlazor Starter | Production-ready .NET template';
-const description = 'Production-ready Blazor Server starter template with MudBlazor Material Design components, .NET 9, Docker, GHCR, Azure deployment, CodeQL, and GitHub Pages documentation.';
+const title = 'Blazor learning sandbox | MudBlazor labs';
+const description = 'A hands-on Blazor and MudBlazor toolbox. Explore working examples, inspect their source, and experiment with state, APIs, SQLite, authentication, files, and deployment.';
 ---
 
 <BaseLayout title={title} description={description}>
   <Navbar />
 
-  <main>
+  <main class="site-main" id="main-content" tabindex="-1">
     <Hero />
     <Dashboard />
   </main>

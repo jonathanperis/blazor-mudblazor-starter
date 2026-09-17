@@ -8,8 +8,8 @@ interface Props {
 }
 
 const {
-  title = 'Blazor MudBlazor Starter | Production-ready .NET template',
-  description = 'Production-ready Blazor Server starter template with MudBlazor Material Design components, .NET 9, Docker, GHCR, Azure deployment, CodeQL, and GitHub Pages documentation.'
+  title = 'Blazor learning sandbox | MudBlazor labs',
+  description = 'Hands-on Blazor and MudBlazor labs: state, forms, data grids, APIs, SQLite, authentication, localization, files, and observability. Learn locally with optional Docker and Azure deployment.'
 } = Astro.props;
 
 const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : `https://jonathanperis.github.io${Astro.url.pathname}`;
@@ -46,7 +46,7 @@ const jsonLd = {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <meta name="description" content={description} />
-    <meta name="keywords" content="Blazor, MudBlazor, .NET 9, Material Design, Azure, Docker, GHCR, C#, Blazor Server, starter template, GitHub Pages" />
+    <meta name="keywords" content="Blazor, MudBlazor, .NET 10, learning, C#, SQLite, Material Design, Azure, Docker" />
     <link rel="canonical" href={pageUrl} />
     <link rel="icon" href={faviconHref} sizes="any" />
     <link rel="icon" type="image/png" href={faviconPngHref} />
@@ -71,6 +71,7 @@ const jsonLd = {
     <Analytics />
   </head>
   <body>
+    <a href="#main-content" class="skip-link">Skip to content</a>
     <slot />
   </body>
 </html>

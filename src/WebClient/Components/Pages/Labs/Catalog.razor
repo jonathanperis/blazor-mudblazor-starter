@@ -1,0 +1,26 @@
+@page "/labs"
+
+<PageTitle>Learning paths · Blazor sandbox</PageTitle>
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4 pb-8">
+    <MudText Typo="Typo.h4" HtmlTag="h1">Choose an experiment</MudText>
+    <MudText Class="my-3">Follow the list from top to bottom, or jump to a topic. Open the source beside the lab, try the exercise, then change one thing and observe the result.</MudText>
+    <MudTextField T="string" @bind-Value="_search" Label="Find a lab" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" />
+    <MudGrid>
+        @foreach (var lab in LabCatalog.All.Where(Matches))
+        {
+            <MudItem xs="12" md="6">
+                <MudPaper Class="pa-4 h-100" Outlined>
+                    <MudText Typo="Typo.overline">@lab.Level · @lab.Minutes min</MudText>
+                    <MudText Typo="Typo.h6" HtmlTag="h2"><MudLink Href="@lab.Route">@lab.Title</MudLink></MudText>
+                    <MudText Class="my-2">@lab.Objective</MudText>
+                    <MudText Typo="Typo.caption">Prerequisite: @lab.Prerequisites</MudText>
+                </MudPaper>
+            </MudItem>
+        }
+    </MudGrid>
+</MudContainer>
+
+@code {
+    private string _search = "";
+    private bool Matches(Lab lab) => $"{lab.Title} {lab.Objective}".Contains(_search, StringComparison.OrdinalIgnoreCase);
+}
