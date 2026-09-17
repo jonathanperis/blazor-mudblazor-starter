@@ -1,7 +1,7 @@
 export const SLUG_LABEL: Record<string, string> = {
   home: 'Overview', 'getting-started': 'Getting started', 'learning-path': 'Learning paths',
   components: 'Lab reference', configuration: 'Configuration', testing: 'Testing and experiments',
-  deployment: 'Docker and Azure', documentation: 'Documentation site', 'project-structure': 'Project structure',
+  deployment: 'Docker and hosting', documentation: 'Documentation site', 'project-structure': 'Project structure',
 };
 
 export const SECTION_CATEGORIES: { label: string; ids: string[] }[] = [

@@ -22,7 +22,7 @@ Tests use xUnit, bUnit, ASP.NET Core's in-process server, and real SQLite migrat
 | Persistence | Migrations, workspace isolation, stale-update/delete conflicts, scoped reset |
 | Localization | Culture cookie, Portuguese resource text, culture-specific formatting |
 
-These checks do not measure browser layout, assistive-technology behavior, or a live Azure deployment. A separate browser session is needed for those observations.
+These checks do not measure browser layout, assistive-technology behavior, or a live hosting environment. Browser and post-deployment verification are separate test layers; Hostinger setup is pending.
 
 ## Check a published app through HTTP
 

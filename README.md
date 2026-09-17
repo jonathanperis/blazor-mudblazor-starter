@@ -5,7 +5,7 @@ A Swiss-army-knife learning project for **Blazor Server and MudBlazor**. Explore
 [![Build Check](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/build-check.yml/badge.svg)](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/build-check.yml)
 [![CodeQL](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/codeql.yml/badge.svg)](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/codeql.yml)
 
-**[Live labs](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/labs)** · **[Learning guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/)**
+**[Learning guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/)** · Run the labs locally using the commands below.
 
 ## Run locally
 
@@ -32,7 +32,7 @@ Open **http://localhost:5000/labs**. For local TLS, run `dotnet run --project sr
 | `/labs/auth` | Demo personas, cookie authentication, antiforgery, server-enforced policies |
 | `/labs/localization` | English/Portuguese, culture formatting, themes, keyboard and live-region practice |
 | `/labs/files` | Bounded CSV import/export and cancellable server work with progress |
-| `/labs/observability` | Structured logs, trace IDs, liveness/readiness, optional Docker/Azure deployment |
+| `/labs/observability` | Structured logs, trace IDs, liveness/readiness, Docker and hosting considerations |
 
 Each lab includes an objective, prerequisites, an approximate duration, a source link, a common mistake, and an exercise. Reset controls make experiments repeatable.
 
@@ -43,7 +43,7 @@ Each lab includes an objective, prerequisites, an approximate duration, a source
 - **API:** deterministic, read-only server dataset with bounded pages. The UI demonstrates actual HTTP requests.
 - **Notebook:** SQLite data and data-protection keys live in ignored `src/WebClient/App_Data/`. A protected, essential workspace cookie scopes notes to this browser. Demo personas are separate from workspace ownership.
 - **CSV/work:** imports replace data only after complete validation. Processing stops when the page is disposed; it is not a durable queue.
-- **Authentication:** fixed demonstration personas are enabled by default only in Development. Azure explicitly disables them. Use an identity provider for real accounts.
+- **Authentication:** fixed demonstration personas are enabled by default only in Development. Use an identity provider for real accounts.
 
 ## Stack
 
@@ -93,15 +93,15 @@ The supported publishing experiment is `--build-arg READY_TO_RUN=true`. `BUILD_C
 ## Delivery
 
 - **PRs:** behavioral tests, locked restore with vulnerability checks, published-app HTTP checks, docs build/link/drift checks, dependency review, Bicep compilation, workflow linting, and container checks/scanning.
-- **Main:** validates again and publishes a multi-architecture GHCR image with a commit tag and a manifest digest. `latest` is a convenience tag; Azure deployment uses the digest.
-- **Azure:** optional, enabled with `AZURE_DEPLOY_ENABLED=true`. Uses OIDC and the `azure-sandbox` GitHub environment. No publish profile is needed.
+- **Main:** validates again and publishes a multi-architecture GHCR image with a commit tag and a manifest digest. `latest` is a convenience tag; use the digest to identify an exact build.
+- **Application hosting:** Hostinger is the intended target, but this project's environment is not configured. The release workflow does not deploy the application.
 - **GitHub Pages:** uses the shared `pages-docs-deploy.yml@main` workflow.
 
-Follow the [deployment lab](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/deployment/) for resource names, permissions, configuration, persistence limitations, and cleanup.
+Follow the [hosting guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/deployment/) for the current delivery boundary and the decisions required before configuring Hostinger.
 
 ## Structure
 
-`src/WebClient/Components/` contains the shell and lab pages. `Features/` contains forecast, notebook, identity, localization, and learning support code. `tests/WebClient.Tests/` contains component and integration tests. `docs/wiki/` is the learning guide; `infra/` is the optional Azure deployment.
+`src/WebClient/Components/` contains the shell and lab pages. `Features/` contains forecast, notebook, identity, localization, and learning support code. `tests/WebClient.Tests/` contains component and integration tests. `docs/wiki/` is the learning guide; `infra/` retains the previous Azure templates as reference material.
 
 ## License
 

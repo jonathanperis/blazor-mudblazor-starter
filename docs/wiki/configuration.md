@@ -54,4 +54,4 @@ The app remains framework-dependent. Native AOT is unsupported for Blazor Server
 
 ## Optional telemetry
 
-The application registers Application Insights only when `APPLICATIONINSIGHTS_CONNECTION_STRING` is set. Console logging and the diagnostics lab work without Azure. Avoid logging notebook content, imported data, cookies, or credentials. The Bicep deployment uses SDK instrumentation, without a duplicate auto-instrumentation agent.
+The application registers Application Insights only when `APPLICATIONINSIGHTS_CONNECTION_STRING` is set. Console logging and the diagnostics lab work without Azure. Avoid logging notebook content, imported data, cookies, or credentials. Application hosting is planned for Hostinger, but its environment is not configured.
