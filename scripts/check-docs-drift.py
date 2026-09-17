@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Compare documented stack, lab routes and release steps with their sources."""
+"""Compare documented stack, toolchain, lab routes and release steps with source."""
 import json
 import re
 import xml.etree.ElementTree as ET
@@ -28,6 +28,12 @@ def main():
         if package.get("PrivateAssets") == "all":
             continue
         require(f"| {package.get('Include')} | {package.get('Version')} |" in readme, f"README package differs: {package.get('Include')}")
+    target_major = project.findtext(".//TargetFramework", default="").removeprefix("net").split(".")[0]
+    mud_major = project.findall(".//PackageReference[@Include='MudBlazor']")[0].attrib["Version"].split(".")[0]
+    hero = read("docs/src/components/home/Hero.astro")
+    for label in [f".NET {target_major}", f"MudBlazor {mud_major}"]:
+        require(f">{label}</span>" in hero, f"landing-page stack differs: {label}")
+    require("dotnet restore --locked-mode" in read("docs/src/components/home/Dashboard.astro"), "landing quickstart missing locked restore")
     for path in ["src/WebClient/packages.lock.json", "tests/WebClient.Tests/packages.lock.json", "docs/bun.lock"]:
         require((ROOT / path).is_file(), f"missing lockfile: {path}")
 
@@ -47,14 +53,28 @@ def main():
 
     release = read(".github/workflows/main-release.yml").split("\njobs:\n", 1)[1]
     jobs = re.findall(r"^  ([A-Za-z0-9_-]+):$", release, re.M)
-    for job in jobs:
-        require(f"**{job}**" in read("docs/wiki/deployment.md"), f"deployment guide missing release job {job}")
-    pages_workflow = "pages-docs-deploy.yml@3a6707da1d9f043bc3fa760bc08525db96d34c9d"
+    deployment = read("docs/wiki/deployment.md")
+    release_guide = deployment.split("## Release flow\n", 1)[1].split("\n## ", 1)[0]
+    documented_jobs = re.findall(r"^\d+\. \*\*([^*]+)\*\*", release_guide, re.M)
+    require(sorted(jobs) == sorted(documented_jobs), "deployment guide release jobs differ (including obsolete jobs)")
+    pages_workflow = "pages-docs-deploy.yml@d7e3c753530db86cb01b9510ab045c99b172ba03"
     require(pages_workflow in read(".github/workflows/deploy.yml"), "Pages workflow delegation changed; review the pin and update docs")
     require(pages_workflow in read("docs/wiki/deployment.md"), "Pages delegation missing from guide")
     require("Renovate" in readme and (ROOT / "renovate.json").is_file(), "dependency management docs/config differ")
 
     package = json.loads(read("docs/package.json"))
+    node = read("docs/.node-version").strip()
+    bun = package["packageManager"].removeprefix("bun@")
+    build_checks = read(".github/workflows/build-check.yml")
+    require("node-version-file: docs/.node-version" in build_checks, "PR checks must use the docs Node pin")
+    require(f"node-version: '{node}'" in read(".github/workflows/deploy.yml"), "Pages Node version differs from docs pin")
+    require(f"bun-version: '{bun}'" in build_checks, "PR Bun version differs from packageManager")
+    for path in ["docs/README.md", "docs/wiki/documentation.md"]:
+        guide = read(path)
+        require(f"Node.js {node}" in guide and f"Bun {bun}" in guide and "Python 3" in guide, f"docs toolchain differs: {path}")
+    for path in ["README.md", "docs/README.md", "docs/wiki/documentation.md", "AGENTS.md", ".github/workflows/build-check.yml"]:
+        for command in ["check:drift", "check:types", "build", "check:rendered"]:
+            require(f"npm run {command}" in read(path), f"missing docs command {command}: {path}")
     require(package["dependencies"]["astro"].startswith("^7."), "update the Astro major-version guide")
     require(package["engines"]["node"] == ">=22.12.0", "update documented Node requirements")
     require("trivy-action" in read(".github/workflows/build-check.yml"), "container scan claim differs from CI")

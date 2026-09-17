@@ -24,7 +24,7 @@ dotnet ef migrations list --project src/WebClient
 docker build -t blazor-learning -f src/WebClient/Dockerfile src/
 ```
 
-In `docs/`, run `bun install --frozen-lockfile`, `npm run check:drift`, `npm run build`, `npm run check:rendered`, and `bun audit`. Use Node.js 22.12+ for the Astro CLI. HTTP smoke: `python3 scripts/smoke-http.py --base-url http://127.0.0.1:5000`.
+In `docs/`, run `bun install --frozen-lockfile`, `npm run check:drift`, `npm run check:types`, `npm run build`, `npm run check:rendered`, and `bun audit`. Select Node from `docs/.node-version`, Bun from `docs/package.json`'s `packageManager`, and Python 3 for the verification scripts. HTTP smoke: `python3 scripts/smoke-http.py --base-url http://127.0.0.1:5000`.
 
 ## Contracts to preserve
 

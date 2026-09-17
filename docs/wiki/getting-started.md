@@ -4,7 +4,7 @@
 
 - Install the .NET SDK specified in the repository's `global.json`.
 - Docker is optional.
-- Node.js 22.12+ and Bun are needed only when editing the documentation site.
+- Node.js, Bun, and Python 3 are needed only for the documentation-site workflow. See the [documentation guide](../documentation/) for current toolchain versions; Python 3 also runs the optional application HTTP smoke check.
 
 ## Run the app
 
