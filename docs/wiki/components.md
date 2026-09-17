@@ -1,134 +1,54 @@
-# Components
+# Lab reference
 
-## Layout Components
+## Shared shell
 
-### MainLayout.razor
+`MainLayout.razor` renders the shell immediately. Its first interactive render loads preferences through `UiPreferences`; subsequent theme and drawer events await their writes. Only `isDarkMode` and `drawerOpen` are persisted. CSS determines the small-screen theme control.
 
-The root layout component that provides the MudBlazor application shell. Inherits from `LayoutComponentBase` and implements `IBrowserViewportObserver` for responsive design.
+Custom colors use MudBlazor palette variables. The shell includes a skip link, semantic main landmark, labeled icon controls, error recovery, and navigation to every lab.
 
-**Features:**
-- `MudThemeProvider` with bindable dark mode toggle, persisted to localStorage
-- Purple `MudAppBar` branded as **MudBlazor Starter**, with drawer toggle, dark mode control, and project overflow menu
-- `MudDrawer` with `MudNavMenu` links labeled **Overview**, **Counter demo**, and **DataGrid demo**
-- Project overflow links for GitHub, documentation, and health check
-- `MudPopoverProvider`, `MudDialogProvider`, and `MudSnackbarProvider` for MudBlazor services
-- Responsive breakpoint detection: displays a `MudToggleIconButton` on small screens and a `MudSwitch` on larger screens
-- Semantic `<main>` wrapper and accessible labels for shell controls
-- UI state (dark mode, drawer open, screen size) persisted to localStorage and restored on first render
+`LabFrame.razor` reads `LabCatalog`, displays objectives and exercises, and wraps the experiment in an error boundary. Recovery invokes the experiment's reset callback before recreating child content. Labs without a safe reset callback offer a full reload.
 
-**Key behavior:**
-- Subscribes to `IBrowserViewportService` for breakpoint change notifications
-- Implements `IAsyncDisposable` to unsubscribe from viewport events
-- Delays rendering until localStorage state is loaded to prevent flash of unstyled content
+## State and forms
 
-### Breadcrumb.razor
+- `Counter.razor` owns the component count; `CounterControl.razor` raises an event callback.
+- `CircuitCounter` is scoped to the interactive circuit. Its lifetime differs from prerendered component state.
+- `WeatherForecast` defines validation, sensible defaults, a draft copy, and validated application of changes.
+- `ForecastFields.razor` connects each input to the EditForm with `For` expressions.
+- `EditWeather.razor` edits a copy. The caller applies it only after a successful dialog result.
 
-A reusable compact breadcrumb navigation component that wraps `MudBreadcrumbs` in a `MudContainer` instead of a heavy raised card.
+## DataGrid
 
-**Parameters:**
+`/weather` uses a component-owned list and seeded generator. Reset recreates the grid, clearing its search, filters, sort, selection, and pagination. The date column binds the date value and uses a display format.
 
-| Parameter | Type | Description |
+Search is debounced. Copy is available from visible row/toolbar controls as well as the context menu. Selected CSV copy is limited to 1,000 rows. Dataset generation timings measure generation only, not browser rendering or concurrent-server capacity.
+
+## HTTP API
+
+`GET /api/forecasts` accepts:
+
+| Parameter | Default | Bound |
 |---|---|---|
-| `Items` | `List<BreadcrumbItem>` | List of breadcrumb items to display |
+| `count` | 1000 | 1–69,420 |
+| `page` | 0 | 0–69,420 |
+| `pageSize` | 25 | 1–100 |
+| `search` | empty | 120 characters |
+| `delayMs` | 0 | 0–2000 |
+| `descending` | false | Boolean, sort by date |
+| `fail` | false | Boolean, simulate HTTP 503 |
 
-Uses a custom separator template with `MudIcon` (arrow forward icon) and an `aria-label="Breadcrumb"` navigation label. Each page defines its own breadcrumb items and passes them to this component.
+Responses contain `{ items, total }`. Invalid bounds return 400. The endpoint observes request cancellation. The typed client uses a configured internal base URL; changing a request cancels the old one and ignores its result.
 
----
+## SQLite notebook
 
-## Page Components
+`NotebookService` creates a DbContext per operation. All queries and writes include the current workspace. The root passes the protected-cookie workspace into the circuit as a server component parameter; interactive services do not depend on a live HttpContext. A GUID version token implements optimistic concurrency on SQLite. Conflicts retain the UI draft and require reloading the current note rather than silently overwriting another tab's change.
 
-### Home.razor
+Migrations run at startup for this single-instance learning app. Notebook reset deletes only the current workspace's notes and requires explicit confirmation in the page.
 
-Route: `/`
+## Identity, culture, files, and diagnostics
 
-Production-oriented starter overview page. It presents a concise hero, proof chips, GitHub/docs/DataGrid CTAs, a clone/run command block, and feature cards that explain the included deployment, documentation, and MudBlazor UI patterns.
-
-### Counter.razor
-
-Route: `/counter`
-
-Interactive **Counter demo** page. Shows a prominent current count value, a primary **Increment count** button, and a **Reset** button that is disabled while the count is zero. Demonstrates Blazor component state and event handling without reading like untouched scaffold filler.
-
-### Weather.razor
-
-Route: `/weather`
-
-Full-featured **DataGrid demo** page demonstrating CRUD operations, virtualization, row selection, paging, and clipboard integration.
-
-**Features:**
-- `MudDataGrid` with 69,420 generated weather forecast entries
-- Header framed as **MudDataGrid showcase** with capability chips for virtualization, CRUD dialogs, and right-click copy
-- Action row with **Add record**, **Remove selected**, and a selected-count chip
-- `Remove selected` stays disabled until at least one row is selected
-- Shortened record IDs via `ShortId(Guid)` to avoid full GUID visual noise
-- Date, Temperature (C/F), and Summary columns without duplicated stress-test columns
-- Multi-selection support with `SelectColumn`
-- Quick filter search across displayed columns
-- Sortable and filterable columns with `SortMode.Multiple`
-- Virtualized rendering for performance with large datasets
-- Fixed header with configurable page sizes (10, 25, 50, 100, 500, 1000, 5000)
-- Loading state with simulated 2-second delay
-
-**CRUD Operations:**
-- Add: opens `AddWeather` dialog via `IDialogService`, appends a new entry, and shows `Weather record added.`
-- Edit: opens `EditWeather` dialog with the selected item and replaces the entry in-place
-- Remove: opens `RemoveWeather` confirmation dialog and removes all selected items
-
-**Context Menu:**
-- Right-click on a row to copy a single line or all selected lines to the clipboard
-- Clipboard data is formatted as semicolon-separated values
-- Empty-selection snackbar messages explicitly tell the user to select rows first
-
-**Data model** (`WeatherForecast`): Defined as a nested class with `Id` (Guid), `Date` (DateTime), `TemperatureC` (int), `Summary` (string?), and computed `TemperatureF`.
-
-### Error.razor
-
-Route: `/Error`
-
-Error page that displays when an unhandled exception occurs. Shows the request ID from `Activity.Current` or `HttpContext.TraceIdentifier` when available. Includes guidance about the Development environment.
-
----
-
-## Weather Dialog Components
-
-### AddWeather.razor
-
-A `MudDialog` wrapped in an `EditForm` with `DataAnnotationsValidator`. Provides text fields for Weather ID (Guid), Date, Temperature (C), and Summary. On valid submission, returns the new `WeatherForecast` via `DialogResult.Ok` and shows a success snackbar notification.
-
-### EditWeather.razor
-
-A `MudDialog` wrapped in an `EditForm` for editing an existing weather entry.
-
-**Parameters:**
-
-| Parameter | Type | Description |
-|---|---|---|
-| `Item` | `Weather.WeatherForecast` | The weather entry to edit |
-
-The Weather ID field is read-only. On valid submission, returns the edited item via `DialogResult.Ok` and shows a success snackbar notification.
-
-### RemoveWeather.razor
-
-A simple `MudDialog` confirmation prompt. Displays a warning message asking the user to confirm deletion. On confirmation, returns `DialogResult.Ok(true)` and shows a success snackbar notification. Does not use `EditForm` since no data input is required.
-
----
-
-## MudBlazor Components Used
-
-| Component | Usage |
-|---|---|
-| `MudLayout`, `MudAppBar`, `MudDrawer`, `MudMainContent` | Application shell structure |
-| `MudThemeProvider` | Material Design theming with dark mode |
-| `MudNavMenu`, `MudNavLink` | Side navigation |
-| `MudBreadcrumbs` | Compact page navigation breadcrumbs |
-| `MudDataGrid`, `PropertyColumn`, `SelectColumn`, `TemplateColumn` | DataGrid demo table |
-| `MudDataGridPager` | Data grid pagination |
-| `MudDialog`, `MudDialogProvider` | Modal dialogs for CRUD operations |
-| `MudSnackbar`, `MudSnackbarProvider` | Toast notifications |
-| `MudButton`, `MudIconButton`, `MudToggleIconButton` | Action buttons |
-| `MudTextField` | Form inputs and search |
-| `MudCard`, `MudCardHeader`, `MudCardContent`, `MudCardActions` | Content cards |
-| `MudMenu`, `MudMenuItem` | Context menu and overflow menu |
-| `MudSwitch` | Dark mode toggle (large screens) |
-| `MudText`, `MudLink`, `MudSpacer`, `MudDivider`, `MudIcon`, `MudChip` | Typography and layout utilities |
-| `MudPopoverProvider` | Popover rendering |
+- `POST /auth/demo` accepts only `student` or `instructor`; it is disabled unless the demo feature is enabled. `POST /auth/logout` clears the cookie. Both require antiforgery validation.
+- `GET /api/instructor` enforces an authenticated instructor policy on the server.
+- `POST /culture` validates an antiforgery token and a supported culture (`en-US` or `pt-BR`), writes a culture cookie, and starts a new page/circuit.
+- `ForecastCsv` handles quoted commas, quotes, CRLF, and multiline fields. Imports are at most 1 MiB/1,000 rows and reject invalid or duplicate identities before returning a dataset. Export neutralizes formula-like summaries with an apostrophe, which remains literal on reimport.
+- `BatchExperiment` runs bounded, cancellable asynchronous work. The page cancels it on reset or disposal.
+- `GET /api/diagnostics` logs a trace ID and returns it. `/healthz` is liveness; `/healthz/ready` queries SQLite.

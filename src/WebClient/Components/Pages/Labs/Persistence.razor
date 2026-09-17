@@ -1,0 +1,56 @@
+@page "/labs/persistence"
+@using WebClient.Features.Notebook
+@using Microsoft.EntityFrameworkCore
+@inject NotebookService Notebook
+
+<LabFrame Slug="persistence">
+    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-4">Notes belong to this browser workspace, identified by an essential protected cookie. Keep the same browser and data volume to retain them. Demo persona changes do not change your workspace.</MudAlert>
+    <EditForm Model="_draft" OnValidSubmit="Save" @key="_draft">
+        <DataAnnotationsValidator />
+        <MudTextField Label="Title" @bind-Value="_draft.Title" For="@(() => _draft.Title)" MaxLength="120" />
+        <MudTextField Label="What did you learn?" @bind-Value="_draft.Text" For="@(() => _draft.Text)" MaxLength="4000" Lines="3" />
+        <ValidationSummary />
+        <MudStack Row Class="flex-wrap my-3">
+            <MudButton ButtonType="ButtonType.Submit" Disabled="_busy" Color="Color.Primary" Variant="Variant.Filled">@(_editing is null ? "Add note" : "Save draft")</MudButton>
+            <MudButton OnClick="NewDraft" Disabled="_busy">Cancel / new draft</MudButton>
+            <MudButton OnClick="Load" Disabled="_busy">Reload notes</MudButton>
+        </MudStack>
+    </EditForm>
+    <MudText Class="my-3" role="status">@_status</MudText>
+    @foreach (var note in _notes)
+    {
+        <MudPaper Outlined Class="pa-3 mb-3" @key="note.Id">
+            <MudText Typo="Typo.h6" HtmlTag="h2">@note.Title</MudText>
+            <MudText Style="white-space: pre-wrap">@note.Text</MudText>
+            <MudText Typo="Typo.caption">Version: @note.Version.ToString("N")[..8]</MudText>
+            <MudStack Row><MudButton OnClick="() => Edit(note)" Disabled="_busy">Edit draft</MudButton><MudButton OnClick="() => Delete(note)" Disabled="_busy" Color="Color.Error">Delete</MudButton></MudStack>
+        </MudPaper>
+    }
+    @if (_notes.Count == 0) { <MudText>No notes yet. Write down the first thing you learned.</MudText> }
+    <MudCheckBox T="bool" @bind-Value="_confirmReset" Label="I want to remove all notes in my workspace" />
+    <MudButton Color="Color.Error" OnClick="Reset" Disabled="@(!_confirmReset || _busy)">Reset my notebook</MudButton>
+</LabFrame>
+
+@code {
+    private List<NoteSnapshot> _notes = [];
+    private NoteDraft _draft = new();
+    private NoteSnapshot? _editing;
+    private string _status = "";
+    private bool _busy;
+    private bool _confirmReset;
+    protected override Task OnInitializedAsync() => Load();
+    private async Task Load() { _notes = await Notebook.ListAsync(); _status = $"Loaded {_notes.Count} notes. An open draft keeps its original version until you choose Edit again."; }
+    private void NewDraft() { _editing = null; _draft = new(); }
+    private void Edit(NoteSnapshot note) { _editing = note; _draft = new() { Title = note.Title, Text = note.Text }; }
+    private async Task Execute(Func<Task> operation)
+    {
+        if (_busy) return;
+        _busy = true;
+        try { await operation(); await Load(); NewDraft(); _status = "Notebook updated."; }
+        catch (DbUpdateConcurrencyException) { _status = "Conflict: another tab changed or deleted this note. Your draft is retained. Reload notes, then select Edit to start from the current version."; }
+        finally { _busy = false; }
+    }
+    private Task Save() => Execute(() => Notebook.SaveAsync(_draft, _editing));
+    private Task Delete(NoteSnapshot note) => Execute(() => Notebook.DeleteAsync(note));
+    private async Task Reset() { if (!_confirmReset) return; await Execute(() => Notebook.ResetAsync()); _confirmReset = false; }
+}

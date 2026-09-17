@@ -1,0 +1,28 @@
+@page "/labs/localization"
+@using WebClient.Features.Localization
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<LocalizationText> Text
+
+<LabFrame Slug="localization" OnReset="Reset">
+    <form action="/culture" method="post" class="lab-form mb-4">
+        <AntiforgeryToken />
+        <label for="culture">Language / Idioma</label>
+        <select id="culture" name="culture"><option value="en-US" selected="@(CultureInfo.CurrentUICulture.Name == "en-US")">English (United States)</option><option value="pt-BR" selected="@(CultureInfo.CurrentUICulture.Name == "pt-BR")">Português (Brasil)</option></select>
+        <button type="submit">Apply language / Aplicar idioma</button>
+    </form>
+    <MudText Typo="Typo.h6" HtmlTag="h2">@Text["Greeting"]</MudText>
+    <MudText Class="my-2">Culture: @CultureInfo.CurrentCulture.Name</MudText>
+    <MudText>@Text["Amount"]: @(1234.56m.ToString("C", CultureInfo.CurrentCulture))</MudText>
+    <MudText>@Text["Date"]: @(new DateTime(2026, 9, 16).ToString("D", CultureInfo.CurrentCulture))</MudText>
+    <MudTextField Label="@Text["Message"]" @bind-Value="_goal" MaxLength="120" Class="my-3" />
+    <MudButton OnClick="Announce" Color="Color.Primary" Variant="Variant.Filled">@Text["Submit"]</MudButton>
+    <p role="status" aria-live="polite">@_announcement</p>
+    <MudText Typo="Typo.body2">This example and MudBlazor component strings are localized; the teaching guide remains in English. Labels, visible focus indicators, and the live region support keyboard and screen-reader practice.</MudText>
+</LabFrame>
+
+@code {
+    private string _goal = "";
+    private string _announcement = "";
+    private void Announce() => _announcement = Text["Announced", _goal];
+    private void Reset() { _goal = ""; _announcement = ""; }
+}

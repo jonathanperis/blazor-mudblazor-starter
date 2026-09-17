@@ -1,0 +1,7 @@
+**/bin/
+**/obj/
+**/App_Data/
+**/.env
+**/.env.*
+**/*.user
+**/.DS_Store

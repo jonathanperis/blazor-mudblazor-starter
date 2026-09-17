@@ -1,59 +1,41 @@
-# Documentation Site
+# Documentation site
 
-The public documentation is an Astro static site in `docs/` and is published to GitHub Pages by `.github/workflows/deploy.yml`.
+The guide is an Astro 7 static site with the Sätteri Markdown processor and Vite 8. GitHub Pages hosts the built HTML; no server adapter is required.
 
-## Authoring Model
+## Commands
 
-| Area | Purpose |
-|---|---|
-| `docs/wiki/*.md` | Markdown source pages rendered under `/docs/` |
-| `docs/src/lib/sidebar.config.ts` | Navigation order and section grouping for Markdown pages |
-| `docs/src/components/home/` | Custom landing page sections for the GitHub Pages root |
-| `docs/astro.config.mjs` | Astro configuration, static output, base path, sitemap, Tailwind, and Markdown processor |
-| `docs/out/` | Generated static output from `npm run build` |
+Use Node.js 22.12+ and Bun from `docs/`:
 
-## Local Commands
-
-Use Bun from the `docs/` directory:
-
-```bash
-cd docs
-bun install
+```sh
+bun install --frozen-lockfile
+npm run check:drift
 npm run build
 npm run check:rendered
+bun audit
 ```
 
-Astro 7 requires Node.js 22.12 or newer. Bun remains the lockfile/install path, but build, preview, and validation commands should run through `npm run ...` so Astro uses the Node.js 22 runtime expected by the reusable Pages workflow.
+Bun manages the committed lockfile. `npm run` uses Node for the Astro CLI. Optional `PUBLIC_GA_ID` enables analytics in the generated site; omit it for a local-only guide.
 
-Run the source-backed drift check from the repository root:
+## Authoring
 
-```bash
-python3 scripts/check-docs-drift.py
-```
+- Add a Markdown file under `wiki/`.
+- Add its slug and label to `src/lib/sidebar.config.ts`.
+- Each page is rendered once, with its own heading IDs. The docs root renders the overview.
+- Use `../configuration/` from a standalone docs page, and `./configuration/` from the overview.
+- Keep source versions in the README/configuration reference rather than repeating them in marketing copy.
 
-## Adding or Renaming a Page
+The build validates sidebar coverage. Rendered checks validate all generated pages, unique IDs, links/anchors, code blocks, tables, and the sitemap advertised by robots.txt. The source drift check compares package/SDK facts and release-job documentation against implementation.
 
-1. Add or rename the Markdown file in `docs/wiki/`.
-2. Add the page slug to `SECTION_CATEGORIES` in `docs/src/lib/sidebar.config.ts`.
-3. Link to the page with root-relative docs routes such as `../configuration/` from another docs page, or `/blazor-mudblazor-starter/docs/configuration/` when authoring absolute public links.
-4. Run `npm run build`, `npm run check:rendered`, and `python3 scripts/check-docs-drift.py`.
+## Navigation and accessibility
 
-## Markdown Processor
+The sidebar highlights the current page and provides topic filtering with a result announcement. On mobile, closed navigation is inert. Opening it moves focus, traps keyboard focus within navigation, and makes content inert; Escape closes it and restores focus. A skip link targets the main content.
 
-The site uses Astro 7 with the default Rust `.astro` compiler, Vite 8/Rolldown bundling, queued rendering, and the Rust-based Sätteri Markdown processor:
+The shared styles support light/dark schemes, visible focus indicators, table/code overflow, and reduced-motion preferences. Manual browser/assistive-technology verification remains a separate test layer.
 
-```js
-import { satteri } from '@astrojs/markdown-satteri';
+## Dependency updates
 
-export default defineConfig({
-  markdown: {
-    processor: satteri(),
-  },
-});
-```
+The manifest contains narrow same-major transitive overrides for smol-toml, PostCSS, and nanoid because upstream ranges/locks previously selected vulnerable versions. Revisit these overrides when upstream dependencies catch up; keep the audit and rendered checks passing.
 
-Sätteri stays explicit so the rendered HTML smoke test protects the Markdown features this site depends on: routes, headings and anchors, tables, fenced code blocks, and internal links. Astro 7's stable request routing and cache APIs are not configured here because the docs deploy is a fully static GitHub Pages artifact, so there is no server/CDN adapter surface to cache or route dynamically.
+## Publishing
 
-## Deployment
-
-`.github/workflows/deploy.yml` delegates to the reusable `jonathanperis/.github/.github/workflows/pages-docs-deploy.yml@main` workflow with inherited secrets. The reusable workflow installs the docs dependencies, builds the Astro site, and publishes the generated Pages artifact.
+`.github/workflows/deploy.yml` calls the shared `pages-docs-deploy.yml@main` workflow. PR validation builds and checks docs before they can reach that deployment path.

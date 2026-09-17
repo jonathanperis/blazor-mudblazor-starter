@@ -1,237 +1,100 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
 import '../../styles/docs.css';
-import { SECTION_CATEGORIES, SECTION_ORDER } from '@/lib/sidebar.config';
+import { SECTION_CATEGORIES, SECTION_ORDER, SLUG_LABEL } from '@/lib/sidebar.config';
 
-const SLUG_LABEL: Record<string, string> = {
-  home: 'Overview',
-  components: 'Components',
-  configuration: 'Configuration',
-  'getting-started': 'Getting Started',
-  deployment: 'Deployment',
-  documentation: 'Documentation',
-  'project-structure': 'Project Structure',
-};
-
-const globResult = import.meta.glob('../../../wiki/*.md', { eager: true });
-
-const pagesBySlug: Record<string, any> = {};
-for (const [path, module] of Object.entries(globResult)) {
-  const fileName = path.split('/').pop()!.replace('.md', '');
-  pagesBySlug[fileName] = module;
+const modules = import.meta.glob('../../../wiki/*.md', { eager: true });
+const pages = Object.fromEntries(Object.entries(modules).map(([path, module]) => [path.split('/').pop()!.replace('.md', ''), module])) as Record<string, any>;
+for (const slug of SECTION_ORDER) {
+  if (!pages[slug]) throw new Error(`Missing wiki/${slug}.md`);
 }
-
-// Build-time assertion: validate SECTION_CATEGORIES IDs against discovered slugs
-const availableSlugs = new Set(Object.keys(pagesBySlug));
-for (const cat of SECTION_CATEGORIES) {
-  for (const id of cat.ids) {
-    if (!availableSlugs.has(id)) {
-      const catName = cat.label || 'root';
-      throw new Error(
-        `SECTION_CATEGORIES references id "${id}" (category: "${catName}") but no matching wiki/${id}.md was found. Available slugs: ${Array.from(availableSlugs).join(', ')}`
-      );
-    }
-  }
+for (const slug of Object.keys(pages)) {
+  if (!SECTION_ORDER.includes(slug)) throw new Error(`wiki/${slug}.md is missing from the sidebar`);
 }
-
-const requestedSlug = Astro.params.slug;
-const isRoot = requestedSlug === undefined;
-const requestedKey = requestedSlug ?? 'home';
-
-const sectionsToRender = isRoot
-  ? SECTION_CATEGORIES.flatMap(cat => cat.ids)
-      .map(slug => ({ slug, page: pagesBySlug[slug] }))
-      .filter(s => s.page)
-  : (() => {
-      const page = pagesBySlug[requestedKey];
-      if (!page) return [];
-      return [{ slug: requestedSlug!, page }];
-    })();
-
 export function getStaticPaths() {
-  return [
-    { params: { slug: undefined } },
-    ...SECTION_ORDER.filter(s => s !== 'home').map(slug => ({ params: { slug } })),
-  ];
+  return [{ params: { slug: undefined } }, ...SECTION_ORDER.filter(slug => slug !== 'home').map(slug => ({ params: { slug } }))];
 }
-
-const pageTitle = isRoot ? 'Blazor MudBlazor Starter - Documentation' : `${SLUG_LABEL[requestedSlug] ?? requestedSlug} - Blazor MudBlazor Starter`;
-const base = import.meta.env.BASE_URL;
-const docsBase = base.replace(/\/$/, '') + '/docs';
-const backHomeUrl = base.replace(/\/$/, '') + '/';
+const slug = Astro.params.slug ?? 'home';
+const Content = pages[slug].default;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const href = (id: string) => `${base}/docs/${id === 'home' ? '' : id + '/'}`;
 ---
 
-<BaseLayout title={pageTitle}>
+<BaseLayout title={`${SLUG_LABEL[slug]} · Blazor learning sandbox`}>
   <div class="mobile-header">
-    <button class="menu-toggle" id="menuToggle" aria-label="Toggle Menu" aria-controls="sidebar" aria-expanded="false">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-    <div class="repo-title">MudBlazor Starter</div>
+    <button class="menu-toggle" id="menuToggle" aria-label="Open documentation navigation" aria-controls="sidebar" aria-expanded="false"><span></span><span></span><span></span></button>
+    <span class="repo-title">Learning guide</span>
   </div>
-
   <div class="overlay" id="overlay"></div>
-
-  <aside class="sidebar" id="sidebar">
+  <aside class="sidebar" id="sidebar" aria-label="Documentation navigation">
     <div class="sidebar-header">
-      <h1 class="repo-title">MudBlazor Starter</h1>
-      <p class="repo-description">Production-ready Blazor Server starter with MudBlazor — .NET 9, Docker, GHCR, Azure, CodeQL, and GitHub Pages docs</p>
-      <input type="text" id="searchInput" class="search-box" placeholder="Search documentation..." aria-label="Search documentation" hidden={!isRoot}>
+      <p class="repo-title">Blazor learning sandbox</p>
+      <p class="repo-description">Small experiments. Working source. Explicit tradeoffs.</p>
+      <label for="searchInput" class="sr-only">Find a documentation topic</label>
+      <input type="search" id="searchInput" class="search-box" placeholder="Find a topic..." />
+      <p id="searchStatus" class="sr-only" role="status"></p>
     </div>
     <div class="sidebar-nav-container">
-      {SECTION_CATEGORIES.map((cat) => {
-        return (
-          <div class="sidebar-category-group" data-category>
-            {cat.label && <div class="sidebar-category">{cat.label}</div>}
-            <ul>
-              {cat.ids.map((id) => (
-                <li>
-                  <a class="nav-item" href={`${docsBase}/#${id}`} data-nav-id={id}>
-                    {SLUG_LABEL[id]}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        );
-      })}
+      {SECTION_CATEGORIES.map(category => (
+        <div class="sidebar-category-group">
+          <div class="sidebar-category">{category.label}</div>
+          <ul>{category.ids.map(id => <li><a class:list={['nav-item', { active: id === slug }]} href={href(id)} aria-current={id === slug ? 'page' : undefined}>{SLUG_LABEL[id]}</a></li>)}</ul>
+        </div>
+      ))}
     </div>
     <div class="sidebar-footer">
-      <a href={backHomeUrl} class="back-home">← Back to home</a>
-      <a href="https://github.com/jonathanperis/blazor-mudblazor-starter" target="_blank" rel="noopener noreferrer">View on GitHub</a>
-      <div>Built by Jonathan Peris</div>
+      <a href={`${base}/`}>← Project overview</a>
+      <a href="https://github.com/jonathanperis/blazor-mudblazor-starter" target="_blank" rel="noopener noreferrer">View source on GitHub</a>
     </div>
   </aside>
-
-  <div class="content-wrapper">
-    <main class="content" id="mainContent">
-      {sectionsToRender.map(({ slug, page: wikiPage }) => {
-        const Content = wikiPage.default ?? wikiPage;
-        return (
-          <section id={slug} class="doc-section">
-            <Content />
-          </section>
-        );
-      })}
-    </main>
+  <div class="content-wrapper" id="contentWrapper">
+    <main class="content" id="main-content" tabindex="-1"><article class="doc-section"><Content /></article></main>
   </div>
 
-  {requestedSlug && <script is:inline define:vars={{ slug: requestedSlug, isRoot: isRoot }}>window.__docsSlug = slug; window.__isRoot = isRoot;</script>}
-
-  <script is:inline>
-    document.addEventListener('DOMContentLoaded', () => {
-      const menuToggle = document.getElementById('menuToggle');
-      const sidebar = document.getElementById('sidebar');
-      const overlay = document.getElementById('overlay');
-
-      function toggleMenu() {
-        const isOpen = sidebar.classList.toggle('open');
-        overlay.classList.toggle('open');
-        if (menuToggle) menuToggle.setAttribute('aria-expanded', String(isOpen));
-      }
-
-      if (menuToggle) menuToggle.addEventListener('click', toggleMenu);
-      if (overlay) overlay.addEventListener('click', toggleMenu);
-
-      const isRoot = window.__isRoot !== false;
-      const prefersReducedMotion = !window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
-      const sections = document.querySelectorAll('section.doc-section');
-      const navItems = document.querySelectorAll('.nav-item');
-
-      // Auto-scroll: root uses section slug; single-section lets browser handle deep-link hashes
-      if (isRoot) {
-        const targetSlug = window.__docsSlug;
-        const hash = window.location.hash;
-        const sectionId = targetSlug || (hash && hash.length > 1 ? hash.slice(1) : null);
-        if (sectionId) {
-          const target = document.getElementById(sectionId);
-          if (target) {
-            setTimeout(() => target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth' }), 100);
-          }
-        }
-      }
-
-      // Scrollspy + nav click: only meaningful with multiple sections
-      if (isRoot && sections.length > 1) {
-        const observer = new IntersectionObserver((entries) => {
-          entries.forEach(entry => {
-            if (entry.isIntersecting) {
-              const sectionId = entry.target.id;
-              navItems.forEach(item => {
-                item.classList.toggle('active', item.dataset.navId === sectionId);
-                if (item.dataset.navId === sectionId) {
-                  item.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'nearest' });
-                }
-              });
-            }
-          });
-        }, { root: null, rootMargin: '-80px 0px -60% 0px', threshold: 0 });
-
-        sections.forEach(section => observer.observe(section));
-
-        navItems.forEach(item => {
-          item.addEventListener('click', () => {
-            if (window.innerWidth <= 768) toggleMenu();
-          });
-        });
-      }
-
-      // Search: only on root (full tree); single-section has nothing to filter
-      if (isRoot) {
-        const searchInput = document.getElementById('searchInput');
-        if (searchInput) {
-          searchInput.addEventListener('input', (e) => {
-            const query = e.target.value.toLowerCase();
-            const content = document.getElementById('mainContent');
-            if (!content) return;
-
-            if (query === '') {
-              sections.forEach(s => s.classList.remove('hidden-section'));
-              navItems.forEach(item => {
-                item.style.display = '';
-                item.parentElement.style.display = '';
-              });
-              document.querySelectorAll('.sidebar-category-group').forEach(group => {
-                group.style.display = '';
-                const catLabel = group.querySelector('.sidebar-category');
-                if (catLabel) catLabel.style.display = '';
-              });
-              return;
-            }
-
-            sections.forEach(section => {
-              const text = section.textContent?.toLowerCase() ?? '';
-              const navItem = document.querySelector(`.nav-item[data-nav-id="${section.id}"]`);
-              const li = navItem ? navItem.parentElement : null;
-
-              if (text.includes(query)) {
-                section.classList.remove('hidden-section');
-                if (li) li.style.display = '';
-              } else {
-                section.classList.add('hidden-section');
-                if (li) li.style.display = 'none';
-              }
-            });
-
-            // Hide empty categories
-            document.querySelectorAll('.sidebar-category-group').forEach(group => {
-              const items = group.querySelectorAll('.nav-item');
-              let visibleCount = 0;
-              items.forEach(item => {
-                const id = item.dataset.navId;
-                const sec = document.getElementById(id ?? '');
-                const vis = !sec || !sec.classList.contains('hidden-section');
-                item.style.display = vis ? '' : 'none';
-                if (vis) visibleCount++;
-              });
-              const catLabel = group.querySelector('.sidebar-category');
-              if (catLabel) catLabel.style.display = visibleCount === 0 ? 'none' : '';
-              group.style.display = visibleCount === 0 ? 'none' : '';
-            });
-          });
-        }
+  <script>
+    const toggle = document.querySelector<HTMLButtonElement>('#menuToggle')!;
+    const sidebar = document.querySelector<HTMLElement>('#sidebar')!;
+    const overlay = document.querySelector<HTMLElement>('#overlay')!;
+    const content = document.querySelector<HTMLElement>('#contentWrapper')!;
+    const mobile = matchMedia('(max-width: 768px)');
+    let open = false;
+    function update() {
+      sidebar.classList.toggle('open', open && mobile.matches);
+      overlay.classList.toggle('open', open && mobile.matches);
+      sidebar.inert = mobile.matches && !open;
+      content.inert = mobile.matches && open;
+      toggle.setAttribute('aria-expanded', String(open && mobile.matches));
+      toggle.setAttribute('aria-label', open ? 'Close documentation navigation' : 'Open documentation navigation');
+    }
+    function close() { open = false; update(); toggle.focus(); }
+    toggle.addEventListener('click', () => {
+      if (open) close();
+      else { open = true; update(); sidebar.querySelector<HTMLInputElement>('input')?.focus(); }
+    });
+    overlay.addEventListener('click', close);
+    mobile.addEventListener('change', () => { open = false; update(); });
+    document.addEventListener('keydown', event => {
+      if (!mobile.matches || !open) return;
+      if (event.key === 'Escape') { event.preventDefault(); close(); }
+      if (event.key === 'Tab') {
+        const controls = [toggle, ...sidebar.querySelectorAll<HTMLElement>('a[href], input')].filter(element => element.getClientRects().length);
+        const first = controls[0], last = controls[controls.length - 1];
+        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
       }
     });
+    const search = document.querySelector<HTMLInputElement>('#searchInput')!;
+    search.addEventListener('input', () => {
+      const query = search.value.trim().toLowerCase();
+      let matches = 0;
+      sidebar.querySelectorAll<HTMLLIElement>('li').forEach(item => {
+        item.hidden = !(item.textContent ?? '').toLowerCase().includes(query);
+        if (!item.hidden) matches++;
+      });
+      sidebar.querySelectorAll<HTMLElement>('.sidebar-category-group').forEach(group => { group.hidden = !group.querySelector('li:not([hidden])'); });
+      document.querySelector('#searchStatus')!.textContent = `${matches} topics found`;
+    });
+    update();
   </script>
+  <noscript><style>.sidebar { transform: none; position: static; width: 100%; height: auto; } .mobile-header, .search-box { display: none; } .content-wrapper { margin-left: 0; width: 100%; } body { display: block; }</style></noscript>
 </BaseLayout>

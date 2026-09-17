@@ -1,54 +1,52 @@
-# Getting Started
+# Getting started
 
 ## Prerequisites
 
-- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0) (9.0.202 or later)
-- [Docker](https://www.docker.com/) (optional, for container builds)
+- Install the .NET SDK specified in the repository's `global.json`.
+- Docker is optional.
+- Node.js 22.12+ and Bun are needed only when editing the documentation site.
 
-## Run Locally
+## Run the app
 
-```bash
+```sh
 git clone https://github.com/jonathanperis/blazor-mudblazor-starter.git
 cd blazor-mudblazor-starter
-dotnet restore
+dotnet restore --locked-mode
 dotnet run --project src/WebClient
 ```
 
-Open `http://localhost:5000` in your browser.
+Open **http://localhost:5000/labs**. Start with the counter and keep the source open beside the application.
 
-The `https` launch profile is also available at `https://localhost:5001`.
+| Profile | Command | Address |
+|---|---|---|
+| HTTP | `dotnet run --project src/WebClient` | `http://localhost:5000` |
+| HTTPS | `dotnet run --project src/WebClient --launch-profile https` | `https://localhost:5001` |
 
-## Run with Docker
+If your local HTTPS certificate is not trusted, follow the .NET SDK's development-certificate instructions. Clipboard support requires a secure context; localhost is normally treated as trustworthy.
 
-Build the image from the `src/` context using the Dockerfile inside `src/WebClient/`:
+## First experiment
 
-```bash
-docker build -t blazor-mudblazor -f src/WebClient/Dockerfile src/
-docker run -p 5000:5000 blazor-mudblazor
+1. Open `/counter` and increment both counts.
+2. Visit `/labs/forms`, then return.
+3. Observe that component state resets while circuit state survives.
+4. Reload the page and observe a new circuit.
+
+Continue with [learning paths](../learning-path/).
+
+## Run a container
+
+```sh
+docker build -t blazor-learning -f src/WebClient/Dockerfile src/
+docker run --rm -p 5000:5000 -v learning-data:/app/App_Data blazor-learning
 ```
 
-Open `http://localhost:5000` in your browser.
+The named volume retains notebook data and workspace-protection keys. Demo login is disabled in the default container; use the Development launch profile to study authentication locally.
 
-### Docker Build Arguments
+## Common setup questions
 
-You can pass build arguments to control optimization:
+- **SDK not found:** `dotnet --list-sdks` must include the feature band in `global.json`.
+- **API lab cannot connect:** its typed client uses `Learning:ApiBaseUrl`, defaulting to port 5000. Set it if you change the app's HTTP port.
+- **Notes disappeared:** retain both the workspace cookie and the data directory. Clearing cookies gives you a new workspace.
+- **A dependency update fails locked restore:** update and review the appropriate lockfile, then run the verification commands.
 
-```bash
-docker build \
-  --build-arg AOT=false \
-  --build-arg TRIM=true \
-  --build-arg EXTRA_OPTIMIZE=true \
-  --build-arg BUILD_CONFIGURATION=Release \
-  -t blazor-mudblazor -f src/WebClient/Dockerfile src/
-```
-
-See [Configuration](/blazor-mudblazor-starter/docs/configuration/) for details on each build argument.
-
-## Access URLs
-
-| Context | URL |
-|---|---|
-| Local (HTTP) | `http://localhost:5000` |
-| Local (HTTPS) | `https://localhost:5001` |
-| Docker container | `http://localhost:5000` |
-| Live demo | [blazor-mudblazor-starter](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/) |
+See [Configuration](../configuration/) and [Testing](../testing/) for details.

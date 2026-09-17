@@ -1,100 +1,26 @@
 @page "/"
 
-<PageTitle>Blazor MudBlazor Starter</PageTitle>
-
-<Breadcrumb Items="_items" />
-
-<MudContainer MaxWidth="MaxWidth.Large" Class="starter-page px-4 pb-8">
-    <MudPaper Class="starter-hero pa-6 pa-md-8" Elevation="2">
-        <MudGrid Spacing="4" Class="align-center">
-            <MudItem xs="12" md="7">
-                <MudStack Spacing="3">
-                    <MudText Typo="Typo.overline" Color="Color.Primary">Blazor Server template</MudText>
-                    <MudText Typo="Typo.h3" HtmlTag="h1" Class="starter-hero-title">
-                        Production-ready Blazor Server starter with MudBlazor
-                    </MudText>
-                    <MudText Typo="Typo.subtitle1" Class="starter-hero-copy">
-                        A clean .NET 9 baseline with MudBlazor 9.3, Docker, Azure deployment,
-                        CI/CD, dark mode, responsive navigation, dialogs, snackbars, and a high-volume DataGrid demo.
-                    </MudText>
-                    <MudStack Row Spacing="2" Class="starter-actions flex-wrap">
-                        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Code" Href="https://github.com/jonathanperis/blazor-mudblazor-starter" Target="_blank" rel="noopener noreferrer">
-                            View on GitHub
-                        </MudButton>
-                        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Article" Href="https://jonathanperis.github.io/blazor-mudblazor-starter/" Target="_blank" rel="noopener noreferrer">
-                            Read docs
-                        </MudButton>
-                        <MudButton Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Filled.TableView" Href="/weather">
-                            Explore DataGrid demo
-                        </MudButton>
-                    </MudStack>
-                </MudStack>
-            </MudItem>
-            <MudItem xs="12" md="5">
-                <MudPaper Class="starter-command pa-4" Elevation="0">
-                    <MudText Typo="Typo.subtitle2" Class="mb-2">Clone and run</MudText>
-                    <pre><code>git clone https://github.com/jonathanperis/blazor-mudblazor-starter.git
-cd blazor-mudblazor-starter
-dotnet run --project src/WebClient</code></pre>
-                </MudPaper>
-            </MudItem>
-        </MudGrid>
-    </MudPaper>
-
-    <MudPaper Class="starter-proof pa-4 mt-4" Elevation="1">
-        <MudStack Row Spacing="1" Class="flex-wrap" AlignItems="AlignItems.Center">
-            <MudText Typo="Typo.subtitle2" Class="mr-2">Included proof:</MudText>
-            @foreach (var chip in _proofChips)
-            {
-                <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined" Size="Size.Small">@chip</MudChip>
-            }
+<PageTitle>Blazor learning sandbox</PageTitle>
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4 pb-8">
+    <MudPaper Class="pa-6 mb-4" Outlined>
+        <MudText Typo="Typo.overline" Color="Color.Primary">Learn by changing working examples</MudText>
+        <MudText Typo="Typo.h3" HtmlTag="h1">Your Blazor and MudBlazor toolbox</MudText>
+        <MudText Typo="Typo.h6" HtmlTag="p" Class="my-4">Explore focused labs, inspect the source, and experiment with the tradeoffs.</MudText>
+        <MudText Class="mb-4">Start with component state. Progress through forms, data grids, APIs, SQLite, authentication, localization, files, and observability. Each lab includes an exercise and explains the lifetime of its data.</MudText>
+        <MudStack Row Class="flex-wrap">
+            <MudButton Href="/counter" Variant="Variant.Filled" Color="Color.Primary">Start learning</MudButton>
+            <MudButton Href="/labs" Variant="Variant.Outlined" Color="Color.Primary">Explore all labs</MudButton>
+            <MudButton Href="https://github.com/jonathanperis/blazor-mudblazor-starter" Target="_blank" rel="noopener noreferrer">View source</MudButton>
         </MudStack>
     </MudPaper>
-
-    <MudGrid Spacing="4" Class="mt-1">
-        <MudItem xs="12" md="5">
-            <MudCard Elevation="1" Class="starter-card h-100">
-                <MudCardContent>
-                    <MudIcon Icon="@Icons.Material.Filled.Verified" Color="Color.Success" Size="Size.Large" Class="mb-3" />
-                    <MudText Typo="Typo.h5" HtmlTag="h2">Production path included</MudText>
-                    <MudText Typo="Typo.body2" Class="mt-2">
-                        Build checks, CodeQL, Renovate dependency updates, Docker image publishing, Azure infrastructure, and a health endpoint are already wired.
-                    </MudText>
-                </MudCardContent>
-            </MudCard>
-        </MudItem>
-        <MudItem xs="12" md="7">
-            <MudCard Elevation="1" Class="starter-card h-100">
-                <MudCardContent>
-                    <MudIcon Icon="@Icons.Material.Filled.TableRows" Color="Color.Primary" Size="Size.Large" Class="mb-3" />
-                    <MudText Typo="Typo.h5" HtmlTag="h2">MudBlazor patterns you can reuse</MudText>
-                    <MudText Typo="Typo.body2" Class="mt-2">
-                        The sample routes demonstrate component state, a responsive shell, persisted theme preference,
-                        CRUD dialogs, virtualized records, search, filters, row selection, context menus, and snackbars.
-                    </MudText>
-                    <MudButton Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Filled.ArrowForward" Href="/weather" Class="mt-3">
-                        Open the DataGrid route
-                    </MudButton>
-                </MudCardContent>
-            </MudCard>
-        </MudItem>
-    </MudGrid>
+    <MudText Typo="Typo.h5" HtmlTag="h2" Class="mb-3">A small app with room to experiment</MudText>
+    <MudText Class="mb-4">.NET 10, MudBlazor 9, synthetic datasets, and a local SQLite notebook. Cloud accounts are optional. The default labs are designed for learning, with explicit boundaries between demonstration code and deployment concerns.</MudText>
+    <MudPaper Class="pa-4 mb-4" Outlined>
+        <MudText Typo="Typo.h6" HtmlTag="h2">Run locally</MudText>
+        <pre><code>git clone https://github.com/jonathanperis/blazor-mudblazor-starter.git
+cd blazor-mudblazor-starter
+dotnet run --project src/WebClient</code></pre>
+        <MudLink Href="https://jonathanperis.github.io/blazor-mudblazor-starter/docs/getting-started/">Setup and learning guide</MudLink>
+    </MudPaper>
+    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">Counter and grid experiments reset with their component or circuit. The SQLite notebook survives restarts on the same data volume and is scoped to your browser workspace.</MudAlert>
 </MudContainer>
-
-@code {
-    private readonly string[] _proofChips =
-    [
-        ".NET 9",
-        "MudBlazor 9.3",
-        "Docker",
-        "GHCR",
-        "Azure App Service",
-        "CodeQL",
-        "GitHub Pages"
-    ];
-
-    private readonly List<BreadcrumbItem> _items =
-    [
-        new("Overview", href: null, icon: Icons.Material.Filled.Home, disabled: true),
-    ];
-}

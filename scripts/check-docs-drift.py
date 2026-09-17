@@ -1,146 +1,63 @@
 #!/usr/bin/env python3
-"""Source-backed drift checks for README and wiki docs.
-
-The checks intentionally target facts that have drifted before: package versions,
-release workflow topology, deploy workflow implementation, and route/sidebar
-coverage for the Markdown wiki.
-"""
-
-from __future__ import annotations
-
+"""Compare documented stack, lab routes and release steps with their sources."""
 import json
 import re
-import sys
 import xml.etree.ElementTree as ET
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
-README = ROOT / "README.md"
-AGENTS = ROOT / "AGENTS.md"
-AGENT_MEMORY_DIR = ROOT / ".agents" / "memory"
-WIKI_DIR = ROOT / "docs" / "wiki"
-DOC_FILES = [README, *sorted(WIKI_DIR.glob("*.md"))]
-AGENT_FILES = [AGENTS, *sorted(AGENT_MEMORY_DIR.glob("*.md"))]
-PUBLIC_COPY_FILES = [
-    ROOT / "src" / "WebClient" / "Components" / "Pages" / "Home.razor",
-    ROOT / "docs" / "src" / "components" / "home" / "Hero.astro",
-    ROOT / "docs" / "src" / "components" / "home" / "Dashboard.astro",
-]
-TEXT_FILES = [*DOC_FILES, *AGENT_FILES, *PUBLIC_COPY_FILES]
 
 
-def read(path: Path) -> str:
-    return path.read_text(encoding="utf-8")
+def read(path):
+    return (ROOT / path).read_text(encoding="utf-8")
 
 
-def fail(message: str) -> None:
-    print(f"docs drift: {message}", file=sys.stderr)
-    raise SystemExit(1)
-
-
-def require(condition: bool, message: str) -> None:
+def require(condition, message):
     if not condition:
-        fail(message)
+        raise SystemExit(f"docs drift: {message}")
 
 
-def require_contains(path: Path, needle: str) -> None:
-    require(needle in read(path), f"{path.relative_to(ROOT)} is missing {needle!r}")
+def main():
+    readme = read("README.md")
+    sdk = json.loads(read("global.json"))["sdk"]["version"]
+    require(f"SDK {sdk}" in readme, "README SDK version differs from global.json")
+    require(f'"version": "{sdk}"' in read("docs/wiki/configuration.md"), "configuration guide SDK version differs")
+    require(f"dotnet/sdk:{sdk}" in read("src/WebClient/Dockerfile"), "Docker SDK differs from global.json")
+    project = ET.fromstring(read("src/WebClient/WebClient.csproj"))
+    for package in project.findall(".//PackageReference"):
+        if package.get("PrivateAssets") == "all":
+            continue
+        require(f"| {package.get('Include')} | {package.get('Version')} |" in readme, f"README package differs: {package.get('Include')}")
+    for path in ["src/WebClient/packages.lock.json", "tests/WebClient.Tests/packages.lock.json", "docs/bun.lock"]:
+        require((ROOT / path).is_file(), f"missing lockfile: {path}")
 
+    catalog = read("src/WebClient/Features/Learning/LabCatalog.cs")
+    labs = re.findall(r'new\("([^\"]+)",\s*"[^\"]+",\s*"([^\"]+)".*?,\s*"([^\"]+\.razor)"\)', catalog, re.S)
+    require(bool(labs), "could not read lab catalog")
+    for slug, route, source in labs:
+        path = ROOT / "src/WebClient/Components/Pages" / source
+        require(path.is_file() and f'@page "{route}"' in path.read_text(), f"catalog route/source differs: {slug}")
+        require(f"`{route}`" in readme, f"README missing lab: {route}")
+        require(f'"{route}"' in read("scripts/smoke-http.py"), f"HTTP smoke missing lab: {route}")
 
-def require_absent(pattern: str, flags: int = 0) -> None:
-    regex = re.compile(pattern, flags)
-    for path in TEXT_FILES:
-        for line_no, line in enumerate(read(path).splitlines(), 1):
-            if regex.search(line):
-                fail(f"stale phrase in {path.relative_to(ROOT)}:{line_no}: {line}")
+    sidebar = read("docs/src/lib/sidebar.config.ts")
+    ids = [slug for group in re.findall(r"ids:\s*\[([^\]]+)\]", sidebar) for slug in re.findall(r"'([^']+)'", group)]
+    wiki = {path.stem for path in (ROOT / "docs/wiki").glob("*.md")}
+    require(set(ids) == wiki and len(ids) == len(wiki), "wiki and sidebar coverage differ")
 
+    release = read(".github/workflows/main-release.yml").split("\njobs:\n", 1)[1]
+    jobs = re.findall(r"^  ([A-Za-z0-9_-]+):$", release, re.M)
+    for job in jobs:
+        require(f"**{job}**" in read("docs/wiki/deployment.md"), f"deployment guide missing release job {job}")
+    require("pages-docs-deploy.yml@main" in read(".github/workflows/deploy.yml"), "Pages workflow delegation changed; update docs")
+    require("pages-docs-deploy.yml@main" in read("docs/wiki/deployment.md"), "Pages delegation missing from guide")
+    require("Renovate" in readme and (ROOT / "renovate.json").is_file(), "dependency management docs/config differ")
 
-def package_version(package_name: str) -> str:
-    project = ET.parse(ROOT / "src" / "WebClient" / "WebClient.csproj")
-    for item in project.findall(".//PackageReference"):
-        if item.attrib.get("Include") == package_name:
-            return item.attrib["Version"]
-    fail(f"PackageReference {package_name!r} not found")
-
-
-def workflow_jobs(workflow: str) -> set[str]:
-    text = read(ROOT / ".github" / "workflows" / workflow)
-    jobs_index = text.find("\njobs:\n")
-    require(jobs_index >= 0, f"could not find jobs section in {workflow}")
-    jobs_body = text[jobs_index:]
-    return set(re.findall(r"^  ([A-Za-z0-9_-]+):\n    ", jobs_body, re.M))
-
-
-def main() -> None:
-    mudblazor = package_version("MudBlazor")
-    translations = package_version("MudBlazor.Translations")
-    app_insights = package_version("Microsoft.ApplicationInsights.AspNetCore")
-    sdk = json.loads(read(ROOT / "global.json"))["sdk"]["version"]
-
-    require_contains(README, f"MudBlazor | {mudblazor}")
-    require_contains(ROOT / "docs" / "wiki" / "project-structure.md", f"MudBlazor {mudblazor}")
-    require_contains(ROOT / "src" / "WebClient" / "Components" / "Pages" / "Home.razor", f"MudBlazor {mudblazor.rsplit('.', 1)[0]}")
-    require_contains(ROOT / "docs" / "src" / "components" / "home" / "Hero.astro", f"MudBlazor {mudblazor.rsplit('.', 1)[0]}")
-    require_contains(README, f"SDK {sdk}")
-    require_contains(ROOT / "docs" / "wiki" / "configuration.md", f'"version": "{sdk}"')
-    require(AGENTS.exists(), "AGENTS.md must exist for standardized harness instructions")
-    require(AGENT_MEMORY_DIR.exists(), ".agents/memory must exist for standardized agent memory")
-    legacy_word = "cla" + "ude"
-    legacy_root_file = ROOT / (legacy_word.upper() + ".md")
-    legacy_dir = ROOT / ("." + legacy_word)
-    require(not legacy_root_file.exists(), "legacy root harness file must be removed after AGENTS.md migration")
-    require(not legacy_dir.exists(), "legacy dot-directory must be removed after .agents migration")
-
-    require_contains(AGENTS, f"MudBlazor {mudblazor}")
-    require_contains(AGENTS, f"MudBlazor.Translations {translations}")
-    require_contains(AGENTS, f"Microsoft.ApplicationInsights.AspNetCore {app_insights}")
-    require_absent(rf"\.?{legacy_word}", flags=re.I)
-
-    require_absent(r"MudBlazor (?:9\.2(?:\.0)?)")
-    if not (ROOT / ".github" / "dependabot.yml").exists():
-        require_absent(r"Dependabot", flags=re.I)
-    if not (ROOT / "docker-compose.yml").exists():
-        require_absent(r"docker-compose", flags=re.I)
-    require_absent(r"dependency review|container scanning", flags=re.I)
-    require_contains(ROOT / "README.md", "Renovate")
-    require_contains(ROOT / "docs" / "wiki" / "home.md", "Renovate")
-    require_contains(ROOT / "docs" / "wiki" / "project-structure.md", "renovate.json")
-    require_contains(ROOT / "docs" / "wiki" / "configuration.md", "APPLICATIONINSIGHTS_CONNECTION_STRING")
-    require_contains(ROOT / "docs" / "wiki" / "deployment.md", "App Service Plan: `github-jonathanperis` (`B1`, Linux)")
-    require_contains(ROOT / "infra" / "main.bicep", "module appServicePlan 'modules/appServicePlan.bicep'")
-    require_contains(ROOT / "docs" / "wiki" / "documentation.md", "Astro 7")
-    require_contains(ROOT / "docs" / "wiki" / "documentation.md", "Vite 8")
-    require_contains(ROOT / "docs" / "wiki" / "documentation.md", "Sätteri")
-    docs_package = json.loads(read(ROOT / "docs" / "package.json"))
-    require(docs_package["dependencies"].get("astro", "").startswith("^7."), "docs/package.json must depend on Astro 7")
-    require(docs_package.get("engines", {}).get("node") == ">=22.12.0", "docs/package.json must declare Astro 7 Node.js floor")
-    require_absent(r"Astro 6")
-    require_absent(r"Production-optimized builds with AOT(?: compilation)?[, ]")
-    require_absent(r"Runs three sequential jobs|build-push-image|deploy-image-azure")
-    require_absent(r"actions/configure-pages|actions/upload-pages-artifact")
-
-    release_jobs = workflow_jobs("main-release.yml")
-    for job in [
-        "setup-build-test",
-        "build-push-amd64",
-        "deploy-infra",
-        "deploy-image",
-        "build-push-arm64",
-        "merge-manifest",
-    ]:
-        require(job in release_jobs, f"main-release.yml no longer has job {job!r}")
-        require_contains(ROOT / "docs" / "wiki" / "deployment.md", f"**{job}**")
-
-    deploy_workflow = read(ROOT / ".github" / "workflows" / "deploy.yml")
-    require("pages-docs-deploy.yml@main" in deploy_workflow, "deploy.yml no longer delegates to reusable Pages workflow")
-    require_contains(ROOT / "docs" / "wiki" / "deployment.md", "pages-docs-deploy.yml@main")
-
-    sidebar = read(ROOT / "docs" / "src" / "lib" / "sidebar.config.ts")
-    sidebar_ids = set(re.findall(r"[\"']([a-z0-9-]+)[\"']", sidebar))
-    wiki_slugs = {path.stem for path in WIKI_DIR.glob("*.md")}
-    require(wiki_slugs <= sidebar_ids, f"wiki files missing from sidebar: {sorted(wiki_slugs - sidebar_ids)}")
-
-    print("README/wiki drift checks passed")
+    package = json.loads(read("docs/package.json"))
+    require(package["dependencies"]["astro"].startswith("^7."), "update the Astro major-version guide")
+    require(package["engines"]["node"] == ">=22.12.0", "update documented Node requirements")
+    require("trivy-action" in read(".github/workflows/build-check.yml"), "container scan claim differs from CI")
+    print(f"Source-backed docs checks passed ({len(labs)} labs, {len(wiki)} guide pages)")
 
 
 if __name__ == "__main__":

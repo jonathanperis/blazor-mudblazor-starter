@@ -1,211 +1,50 @@
-# Blazor MudBlazor Starter — Agent Instructions
+# Blazor learning sandbox — agent instructions
 
-Production-ready Blazor Server starter template with MudBlazor Material Design components, .NET 9, Docker, and Azure deployment.
+A local-first school/playground project for Blazor Server and MudBlazor. Optimize for correct, explainable, resettable experiments. Read `PRODUCT.md` and `DESIGN.md` before changing the learning experience.
 
-**Live demo:** https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/
+## Stack and layout
 
----
+- Supported .NET 10 SDK pinned in `global.json`; package versions in `src/WebClient/WebClient.csproj`.
+- One Blazor host, MudBlazor, translated component strings, EF Core SQLite, optional Application Insights.
+- `Components/Pages/Labs/`: focused learning pages; `/counter` and `/weather` remain foundational routes.
+- `Components/Learning/`: shared frame and callback example.
+- `Features/`: models, API client/endpoints, notebook, identity, localization and learning support.
+- `tests/WebClient.Tests/`: xUnit/bUnit, in-process HTTP, and real SQLite migration tests.
+- `docs/`: Astro 7/Sätteri static guide; `infra/`: optional Azure deployment.
 
-## Tech Stack
-
-| Technology | Purpose |
-|-----------|---------|
-| .NET 9 (SDK 9.0.202) | Runtime |
-| Blazor Server | Interactive server-side rendering |
-| MudBlazor 9.3.0 | Material Design UI components |
-| MudBlazor.Translations 3.3.0 | Multi-language support |
-| Microsoft.ApplicationInsights.AspNetCore 3.1.0 | Telemetry (active in Azure only) |
-| Docker | Multi-arch builds (amd64/arm64) |
-| Azure App Service | Production hosting (Brazil South) |
-| Bicep | Infrastructure as Code (`infra/`) |
-| GitHub Actions | CI/CD (build, test, deploy) |
-| GitHub Pages | Documentation site |
-
----
-
-## Build Commands
+## Commands
 
 ```sh
-dotnet restore                              # Restore dependencies
-dotnet run --project src/WebClient          # Dev server (http://localhost:5000)
-dotnet build src/WebClient -c Release       # Production build
-docker build --build-arg TRIM=true --build-arg EXTRA_OPTIMIZE=true \
-  -f src/WebClient/Dockerfile src/          # Docker build
+dotnet restore --locked-mode
+dotnet test -c Release --no-restore
+dotnet publish src/WebClient -c Release -o artifacts/publish
+dotnet run --project src/WebClient
+dotnet tool restore
+dotnet ef migrations list --project src/WebClient
+docker build -t blazor-learning -f src/WebClient/Dockerfile src/
 ```
 
-### Build Arguments
+In `docs/`, run `bun install --frozen-lockfile`, `npm run check:drift`, `npm run build`, `npm run check:rendered`, and `bun audit`. Use Node.js 22.12+ for the Astro CLI. HTTP smoke: `python3 scripts/smoke-http.py --base-url http://127.0.0.1:5000`.
 
-| Arg | Default | Purpose |
-|-----|---------|---------|
-| AOT | false | Ahead-of-Time compilation |
-| TRIM | false | ReadyToRun + SingleFile + SelfContained |
-| EXTRA_OPTIMIZE | false | Remove symbols, disable debugger, invariant globalization |
-| BUILD_CONFIGURATION | Debug | Debug or Release |
+## Contracts to preserve
 
-### Build Optimization Tiers
+- Edit dialogs work on a copy; only validated confirmation commits changes.
+- API/CSV inputs are bounded. Imports return an entire valid dataset or fail without partial mutation.
+- Notebook queries/writes include the current workspace and use optimistic concurrency. Create a DbContext per operation.
+- Workspace cookies and protection keys are separate from demo persona cookies.
+- Demo sign-in defaults to Development only. The instructor policy is enforced at the endpoint and login/culture posts require antiforgery validation.
+- Theme and drawer writes are awaited. Screen size is derived, not persisted. Render usable content before JS interop.
+- Reset/disposal cancels owned asynchronous work. Stale results must not overwrite reset state.
+- Globalization and diagnostics stay enabled. Only ReadyToRun is exposed as a publishing experiment; Native AOT/trimming are not supported app modes.
 
-| Tier | AOT | TRIM | EXTRA_OPTIMIZE | Use Case |
-|------|-----|------|----------------|----------|
-| Debug | false | false | false | Local development |
-| Release | false | true | true | Production deployment |
+## Delivery
 
----
+PR checks cover tests, published routes/assets, docs, dependencies, workflows, Bicep and containers. Main validates, publishes both architectures, and optionally deploys an immutable image digest through OIDC. Azure opt-in uses repository variables and the `azure-sandbox` environment; no publish profile is used.
 
-## Architecture
+Keep NuGet/Bun lockfiles current. Renovate uses the shared preset. Regenerate `infra/main.json` after Bicep changes. Do not deploy merely to verify a code change.
 
-Blazor Server with real-time WebSocket communication:
+## Contribution
 
-```
-Browser ↔ (WebSocket) ↔ ASP.NET Core Blazor Server
-                        ├── Razor Components (pages, layouts, dialogs)
-                        ├── MudBlazor Services (dialogs, snackbars, viewport)
-                        ├── JavaScript Interop (localStorage persistence)
-                        └── Health Checks (/healthz)
-```
+Use a feature branch and a pull request when requested; never commit or push without authorization. Conventional commits and rebase-only merging match repository conventions. Preserve unrelated work.
 
-### Key Patterns
-
-- **Dialog CRUD pattern** — `DialogService.ShowAsync<T>()` returns `DialogResult` with data
-- **State persistence** — Dark mode and drawer state saved to `localStorage` via JS interop
-- **Responsive breakpoints** — `IBrowserViewportService` + `IBrowserViewportObserver`
-- **Virtualized data grid** — `MudDataGrid` with 69K+ rows, filtering, sorting, paging
-- **Context menu** — Right-click row → clipboard copy via `IJSRuntime`
-- **Breadcrumb navigation** — Reusable `Breadcrumb.razor` component with `BreadcrumbItem` list
-
-### State Persistence Flow
-
-```
-OnAfterRenderAsync(firstRender: true) → Read from localStorage
-Property setter → Write to localStorage
-```
-
-Persisted keys: `isDarkMode`, `drawerOpen`, `isSmallScreen`
-
----
-
-## Project Structure
-
-```
-blazor-mudblazor-starter/
-├── src/WebClient/
-│   ├── Program.cs                   # Entry point, service registration
-│   ├── WebClient.csproj             # .NET 9, build optimization flags
-│   ├── Dockerfile                   # Multi-stage build (base → build → publish → final)
-│   ├── appsettings.json             # Base configuration
-│   ├── Properties/launchSettings.json
-│   └── Components/
-│       ├── App.razor                # Root HTML document (MudBlazor CSS/JS)
-│       ├── Routes.razor             # Router config (MainLayout default)
-│       ├── _Imports.razor           # Global using directives
-│       ├── Layout/
-│       │   ├── MainLayout.razor     # App shell (bar, drawer, dark mode, viewport observer)
-│       │   └── Breadcrumb.razor     # Navigation breadcrumbs
-│       ├── Pages/
-│       │   ├── Home.razor           # / — Landing page
-│       │   ├── Counter.razor        # /counter — Click counter
-│       │   ├── Weather.razor        # /weather — Data grid CRUD demo (69K+ rows)
-│       │   └── Error.razor          # /Error — Error page with request ID
-│       └── Weather/
-│           ├── AddWeather.razor     # Add dialog (form + validation)
-│           ├── EditWeather.razor    # Edit dialog (pre-filled form)
-│           └── RemoveWeather.razor  # Delete confirmation dialog
-├── infra/
-│   ├── main.bicep                   # Bicep entry point (Log Analytics, App Insights, App Service Plan, Web App)
-│   ├── main.bicepparam              # Production parameter values
-│   ├── main.json                    # Compiled ARM template
-│   └── modules/
-│       ├── logAnalytics.bicep       # Dedicated Log Analytics workspace
-│       ├── appInsights.bicep        # Application Insights (workspace-based)
-│       ├── appServicePlan.bicep     # Linux App Service Plan module used by main.bicep
-│       └── webApp.bicep             # Container Web App
-├── .github/
-│   ├── workflows/
-│   │   ├── build-check.yml         # PR: dotnet build + Docker health check
-│   │   ├── main-release.yml        # Main: 6-job pipeline (amd64 → deploy-infra → deploy-image; arm64 → merge-manifest)
-│   │   ├── codeql.yml              # Security analysis (C#, weekly + push/PR)
-│   │   └── deploy.yml              # GitHub Pages deployment
-│   └── codeql/codeql-config.yml    # CodeQL exclusions (obj/, bin/, generated code)
-├── renovate.json                    # Shared Renovate dependency-update preset
-├── .agents/memory/                  # In-repo agent memory (architecture reference)
-├── .editorconfig                    # UTF-8, LF, 4-space indent (.cs/.razor)
-├── global.json                      # .NET SDK 9.0.202 pinned
-├── WebClient.sln                    # Solution file
-└── LICENSE                          # MIT
-```
-
----
-
-## CI/CD Workflows
-
-### Pull Requests (`build-check.yml`)
-1. Restore + build (.NET Debug)
-2. Build Docker image
-3. Run container, health check `/healthz` (20 retries, 5s interval)
-
-### Main Branch (`main-release.yml`)
-6-job pipeline:
-1. `setup-build-test` — Restore + build (.NET Release, TRIM=true, EXTRA_OPTIMIZE=true)
-2. `build-push-amd64` — Build linux/amd64, push as `:latest`
-3. `deploy-infra` — OIDC login + Bicep deploy (Incremental, `infra/`) — needs amd64
-4. `deploy-image` — Deploy `:latest` to Azure Web App — needs deploy-infra
-5. `build-push-arm64` — Build linux/arm64/v8, push as `:latest-arm64` (parallel, non-blocking for deploy) — needs amd64
-6. `merge-manifest` — Merge amd64 + arm64 digests into `:latest` multi-arch manifest — needs both builds
-
-### Security (`codeql.yml`)
-- C# analysis with `security-and-quality` queries
-- Triggers: push/PR to main + weekly schedule
-
-### Documentation (`deploy.yml`)
-- Delegates to the reusable `jonathanperis/.github/.github/workflows/pages-docs-deploy.yml@main` workflow
-- Builds the Astro docs site in `docs/` and publishes it to GitHub Pages
-- Triggers: push to main, manual dispatch
-
-### Dependency Updates (`renovate.json`)
-- Inherits the shared `github>jonathanperis/.github` Renovate preset
-- Covers NuGet packages, Docker base images, GitHub Actions versions, and docs tooling
-
----
-
-## Contribution Workflow
-
-- **All changes** go through a feature branch + pull request
-- **Merge strategy:** Rebase only (squash and merge commits disabled)
-- **Auto merge:** Enabled
-- **Delete branch on merge:** Enabled
-- **Web commit signoff:** Required
-- **Branch naming:** `feat/`, `fix/`, `docs/`, `chore/`, `ci/` prefixes
-- **Commit style:** Conventional commits (see git log for examples)
-
-### Branch Protection (main)
-- Required linear history
-- Force pushes blocked
-- Branch deletions blocked
-
-### Community Health Files
-
-CODE_OF_CONDUCT, CONTRIBUTING, SECURITY, SUPPORT, and LICENSE are managed at the org level in the [jonathanperis/.github](https://github.com/jonathanperis/.github) repository. Do **not** create these files in this repo.
-
----
-
-## Docker
-
-```sh
-# Build
-docker build --build-arg TRIM=true --build-arg EXTRA_OPTIMIZE=true \
-  -f src/WebClient/Dockerfile src/
-
-# Run
-docker run -p 5000:5000 blazor-mudblazor-starter
-```
-
-- **Base image:** `mcr.microsoft.com/dotnet/aspnet:9.0`
-- **SDK image:** `mcr.microsoft.com/dotnet/sdk:9.0`
-- **Non-root user:** `app`
-- **Port:** 5000 (`ASPNETCORE_URLS=http://+:5000`)
-- **Health check:** `/healthz`
-- **Multi-stage:** base → build (with clang/zlib for AOT) → publish → final
-
-### Container Image
-
-- **Registry:** `ghcr.io/jonathanperis/blazor-mudblazor-starter:latest`
-- **Platforms:** linux/amd64, linux/arm64/v8
+Community policy files are managed at `jonathanperis/.github`; do not duplicate them here. Keep task artifacts and local credentials ignored. The agent memory directory is `.agents/memory/`.

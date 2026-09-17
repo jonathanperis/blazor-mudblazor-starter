@@ -1,120 +1,108 @@
-# blazor-mudblazor-starter
+# Blazor learning sandbox
 
-> Blazor Server starter template with MudBlazor Material Design components -- .NET 9, Docker, and Azure CI/CD ready
+A Swiss-army-knife learning project for **Blazor Server and MudBlazor**. Explore working examples, read their source, change one thing, and observe the result.
 
-[![CI](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/build-check.yml/badge.svg)](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/build-check.yml) [![Release](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/main-release.yml/badge.svg)](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/main-release.yml) [![CodeQL](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/codeql.yml/badge.svg)](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/codeql.yml) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+[![Build Check](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/build-check.yml/badge.svg)](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/build-check.yml)
+[![CodeQL](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/codeql.yml/badge.svg)](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/codeql.yml)
 
-**[Live demo →](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/)** | **[Documentation →](https://jonathanperis.github.io/blazor-mudblazor-starter/)**
+**[Live labs](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/labs)** · **[Learning guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/)**
 
----
+## Run locally
 
-## About
+Install **.NET 10 SDK 10.0.401** (or a later patch in that SDK feature band). The SDK includes the current .NET runtime. Cloud credentials are optional.
 
-A ready-to-use starter template for building interactive web applications with Blazor Server and MudBlazor. Comes pre-configured with a Material Design layout, navigation, dark mode toggle, and demo pages that demonstrate data binding, data grids, and CRUD dialogs. The project includes a multi-stage Dockerfile for AMD64 and ARM64 architectures, and a CI/CD pipeline that builds, pushes to GitHub Container Registry, and deploys to Azure Web App.
-
-## Tech Stack
-
-| Technology | Version | Purpose |
-|---|---|---|
-| .NET | 9.0 (SDK 9.0.202) | Runtime and SDK |
-| Blazor Server | - | Interactive server-side rendering |
-| MudBlazor | 9.3.0 | Material Design UI components |
-| MudBlazor.Translations | 3.3.0 | Localization support |
-| Application Insights | 3.1.0 | Optional production telemetry when configured |
-| Docker | Multi-stage | AMD64 + ARM64 container builds |
-| GitHub Actions | - | CI/CD to GHCR + Azure Web App |
-
-## Features
-
-- Pre-configured MudBlazor layout with app bar, navigation drawer, breadcrumbs, and dark mode toggle
-- Demo pages: Home (landing), Counter (interactive counter), Weather (virtualized data grid with Add/Edit/Remove dialogs)
-- Multi-architecture Docker image (AMD64 + ARM64) with ASP.NET Core `/healthz` endpoint used by CI smoke tests
-- Production-optimized builds with optional AOT plus ReadyToRun, trimming, and extra optimization support
-- CI/CD pipeline: PR build checks with container health verification, main branch release to GHCR and Azure Web App
-- Responsive design with breakpoint-aware UI (switch vs toggle for dark mode)
-- Clipboard copy support for data grid rows via right-click context menu
-
-## Getting Started
-
-### Prerequisites
-
-- [.NET 9 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
-- [Docker](https://www.docker.com/) (optional)
-
-### Quick Start
-
-```bash
+```sh
 git clone https://github.com/jonathanperis/blazor-mudblazor-starter.git
 cd blazor-mudblazor-starter
-dotnet restore
+dotnet restore --locked-mode
 dotnet run --project src/WebClient
 ```
 
-Open `http://localhost:5000` in your browser.
+Open **http://localhost:5000/labs**. For local TLS, run `dotnet run --project src/WebClient --launch-profile https`.
 
-### Run with Docker
+## Choose a lab
 
-```bash
-docker build -t blazor-mudblazor -f src/WebClient/Dockerfile src/
-docker run -p 5000:5000 blazor-mudblazor
+| Route | Lesson |
+|---|---|
+| `/counter` | Parameters, event callbacks, component state, and circuit lifetime |
+| `/labs/forms` | Data annotations, field feedback, draft editing, cancel versus confirm |
+| `/weather` | Typed DataGrid filters, sorting, CRUD, selection, virtualization, deterministic datasets |
+| `/labs/api` | Typed HTTP client, server paging, latency, errors, empty states, cancellation |
+| `/labs/persistence` | SQLite, EF Core migrations, workspace isolation, optimistic concurrency |
+| `/labs/auth` | Demo personas, cookie authentication, antiforgery, server-enforced policies |
+| `/labs/localization` | English/Portuguese, culture formatting, themes, keyboard and live-region practice |
+| `/labs/files` | Bounded CSV import/export and cancellable server work with progress |
+| `/labs/observability` | Structured logs, trace IDs, liveness/readiness, optional Docker/Azure deployment |
+
+Each lab includes an objective, prerequisites, an approximate duration, a source link, a common mistake, and an exercise. Reset controls make experiments repeatable.
+
+### Understand the data lifetime
+
+- **Counter:** component state resets on navigation; circuit-scoped state survives navigation but resets with a new circuit.
+- **Grid:** private in-memory data resets on navigation/reload. Choose 100–69,420 records and a random seed. Virtualization limits rendering, not dataset allocation.
+- **API:** deterministic, read-only server dataset with bounded pages. The UI demonstrates actual HTTP requests.
+- **Notebook:** SQLite data and data-protection keys live in ignored `src/WebClient/App_Data/`. A protected, essential workspace cookie scopes notes to this browser. Demo personas are separate from workspace ownership.
+- **CSV/work:** imports replace data only after complete validation. Processing stops when the page is disposed; it is not a durable queue.
+- **Authentication:** fixed demonstration personas are enabled by default only in Development. Azure explicitly disables them. Use an identity provider for real accounts.
+
+## Stack
+
+| Package / tool | Version |
+|---|---|
+| SDK | 10.0.401 |
+| Microsoft.ApplicationInsights.AspNetCore | 3.1.2 |
+| Microsoft.EntityFrameworkCore.Sqlite | 10.0.12 |
+| MudBlazor | 9.10.0 |
+| MudBlazor.Translations | 3.6.0 |
+
+The docs use Astro 7 and Sätteri, with a committed Bun lockfile. NuGet lockfiles cover application and test dependencies. Renovate maintains dependency updates.
+
+## Verify and experiment
+
+```sh
+dotnet test -c Release
+dotnet publish src/WebClient -c Release -o artifacts/publish
+dotnet tool restore
+dotnet ef migrations list --project src/WebClient
 ```
 
-## Project Structure
+For documentation, use Node.js 22.12+ and Bun:
 
-```
-blazor-mudblazor-starter/
-├── src/WebClient/
-│   ├── Program.cs                  # App entry point, MudBlazor service registration
-│   ├── WebClient.csproj            # .NET 9, MudBlazor 9.3.0, AOT/Trim build flags
-│   ├── Dockerfile                  # Multi-stage build (AMD64 + ARM64)
-│   ├── appsettings.json            # Base configuration
-│   ├── appsettings.Development.json
-│   ├── Properties/launchSettings.json
-│   ├── wwwroot/                    # Static assets
-│   └── Components/
-│       ├── App.razor               # Root HTML document, MudBlazor CSS/JS imports
-│       ├── Routes.razor            # Router setup with MainLayout default
-│       ├── _Imports.razor          # Global using directives
-│       ├── Layout/
-│       │   ├── MainLayout.razor    # MudBlazor layout shell (app bar, drawer, dark mode)
-│       │   └── Breadcrumb.razor    # Reusable breadcrumb navigation component
-│       ├── Pages/
-│       │   ├── Home.razor          # Landing page
-│       │   ├── Counter.razor       # Interactive counter demo
-│       │   ├── Weather.razor       # Data grid with CRUD operations
-│       │   └── Error.razor         # Error page with request ID
-│       └── Weather/
-│           ├── AddWeather.razor    # Dialog for adding weather entries
-│           ├── EditWeather.razor   # Dialog for editing weather entries
-│           └── RemoveWeather.razor # Delete confirmation dialog
-├── .github/workflows/
-│   ├── build-check.yml             # PR validation: build + Docker + health check
-│   ├── main-release.yml            # Release: build + GHCR push + Azure deploy
-│   ├── codeql.yml                  # C# security and quality analysis
-│   └── deploy.yml                  # GitHub Pages documentation deployment
-├── WebClient.sln
-├── global.json                     # .NET SDK 9.0.202
-├── renovate.json                   # Shared Renovate dependency-update preset
-└── LICENSE
+```sh
+cd docs
+bun install --frozen-lockfile
+npm run check:drift
+npm run build
+npm run check:rendered
+bun audit
 ```
 
-## CI/CD
+See the [testing guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/testing/) for test boundaries, HTTP smoke checks, and measurement exercises.
 
-| Workflow | Trigger | Purpose |
-|----------|---------|---------|
-| `build-check.yml` | Pull requests | .NET build + Docker health check (`/healthz`) |
-| `main-release.yml` | Push to main | Release build + multi-arch GHCR push + Azure deploy |
-| `codeql.yml` | Push/PR + weekly | C# security and quality analysis |
-| `deploy.yml` | Push to main + manual dispatch | GitHub Pages deployment |
+## Docker
 
-**Container image:** `ghcr.io/jonathanperis/blazor-mudblazor-starter:latest` (amd64 + arm64)
+```sh
+docker build -t blazor-learning -f src/WebClient/Dockerfile src/
+docker run --rm -p 5000:5000 -v learning-data:/app/App_Data blazor-learning
+```
 
-**Deployment:** Azure App Service (Brazil South) with Bicep infrastructure via Azure OIDC plus image deployment via publish profile
+The container runs as `app` and listens on port 5000. The named volume preserves SQLite and workspace-protection keys. Omit it for a disposable environment. Demo sign-in is disabled in the default container environment.
 
-## Dependency Management
+The supported publishing experiment is `--build-arg READY_TO_RUN=true`. `BUILD_CONFIGURATION` defaults to `Release`. Native AOT and trimming are not supported modes for this Blazor Server sample; globalization and diagnostics stay enabled.
 
-Automated dependency updates are handled by [Renovate](https://docs.renovatebot.com/) via `renovate.json`, which inherits the shared `github>jonathanperis/.github` preset for NuGet packages, Docker base images, GitHub Actions, and docs tooling.
+## Delivery
+
+- **PRs:** behavioral tests, locked restore with vulnerability checks, published-app HTTP checks, docs build/link/drift checks, dependency review, Bicep compilation, workflow linting, and container checks/scanning.
+- **Main:** validates again and publishes a multi-architecture GHCR image with a commit tag and a manifest digest. `latest` is a convenience tag; Azure deployment uses the digest.
+- **Azure:** optional, enabled with `AZURE_DEPLOY_ENABLED=true`. Uses OIDC and the `azure-sandbox` GitHub environment. No publish profile is needed.
+- **GitHub Pages:** uses the shared `pages-docs-deploy.yml@main` workflow.
+
+Follow the [deployment lab](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/deployment/) for resource names, permissions, configuration, persistence limitations, and cleanup.
+
+## Structure
+
+`src/WebClient/Components/` contains the shell and lab pages. `Features/` contains forecast, notebook, identity, localization, and learning support code. `tests/WebClient.Tests/` contains component and integration tests. `docs/wiki/` is the learning guide; `infra/` is the optional Azure deployment.
 
 ## License
 
-MIT -- see [LICENSE](LICENSE)
+MIT — see [LICENSE](LICENSE).

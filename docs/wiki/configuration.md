@@ -1,106 +1,57 @@
 # Configuration
 
-## Application Settings
+## SDK and packages
 
-### appsettings.json
-
-```json
-{
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information",
-      "Microsoft.AspNetCore": "Warning"
-    }
-  },
-  "AllowedHosts": "*"
-}
-```
-
-| Key | Default | Description |
-|---|---|---|
-| `Logging:LogLevel:Default` | `Information` | Minimum log level for all categories |
-| `Logging:LogLevel:Microsoft.AspNetCore` | `Warning` | Log level for ASP.NET Core framework logs |
-| `AllowedHosts` | `*` | Allowed host headers (all hosts by default) |
-
-### appsettings.Development.json
-
-Overrides for local development. Currently mirrors the base logging configuration.
-
-## Environment Variables
-
-| Variable | Default | Description |
-|---|---|---|
-| `ASPNETCORE_ENVIRONMENT` | `Production` | Set to `Development` for local dev (auto-set by launch profiles) |
-| `ASPNETCORE_URLS` | `http://+:5000` | Listening URL (set in Dockerfile for container builds) |
-| `APPLICATIONINSIGHTS_CONNECTION_STRING` | unset locally; set by Azure Bicep | Enables Application Insights telemetry when present |
-| `APPINSIGHTS_INSTRUMENTATIONKEY` | unset locally; set by Azure Bicep | Legacy instrumentation key exposed for Azure App Service/Application Insights compatibility |
-| `ApplicationInsightsAgent_EXTENSION_VERSION` | unset locally; `~3` in Azure | Enables the Azure App Service Application Insights site extension |
-
-Application Insights is inactive for local development unless you provide `APPLICATIONINSIGHTS_CONNECTION_STRING`. In Azure, the Bicep deployment wires the connection string and instrumentation key into Web App application settings.
-
-## .NET SDK Version
-
-Pinned in `global.json`:
+`global.json` selects the supported SDK:
 
 ```json
 {
   "sdk": {
-    "version": "9.0.202",
-    "rollForward": "minor"
+    "version": "10.0.401",
+    "rollForward": "latestPatch"
   }
 }
 ```
 
-The `rollForward: minor` policy allows using any 9.0.x SDK version at or above 9.0.202.
+The policy permits later patches in the same SDK feature band. Package versions live in `WebClient.csproj` and the README stack table. Application and test NuGet lockfiles make restores reproducible. The application declares both Linux runtime identifiers so locked container restores support amd64 and arm64. Known NuGet advisories fail restore through the NU1901–NU1904 warning policy.
 
-## MudBlazor Service Registration
+## Runtime settings
 
-In `Program.cs`, MudBlazor is registered with:
+| Key | Default | Purpose |
+|---|---|---|
+| `Learning:ApiBaseUrl` | `http://127.0.0.1:5000/` | Internal HTTP address for the typed client and diagnostics lab |
+| `Learning:DataDirectory` | `App_Data` under the content root | SQLite database and data-protection keys |
+| `Learning:EnableDemoAuth` | true only in Development | Enable fixed educational personas |
+| `APPLICATIONINSIGHTS_CONNECTION_STRING` | unset | Opt in to Application Insights export |
+| `ASPNETCORE_URLS` | launch profile or container port 5000 | Server listener |
+| `HTTPS_PORT` | unset | Enable application-level HTTPS redirection when a TLS endpoint is configured |
 
-```csharp
-builder.Services.AddMudServices();
-builder.Services.AddMudTranslations();
-MudGlobal.UnhandledExceptionHandler = Console.WriteLine;
+Use double underscores for hierarchical environment variables, for example `Learning__ApiBaseUrl`. ASP.NET Core does not automatically load `.env` files; supply environment variables or development user secrets using the standard configuration providers.
+
+```sh
+Learning__ApiBaseUrl=http://127.0.0.1:5050/ \
+  dotnet run --project src/WebClient --no-launch-profile --urls http://127.0.0.1:5050
 ```
 
-- `AddMudServices()` registers all MudBlazor services (dialogs, snackbar, scroll, resize, etc.)
-- `AddMudTranslations()` registers localization support (MudBlazor.Translations 3.3.0)
-- `MudGlobal.UnhandledExceptionHandler` routes unhandled exceptions to the console
+The no-launch-profile example uses the default Production environment, so demo sign-in is disabled. To study the identity lab, run the default Development profile.
 
-## Docker Build Arguments
+## Preferences and culture
 
-The Dockerfile accepts four build arguments that control the compilation output:
+Only theme and drawer preferences use localStorage. Storage denial leaves controls usable for the current visit. Viewport size is derived, not stored.
 
-| Argument | Default | Values | Description |
-|---|---|---|---|
-| `AOT` | `false` | `true`, `false` | Enable Ahead-of-Time compilation for faster startup |
-| `TRIM` | `false` | `true`, `false` | Enable ReadyToRun, single-file publish, and self-contained deployment |
-| `EXTRA_OPTIMIZE` | `false` | `true`, `false` | Strip symbols, disable debugger support, invariant globalization |
-| `BUILD_CONFIGURATION` | `Debug` | `Debug`, `Release` | .NET build configuration |
+Request localization supports English and Brazilian Portuguese. The culture form performs a full redirect so a fresh circuit inherits the culture. This example and MudBlazor's translated strings change; the teaching guide remains English.
 
-### Build Flag Details
+The notebook uses a separate protected workspace cookie. Retain its cookie and the data-protection keys to retain access to the same notes. Demo personas do not identify notebook ownership.
 
-**AOT** (`AOT=true`): Enables `PublishAot` with `OptimizationPreference` set to `Speed`. Produces a native binary with faster cold-start performance.
+## Publishing experiments
 
-**TRIM** (`Trim=true`): Enables `PublishReadyToRun`, `PublishReadyToRunComposite`, `PublishSingleFile`, and `SelfContained`. Produces an optimized single-file deployment.
+| Docker argument | Default | Effect |
+|---|---|---|
+| `BUILD_CONFIGURATION` | `Release` | Compilation configuration |
+| `READY_TO_RUN` | `false` | Supported ReadyToRun precompilation |
 
-**EXTRA_OPTIMIZE** (`ExtraOptimize=true`): Applies aggressive optimizations for minimal binary size:
-- `TrimmerRemoveSymbols` -- removes debug symbols
-- `DebuggerSupport` -- disabled
-- `InvariantGlobalization` -- uses invariant culture
-- `EventSourceSupport` -- disabled
-- `HttpActivityPropagationSupport` -- disabled
-- `MetadataUpdaterSupport` -- disabled
-- `StackTraceSupport` -- disabled
-- `UseSystemResourceKeys` -- uses system resource keys instead of embedded strings
+The app remains framework-dependent. Native AOT is unsupported for Blazor Server. Trimming, invariant globalization, and diagnostic-stripping modes are intentionally absent. Measure publishing options using the [testing guide](../testing/).
 
-### Production Defaults
+## Optional telemetry
 
-The `main-release.yml` pipeline uses these defaults:
-
-```
-AOT=false
-TRIM=true
-EXTRA_OPTIMIZE=true
-BUILD_CONFIGURATION=Release
-```
+The application registers Application Insights only when `APPLICATIONINSIGHTS_CONNECTION_STRING` is set. Console logging and the diagnostics lab work without Azure. Avoid logging notebook content, imported data, cookies, or credentials. The Bicep deployment uses SDK instrumentation, without a duplicate auto-instrumentation agent.
