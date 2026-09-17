@@ -65,4 +65,4 @@ az bicep build-params --file infra/main.bicepparam --stdout
 
 ## Documentation publishing
 
-The separate `deploy.yml` workflow delegates to `jonathanperis/.github/.github/workflows/pages-docs-deploy.yml@main` for the static GitHub Pages guide. This is documentation publishing, separate from application hosting.
+The separate `deploy.yml` workflow delegates to `jonathanperis/.github/.github/workflows/pages-docs-deploy.yml@3a6707da1d9f043bc3fa760bc08525db96d34c9d` for the static GitHub Pages guide. The reviewed commit pin is checked against this guide, and only the optional public analytics ID is passed as a secret. This is documentation publishing, separate from application hosting.

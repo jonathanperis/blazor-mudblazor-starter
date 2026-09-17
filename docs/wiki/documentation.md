@@ -38,4 +38,4 @@ The manifest contains narrow same-major transitive overrides for smol-toml, Post
 
 ## Publishing
 
-`.github/workflows/deploy.yml` calls the shared `pages-docs-deploy.yml@main` workflow. PR validation builds and checks docs before they can reach that deployment path.
+`.github/workflows/deploy.yml` calls the shared `pages-docs-deploy.yml` workflow at a reviewed full commit SHA. PR validation builds and checks docs before they can reach that deployment path.
