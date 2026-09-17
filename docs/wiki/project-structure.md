@@ -26,6 +26,8 @@ renovate.json                   shared dependency-update preset
 
 ## Boundaries
 
+Start with [`Program.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient/Program.cs) for host setup, [`LabCatalog.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient/Features/Learning/LabCatalog.cs) for the lesson map, and [`IntegrationTests.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/tests/WebClient.Tests/IntegrationTests.cs) for HTTP and persistence examples. The [documentation-site guide](../documentation/) explains the separate Astro project.
+
 Keep related lab behavior together. Pages demonstrate the interaction; feature code owns reusable behavior that benefits from direct testing. One host is enough for these lessons.
 
 The forecast model is independent of a Razor page. The notebook service depends on a short-lived context factory and learner workspace, not component rendering. The auth example enforces access at the endpoint, not just through UI visibility.

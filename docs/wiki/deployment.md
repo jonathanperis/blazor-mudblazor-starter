@@ -22,7 +22,7 @@ Both publishing modes keep culture and diagnostics support. `ghcr.io/jonathanper
 
 ## PR validation
 
-`build-check.yml` runs behavioral tests, locked dependency restore/audit, published-app HTTP smoke checks, documentation build/link/drift checks, dependency review, infrastructure compilation, workflow linting, and a Docker matrix for both ReadyToRun values. Trivy scans the default image for high/critical vulnerabilities.
+[`build-check.yml`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/.github/workflows/build-check.yml) runs behavioral tests, locked dependency restore/audit, published-app HTTP smoke checks, documentation type/build/link/drift checks, dependency review, infrastructure compilation, workflow linting, and a Docker matrix for both ReadyToRun values. Trivy scans the default image for high/critical vulnerabilities.
 
 The existing protected-branch names `setup-build-test` and `container-test` are preserved. The latter requires the complete container matrix to pass.
 
@@ -65,4 +65,4 @@ az bicep build-params --file infra/main.bicepparam --stdout
 
 ## Documentation publishing
 
-The separate `deploy.yml` workflow delegates to `jonathanperis/.github/.github/workflows/pages-docs-deploy.yml@3a6707da1d9f043bc3fa760bc08525db96d34c9d` for the static GitHub Pages guide. The reviewed commit pin is checked against this guide, and only the optional public analytics ID is passed as a secret. This is documentation publishing, separate from application hosting.
+The separate [`deploy.yml`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/.github/workflows/deploy.yml) workflow delegates to `jonathanperis/.github/.github/workflows/pages-docs-deploy.yml@d7e3c753530db86cb01b9510ab045c99b172ba03` for the static GitHub Pages guide. The reviewed commit pin is checked against this guide, the selected Node version is passed as an input, and only the optional public analytics ID is passed as a secret. The shared workflow installs and builds independently of PR validation. This is documentation publishing, separate from application hosting.

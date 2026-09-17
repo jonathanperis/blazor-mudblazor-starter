@@ -55,29 +55,30 @@ Each lab includes an objective, prerequisites, an approximate duration, a source
 | MudBlazor | 9.10.0 |
 | MudBlazor.Translations | 3.6.0 |
 
-The docs use Astro 7 and Sätteri, with a committed Bun lockfile. NuGet lockfiles cover application and test dependencies. Renovate maintains dependency updates.
+The docs use Astro 7, Sätteri, and TypeScript 7, with a committed Bun lockfile. NuGet lockfiles cover application and test dependencies. Renovate maintains dependency updates.
 
 ## Verify and experiment
 
 ```sh
-dotnet test -c Release
-dotnet publish src/WebClient -c Release -o artifacts/publish
+dotnet test -c Release --no-restore
+dotnet publish src/WebClient -c Release --no-restore -o artifacts/publish
 dotnet tool restore
 dotnet ef migrations list --project src/WebClient
 ```
 
-For documentation, use Node.js 22.12+ and Bun:
+For documentation, use the Node version in [`docs/.node-version`](docs/.node-version), Bun from the `packageManager` field in [`docs/package.json`](docs/package.json), and Python 3 for the verification scripts:
 
 ```sh
 cd docs
 bun install --frozen-lockfile
 npm run check:drift
+npm run check:types
 npm run build
 npm run check:rendered
 bun audit
 ```
 
-See the [testing guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/testing/) for test boundaries, HTTP smoke checks, and measurement exercises.
+See the [testing guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/testing/) for test boundaries, HTTP smoke checks, and measurement exercises. The [docs maintainer README](docs/README.md) explains authoring, local URLs, and the static-site structure.
 
 ## Docker
 

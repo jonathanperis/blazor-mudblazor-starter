@@ -8,7 +8,7 @@
 | Forms and dialogs (`/labs/forms`) | 15 min | Submit invalid input, then edit and cancel |
 | Localization (`/labs/localization`) | 15 min | Switch to Portuguese and repeat using keyboard navigation |
 
-Read `CounterControl.razor` for the child-to-parent `EventCallback`, and `EditWeather.razor` for the draft-copy pattern. Explain why the parent owns the committed object.
+Read [`CounterControl.razor`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient/Components/Learning/CounterControl.razor) for the child-to-parent `EventCallback`, and [`EditWeather.razor`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient/Components/Weather/EditWeather.razor) for the draft-copy pattern. Explain why the parent owns the committed object.
 
 ## Data: move from memory to persistence
 
@@ -18,7 +18,7 @@ Read `CounterControl.razor` for the child-to-parent `EventCallback`, and `EditWe
 | API (`/labs/api`) | 20 min | Compare payload size, add latency, cancel, and simulate a failure |
 | SQLite (`/labs/persistence`) | 25 min | Edit the same note in two tabs and observe the concurrency conflict |
 
-Ask which costs virtualization removes, which costs remain on the server, and how a short-lived DbContext differs from a circuit-scoped service.
+Compare [`Weather.razor`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient/Components/Pages/Weather.razor), [`ForecastApi.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient/Features/Forecasts/ForecastApi.cs), and [`NotebookService.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient/Features/Notebook/NotebookService.cs). Ask which costs virtualization removes, which costs remain on the server, and how a short-lived DbContext differs from a circuit-scoped service.
 
 ## Boundaries: ownership, access, and cancellation
 

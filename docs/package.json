@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
+  "packageManager": "bun@1.4.2",
   "engines": {
     "node": ">=22.12.0"
   },
@@ -10,22 +11,18 @@
     "dev": "astro dev",
     "build": "astro build",
     "preview": "astro preview",
+    "check:types": "tsc --noEmit",
     "check:drift": "python3 ../scripts/check-docs-drift.py",
     "check:rendered": "python3 ../scripts/check-docs-rendered-html.py"
   },
   "dependencies": {
-    "@astrojs/markdown-satteri": "^0.3.8",
+    "@astrojs/markdown-satteri": "^0.4.1",
     "@astrojs/sitemap": "^3.7.4",
     "astro": "^7.3.3"
-  },
-  "overrides": {
-    "smol-toml": "^1.8.0",
-    "postcss": "^8.5.28",
-    "nanoid": "^3.3.16"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
     "tailwindcss": "^4.3.3",
-    "typescript": "^6.0.3"
+    "typescript": "^7.0.2"
   }
 }
