@@ -59,3 +59,10 @@ node_modules/
 package-lock.json
 # Allow the docs Astro project to commit its lockfile
 !docs/package-lock.json
+
+# Local specifications, credentials, and learning data
+.specs/
+.env
+.env.*
+!.env.example
+**/App_Data/

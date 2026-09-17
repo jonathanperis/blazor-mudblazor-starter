@@ -1,0 +1,50 @@
+@inject NavigationManager Navigation
+
+<PageTitle>@Lab.Title · Blazor learning sandbox</PageTitle>
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4 pb-8">
+    <MudLink Href="/labs">← All labs</MudLink>
+    <MudText Typo="Typo.h4" HtmlTag="h1" Class="mt-3">@Lab.Title</MudText>
+    <MudText Typo="Typo.body1" Class="my-3">@Lab.Objective</MudText>
+    <MudStack Row Class="flex-wrap mb-4" AlignItems="AlignItems.Center">
+        <MudChip T="string" Size="Size.Small" Color="Color.Primary">@Lab.Level</MudChip>
+        <MudText Typo="Typo.body2">@Lab.Minutes min · Prerequisite: @Lab.Prerequisites</MudText>
+        <MudLink Href="@SourceUrl" Target="_blank" rel="noopener noreferrer">View source</MudLink>
+    </MudStack>
+    <MudPaper Class="pa-4 mb-4" Outlined>
+        <ErrorBoundary @ref="_boundary">
+            <ChildContent><div @key="_generation">@ChildContent</div></ChildContent>
+            <ErrorContent>
+                <MudAlert Severity="Severity.Error">This experiment failed. Reset its state or reload the page to try again.</MudAlert>
+                @if (OnReset.HasDelegate)
+                {
+                    <MudButton OnClick="Recover" Class="mt-2">Reset and retry</MudButton>
+                }
+                else
+                {
+                    <a href="@Navigation.Uri" data-enhance-nav="false">Reload lab</a>
+                }
+            </ErrorContent>
+        </ErrorBoundary>
+        @if (OnReset.HasDelegate)
+        {
+            <MudButton OnClick="OnReset" Disabled="ResetDisabled" StartIcon="@Icons.Material.Filled.RestartAlt" Class="mt-4">Reset experiment</MudButton>
+        }
+    </MudPaper>
+    <MudText Typo="Typo.h6" HtmlTag="h2">Why it works</MudText>
+    <MudText Class="mt-2 mb-4">@Lab.Explanation</MudText>
+    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-4">Common mistake: @Lab.Pitfall</MudAlert>
+    <MudText Typo="Typo.h6" HtmlTag="h2">Try it yourself</MudText>
+    <MudText Class="mt-2">@Lab.Exercise</MudText>
+</MudContainer>
+
+@code {
+    [Parameter, EditorRequired] public string Slug { get; set; } = "";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public EventCallback OnReset { get; set; }
+    [Parameter] public bool ResetDisabled { get; set; }
+    private Lab Lab => LabCatalog.Get(Slug);
+    private string SourceUrl => $"https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient/Components/Pages/{Lab.Source}";
+    private ErrorBoundary? _boundary;
+    private int _generation;
+    private async Task Recover() { await OnReset.InvokeAsync(); _generation++; _boundary?.Recover(); }
+}

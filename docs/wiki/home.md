@@ -1,29 +1,29 @@
-# Blazor MudBlazor Starter
+# Blazor learning sandbox
 
-Production-ready Blazor Server starter template with MudBlazor Material Design components. Built on .NET 9 with Docker multi-arch support, GHCR publishing, Azure App Service deployment, CodeQL, and GitHub Pages documentation.
+A hands-on toolbox for learning Blazor Server and MudBlazor. Every lab is a small working example with source, an explanation, a common mistake, and something to try.
 
-**[Live demo](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/)** · **[GitHub repository](https://github.com/jonathanperis/blazor-mudblazor-starter)**
+## Start here
 
----
+1. [Run locally](./getting-started/).
+2. [Choose a learning path](./learning-path/).
+3. [Explore the lab reference](./components/).
+4. [Run tests and measurements](./testing/).
 
-## Quick Links
+[Live lab catalog](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/labs) · [Source repository](https://github.com/jonathanperis/blazor-mudblazor-starter)
 
-| Page | Description |
+## How to learn here
+
+Predict what an interaction will do. Try it. Read the implementation. Change one thing and compare. Use reset controls to return to a known dataset or state.
+
+The default application runs locally using synthetic forecasts and SQLite. Cloud credentials are optional. Authentication uses clearly labeled local demo personas; the Azure deployment disables them.
+
+## Map of the guide
+
+| Topic | Purpose |
 |---|---|
-| [Getting Started](#getting-started) | Prerequisites, local run, Docker run |
-| [Project Structure](#project-structure) | Directory layout and file descriptions |
-| [Components](#components) | Blazor components reference |
-| [Configuration](#configuration) | App settings, build flags, environment variables |
-| [Deployment](#deployment) | Docker, CI/CD, and Azure deployment |
-| [Documentation Site](#documentation) | Astro Pages authoring, Sätteri, and validation workflow |
+| [Configuration](./configuration/) | Runtime, culture, storage, API base URL and optional telemetry |
+| [Docker and Azure](./deployment/) | Supported publishing modes and an optional deployment exercise |
+| [Documentation site](./documentation/) | Add pages and verify links |
+| [Project structure](./project-structure/) | Find the implementation and tests |
 
-## Key Features
-
-- Pre-configured MudBlazor layout with purple app bar, navigation drawer, compact breadcrumbs, project links, and dark mode toggle
-- Productized demo pages: Overview, Counter demo, and DataGrid demo with Add/Edit/Remove dialogs
-- DataGrid showcase with 69,420 virtualized rows, shortened record IDs, row selection, paging, and right-click clipboard copy
-- Multi-architecture Docker image (AMD64 + ARM64) with ASP.NET Core health endpoint at `/healthz`
-- Production-optimized builds with optional AOT plus ReadyToRun, trimming, and extra optimization support
-- CI/CD pipeline: PR build checks with container health verification, main branch release to GHCR and Azure
-- Renovate dependency updates through the shared `github>jonathanperis/.github` preset
-- GitHub Pages documentation site with project overview, reference docs, and deployment notes
+Delivery checks include behavior tests, dependency review, container scanning, and documentation checks. Renovate maintains package updates. These checks provide specific evidence; a green health endpoint alone does not prove that a UI interaction works.

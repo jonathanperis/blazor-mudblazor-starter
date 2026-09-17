@@ -1,171 +1,67 @@
 @inherits LayoutComponentBase
-@inject IJSRuntime Js
-@implements IBrowserViewportObserver
-@implements IAsyncDisposable
+@inject UiPreferences Preferences
+@inject NavigationManager Navigation
 
-<MudThemeProvider @bind-IsDarkMode="@IsDarkMode" Theme="_theme"/>
-<MudPopoverProvider/>
-<MudDialogProvider/>
-<MudSnackbarProvider/>
-
-@if (!_initialized)
-{
-    <div style="display:none"></div>
-}
-else
-{
-        <MudLayout>
-        <MudAppBar Dense="true" Elevation="3">
-            <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="DrawerToggle" aria-label="Toggle navigation drawer" />
-            <MudText Typo="Typo.h6" Class="ml-3">MudBlazor Starter</MudText>
-            <MudSpacer/>
-            @if (IsSmallScreen)
+<MudThemeProvider IsDarkMode="Preferences.IsDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+<a class="skip-link" href="#main-content">Skip to content</a>
+<MudLayout Class="@(Preferences.IsDarkMode ? "sandbox-dark" : "sandbox-light")">
+    <MudAppBar Dense Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer" aria-label="Toggle navigation drawer" />
+        <MudText Typo="Typo.h6">Blazor learning sandbox</MudText>
+        <MudSpacer />
+        <div class="desktop-theme"><MudSwitch T="bool" Value="Preferences.IsDarkMode" ValueChanged="Preferences.SetThemeAsync" Label="Dark mode" Color="Color.Secondary" /></div>
+        <div class="mobile-theme"><MudIconButton Icon="@(Preferences.IsDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" Color="Color.Inherit" OnClick="ToggleTheme" aria-label="@(Preferences.IsDarkMode ? "Use light theme" : "Use dark theme")" /></div>
+        <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Project links" Color="Color.Inherit">
+            <MudMenuItem Href="https://github.com/jonathanperis/blazor-mudblazor-starter" Target="_blank" rel="noopener noreferrer">GitHub</MudMenuItem>
+            <MudMenuItem Href="https://jonathanperis.github.io/blazor-mudblazor-starter/docs/" Target="_blank" rel="noopener noreferrer">Learning guide</MudMenuItem>
+            <MudMenuItem Href="/healthz" Target="_blank">Liveness</MudMenuItem>
+        </MudMenu>
+    </MudAppBar>
+    <MudDrawer Open="Preferences.DrawerOpen" OpenChanged="Preferences.SetDrawerAsync" ClipMode="DrawerClipMode.Always">
+        <MudNavMenu>
+            <MudNavLink Href="/" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Overview</MudNavLink>
+            <MudNavLink Href="/labs" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.School">Learning paths</MudNavLink>
+            <MudDivider />
+            @foreach (var lab in LabCatalog.All)
             {
-                <MudToggleIconButton @bind-Toggled="IsDarkMode"
-                                     Icon="@Icons.Material.Filled.DarkMode"
-                                     Color="@Color.Default"
-                                     ToggledIcon="@Icons.Material.Filled.LightMode"
-                                     ToggledColor="@Color.Default"
-                                     aria-label="Toggle dark mode" />
+                <MudNavLink Href="@lab.Route">@lab.Title</MudNavLink>
             }
-            else
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent>
+        <main id="main-content" tabindex="-1">
+            @if (!Preferences.Available)
             {
-                <MudSwitch @bind-Value="IsDarkMode" Color="Color.Secondary" Class="ma-4" T="bool" Label="Dark mode" />
+                <MudAlert Severity="Severity.Info" Dense>Browser storage is unavailable. Theme and navigation still work for this visit.</MudAlert>
             }
-            <MudMenu Icon="@Icons.Material.Filled.MoreVert" Color="Color.Inherit" AnchorOrigin="@Origin.BottomRight" AriaLabel="Open project links">
-                <MudMenuItem Label="GitHub" Icon="@Icons.Material.Filled.Code" Href="https://github.com/jonathanperis/blazor-mudblazor-starter" Target="_blank" rel="noopener noreferrer" />
-                <MudMenuItem Label="Documentation" Icon="@Icons.Material.Filled.Article" Href="https://jonathanperis.github.io/blazor-mudblazor-starter/" Target="_blank" rel="noopener noreferrer" />
-                <MudMenuItem Label="Health check" Icon="@Icons.Material.Filled.HealthAndSafety" Href="/healthz" Target="_blank" />
-            </MudMenu>
-        </MudAppBar>
-        <MudDrawer @bind-Open="_drawerOpen" ClipMode="DrawerClipMode.Always">
-            <MudPaper Class="py-3" Elevation="0" Style="background-color: transparent">
-                <MudNavMenu>
-                    <MudNavLink Href="/" Icon="@Icons.Material.Filled.Home">Overview</MudNavLink>
-                    <MudDivider/>
-                    <MudNavLink Href="/counter" Icon="@Icons.Material.Filled.TouchApp">Counter demo</MudNavLink>
-                    <MudDivider/>
-                    <MudNavLink Href="/weather" Icon="@Icons.Material.Filled.TableView">DataGrid demo</MudNavLink>
-                    <MudDivider/>
-                </MudNavMenu>
-            </MudPaper>
-        </MudDrawer>
-        <MudMainContent>
-            <main>
-                @Body
-            </main>
-        </MudMainContent>
-    </MudLayout>
-}
+            <ErrorBoundary @key="Navigation.Uri">
+                <ChildContent>@Body</ChildContent>
+                <ErrorContent>
+                    <MudAlert Severity="Severity.Error" Class="ma-4">This lab encountered an error. Reload it to start a fresh experiment.</MudAlert>
+                    <a href="@Navigation.Uri" data-enhance-nav="false" class="ma-4">Reload lab</a>
+                </ErrorContent>
+            </ErrorBoundary>
+        </main>
+    </MudMainContent>
+</MudLayout>
+<div id="blazor-error-ui" role="alert">The interactive session stopped. <a href="" class="reload">Reload to reconnect</a>.</div>
 
 @code {
-    [Inject]
-    private IBrowserViewportService? BrowserViewportService { get; set; }
+    private Task ToggleDrawer() => Preferences.SetDrawerAsync(!Preferences.DrawerOpen);
+    private Task ToggleTheme() => Preferences.SetThemeAsync(!Preferences.IsDarkMode);
 
-    private readonly MudTheme _theme = new();
-    Guid IBrowserViewportObserver.Id { get; } = Guid.NewGuid();
-
-    // Backing fields for persisted properties.
-    private bool _isDarkMode;
-    private bool _drawerOpen;
-    private bool _isSmallScreen;
-    private bool _initialized;
-
-    // Public property with getter and setter to persist the theme state.
-    private bool IsDarkMode
-    {
-        get => _isDarkMode;
-        set
-        {
-            if (_isDarkMode == value) return;
-
-            _isDarkMode = value;
-            _ = SaveSettingAsync("isDarkMode", value);
-        }
-    }
-
-    // Public property for the drawer state.
-    private bool DrawerOpen
-    {
-        get => _drawerOpen;
-        set
-        {
-            if (_drawerOpen == value) return;
-
-            _drawerOpen = value;
-            _ = SaveSettingAsync("drawerOpen", value);
-        }
-    }
-
-    // Public property with getter and setter to persist the rendered state.
-    private bool IsSmallScreen
-    {
-        get => _isSmallScreen;
-        set
-        {
-            if (_isSmallScreen == value) return;
-
-            _isSmallScreen = value;
-            _ = SaveSettingAsync("isSmallScreen", value);
-        }
-    }
-
-    // Called when the drawer toggle button is clicked.
-    void DrawerToggle()
-    {
-        DrawerOpen = !DrawerOpen;
-    }
-
-    // Save the given setting in localStorage.
-    private async Task SaveSettingAsync(string key, bool value)
-    {
-        await Js.InvokeVoidAsync("localStorage.setItem", key, value.ToString());
-    }
-
-    // On first render, load the values from localStorage.
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        if (firstRender)
+        if (!firstRender) return;
+        try
         {
-            var darkModeStr = await Js.InvokeAsync<string>("localStorage.getItem", "isDarkMode");
-            if (!string.IsNullOrEmpty(darkModeStr) && bool.TryParse(darkModeStr, out var darkMode))
-            {
-                _isDarkMode = darkMode;
-            }
-
-            var drawerStateStr = await Js.InvokeAsync<string>("localStorage.getItem", "drawerOpen");
-            if (!string.IsNullOrEmpty(drawerStateStr) && bool.TryParse(drawerStateStr, out var drawerState))
-            {
-                _drawerOpen = drawerState;
-            }
-
-            var smallScreenModeStr = await Js.InvokeAsync<string>("localStorage.getItem", "isSmallScreen");
-            if (!string.IsNullOrEmpty(smallScreenModeStr) && bool.TryParse(smallScreenModeStr, out var smallScreenMode))
-            {
-                _isSmallScreen = smallScreenMode;
-            }
-
-            _initialized = true;
+            await Preferences.LoadAsync();
             StateHasChanged();
-
-            await BrowserViewportService?.SubscribeAsync(this, fireImmediately: true)!;
         }
-
-        await base.OnAfterRenderAsync(firstRender);
-    }
-
-    public async ValueTask DisposeAsync() => await BrowserViewportService?.UnsubscribeAsync(this)!;
-
-    ResizeOptions IBrowserViewportObserver.ResizeOptions { get; } = new()
-    {
-        ReportRate = 250,
-        NotifyOnBreakpointOnly = true
-    };
-
-    Task IBrowserViewportObserver.NotifyBrowserViewportChangeAsync(BrowserViewportEventArgs browserViewportEventArgs)
-    {
-        IsSmallScreen = browserViewportEventArgs.Breakpoint is Breakpoint.Sm or Breakpoint.Xs;
-
-        return InvokeAsync(StateHasChanged);
+        catch (JSDisconnectedException) { }
+        catch (TaskCanceledException) { }
     }
 }

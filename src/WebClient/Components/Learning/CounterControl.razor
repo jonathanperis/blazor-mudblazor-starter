@@ -1,0 +1,6 @@
+<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="() => ValueChanged.InvokeAsync(Value + 1)">Increment component count</MudButton>
+
+@code {
+    [Parameter] public int Value { get; set; }
+    [Parameter] public EventCallback<int> ValueChanged { get; set; }
+}

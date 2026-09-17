@@ -1,79 +1,24 @@
 ---
-interface Stat {
-  value: string;
-  label: string;
-}
-
-interface Feature {
-  title: string;
-  description: string;
-}
-
-const stats: Stat[] = [
-  { value: '69,420', label: 'virtualized DataGrid rows in the demo' },
-  { value: '.NET 9', label: 'Blazor Server runtime baseline' },
-  { value: 'GHCR + Azure', label: 'container publish and deploy path' },
-  { value: 'GitHub Pages', label: 'documentation site included' },
-];
-
-const features: Feature[] = [
-  {
-    title: 'MudBlazor application shell',
-    description: 'Purple app bar, drawer navigation, breadcrumbs, cards, dialogs, snackbars, theme toggle, and responsive layout patterns you can reuse.'
-  },
-  {
-    title: 'Production path included',
-    description: 'Multi-stage Docker image, CI container health checks, GHCR publishing, Azure App Service deployment, and health endpoint verification.'
-  },
-  {
-    title: 'DataGrid demo with real UI states',
-    description: 'Search, sorting, filtering, paging, virtualization, CRUD dialogs, row selection, and right-click clipboard actions in one focused demo page.'
-  },
-  {
-    title: 'Security and delivery hygiene',
-    description: 'CodeQL, Renovate dependency updates, docs publishing, and release-oriented workflows are part of the starter instead of afterthoughts.'
-  },
+const paths = [
+  { title: 'Build a foundation', description: 'Component state, lifecycle, forms, draft editing, localization, themes, and keyboard-friendly controls.' },
+  { title: 'Work with data', description: 'Deterministic grids, server paging, typed HTTP clients, cancellation, SQLite migrations, and concurrency.' },
+  { title: 'Explore boundaries', description: 'Demo identities and policies, atomic CSV imports, bounded uploads, and cancellable server work.' },
+  { title: 'Observe and deliver', description: 'Trace IDs, health checks, behavior tests, Docker, dependency and container scanning, and optional Azure deployment.' },
 ];
 ---
-
-<section class="dashboard" aria-labelledby="included-title">
-  <div class="stats-grid">
-    {stats.map(stat => (
-      <div class="stat-item">
-        <h3>{stat.value}</h3>
-        <p>{stat.label}</p>
-      </div>
-    ))}
-  </div>
-
-  <div class="features-section">
-    <p class="section-kicker">What you get</p>
-    <h2 id="included-title">A starter that feels assembled, not generated</h2>
-    <div class="features-grid">
-      {features.map(f => (
-        <article class="feature-card">
-          <h3>{f.title}</h3>
-          <p>{f.description}</p>
-        </article>
-      ))}
-    </div>
-  </div>
+<section class="dashboard" aria-labelledby="paths-title">
+  <p class="section-kicker">Explore the toolbox</p>
+  <h2 id="paths-title">Practical patterns with their tradeoffs visible</h2>
+  <div class="features-grid">{paths.map(path => <article class="feature-card"><h3>{path.title}</h3><p>{path.description}</p></article>)}</div>
 </section>
-
 <section class="quickstart-section" aria-labelledby="quickstart-title">
   <div class="quickstart-copy">
-    <p class="section-kicker">Quick start</p>
-    <h2 id="quickstart-title">Clone, run, then replace the demo content with your product</h2>
-    <p>Use the app locally, read the docs on GitHub Pages, and keep the same CI/CD path when you deploy your own version.</p>
+    <p class="section-kicker">Start locally</p>
+    <h2 id="quickstart-title">A classroom that fits in one application</h2>
+    <p>No cloud account needed for the basic labs. Synthetic datasets reset on demand. A local notebook keeps your learning notes.</p>
+    <a class="btn btn-text" href="./docs/getting-started/">Read the setup guide</a>
   </div>
-  <div class="code-block">
-    <pre><code><span class="comment"># Clone the starter template</span>
-<span class="command">git clone</span> <span class="arg">https://github.com/jonathanperis/blazor-mudblazor-starter.git</span>
-
-<span class="comment"># Navigate into the directory</span>
-<span class="command">cd</span> <span class="arg">blazor-mudblazor-starter</span>
-
-<span class="comment"># Run the Blazor application</span>
-<span class="command">dotnet run</span> <span class="arg">--project src/WebClient</span></code></pre>
-  </div>
+  <div class="code-block"><pre><code>git clone https://github.com/jonathanperis/blazor-mudblazor-starter.git
+cd blazor-mudblazor-starter
+dotnet run --project src/WebClient</code></pre></div>
 </section>

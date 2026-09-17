@@ -1,0 +1,26 @@
+@page "/labs/forms"
+@inject IDialogService Dialogs
+
+<LabFrame Slug="forms" OnReset="Reset">
+    <MudText Typo="Typo.h6" HtmlTag="h2">A record with a draft</MudText>
+    <MudText Class="my-3" role="status">@_record.Date?.ToString("d") · @_record.TemperatureC °C · @_record.Summary</MudText>
+    <MudButton OnClick="Edit" Color="Color.Primary" Variant="Variant.Filled">Edit record</MudButton>
+    <MudText Class="mt-3" role="status">@_status</MudText>
+</LabFrame>
+
+@code {
+    private WeatherForecast _record = ForecastData.Generate(1)[0];
+    private string _status = "The dialog edits a copy. Cancel leaves this record unchanged.";
+    private void Reset() { _record = ForecastData.Generate(1)[0]; _status = "Sample reset."; }
+    private async Task Edit()
+    {
+        var parameters = new DialogParameters<EditWeather> { { x => x.Item, _record } };
+        var dialog = await Dialogs.ShowAsync<EditWeather>("Edit forecast", parameters);
+        if (await dialog.Result is { Canceled: false, Data: WeatherForecast draft })
+        {
+            _record.Apply(draft);
+            _status = "Validated draft committed.";
+        }
+        else _status = "Canceled. Original record retained.";
+    }
+}

@@ -1,0 +1,72 @@
+@page "/labs/files"
+@inject IJSRuntime Js
+@implements IDisposable
+
+<LabFrame Slug="files" OnReset="Reset">
+    <MudText Typo="Typo.h6" HtmlTag="h2">Atomic CSV import</MudText>
+    <MudText Class="my-3">At most 1 MiB and 1,000 rows. Dates use yyyy-MM-dd. Export quotes fields and prefixes formula-like summaries with an apostrophe for spreadsheet safety.</MudText>
+    <label for="csv-file">Choose a forecast CSV</label>
+    <InputFile id="csv-file" OnChange="Import" accept=".csv,text/csv" disabled="@_busy" />
+    <MudButton OnClick="Export" Class="ml-3">Download sample CSV</MudButton>
+    <MudText Class="my-3" role="status">@_status</MudText>
+    <MudTable T="WeatherForecast" Items="_rows.Take(5)" Dense>
+        <HeaderContent><MudTh>Date</MudTh><MudTh>°C</MudTh><MudTh>Summary</MudTh></HeaderContent>
+        <RowTemplate><MudTd DataLabel="Date">@context.Date?.ToString("d")</MudTd><MudTd DataLabel="°C">@context.TemperatureC</MudTd><MudTd DataLabel="Summary">@context.Summary</MudTd></RowTemplate>
+    </MudTable>
+    <MudText Typo="Typo.caption">Preview shows at most five of @_rows.Count rows.</MudText>
+    <MudDivider Class="my-4" />
+    <MudText Typo="Typo.h6" HtmlTag="h2">Cancellable server work</MudText>
+    <MudText Class="my-3">Process 100 simulated steps, 50 ms each. Work belongs to this page and stops when you leave. For durable work, the deployment guide explains the next step: a hosted queue and persisted job state.</MudText>
+    <MudButton OnClick="Run" Disabled="_busy" Variant="Variant.Filled" Color="Color.Primary">Start processing</MudButton>
+    <MudButton OnClick="Cancel" Disabled="@(!_busy)">Cancel work</MudButton>
+    <MudProgressLinear Value="_progress" Class="my-3" aria-label="Processing progress" />
+    <MudText role="status">@_progress% · @_workStatus</MudText>
+</LabFrame>
+
+@code {
+    private List<WeatherForecast> _rows = ForecastData.Generate(5);
+    private string _status = "Five sample rows loaded.";
+    private string _workStatus = "Idle";
+    private int _progress;
+    private bool _busy;
+    private bool _disposed;
+    private CancellationTokenSource? _work;
+    private readonly CancellationTokenSource _lifetime = new();
+    private Task Export() => Js.InvokeVoidAsync("learningFiles.download", "forecasts.csv", ForecastCsv.Export(_rows)).AsTask();
+    private async Task Import(InputFileChangeEventArgs args)
+    {
+        if (_busy) return;
+        using var work = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
+        _work = work;
+        _busy = true;
+        try
+        {
+            await using var stream = args.File.OpenReadStream(ForecastCsv.MaxBytes, work.Token);
+            using var reader = new StreamReader(stream);
+            var text = await reader.ReadToEndAsync(work.Token);
+            var parsed = ForecastCsv.Parse(text);
+            work.Token.ThrowIfCancellationRequested();
+            _rows = parsed;
+            _status = $"Imported {parsed.Count} rows. The entire import passed validation.";
+        }
+        catch (Exception error) when (error is IOException or FormatException) { if (_work == work) _status = $"Import rejected: {error.Message} Original data retained."; }
+        catch (OperationCanceledException) when (work.IsCancellationRequested) { if (_work == work) _status = "Import canceled. Original data retained."; }
+        finally { if (_work == work) { _busy = false; _work = null; } }
+    }
+    private void Cancel() => _work?.Cancel();
+    private void Reset() { Cancel(); _work = null; _busy = false; _rows = ForecastData.Generate(5); _status = "Sample reset."; _progress = 0; _workStatus = "Idle"; }
+    private async Task Run()
+    {
+        if (_busy) return;
+        using var work = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token);
+        _work = work; _busy = true; _progress = 0; _workStatus = "Running";
+        try
+        {
+            await BatchExperiment.RunAsync(100, percent => InvokeAsync(() => { if (!_disposed && _work == work) { _progress = percent; StateHasChanged(); } }), work.Token);
+            if (_work == work) _workStatus = "Completed";
+        }
+        catch (OperationCanceledException) when (work.IsCancellationRequested) { if (_work == work) _workStatus = "Canceled"; }
+        finally { if (_work == work) { _busy = false; _work = null; } }
+    }
+    public void Dispose() { _disposed = true; _lifetime.Cancel(); _lifetime.Dispose(); }
+}

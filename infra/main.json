@@ -4,8 +4,8 @@
   "metadata": {
     "_generator": {
       "name": "bicep",
-      "version": "0.43.8.12551",
-      "templateHash": "1194797624442194597"
+      "version": "0.41.2.15936",
+      "templateHash": "15091195234203327829"
     }
   },
   "parameters": {
@@ -40,6 +40,18 @@
     "appServicePlanSku": {
       "type": "string",
       "defaultValue": "B1",
+      "allowedValues": [
+        "F1",
+        "B1",
+        "B2",
+        "B3",
+        "S1",
+        "S2",
+        "S3",
+        "P1v3",
+        "P2v3",
+        "P3v3"
+      ],
       "metadata": {
         "description": "SKU for the App Service Plan."
       }
@@ -93,8 +105,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.43.8.12551",
-              "templateHash": "13020001867562261324"
+              "version": "0.41.2.15936",
+              "templateHash": "2501186460069170369"
             }
           },
           "parameters": {
@@ -170,8 +182,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.43.8.12551",
-              "templateHash": "12944490659995717120"
+              "version": "0.41.2.15936",
+              "templateHash": "4395830973365577245"
             }
           },
           "parameters": {
@@ -211,10 +223,6 @@
             "name": {
               "type": "string",
               "value": "[parameters('appInsightsName')]"
-            },
-            "instrumentationKey": {
-              "type": "string",
-              "value": "[reference(resourceId('Microsoft.Insights/components', parameters('appInsightsName')), '2020-02-02').InstrumentationKey]"
             },
             "connectionString": {
               "type": "string",
@@ -256,8 +264,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.43.8.12551",
-              "templateHash": "10685347558967758328"
+              "version": "0.41.2.15936",
+              "templateHash": "11657269007901833001"
             }
           },
           "parameters": {
@@ -345,11 +353,11 @@
           "appInsightsConnectionString": {
             "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deploy-app-insights'), '2025-04-01').outputs.connectionString.value]"
           },
-          "appInsightsInstrumentationKey": {
-            "value": "[reference(resourceId('Microsoft.Resources/deployments', 'deploy-app-insights'), '2025-04-01').outputs.instrumentationKey.value]"
-          },
           "projectName": {
             "value": "[parameters('projectName')]"
+          },
+          "alwaysOn": {
+            "value": "[not(equals(parameters('appServicePlanSku'), 'F1'))]"
           }
         },
         "template": {
@@ -358,8 +366,8 @@
           "metadata": {
             "_generator": {
               "name": "bicep",
-              "version": "0.43.8.12551",
-              "templateHash": "10082902347342359261"
+              "version": "0.41.2.15936",
+              "templateHash": "10204310892754336833"
             }
           },
           "parameters": {
@@ -378,11 +386,11 @@
             "appInsightsConnectionString": {
               "type": "string"
             },
-            "appInsightsInstrumentationKey": {
-              "type": "string"
-            },
             "projectName": {
               "type": "string"
+            },
+            "alwaysOn": {
+              "type": "bool"
             }
           },
           "resources": [
@@ -398,13 +406,24 @@
               "properties": {
                 "serverFarmId": "[parameters('appServicePlanId')]",
                 "httpsOnly": true,
+                "clientAffinityEnabled": true,
                 "siteConfig": {
                   "linuxFxVersion": "[format('DOCKER|{0}', parameters('containerImage'))]",
-                  "alwaysOn": false,
+                  "alwaysOn": "[parameters('alwaysOn')]",
+                  "webSocketsEnabled": true,
+                  "healthCheckPath": "/healthz/ready",
                   "http20Enabled": true,
                   "minTlsVersion": "1.2",
                   "ftpsState": "Disabled",
                   "appSettings": [
+                    {
+                      "name": "WEBSITES_PORT",
+                      "value": "5000"
+                    },
+                    {
+                      "name": "Learning__EnableDemoAuth",
+                      "value": "false"
+                    },
                     {
                       "name": "DOCKER_REGISTRY_SERVER_URL",
                       "value": "https://ghcr.io"
@@ -416,14 +435,6 @@
                     {
                       "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
                       "value": "[parameters('appInsightsConnectionString')]"
-                    },
-                    {
-                      "name": "APPINSIGHTS_INSTRUMENTATIONKEY",
-                      "value": "[parameters('appInsightsInstrumentationKey')]"
-                    },
-                    {
-                      "name": "ApplicationInsightsAgent_EXTENSION_VERSION",
-                      "value": "~3"
                     }
                   ]
                 }

@@ -3,8 +3,8 @@ param webAppName string
 param appServicePlanId string
 param containerImage string
 param appInsightsConnectionString string
-param appInsightsInstrumentationKey string
 param projectName string
+param alwaysOn bool
 
 resource webApp 'Microsoft.Web/sites@2024-04-01' = {
   name: webAppName
@@ -16,13 +16,24 @@ resource webApp 'Microsoft.Web/sites@2024-04-01' = {
   properties: {
     serverFarmId: appServicePlanId
     httpsOnly: true
+    clientAffinityEnabled: true
     siteConfig: {
       linuxFxVersion: 'DOCKER|${containerImage}'
-      alwaysOn: false // must be false on F1
+      alwaysOn: alwaysOn
+      webSocketsEnabled: true
+      healthCheckPath: '/healthz/ready'
       http20Enabled: true
       minTlsVersion: '1.2'
       ftpsState: 'Disabled'
       appSettings: [
+        {
+          name: 'WEBSITES_PORT'
+          value: '5000'
+        }
+        {
+          name: 'Learning__EnableDemoAuth'
+          value: 'false'
+        }
         {
           name: 'DOCKER_REGISTRY_SERVER_URL'
           value: 'https://ghcr.io'
@@ -34,14 +45,6 @@ resource webApp 'Microsoft.Web/sites@2024-04-01' = {
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
           value: appInsightsConnectionString
-        }
-        {
-          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: appInsightsInstrumentationKey
-        }
-        {
-          name: 'ApplicationInsightsAgent_EXTENSION_VERSION'
-          value: '~3'
         }
       ]
     }

@@ -1,0 +1,9 @@
+<MudTextField Label="Record ID" Value="@Model.Id.ToString()" ReadOnly="true" />
+<MudDatePicker Label="Date" @bind-Date="Model.Date" For="@(() => Model.Date)" Editable="false" />
+<MudNumericField T="int?" Label="Temperature (°C)" @bind-Value="Model.TemperatureC" For="@(() => Model.TemperatureC)" Min="-100" Max="100" />
+<MudTextField Label="Summary" @bind-Value="Model.Summary" For="@(() => Model.Summary)" MaxLength="120" />
+<ValidationSummary />
+
+@code {
+    [Parameter, EditorRequired] public WeatherForecast Model { get; set; } = null!;
+}

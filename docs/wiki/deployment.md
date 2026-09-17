@@ -1,113 +1,75 @@
-# Deployment
+# Docker and Azure
 
-## Docker
+## Local container exercise
 
-### Build the Image
-
-The Dockerfile uses a multi-stage build with the .NET 9 SDK and ASP.NET runtime images. The build context is the `src/` directory.
-
-```bash
-docker build -t blazor-mudblazor -f src/WebClient/Dockerfile src/
+```sh
+docker build -t blazor-learning -f src/WebClient/Dockerfile src/
+docker run --rm -p 5000:5000 -v learning-data:/app/App_Data blazor-learning
 ```
 
-With production optimizations:
+The image uses a supported .NET 10 SDK/runtime, runs as `app`, and listens on port 5000. The `src/.dockerignore` excludes local build artifacts, database files, and environment files.
 
-```bash
-docker build \
-  --build-arg AOT=false \
-  --build-arg TRIM=true \
-  --build-arg EXTRA_OPTIMIZE=true \
-  --build-arg BUILD_CONFIGURATION=Release \
-  -t blazor-mudblazor -f src/WebClient/Dockerfile src/
-```
+`BUILD_CONFIGURATION` defaults to `Release`. Set `READY_TO_RUN=true` to compare ReadyToRun publishing with the default framework-dependent image. Both modes keep culture and diagnostics support.
 
-### Run the Container
+`ghcr.io/jonathanperis/blazor-mudblazor-starter:latest` is a convenience image tag. Use a commit tag or manifest digest when you need to reproduce an exact image.
 
-```bash
-docker run -p 5000:5000 blazor-mudblazor
-```
+## Data lifetime in a deployment
 
-The container listens on port 5000 (`ASPNETCORE_URLS=http://+:5000`). The entry point is the compiled `./WebClient` binary.
+SQLite and workspace-protection keys must be retained together. A Docker named volume does this locally. The sample Azure container is disposable (`WEBSITES_ENABLE_APP_SERVICE_STORAGE=false`), so notebook access is not guaranteed across container replacement. Treat it as a learning workspace, not an account-backed notebook service.
 
-### Multi-Architecture Support
+For a durable multi-instance application, move persistence and key storage to suitable shared services, replace demo identities with a real identity provider, and revisit circuit routing and concurrency. The current component-owned work example stops on disposal; a durable job needs persisted state and a hosted worker/queue.
 
-The release pipeline builds both `linux/amd64` and `linux/arm64/v8` images. It uses Docker Buildx for both builds, QEMU for the arm64 job, and then merges both digests into the multi-arch `:latest` manifest. The Dockerfile installs `clang` and `zlib1g-dev` in the SDK stage so optional AOT compilation has the native toolchain it needs.
+## PR validation
 
-### Pre-built Image
+`build-check.yml` runs behavioral tests, locked dependency restore/audit, published-app HTTP smoke checks, documentation build/link/drift checks, dependency review, infrastructure compilation, workflow linting, and a Docker matrix for both ReadyToRun values. Trivy scans the default image for high/critical vulnerabilities.
 
-The latest release image is available from GitHub Container Registry:
+## Release flow
 
-```bash
-docker pull ghcr.io/jonathanperis/blazor-mudblazor-starter:latest
-docker run -p 5000:5000 ghcr.io/jonathanperis/blazor-mudblazor-starter:latest
-```
+`main-release.yml` has three jobs:
 
----
+1. **validate** calls the same reusable Build Check workflow.
+2. **publish** builds linux/amd64 and linux/arm64 in one manifest and publishes `sha-<commit>` plus `latest`. Its digest is the deployment input.
+3. **deploy** is optional. It logs in through OIDC and deploys Bicep with `containerImage=<image>@<digest>`. Updating the container configuration selects the exact published image.
 
-## CI/CD Pipelines
+Release runs are serialized with cancellation disabled. Package write permission belongs only to publishing; OIDC permission belongs only to deployment.
 
-### build-check.yml (Pull Requests)
+## Optional Azure setup
 
-Triggered on pull requests to `main`. Runs two jobs:
+The template provisions an App Service Plan, Web App, Log Analytics workspace, and Application Insights. It defaults to B1 in Brazil South; review the chosen SKU and 90-day log retention as part of the cost exercise.
 
-1. **setup-build-test**: Sets up the .NET SDK from `global.json`, restores dependencies, and builds the project with debug settings (`AOT=false`, `TRIM=false`, `BUILD_CONFIGURATION=Debug`).
+Before enabling the workflow:
 
-2. **container-test**: Builds a Docker image, runs the container on port 5030, and polls the `/healthz` endpoint up to 20 times (5-second intervals) to verify the application starts correctly. Fails the pipeline if the health check does not return HTTP 200.
+1. Create your resource group and an Azure identity allowed to deploy the resources into it.
+2. Configure a federated credential for GitHub environment `azure-sandbox`, with subject `repo:OWNER/REPO:environment:azure-sandbox` and audience `api://AzureADTokenExchange`.
+3. Create the GitHub environment and apply the approval rules appropriate to your own deployment.
+4. Supply the configuration below. Make the GHCR image publicly pullable, or configure private-registry access separately.
 
-### main-release.yml (Main Branch)
-
-Triggered on push to `main` or manual dispatch. The current release flow is split into six jobs:
-
-1. **setup-build-test**: Restores and builds with production settings (`AOT=false`, `TRIM=true`, `EXTRA_OPTIMIZE=true`, `BUILD_CONFIGURATION=Release`).
-
-2. **build-push-amd64**: Sets up Docker Buildx, authenticates to GitHub Container Registry, builds the `linux/amd64` image, and pushes it as `ghcr.io/jonathanperis/blazor-mudblazor-starter:latest`.
-
-3. **deploy-infra**: Logs in to Azure with OIDC (`AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, `AZURE_SUBSCRIPTION_ID`) and deploys `infra/main.bicep`/`infra/main.bicepparam` with `azure/arm-deploy`.
-
-4. **deploy-image**: Deploys the GHCR `:latest` image to Azure App Service with `azure/webapps-deploy` and the `AZURE_WEBAPP_PUBLISH_PROFILE` secret.
-
-5. **build-push-arm64**: Sets up QEMU and Docker Buildx, builds `linux/arm64/v8`, and pushes it as `:latest-arm64`.
-
-6. **merge-manifest**: Combines the amd64 and arm64 digests into the final multi-arch `:latest` manifest.
-
-### codeql.yml
-
-Runs CodeQL security analysis on the codebase.
-
-### deploy.yml (GitHub Pages)
-
-Triggered on push to `main` or manual dispatch. Delegates to the reusable `jonathanperis/.github/.github/workflows/pages-docs-deploy.yml@main` workflow with inherited secrets; that shared workflow builds the Astro docs from `docs/` and publishes the generated Pages artifact.
-
----
-
-## Azure Web App
-
-The application is deployed to Azure App Service in the Brazil South region. The workflow first keeps the Azure resources current with Bicep over OIDC, then deploys the GHCR container image to the Web App with the Azure publish profile.
-
-The Bicep entry point creates or updates the App Service Plan, Web App, Log Analytics Workspace, and Application Insights instance. The App Service Plan is provisioned from `infra/modules/appServicePlan.bicep` before the Web App module consumes its resource ID.
-
-**Live demo:** [blazor-mudblazor-starter](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/)
-
-### Azure Deployment Requirements
-
-- Resource group: `github-jonathanperis`
-- Region: `brazilsouth`
-- App Service Plan: `github-jonathanperis` (`B1`, Linux)
-  - The plan is created or updated by `infra/modules/appServicePlan.bicep`.
-  - `infra/main.bicepparam` controls the plan name and `appServicePlanSku`.
-- Web App name: `blazor-mudblazor-starter`
-- OIDC secrets for infrastructure deployment: `AZURE_CLIENT_ID`, `AZURE_TENANT_ID`, and `AZURE_SUBSCRIPTION_ID`
-- The `AZURE_WEBAPP_PUBLISH_PROFILE` secret set in the GitHub repository settings (download from Azure Portal > Web App > Deployment Center > Manage publish profile)
-- GHCR image access configured on the Azure Web App (the image is public via GitHub Packages)
-
-### Observability
-
-`infra/main.bicep` provisions Log Analytics and Application Insights, then passes telemetry settings into the Web App module. The app only registers `AddApplicationInsightsTelemetry()` when `APPLICATIONINSIGHTS_CONNECTION_STRING` is present, so local runs stay telemetry-free by default while Azure deployments emit telemetry automatically.
-
-Azure app settings managed by Bicep:
-
-| Setting | Purpose |
+| GitHub setting | Purpose |
 |---|---|
-| `APPLICATIONINSIGHTS_CONNECTION_STRING` | Enables Application Insights telemetry in `Program.cs` |
-| `APPINSIGHTS_INSTRUMENTATIONKEY` | Compatibility setting for App Service/Application Insights integration |
-| `ApplicationInsightsAgent_EXTENSION_VERSION` | Enables the App Service Application Insights extension (`~3`) |
+| Variable `AZURE_DEPLOY_ENABLED` | Set exactly `true` to enable deployment on main |
+| Variable `AZURE_RESOURCE_GROUP` | Existing target resource group |
+| Variable `AZURE_WEBAPP_NAME` | Your unique Web App name |
+| Variable `AZURE_APP_SERVICE_PLAN` | Plan to provision/manage |
+| Variable `AZURE_LOCATION` | Optional; defaults to `brazilsouth` |
+| Secret `AZURE_CLIENT_ID` | Federated identity's client ID |
+| Secret `AZURE_TENANT_ID` | Azure tenant |
+| Secret `AZURE_SUBSCRIPTION_ID` | Target subscription |
+
+No publish-profile secret is used. The workflow overrides the maintainer-specific names in `infra/main.bicepparam`; when deploying manually, provide your own parameter file or overrides.
+
+The Web App declares `WEBSITES_PORT=5000`, WebSockets, client affinity, TLS 1.2+, HTTPS-only access, disabled FTPS, and `/healthz/ready`. Always-on follows whether the selected plan is F1. Demo sign-in is explicitly disabled. `APPLICATIONINSIGHTS_CONNECTION_STRING` connects SDK telemetry to the provisioned resource.
+
+## Validate infrastructure without deploying
+
+```sh
+az bicep build --file infra/main.bicep --stdout
+az bicep build-params --file infra/main.bicepparam --stdout
+```
+
+The checked-in `infra/main.json` is generated from Bicep. Regenerate it after template changes. Compilation proves template validity, not subscription permissions or a successful live deployment.
+
+After your exercise, inspect and remove only the resources you created. Resource-group deletion also removes all unrelated resources in that group, so use a dedicated group for an isolated exercise.
+
+## Documentation deployment
+
+`deploy.yml` delegates to `jonathanperis/.github/.github/workflows/pages-docs-deploy.yml@main`. It installs from the Bun lockfile and publishes the static site. See [Documentation site](../documentation/).

@@ -1,62 +1,21 @@
----
-const demoUrl = 'https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/';
-const repoUrl = 'https://github.com/jonathanperis/blazor-mudblazor-starter';
----
-
 <section class="hero" aria-labelledby="hero-title">
   <div class="hero-copy">
-    <p class="eyebrow">MudBlazor starter for real projects</p>
-    <h1 id="hero-title">Production-ready Blazor Server starter with MudBlazor</h1>
-    <p class="tagline">
-      A clean .NET 9 template with Material UI patterns, Docker packaging, GitHub Actions,
-      GHCR publishing, Azure App Service deployment, CodeQL, and GitHub Pages docs already wired together.
-    </p>
-
-    <div class="badges" aria-label="Included platform capabilities">
-      <span class="badge">.NET 9</span>
-      <span class="badge">MudBlazor 9.3</span>
-      <span class="badge">Docker</span>
-      <span class="badge">GHCR</span>
-      <span class="badge">Azure App Service</span>
-      <span class="badge">CodeQL</span>
-      <span class="badge">GitHub Pages</span>
-    </div>
-
+    <p class="eyebrow">Learn by changing working examples</p>
+    <h1 id="hero-title">Your Blazor and MudBlazor toolbox</h1>
+    <p class="tagline">Small labs with live experiments, source links, explanations, and exercises. Start with a counter. Build your way to APIs, persistence, authentication, and deployment.</p>
+    <div class="badges" aria-label="Learning stack"><span class="badge">.NET 10</span><span class="badge">MudBlazor 9</span><span class="badge">SQLite</span><span class="badge">Local-first labs</span></div>
     <div class="ctas">
-      <a href={demoUrl} target="_blank" rel="noopener noreferrer" class="btn btn-primary">Open live demo</a>
-      <a href="./docs/" class="btn btn-secondary">Read documentation</a>
-      <a href={repoUrl} target="_blank" rel="noopener noreferrer" class="btn btn-text">View on GitHub</a>
+      <a class="btn btn-primary" href="./docs/learning-path/">Choose a learning path</a>
+      <a class="btn btn-secondary" href="https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/labs" target="_blank" rel="noopener noreferrer">Explore live labs</a>
     </div>
   </div>
-
-  <div class="app-preview" aria-label="Preview of the starter application shell">
-    <div class="preview-appbar">
-      <span class="preview-menu" aria-hidden="true"></span>
-      <strong>MudBlazor Starter</strong>
-      <span class="preview-theme">Dark mode</span>
-    </div>
-    <div class="preview-shell">
-      <aside class="preview-drawer" aria-hidden="true">
-        <span class="active">Overview</span>
-        <span>Counter demo</span>
-        <span>DataGrid demo</span>
-      </aside>
-      <div class="preview-content">
-        <div class="preview-breadcrumb">Home / Overview</div>
-        <div class="preview-paper">
-          <p class="preview-overline">Production starter</p>
-          <h2>Build on a starter that already has the boring parts done.</h2>
-          <div class="preview-actions">
-            <span></span>
-            <span></span>
-          </div>
-        </div>
-        <div class="preview-grid">
-          <span></span>
-          <span></span>
-          <span></span>
-        </div>
-      </div>
-    </div>
-  </div>
+  <aside class="app-preview learning-preview" aria-label="How to use a lab">
+    <h2>One experiment at a time</h2>
+    <ol>
+      <li><strong>Predict.</strong> Read the objective and decide what should happen.</li>
+      <li><strong>Try.</strong> Change a value, introduce latency, or cancel an operation.</li>
+      <li><strong>Inspect.</strong> Open the source and connect behavior to implementation.</li>
+      <li><strong>Reset.</strong> Repeat with a new hypothesis.</li>
+    </ol>
+  </aside>
 </section>

@@ -1,62 +1,49 @@
-# Project Structure
+# Project structure
 
-```
-blazor-mudblazor-starter/
-├── .github/
-│   └── workflows/
-│       ├── build-check.yml             # PR validation: .NET build + Docker build + health check
-│       ├── codeql.yml                  # CodeQL security analysis
-│       ├── deploy.yml                  # GitHub Pages deployment
-│       └── main-release.yml            # Release: optimized build + GHCR push + Azure deploy
-├── src/
-│   └── WebClient/
-│       ├── Components/
-│       │   ├── App.razor               # Root HTML document with MudBlazor CSS/JS imports
-│       │   ├── Routes.razor            # Blazor router, defaults to MainLayout
-│       │   ├── _Imports.razor          # Global using directives for all components
-│       │   ├── Layout/
-│       │   │   ├── MainLayout.razor    # App shell: app bar, drawer, dark mode, responsive breakpoints
-│       │   │   └── Breadcrumb.razor    # Reusable breadcrumb navigation component
-│       │   ├── Pages/
-│       │   │   ├── Home.razor          # Production starter overview (route: /)
-│       │   │   ├── Counter.razor       # Counter demo with increment/reset state (route: /counter)
-│       │   │   ├── Weather.razor       # DataGrid demo with virtualization and CRUD (route: /weather)
-│       │   │   └── Error.razor         # Error page with request ID display (route: /Error)
-│       │   └── Weather/
-│       │       ├── AddWeather.razor    # MudDialog for adding weather entries
-│       │       ├── EditWeather.razor   # MudDialog for editing weather entries
-│       │       └── RemoveWeather.razor # MudDialog for delete confirmation
-│       ├── Properties/
-│       │   └── launchSettings.json     # Local dev profiles (HTTP on 5000, HTTPS on 5001)
-│       ├── wwwroot/                    # Static assets (favicon, CSS)
-│       ├── appsettings.json            # Base configuration (logging, allowed hosts)
-│       ├── appsettings.Development.json # Development logging overrides
-│       ├── Dockerfile                  # Multi-stage .NET 9 build (AMD64 + ARM64)
-│       ├── Program.cs                  # App entry point, MudBlazor service registration
-│       └── WebClient.csproj            # Project file: .NET 9, MudBlazor 9.3.0, AOT/Trim flags
-├── .editorconfig                       # Code style settings
-├── .gitignore                          # Git ignore rules
-├── global.json                         # .NET SDK version pin (9.0.202, roll-forward: minor)
-├── renovate.json                       # Shared Renovate dependency update preset
-├── LICENSE                             # MIT license
-├── README.md                          # Project overview and quick start
-└── WebClient.sln                       # Solution file
+```text
+src/WebClient/
+  Program.cs                     services, middleware, endpoints, startup migrations
+  Components/
+    Layout/                      shell, preferences, semantic navigation
+    Learning/                    common lab frame and callback example
+    Pages/                       overview, counter, DataGrid
+      Labs/                      catalog and focused learning pages
+    Weather/                     shared validated fields and draft dialogs
+  Features/
+    Forecasts/                   model, generator, CSV codec, API and typed client
+    Learning/                    catalog, circuit state, preferences, cancellable work
+    Notebook/                    workspace, EF Core service, health check, migrations
+    Identity/                    educational cookie identities and culture endpoints
+    Localization/                English and Portuguese resources
+  wwwroot/                       theme-aware CSS, small JS interop helpers, icons
+tests/WebClient.Tests/           bUnit, domain, HTTP and SQLite tests
+scripts/                        docs drift/link checks and HTTP smoke checks
+docs/wiki/                      Markdown learning guide
+infra/                          optional Azure Bicep and generated ARM template
+.config/dotnet-tools.json        pinned EF migration CLI
+renovate.json                   shared dependency-update preset
 ```
 
-## Key Directories
+## Boundaries
 
-### `src/WebClient/Components/Layout/`
+Keep related lab behavior together. Pages demonstrate the interaction; feature code owns reusable behavior that benefits from direct testing. One host is enough for these lessons.
 
-Contains the application shell. `MainLayout.razor` provides the MudBlazor layout with app bar, navigation drawer, dark mode toggle (persisted via localStorage), and responsive breakpoint handling. `Breadcrumb.razor` is a reusable component that accepts a list of `BreadcrumbItem` parameters.
+The forecast model is independent of a Razor page. The notebook service depends on a short-lived context factory and learner workspace, not component rendering. The auth example enforces access at the endpoint, not just through UI visibility.
 
-### `src/WebClient/Components/Pages/`
+## Add a lab
 
-Contains routable page components. Each page uses the compact `Breadcrumb` component for navigation context. `Home` presents the production-ready starter overview, `Counter` demonstrates component state, and the `Weather` route is framed as a DataGrid demo with `MudDataGrid`, dialog services, snackbar notifications, row selection, and clipboard integration.
+1. Add its route under `Components/Pages/Labs/`.
+2. Add metadata to `LabCatalog` and render its content through `LabFrame`.
+3. State ownership, lifetime, failure behavior, and reset semantics.
+4. Add focused feature code only when it provides a useful teaching/test boundary.
+5. Add a meaningful behavior test, update route smoke checks, and document the lesson.
 
-### `src/WebClient/Components/Weather/`
+## Change the notebook schema
 
-Contains MudDialog components used by the Weather page for Add, Edit, and Remove operations. Each dialog uses `EditForm` with `DataAnnotationsValidator` for form validation (except RemoveWeather, which is a simple confirmation).
+```sh
+dotnet tool restore
+dotnet ef migrations add YourChange --project src/WebClient --output-dir Features/Notebook/Migrations
+dotnet test -c Release
+```
 
-### `.github/workflows/`
-
-Contains four GitHub Actions workflows: `build-check.yml` for PR validation (includes container health check against `/healthz`), `main-release.yml` for production releases to GHCR and Azure, `codeql.yml` for security analysis, and `deploy.yml` for GitHub Pages deployment. Dependency updates are configured separately in `renovate.json`, which inherits the shared `github>jonathanperis/.github` preset.
+Commit the migration, designer, and model snapshot together. The app applies migrations on startup; the SQLite integration test verifies that a fresh database can be created from them.

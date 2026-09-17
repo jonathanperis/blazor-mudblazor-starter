@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype"><value>text/microsoft-resx</value></resheader>
+  <resheader name="version"><value>2.0</value></resheader>
+  <data name="Greeting" xml:space="preserve"><value>Bem-vindo ao laboratório de localização</value></data>
+  <data name="Amount" xml:space="preserve"><value>Valor</value></data>
+  <data name="Date" xml:space="preserve"><value>Data</value></data>
+  <data name="Message" xml:space="preserve"><value>Seu objetivo de aprendizado</value></data>
+  <data name="Submit" xml:space="preserve"><value>Anunciar objetivo</value></data>
+  <data name="Announced" xml:space="preserve"><value>Objetivo: {0}</value></data>
+</root>
