@@ -9,20 +9,20 @@ A hands-on toolbox for learning Blazor Server and MudBlazor. Every lab is a smal
 3. [Explore the lab reference](./components/).
 4. [Run tests and measurements](./testing/).
 
-[Live lab catalog](https://blazor-mudblazor-starter-hmdqebc9f4eneeep.brazilsouth-01.azurewebsites.net/labs) · [Source repository](https://github.com/jonathanperis/blazor-mudblazor-starter)
+[Source repository](https://github.com/jonathanperis/blazor-mudblazor-starter) · Run `/labs` locally. Hostinger setup is pending; no application deployment is configured.
 
 ## How to learn here
 
 Predict what an interaction will do. Try it. Read the implementation. Change one thing and compare. Use reset controls to return to a known dataset or state.
 
-The default application runs locally using synthetic forecasts and SQLite. Cloud credentials are optional. Authentication uses clearly labeled local demo personas; the Azure deployment disables them.
+The default application runs locally using synthetic forecasts and SQLite. Cloud credentials are optional. Authentication uses clearly labeled demo personas enabled only in Development by default.
 
 ## Map of the guide
 
 | Topic | Purpose |
 |---|---|
 | [Configuration](./configuration/) | Runtime, culture, storage, API base URL and optional telemetry |
-| [Docker and Azure](./deployment/) | Supported publishing modes and an optional deployment exercise |
+| [Docker and hosting](./deployment/) | Supported publishing modes and the pending Hostinger setup |
 | [Documentation site](./documentation/) | Add pages and verify links |
 | [Project structure](./project-structure/) | Find the implementation and tests |
 

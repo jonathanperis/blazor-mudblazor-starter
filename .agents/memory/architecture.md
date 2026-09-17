@@ -8,6 +8,6 @@ One .NET 10 Blazor Server host. `LabCatalog` defines routes and teaching metadat
 - Demo cookie personas are Development-only by default. Notebook ownership is independent of persona. Protected endpoints enforce authorization and form endpoints enforce antiforgery.
 - UI preferences persist `isDarkMode` and `drawerOpen`; viewport state is derived from CSS.
 - Supported publishing is framework-dependent, optionally ReadyToRun. Culture and diagnostic support remain enabled.
-- PR validation tests behavior and builds docs/containers; release publishes an immutable multi-arch digest and optionally deploys Azure through OIDC.
+- PR validation tests behavior and builds docs/containers; release publishes an immutable multi-arch digest only. Hostinger setup is pending. Azure templates remain historical reference material, not an active deployment path.
 
 Authoritative commands and boundaries: root `AGENTS.md`, `README.md`, and `docs/wiki/`.

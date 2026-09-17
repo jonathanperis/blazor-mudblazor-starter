@@ -64,7 +64,7 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
 }
-// Azure terminates TLS at its front end. Use the HTTPS launch profile for local TLS.
+// Configure HTTPS redirection only when the hosting environment supplies a TLS endpoint.
 if (app.Configuration["HTTPS_PORT"] is not null) app.UseHttpsRedirection();
 app.UseRequestLocalization();
 app.Use(LearnerWorkspace.EstablishAsync);

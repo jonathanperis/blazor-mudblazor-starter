@@ -9,7 +9,7 @@ interface Props {
 
 const {
   title = 'Blazor learning sandbox | MudBlazor labs',
-  description = 'Hands-on Blazor and MudBlazor labs: state, forms, data grids, APIs, SQLite, authentication, localization, files, and observability. Learn locally with optional Docker and Azure deployment.'
+  description = 'Hands-on Blazor and MudBlazor labs: state, forms, data grids, APIs, SQLite, authentication, localization, files, and observability. Learn locally with Docker and hosting exercises.'
 } = Astro.props;
 
 const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : `https://jonathanperis.github.io${Astro.url.pathname}`;
@@ -46,7 +46,7 @@ const jsonLd = {
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet" />
     <meta name="description" content={description} />
-    <meta name="keywords" content="Blazor, MudBlazor, .NET 10, learning, C#, SQLite, Material Design, Azure, Docker" />
+    <meta name="keywords" content="Blazor, MudBlazor, .NET 10, learning, C#, SQLite, Material Design, Docker, Hostinger" />
     <link rel="canonical" href={pageUrl} />
     <link rel="icon" href={faviconHref} sizes="any" />
     <link rel="icon" type="image/png" href={faviconPngHref} />
