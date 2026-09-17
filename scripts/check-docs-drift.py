@@ -49,8 +49,9 @@ def main():
     jobs = re.findall(r"^  ([A-Za-z0-9_-]+):$", release, re.M)
     for job in jobs:
         require(f"**{job}**" in read("docs/wiki/deployment.md"), f"deployment guide missing release job {job}")
-    require("pages-docs-deploy.yml@main" in read(".github/workflows/deploy.yml"), "Pages workflow delegation changed; update docs")
-    require("pages-docs-deploy.yml@main" in read("docs/wiki/deployment.md"), "Pages delegation missing from guide")
+    pages_workflow = "pages-docs-deploy.yml@3a6707da1d9f043bc3fa760bc08525db96d34c9d"
+    require(pages_workflow in read(".github/workflows/deploy.yml"), "Pages workflow delegation changed; review the pin and update docs")
+    require(pages_workflow in read("docs/wiki/deployment.md"), "Pages delegation missing from guide")
     require("Renovate" in readme and (ROOT / "renovate.json").is_file(), "dependency management docs/config differ")
 
     package = json.loads(read("docs/package.json"))

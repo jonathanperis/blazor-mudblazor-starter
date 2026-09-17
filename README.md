@@ -95,7 +95,7 @@ The supported publishing experiment is `--build-arg READY_TO_RUN=true`. `BUILD_C
 - **PRs:** behavioral tests, locked restore with vulnerability checks, published-app HTTP checks, docs build/link/drift checks, dependency review, Bicep compilation, workflow linting, and container checks/scanning.
 - **Main:** validates again and publishes a multi-architecture GHCR image with a commit tag and a manifest digest. `latest` is a convenience tag; use the digest to identify an exact build.
 - **Application hosting:** Hostinger is the intended target, but this project's environment is not configured. The release workflow does not deploy the application.
-- **GitHub Pages:** uses the shared `pages-docs-deploy.yml@main` workflow.
+- **GitHub Pages:** uses the shared `pages-docs-deploy.yml` workflow pinned to a reviewed full commit SHA in `deploy.yml`.
 
 Follow the [hosting guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/deployment/) for the current delivery boundary and the decisions required before configuring Hostinger.
 
