@@ -3,9 +3,9 @@ ARG BUILD_CONFIGURATION=Release
 ARG READY_TO_RUN=false
 ARG TARGETARCH
 WORKDIR /src
-COPY ["WebClient/WebClient.csproj", "WebClient/packages.lock.json", "WebClient/"]
-RUN dotnet restore "WebClient/WebClient.csproj" --locked-mode -a "$TARGETARCH" -p:PublishReadyToRun="$READY_TO_RUN"
+# Razor files participate in the SDK's implicit static-asset package references.
 COPY . .
+RUN dotnet restore "WebClient/WebClient.csproj" --locked-mode -a "$TARGETARCH" -p:PublishReadyToRun="$READY_TO_RUN"
 RUN dotnet publish "WebClient/WebClient.csproj" --no-restore -c "$BUILD_CONFIGURATION" \
     -a "$TARGETARCH" --no-self-contained -p:PublishReadyToRun="$READY_TO_RUN" -o /app/publish
 
