@@ -1,0 +1,12 @@
+@page "/components/timeline"
+@attribute [ComponentPage("Timeline", GalleryGroup.DataDisplay, "Events placed along a line in order, each with a dot, its content and optional opposite text such as a date. Use it for histories, release notes and progress logs where sequence is the point.", MudDocs = "timeline", Types = ["MudTimeline", "MudTimelineItem"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(TimelineBasics)" Title="Content and opposite text" Description="ItemContent sits on one side of the line and ItemOpposite on the other. The default position, Alternate, swaps sides on every item." />
+    <Example Of="typeof(TimelinePositions)" Title="Every orientation and position" Description="Vertical timelines accept Start, Left, Alternate, Right and End; horizontal ones accept Top, Alternate and Bottom. Start and End follow the reading direction, Left and Right do not." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(TimelineDots)" Title="Dot variants, sizes and colors" Description="Every Variant and Size combination of the dot, then the theme colors. Icon puts a symbol inside a dot; give the item text as well, because a colored dot alone carries no meaning for everyone." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(TimelineCustomDots)" Title="Custom dots and hidden dots" Description="ItemDot replaces the dot with any content, DotClass styles the built-in one, and HideDot removes it for a continuation line." />
+    <Example Of="typeof(TimelineAlignment)" Title="Alignment, reverse and modifiers" Description="TimelineAlign moves the dot to the start, middle or end of each item. Reverse flips the alternating sides, and Modifiers adds the small arrow that points from a card to its dot." />
+    <Example Of="typeof(TimelineProjectHistory)" Title="A project history" Description="A realistic log: dated milestones with an icon and a status written in words, so the color only reinforces what the text already says." />
+    <Example Of="typeof(TimelinePlayground)" Title="Playground" Description="Change orientation, position, alignment and the dot; the markup lists only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

@@ -1,0 +1,35 @@
+<MudSimpleTable FixedHeader="true" Dense="true" Striped="true" Elevation="0" Style="height: 300px">
+    <thead>
+        <tr>
+            <th scope="col">Stop code</th>
+            <th scope="col">Stop</th>
+            <th scope="col">Fare zone</th>
+            <th scope="col">Step-free access</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var stop in _stops)
+        {
+            <tr>
+                <td style="font-family: var(--font-mono)">@stop.Code</td>
+                <td>@stop.Name</td>
+                <td>@stop.Zone</td>
+                <td>@(stop.StepFree ? "Yes" : "No")</td>
+            </tr>
+        }
+    </tbody>
+</MudSimpleTable>
+
+@code {
+    private record Stop(string Code, string Name, int Zone, bool StepFree);
+
+    private static readonly string[] Names =
+    [
+        "Northgate Depot", "Mill Lane", "Market Square", "Cathedral Close", "University Park", "Science Library", "Riverside Walk",
+        "Old Ropeworks", "Fish Market", "Harbour Quay", "Lighthouse Road", "Ferry Terminal", "Saltmarsh", "Airport Parkway"
+    ];
+
+    private readonly Stop[] _stops = Names
+        .Select((name, index) => new Stop($"NG{index + 101}", name, 1 + index / 5, index % 3 != 1))
+        .ToArray();
+}

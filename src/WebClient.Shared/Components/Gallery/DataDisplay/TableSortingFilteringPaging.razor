@@ -1,0 +1,56 @@
+<MudTable Items="_books" Filter="Matches" RowsPerPage="5" Hover="true" Elevation="0" SortLabel="Sort by">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6" HtmlTag="h3">Catalogue</MudText>
+        <MudSpacer />
+        <MudTextField @bind-Value="_search" Immediate="true" Label="Search title or author" Clearable="true"
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" Margin="Margin.Dense"
+                      Variant="Variant.Outlined" Class="flex-grow-0" Style="width: 18rem" />
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel InitialDirection="SortDirection.Ascending" SortBy="(Book book) => book.Title">Title</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="(Book book) => book.Author">Author</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel SortBy="(Book book) => book.Year">Year</MudTableSortLabel></MudTh>
+        <MudTh Style="text-align: right"><MudTableSortLabel SortBy="(Book book) => book.Price">Price</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Title">@context.Title</MudTd>
+        <MudTd DataLabel="Author">@context.Author</MudTd>
+        <MudTd DataLabel="Year">@context.Year</MudTd>
+        <MudTd DataLabel="Price" Style="text-align: right">@context.Price.ToString("C", Prices)</MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText Typo="Typo.body2" Class="pa-4">No books match “@_search”.</MudText>
+    </NoRecordsContent>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="[5, 10, 25]" RowsPerPageString="Books per page:" />
+    </PagerContent>
+</MudTable>
+
+@code {
+    private record Book(string Title, string Author, int Year, decimal Price);
+
+    private static readonly CultureInfo Prices = CultureInfo.GetCultureInfo("en-GB");
+    private string _search = "";
+
+    private readonly Book[] _books =
+    [
+        new("The Lighthouse Keeper's Almanac", "Maren Holt", 2021, 18.50m),
+        new("Salt and Ledger", "Idris Okafor", 2019, 24.00m),
+        new("A Field Guide to Quiet Rivers", "Ana Ribeiro", 2023, 15.99m),
+        new("The Clockmaker's Daughter", "Lena Vogt", 2017, 11.99m),
+        new("Night Trains of Europe", "Tomasz Wierzbicki", 2022, 19.75m),
+        new("Bread, Salt and Weather", "Ana Ribeiro", 2016, 13.25m),
+        new("The Cartographer's Error", "Hugo Lindqvist", 2020, 16.00m),
+        new("Moths of the Northern Coast", "Maren Holt", 2018, 22.40m),
+        new("A Short History of Ink", "Priya Raman", 2024, 27.00m),
+        new("Winter at the Observatory", "Lena Vogt", 2023, 12.99m),
+        new("Ferries and Fog", "Idris Okafor", 2015, 9.99m),
+        new("The Patient Garden", "Sofia Marchetti", 2021, 17.50m),
+        new("Letters from the Signal Box", "Hugo Lindqvist", 2014, 10.50m)
+    ];
+
+    private bool Matches(Book book) =>
+        string.IsNullOrWhiteSpace(_search)
+        || book.Title.Contains(_search, StringComparison.OrdinalIgnoreCase)
+        || book.Author.Contains(_search, StringComparison.OrdinalIgnoreCase);
+}

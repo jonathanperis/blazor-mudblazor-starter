@@ -1,0 +1,50 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudPaper Outlined="true" Style="width: 18rem">
+            <MudList T="string" SelectionMode="_mode" Color="_color" CheckBoxColor="_color" Dense="_dense" Gutters="_gutters"
+                     Padding="_padding" Disabled="_disabled" ReadOnly="_readOnly">
+                <MudListItem Value="@("Fiction")" Text="Fiction" Icon="@Icons.Material.Outlined.AutoStories" />
+                <MudListItem Value="@("Nature")" Text="Nature" Icon="@Icons.Material.Outlined.Park" />
+                <MudListItem Value="@("History")" Text="History" Icon="@Icons.Material.Outlined.HistoryEdu" />
+                <MudListItem Value="@("Travel")" Text="Travel" Icon="@Icons.Material.Outlined.Map" />
+            </MudList>
+        </MudPaper>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_mode" Label="Selection mode" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<SelectionMode>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_gutters" Label="Gutters" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_padding" Label="Padding" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_readOnly" Label="Read-only" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private SelectionMode _mode = SelectionMode.SingleSelection;
+    private Color _color = Color.Primary;
+    private bool _dense;
+    private bool _gutters = true;
+    private bool _padding;
+    private bool _disabled;
+    private bool _readOnly;
+
+    // MudList defaults: SingleSelection, Color.Primary, CheckBoxColor Default, Gutters on, the rest off.
+    private string Code => Snippet.Element("MudList",
+    [
+        ("T", "string"),
+        ("SelectionMode", Snippet.Enum(_mode, SelectionMode.SingleSelection)),
+        ("Color", Snippet.Enum(_color, Color.Primary)),
+        ("CheckBoxColor", _mode == SelectionMode.MultiSelection ? Snippet.Enum(_color, Color.Default) : null),
+        ("Dense", Snippet.Flag(_dense)),
+        ("Gutters", _gutters ? null : "false"),
+        ("Padding", Snippet.Flag(_padding)),
+        ("Disabled", Snippet.Flag(_disabled)),
+        ("ReadOnly", Snippet.Flag(_readOnly))
+    ], "\n    <MudListItem Value=\"@(\"Fiction\")\" Text=\"Fiction\" Icon=\"@Icons.Material.Outlined.AutoStories\" />\n    …\n");
+}

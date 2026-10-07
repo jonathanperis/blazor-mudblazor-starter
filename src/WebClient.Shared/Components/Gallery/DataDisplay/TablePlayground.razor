@@ -1,0 +1,69 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudTable Items="_books" Dense="_dense" Hover="_hover" Striped="_striped" Bordered="_bordered" Outlined="_outlined"
+                  Square="_square" Elevation="_elevation" MultiSelection="_multiSelection" Breakpoint="_breakpoint" Style="width: 100%">
+            <HeaderContent>
+                <MudTh>Title</MudTh>
+                <MudTh>Author</MudTh>
+                <MudTh Style="text-align: right">Price</MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Title">@context.Title</MudTd>
+                <MudTd DataLabel="Author">@context.Author</MudTd>
+                <MudTd DataLabel="Price" Style="text-align: right">@context.Price.ToString("0.00")</MudTd>
+            </RowTemplate>
+        </MudTable>
+    </Preview>
+    <Controls>
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_hover" Label="Hover" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_striped" Label="Striped" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_bordered" Label="Bordered" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_outlined" Label="Outlined" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_square" Label="Square" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_multiSelection" Label="Multi selection" Color="Color.Primary" />
+        <MudSlider @bind-Value="_elevation" Min="0" Max="12" Step="1" Color="Color.Primary">Elevation: @_elevation</MudSlider>
+        <MudSelect @bind-Value="_breakpoint" Label="Breakpoint (stack below)" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Breakpoints) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+    </Controls>
+</Playground>
+
+@code {
+    private record Book(string Title, string Author, decimal Price);
+
+    private static readonly Breakpoint[] Breakpoints = [Breakpoint.None, Breakpoint.Xs, Breakpoint.Sm, Breakpoint.Md, Breakpoint.Lg, Breakpoint.Always];
+
+    private readonly Book[] _books =
+    [
+        new("Salt and Ledger", "Idris Okafor", 24.00m),
+        new("The Patient Garden", "Sofia Marchetti", 17.50m),
+        new("Ferries and Fog", "Idris Okafor", 9.99m),
+        new("Winter at the Observatory", "Lena Vogt", 12.99m)
+    ];
+
+    private bool _dense;
+    private bool _hover = true;
+    private bool _striped;
+    private bool _bordered;
+    private bool _outlined = true;
+    private bool _square;
+    private bool _multiSelection;
+    private int _elevation;
+    private Breakpoint _breakpoint = Breakpoint.Xs;
+
+    // MudTable defaults: Elevation 1, Breakpoint.Xs, every switch off.
+    private string Code => Snippet.Element("MudTable",
+    [
+        ("Items", "_books"),
+        ("Dense", Snippet.Flag(_dense)),
+        ("Hover", Snippet.Flag(_hover)),
+        ("Striped", Snippet.Flag(_striped)),
+        ("Bordered", Snippet.Flag(_bordered)),
+        ("Outlined", Snippet.Flag(_outlined)),
+        ("Square", Snippet.Flag(_square)),
+        ("MultiSelection", Snippet.Flag(_multiSelection)),
+        ("Elevation", _elevation == 1 ? null : _elevation.ToString()),
+        ("Breakpoint", Snippet.Enum(_breakpoint, Breakpoint.Xs))
+    ], "\n    <HeaderContent>…</HeaderContent>\n    <RowTemplate>…</RowTemplate>\n");
+}

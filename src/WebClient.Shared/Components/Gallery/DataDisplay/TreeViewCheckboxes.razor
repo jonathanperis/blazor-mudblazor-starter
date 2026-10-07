@@ -1,0 +1,35 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudPaper Outlined="true" Class="pa-2">
+            <MudTreeView T="string" SelectionMode="SelectionMode.MultiSelection" TriState="_triState" AutoSelectParent="_autoSelectParent"
+                         CheckBoxColor="Color.Secondary" @bind-SelectedValues="_selected">
+                <MudTreeViewItem Value="@("All stations")" Expanded="true">
+                    <MudTreeViewItem Value="@("Highlands")" Expanded="true">
+                        <MudTreeViewItem Value="@("Ben Alder ridge")" />
+                        <MudTreeViewItem Value="@("Loch Ossian shore")" />
+                        <MudTreeViewItem Value="@("Corrour moor")" />
+                    </MudTreeViewItem>
+                    <MudTreeViewItem Value="@("Coast")" Expanded="true">
+                        <MudTreeViewItem Value="@("Harbour wall")" />
+                        <MudTreeViewItem Value="@("Saltmarsh point")" />
+                    </MudTreeViewItem>
+                </MudTreeViewItem>
+            </MudTreeView>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudStack Spacing="1">
+            <MudSwitch @bind-Value="_triState" Label="Tri-state parents" Color="Color.Primary" />
+            <MudSwitch @bind-Value="_autoSelectParent" Label="Select parent when all children are selected" Color="Color.Primary" />
+            <MudText Typo="Typo.body2" Class="mt-3" role="status">
+                @((_selected?.Count ?? 0) == 0 ? "No data selected for download." : $"Download includes: {string.Join(", ", _selected!.Order())}.")
+            </MudText>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private bool _triState = true;
+    private bool _autoSelectParent = true;
+    private IReadOnlyCollection<string>? _selected = ["Harbour wall"];
+}

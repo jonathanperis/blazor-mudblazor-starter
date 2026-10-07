@@ -1,0 +1,26 @@
+<MudTimeline>
+    @foreach (var step in _steps)
+    {
+        <MudTimelineItem Color="Color.Primary" Size="Size.Small">
+            <ItemOpposite>
+                <MudText Typo="Typo.subtitle2" Color="Color.Primary">@step.Time.ToString("HH:mm")</MudText>
+            </ItemOpposite>
+            <ItemContent>
+                <MudText Typo="Typo.subtitle1" HtmlTag="h3">@step.Title</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">@step.Detail</MudText>
+            </ItemContent>
+        </MudTimelineItem>
+    }
+</MudTimeline>
+
+@code {
+    private record Step(TimeOnly Time, string Title, string Detail);
+
+    private readonly Step[] _steps =
+    [
+        new(new(3, 30), "Ovens on", "Deck ovens take an hour to reach 250 °C."),
+        new(new(4, 0), "Shape the loaves", "Overnight dough is divided, shaped and proofed."),
+        new(new(5, 15), "First bake", "Sourdough and rye, steam for the first ten minutes."),
+        new(new(7, 0), "Doors open", "Croissants out of the oven as the first customers arrive.")
+    ];
+}

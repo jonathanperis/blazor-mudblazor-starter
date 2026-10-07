@@ -1,0 +1,23 @@
+<MudCarousel TData="object" AutoCycle="false" Style="height: 260px">
+    @foreach (var special in _specials)
+    {
+        <MudCarouselItem Color="special.Color">
+            <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Spacing="1" Class="px-16" Style="height: 100%; text-align: center">
+                <MudText Typo="Typo.overline">@special.Season</MudText>
+                <MudText Typo="Typo.h4" HtmlTag="h3">@special.Name</MudText>
+                <MudText Typo="Typo.body1" Style="max-width: 36ch">@special.Description</MudText>
+            </MudStack>
+        </MudCarouselItem>
+    }
+</MudCarousel>
+
+@code {
+    private record Special(string Season, string Name, string Description, Color Color);
+
+    private readonly Special[] _specials =
+    [
+        new("Spring", "Rhubarb and custard tart", "Forced rhubarb from the walled garden on a vanilla custard.", Color.Primary),
+        new("Summer", "Tomato focaccia", "Baked every morning with tomatoes from Saltmarsh Farm.", Color.Secondary),
+        new("Autumn", "Spiced apple buns", "Cardamom dough rolled around apples from the harbour orchards.", Color.Tertiary)
+    ];
+}
