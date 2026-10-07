@@ -206,3 +206,6 @@ h1[tabindex="-1"]:focus, main[tabindex="-1"]:focus { outline: none; }
 
 /* Highlights (MudHighlighter, search) read as a marker pen in both themes. */
 mark { background: color-mix(in srgb, var(--mud-palette-warning) 30%, transparent); color: inherit; padding: 0 .08em; border-radius: 2px; }
+
+/* Sentence case everywhere: MudBlazor uppercases tab labels by default. */
+.mud-tab { text-transform: none; letter-spacing: .01em; }
