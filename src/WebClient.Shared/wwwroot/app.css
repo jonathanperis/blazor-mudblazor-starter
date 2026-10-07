@@ -95,12 +95,15 @@ h1[tabindex="-1"]:focus, main[tabindex="-1"]:focus { outline: none; }
 .example-title { margin: 0; font-family: var(--font-serif); font-weight: 500; font-size: 1.5rem; line-height: 1.2; letter-spacing: -.01em; color: var(--ink); }
 .example-description { margin: .35rem 0 0; color: var(--ink-soft); font-size: .9375rem; }
 .example-tools { display: flex; align-items: center; gap: .15rem; }
-.example-preview { position: relative; padding: clamp(1.25rem, 3vw, 2rem); background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--mud-default-borderradius); overflow-x: auto; }
-.example-preview::before { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; background-image: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 0); background-size: 18px 18px; mask-image: linear-gradient(to bottom, black, transparent 70%); opacity: .55; }
-.example-preview > * { position: relative; }
+/* isolation keeps the dot grid (z-index -1) behind content without positioning children, so fixed overlays still work. */
+.example-preview { position: relative; isolation: isolate; padding: clamp(1.25rem, 3vw, 2rem); background: var(--sheet); border: 1px solid var(--rule); border-radius: var(--mud-default-borderradius); overflow-x: auto; }
+.example-preview::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit; background-image: radial-gradient(circle at 1px 1px, color-mix(in srgb, var(--ink) 7%, transparent) 1px, transparent 0); background-size: 18px 18px; mask-image: linear-gradient(to bottom, black, transparent 70%); opacity: .55; }
 .example-preview-flush { padding: 0; }
 .example-preview-flush::before { display: none; }
 .example .code-block { margin-top: -1px; border-top-left-radius: 0; border-top-right-radius: 0; }
+.example-code { display: grid; }
+.code-file { margin: -1px 0 0; padding: .45rem 1.25rem; background: var(--code-bg); border: 1px solid var(--rule); border-bottom: 0; font-family: var(--font-mono); font-size: .72rem; letter-spacing: .04em; color: var(--ink-soft); }
+.code-file + .code-block { border-top-style: dashed; }
 
 /* Code */
 .code-block { background: var(--code-bg); color: var(--code-fg); border: 1px solid var(--rule); border-radius: var(--mud-default-borderradius); overflow: hidden; }
