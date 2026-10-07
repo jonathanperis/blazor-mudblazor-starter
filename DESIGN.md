@@ -14,7 +14,7 @@ The sandbox looks like a printed lab manual: warm paper, ink, one vermilion acce
 
 - Overview explains the learning purpose and offers a clear starting point.
 - The app drawer reads like a table of contents: Labs, Components (grouped by family, the current group expanded), Page samples.
-- `/labs`, `/components` and `/samples` are indexes; the components index is searchable.
+- `/labs`, `/components` and `/samples` are indexes; the components index is searchable, and Ctrl+K / ⌘K searches every lab, component, example and sample from any page.
 - Each lab has one page heading, a source link, linked prerequisites, difficulty and time. Host-specific differences appear as a labeled note inside the lab.
 - Each component page has one heading, the MudBlazor types it covers, links to the MudBlazor reference and its source, and an "On this page" list of examples.
 - The static demo shows a persistent banner explaining that server-only features use stand-ins, with a link to run locally.
@@ -23,7 +23,7 @@ The sandbox looks like a printed lab manual: warm paper, ink, one vermilion acce
 ## Gallery
 
 - Every example is its own file; the code shown is the embedded source of exactly what rendered. Examples are written to be read: short, idiomatic, meaningful data.
-- Where a component has two appearance enums, show every combination with `EnumMatrix`. Main components get a playground whose generated markup omits defaults.
+- Where a component has two appearance enums, show every combination with `EnumMatrix`. Main components get a playground whose generated markup omits defaults and whose settings can be shared as a link.
 - Examples sit on "specimen plates" (sheet, hairline border, faint dot grid). Wide content uses a flush plate and scrolls inside it.
 
 ## Interaction

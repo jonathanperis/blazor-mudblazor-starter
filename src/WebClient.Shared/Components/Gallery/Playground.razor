@@ -1,7 +1,26 @@
-@* A live component beside its controls, with the markup those controls produce. *@
-<div class="playground">
+@* A live component beside its controls, with the markup those controls produce. When the owner is passed, its
+   settings can be copied as a link and are restored from one: see PlaygroundState for what counts as a setting. *@
+@inject NavigationManager Navigation
+@inject IJSRuntime Js
+@inject ISnackbar Snackbar
+@inject ILogger<Playground> Logger
+
+<div class="playground" tabindex="-1" @ref="_element">
     <div class="playground-stage">@Preview</div>
-    <div class="playground-controls" role="group" aria-label="Parameters">@Controls</div>
+    <div class="playground-controls" role="group" aria-label="Parameters">
+        @Controls
+        @if (Owner is not null)
+        {
+            <div class="playground-actions">
+                <MudButton Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.Link" OnClick="CopyLink">Copy link to these settings</MudButton>
+                <MudButton Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.RestartAlt" OnClick="Reset" Disabled="@(!Changed)">Reset</MudButton>
+                @if (_restored > 0)
+                {
+                    <p class="playground-restored" role="status">Settings restored from a shared link.</p>
+                }
+            </div>
+        }
+    </div>
     <div class="playground-code"><CodeBlock Source="@Code" Label="Generated markup" /></div>
 </div>
 
@@ -9,4 +28,54 @@
     [Parameter, EditorRequired] public RenderFragment Preview { get; set; } = null!;
     [Parameter, EditorRequired] public RenderFragment Controls { get; set; } = null!;
     [Parameter, EditorRequired] public string Code { get; set; } = "";
+    /// <summary>The component that owns the settings; pass <c>this</c>. Without it, the link and reset buttons are hidden.</summary>
+    [Parameter] public ComponentBase? Owner { get; set; }
+
+    private ElementReference _element;
+    private Dictionary<string, string> _defaults = [];
+    private int _restored;
+
+    // The anchor of the Example that renders the owner, so a link opens at this playground.
+    private string Anchor => Owner!.GetType().Name.ToLowerInvariant();
+    private bool Changed => Owner is not null && !PlaygroundState.Capture(Owner).OrderBy(pair => pair.Key).SequenceEqual(_defaults.OrderBy(pair => pair.Key));
+
+    protected override void OnInitialized()
+    {
+        if (Owner is null) return;
+        _defaults = PlaygroundState.Capture(Owner);
+        var query = PlaygroundState.Query(Navigation.Uri);
+        if (!query.TryGetValue("playground", out var target) || target != Anchor) return;
+        _restored = PlaygroundState.Apply(Owner, query);
+        // The owner rendered its markup before these values were applied; re-render it.
+        if (_restored > 0) _ = OnOwner(() => { });
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender || _restored == 0) return;
+        try { await _element.FocusAsync(); }
+        catch (Exception error) when (error is JSException or JSDisconnectedException or TaskCanceledException) { Logger.LogDebug(error, "Could not focus the restored playground."); }
+    }
+
+    private async Task CopyLink()
+    {
+        var changes = PlaygroundState.Capture(Owner!).Where(pair => _defaults.GetValueOrDefault(pair.Key) != pair.Value);
+        var query = string.Join('&', changes.Prepend(new("playground", Anchor)).Select(pair => $"{pair.Key}={Uri.EscapeDataString(pair.Value)}"));
+        var link = $"{Navigation.Uri.Split('?', '#')[0]}?{query}#{Anchor}";
+        bool copied;
+        try { copied = await Js.InvokeAsync<bool>("learningFiles.copy", link); }
+        catch (JSException) { copied = false; }
+        Snackbar.Add(copied ? "Link copied. It opens this playground with the same settings." : $"Clipboard unavailable. Copy this link: {link}",
+            copied ? Severity.Success : Severity.Info);
+    }
+
+    private Task Reset()
+    {
+        _restored = 0;
+        return OnOwner(() => PlaygroundState.Apply(Owner!, _defaults));
+    }
+
+    // An event callback whose receiver is the owner runs the change and then re-renders the owner, which recomputes
+    // its generated markup. (EventCallback.Factory.Create would re-render the lambda's target: this component.)
+    private Task OnOwner(Action change) => new EventCallback(Owner, change).InvokeAsync();
 }
