@@ -1,0 +1,54 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudCard Outlined="_outlined" Elevation="_elevation" Square="_square" ContentPadding="_contentPadding" Style="width: 18rem">
+            @if (_header)
+            {
+                <MudCardHeader>
+                    <CardHeaderContent>
+                        <MudText Typo="Typo.subtitle1" HtmlTag="h3">Workshop: bread scoring</MudText>
+                    </CardHeaderContent>
+                </MudCardHeader>
+            }
+            <MudCardContent>
+                <MudText Typo="Typo.body2">Saturday 14:00, room 3. Bring an apron; blades and dough are provided.</MudText>
+            </MudCardContent>
+            @if (_actions)
+            {
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary">Sign up</MudButton>
+                </MudCardActions>
+            }
+        </MudCard>
+    </Preview>
+    <Controls>
+        <MudNumericField @bind-Value="_elevation" Label="Elevation" Min="0" Max="25" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSwitch @bind-Value="_outlined" Label="Outlined" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_square" Label="Square" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_contentPadding" Label="Content padding" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_header" Label="Header" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_actions" Label="Actions" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private int _elevation;
+    private bool _outlined = true;
+    private bool _square;
+    private bool _contentPadding = true;
+    private bool _header = true;
+    private bool _actions = true;
+
+    // MudCard defaults: Elevation 1, not outlined, rounded, ContentPadding true.
+    private string Code => Snippet.Element("MudCard",
+    [
+        ("Elevation", _elevation == 1 ? null : _elevation.ToString(CultureInfo.InvariantCulture)),
+        ("Outlined", Snippet.Flag(_outlined)),
+        ("Square", Snippet.Flag(_square)),
+        ("ContentPadding", _contentPadding ? null : "false")
+    ], Body);
+
+    private string Body =>
+        (_header ? "\n    <MudCardHeader>\n        <CardHeaderContent>…</CardHeaderContent>\n    </MudCardHeader>" : "") +
+        "\n    <MudCardContent>…</MudCardContent>" +
+        (_actions ? "\n    <MudCardActions>…</MudCardActions>" : "") + "\n";
+}

@@ -1,0 +1,30 @@
+<MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+    <MudAvatarGroup Max="3" Spacing="2" OutlineColor="Color.Surface">
+        <ChildContent>
+            @foreach (var (name, initials, color) in Reviewers)
+            {
+                <MudAvatar Color="color" role="img" aria-label="@name">@initials</MudAvatar>
+            }
+        </ChildContent>
+        <MaxAvatarsTemplate>
+            <MudTooltip Text="@HiddenNames(context)">
+                <MudAvatar Color="Color.Dark" Variant="Variant.Outlined" tabindex="0" role="img" aria-label="@($"{context} more: {HiddenNames(context)}")">+@context</MudAvatar>
+            </MudTooltip>
+        </MaxAvatarsTemplate>
+    </MudAvatarGroup>
+    <MudText Typo="Typo.body2">reviewed the grant proposal</MudText>
+</MudStack>
+
+@code {
+    private static readonly (string Name, string Initials, Color Color)[] Reviewers =
+    [
+        ("Priya Raman", "PR", Color.Primary),
+        ("Jonas Weber", "JW", Color.Secondary),
+        ("Lucía Ortega", "LO", Color.Tertiary),
+        ("Kwame Mensah", "KM", Color.Info),
+        ("Elif Kaya", "EK", Color.Success)
+    ];
+
+    // The template receives the number of hidden avatars; they are the last ones in the list.
+    private static string HiddenNames(int hidden) => string.Join(", ", Reviewers[^hidden..].Select(reviewer => reviewer.Name));
+}

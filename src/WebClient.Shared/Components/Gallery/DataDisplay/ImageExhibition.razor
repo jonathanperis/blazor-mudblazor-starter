@@ -1,0 +1,39 @@
+<MudGrid Spacing="4">
+    @foreach (var piece in Pieces)
+    {
+        <MudItem xs="6" sm="4">
+            <figure class="ma-0">
+                <MudImage Src="@piece.Source" Alt="@piece.Description" Fluid="true" ObjectFit="ObjectFit.Cover"
+                          Class="rounded" Style="height: 9rem; width: 100%" />
+                <figcaption class="mt-2">
+                    <MudText Typo="Typo.subtitle2" HtmlTag="span" Class="d-block">@piece.Title</MudText>
+                    <MudText Typo="Typo.caption" HtmlTag="span" Class="mud-text-secondary">@piece.Artist</MudText>
+                </figcaption>
+            </figure>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    private sealed record Piece(string Title, string Artist, string Description, string Source);
+
+    // Synthetic artwork: tall, wide and square SVGs, so Cover has something to crop.
+    private static readonly Piece[] Pieces =
+    [
+        new("Harbour at dusk", "M. Lindqvist", "Orange sun setting over dark water",
+            Svg(320, 180, "<rect width='320' height='180' fill='#E8A15C'/><circle cx='160' cy='110' r='34' fill='#F7D9A8'/><rect y='110' width='320' height='70' fill='#1F3B4D'/>")),
+        new("Three towers", "A. Osei", "Three tall blocks in red, ochre and teal",
+            Svg(160, 280, "<rect width='160' height='280' fill='#F4F1EA'/><rect x='18' y='80' width='34' height='200' fill='#B4441F'/><rect x='63' y='40' width='34' height='240' fill='#7A5C14'/><rect x='108' y='120' width='34' height='160' fill='#1F5F5B'/>")),
+        new("Field study", "R. Duarte", "Rows of green crops under a white sky",
+            Svg(240, 240, "<rect width='240' height='240' fill='#ECE8DF'/><path d='M0 120h240v120H0z' fill='#4E6B4A'/><path d='M0 150h240M0 180h240M0 210h240' stroke='#8FA27A' stroke-width='6'/>")),
+        new("Orbit", "C. Moreau", "A small planet circling a large one on navy",
+            Svg(300, 200, "<rect width='300' height='200' fill='#1C2A44'/><circle cx='150' cy='100' r='40' fill='#E0B85C'/><ellipse cx='150' cy='100' rx='110' ry='40' fill='none' stroke='#7EB3E6' stroke-width='2'/><circle cx='255' cy='112' r='9' fill='#FF8A5C'/>")),
+        new("Bread, still life", "S. Berg", "A round loaf and a knife on a board",
+            Svg(200, 260, "<rect width='200' height='260' fill='#2A2824'/><rect y='190' width='200' height='70' fill='#7A5C14'/><ellipse cx='100' cy='170' rx='60' ry='36' fill='#C68A4A'/><path d='M70 160q30-20 60 0' stroke='#8C5A2B' stroke-width='5' fill='none'/>")),
+        new("Signal", "Y. Demir", "Concentric rings in vermilion on cream",
+            Svg(280, 180, "<rect width='280' height='180' fill='#FBFAF6'/><circle cx='140' cy='90' r='70' fill='none' stroke='#B4441F' stroke-width='6'/><circle cx='140' cy='90' r='44' fill='none' stroke='#B4441F' stroke-width='6'/><circle cx='140' cy='90' r='18' fill='#B4441F'/>"))
+    ];
+
+    private static string Svg(int width, int height, string body) => "data:image/svg+xml;utf8," + Uri.EscapeDataString(
+        $"<svg xmlns='http://www.w3.org/2000/svg' width='{width}' height='{height}' viewBox='0 0 {width} {height}'>{body}</svg>");
+}

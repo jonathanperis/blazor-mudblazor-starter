@@ -1,0 +1,28 @@
+<MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="8" Class="pt-3">
+    <MudBadge Content="2" Color="Color.Primary" Overlap="true" BadgeAriaLabel="2 items">
+        <MudIconButton Icon="@Icons.Material.Outlined.ShoppingBasket" aria-label="Basket" />
+    </MudBadge>
+
+    <MudBadge Content="4" Color="Color.Secondary" Overlap="true" Bordered="true" BadgeAriaLabel="4 pending invites">
+        <MudIconButton Icon="@Icons.Material.Outlined.GroupAdd" Variant="Variant.Outlined" aria-label="Invites" />
+    </MudBadge>
+
+    <MudBadge Content="12" Color="Color.Error" BadgeAriaLabel="12 failed checks">
+        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Rule">Checks</MudButton>
+    </MudBadge>
+
+    <MudBadge Dot="true" Color="Color.Success" Overlap="true" Bordered="true" Origin="Origin.BottomRight" BadgeAriaLabel="Online">
+        <MudAvatar Color="Color.Tertiary" aria-hidden="true">AN</MudAvatar>
+    </MudBadge>
+
+    <MudBadge Icon="@Icons.Material.Filled.Verified" Color="Color.Info" Overlap="true" Bordered="true" Origin="Origin.BottomRight" BadgeAriaLabel="Verified baker">
+        <MudAvatar Color="Color.Primary" Size="Size.Large" aria-hidden="true">SB</MudAvatar>
+    </MudBadge>
+
+    <MudBadge Content="@("Sale")" Color="Color.Warning" Origin="Origin.TopLeft">
+        <MudPaper Outlined="true" Class="px-4 py-3">
+            <MudText Typo="Typo.subtitle2">Rye sourdough</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">€ 3.80 · was € 4.60</MudText>
+        </MudPaper>
+    </MudBadge>
+</MudStack>

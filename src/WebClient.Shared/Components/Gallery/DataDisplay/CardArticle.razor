@@ -1,0 +1,37 @@
+<MudGrid Spacing="4">
+    @foreach (var article in Articles)
+    {
+        <MudItem xs="12" sm="6" md="4">
+            @* The card is a flex column and MudCardContent grows, so every row's actions line up. *@
+            <MudCard Outlined="true" Style="height: 100%">
+                <MudCardMedia Image="@Banner(article.Tint)" Height="96" />
+                <MudCardContent>
+                    <MudText Typo="Typo.overline" HtmlTag="p" Color="Color.Primary">@article.Section</MudText>
+                    <MudText Typo="Typo.h6" HtmlTag="h3" GutterBottom="true">@article.Title</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">@article.Summary</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" EndIcon="@Icons.Material.Outlined.ArrowForward">Read</MudButton>
+                    <MudSpacer />
+                    <MudText Typo="Typo.caption" Class="mud-text-secondary mr-2">@article.Minutes min</MudText>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    private sealed record Article(string Section, string Title, string Summary, int Minutes, string Tint);
+
+    private static readonly Article[] Articles =
+    [
+        new("Transit", "Night buses return to the hill villages", "Four routes resume on Friday with a new timetable built around the last trains.", 4, "#2B5C8A"),
+        new("Science", "Why our lab cools samples slowly", "A degree per minute gave us larger crystals than an ice bath ever did.", 7, "#1F5F5B"),
+        new("Food", "The bakery that never sells out", "Pre-orders, a chalkboard and one honest rule about yesterday's bread.", 5, "#B4441F")
+    ];
+
+    // A decorative banner in the article's color; it carries no information, so it has no title.
+    private static string Banner(string tint) => "data:image/svg+xml;utf8," + Uri.EscapeDataString(
+        $"<svg xmlns='http://www.w3.org/2000/svg' width='400' height='96' viewBox='0 0 400 96'><rect width='400' height='96' fill='{tint}'/>" +
+        "<path d='M0 70q100-40 200 0t200 0v26H0z' fill='#FFFFFF' fill-opacity='.18'/><path d='M0 84q100-30 200 0t200 0v12H0z' fill='#FFFFFF' fill-opacity='.18'/></svg>");
+}

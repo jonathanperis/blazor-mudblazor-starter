@@ -1,0 +1,40 @@
+<MudStack Spacing="3" Style="max-width: 44rem">
+    <MudTextField @bind-Value="_search" Label="Find in passage" Immediate="true" Clearable="true" Variant="Variant.Outlined"
+                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" Style="max-width: 20rem" />
+    <MudText Typo="Typo.caption" Class="mud-text-secondary" role="status">@Summary</MudText>
+    <MudPaper Outlined="true" Class="pa-5">
+        <MudText Typo="Typo.body1">
+            <MudHighlighter Text="@Passage" HighlightedText="@_search" />
+        </MudText>
+    </MudPaper>
+</MudStack>
+
+@code {
+    private const string Passage =
+        "The Lantern Street bookshop keeps its maps in the back room, beside the reading lamps. " +
+        "Old maps of the harbour sell quickly; maps of the hill villages sit for months. " +
+        "On Thursdays the shop stays open late, and the owner reads aloud from a travel book chosen by the last customer of the week.";
+
+    private string _search = "maps";
+
+    private string Summary
+    {
+        get
+        {
+            if (string.IsNullOrWhiteSpace(_search)) return "Type a word to highlight it.";
+            var count = CountMatches(_search);
+            return count == 1 ? "1 match." : $"{count} matches.";
+        }
+    }
+
+    private static int CountMatches(string term)
+    {
+        int count = 0, index = 0;
+        while ((index = Passage.IndexOf(term, index, StringComparison.OrdinalIgnoreCase)) >= 0)
+        {
+            count++;
+            index += term.Length;
+        }
+        return count;
+    }
+}

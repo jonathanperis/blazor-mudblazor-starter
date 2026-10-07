@@ -1,0 +1,13 @@
+<MudGrid Spacing="3">
+    @foreach (var align in Enum.GetValues<Align>())
+    {
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Outlined="true" Class="pa-4" Height="100%">
+                <MudText Typo="Typo.overline" Align="align" HtmlTag="p">Align.@align</MudText>
+                <MudText Typo="Typo.body2" Align="align">
+                    The reading room opens at nine. Quiet study is upstairs; group work happens beside the map collection.
+                </MudText>
+            </MudPaper>
+        </MudItem>
+    }
+</MudGrid>

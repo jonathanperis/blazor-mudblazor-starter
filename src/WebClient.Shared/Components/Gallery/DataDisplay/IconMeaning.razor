@@ -1,0 +1,45 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.overline" HtmlTag="p" Class="mb-2">Decorative: the text already says it</MudText>
+        <MudPaper Outlined="true" Class="pa-4">
+            <MudStack Spacing="3">
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Outlined.Schedule" Color="Color.Secondary" />
+                    <MudText>Departs 18:42</MudText>
+                </MudStack>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Outlined.Place" Color="Color.Secondary" />
+                    <MudText>Platform 4, Central Station</MudText>
+                </MudStack>
+                <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+                    <MudIcon Icon="@Icons.Material.Outlined.Accessible" Color="Color.Secondary" />
+                    <MudText>Step-free access</MudText>
+                </MudStack>
+            </MudStack>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.overline" HtmlTag="p" Class="mb-2">Meaningful: the icon is the only signal</MudText>
+        <MudPaper Outlined="true" Class="pa-4">
+            <MudStack Spacing="3">
+                @foreach (var (line, status, icon, color) in Lines)
+                {
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+                        <MudText>@line</MudText>
+                        <MudIcon Icon="@icon" Color="@color" Title="@status" />
+                    </MudStack>
+                }
+            </MudStack>
+        </MudPaper>
+        <MudText Typo="Typo.caption" Class="mud-text-secondary mt-2">Hover an icon to see its title; screen readers announce it.</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private static readonly (string Line, string Status, string Icon, Color Color)[] Lines =
+    [
+        ("Harbour line", "Good service", Icons.Material.Outlined.CheckCircle, Color.Success),
+        ("Riverside line", "Minor delays", Icons.Material.Outlined.Schedule, Color.Warning),
+        ("Airport line", "Suspended", Icons.Material.Outlined.Block, Color.Error)
+    ];
+}

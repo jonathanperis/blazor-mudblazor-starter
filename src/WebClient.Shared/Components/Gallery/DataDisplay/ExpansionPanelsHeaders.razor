@@ -1,0 +1,36 @@
+<div style="max-width: 40rem">
+    <MudExpansionPanels MultiExpansion="true">
+        @foreach (var order in Orders)
+        {
+            <MudExpansionPanel>
+                <TitleContent>
+                    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3">
+                        <MudIcon Icon="@order.Icon" Color="Color.Secondary" />
+                        <MudStack Spacing="0" Class="flex-grow-1">
+                            <MudText Typo="Typo.subtitle2">@order.Customer</MudText>
+                            <MudText Typo="Typo.caption" Class="mud-text-secondary">@order.Summary</MudText>
+                        </MudStack>
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@order.StatusColor">@order.Status</MudChip>
+                    </MudStack>
+                </TitleContent>
+                <ChildContent>
+                    <MudText Typo="Typo.body2">@order.Detail</MudText>
+                </ChildContent>
+            </MudExpansionPanel>
+        }
+    </MudExpansionPanels>
+</div>
+
+@code {
+    private sealed record Order(string Customer, string Summary, string Status, Color StatusColor, string Icon, string Detail);
+
+    private static readonly Order[] Orders =
+    [
+        new("Station kiosk", "40 rolls · 12 cardamom knots", "Packed", Color.Success, Icons.Material.Outlined.Storefront,
+            "Collected by the kiosk van at 06:30. Invoice sent with the delivery note."),
+        new("Lantern Street School", "6 loaves · 60 buns", "Baking", Color.Warning, Icons.Material.Outlined.School,
+            "In the second oven, ready at 07:45. Two loaves are sesame-free and labelled separately."),
+        new("Wedding, Saturday", "Three-tier bread crown", "Confirmed", Color.Info, Icons.Material.Outlined.Celebration,
+            "Tasting on Wednesday at 16:00. Delivery to the harbour hall by 11:00 on Saturday.")
+    ];
+}

@@ -1,0 +1,10 @@
+@* Headings inside table cells would pollute the page outline, so every cell renders a span. *@
+<EnumMatrix TRow="Color" TColumn="Typo" Caption="MudText: Color × Typo" ColumnValues="Styles">
+    <Cell>
+        <MudText Typo="@context.Column" Color="@context.Row" HtmlTag="span">Timetable</MudText>
+    </Cell>
+</EnumMatrix>
+
+@code {
+    private static readonly Typo[] Styles = [Typo.h5, Typo.subtitle1, Typo.body1, Typo.body2, Typo.caption, Typo.overline];
+}

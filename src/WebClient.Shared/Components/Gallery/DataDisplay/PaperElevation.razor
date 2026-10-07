@@ -1,0 +1,10 @@
+@* foreach, not for: child content captures the loop variable, and a for counter would show 25 in every paper. *@
+<div style="display: grid; gap: 1.25rem; grid-template-columns: repeat(auto-fill, minmax(5.5rem, 1fr))">
+    @foreach (var elevation in Enumerable.Range(0, 25))
+    {
+        <MudPaper Elevation="elevation" Height="5rem" Class="d-flex flex-column align-center justify-center">
+            <MudText Typo="Typo.h6" HtmlTag="span">@elevation</MudText>
+            <MudText Typo="Typo.caption" HtmlTag="span" Class="mud-text-secondary">Elevation</MudText>
+        </MudPaper>
+    }
+</div>

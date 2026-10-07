@@ -1,0 +1,45 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudIcon Icon="@Choices[_icon]" Size="_size" Color="_color" Disabled="_disabled" Title="@(string.IsNullOrWhiteSpace(_title) ? null : _title)" />
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_icon" Label="Icon" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var name in Choices.Keys) { <MudSelectItem Value="name">@name</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_size" Label="Size" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Size>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudTextField @bind-Value="_title" Label="Title (accessible name)" Variant="Variant.Outlined" Margin="Margin.Dense" Immediate="true" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private static readonly Dictionary<string, string> Choices = new()
+    {
+        ["Outlined.LocalCafe"] = Icons.Material.Outlined.LocalCafe,
+        ["Outlined.DirectionsBus"] = Icons.Material.Outlined.DirectionsBus,
+        ["Rounded.MenuBook"] = Icons.Material.Rounded.MenuBook,
+        ["Filled.Science"] = Icons.Material.Filled.Science,
+        ["TwoTone.WbSunny"] = Icons.Material.TwoTone.WbSunny
+    };
+
+    private string _icon = "Outlined.LocalCafe";
+    private Size _size = Size.Large;
+    private Color _color = Color.Primary;
+    private string _title = "Café";
+    private bool _disabled;
+
+    // MudIcon defaults: Size.Medium, Color.Inherit.
+    private string Code => Snippet.Element("MudIcon",
+    [
+        ("Icon", $"@Icons.Material.{_icon}"),
+        ("Size", Snippet.Enum(_size, Size.Medium)),
+        ("Color", Snippet.Enum(_color, Color.Inherit)),
+        ("Title", string.IsNullOrWhiteSpace(_title) ? null : _title),
+        ("Disabled", Snippet.Flag(_disabled))
+    ]);
+}

@@ -1,0 +1,15 @@
+<MudGrid Spacing="4">
+    @foreach (var light in new[] { false, true })
+    {
+        <MudItem xs="12" sm="6">
+            <MudText Typo="Typo.overline" HtmlTag="p" Class="mb-2">@(light ? "Light=\"true\"" : "Default")</MudText>
+            <MudPaper Outlined="true" Class="pa-4">
+                <MudText Typo="Typo.body2">Sourdough starter fed</MudText>
+                <MudDivider Light="light" Class="my-3" />
+                <MudText Typo="Typo.body2">Dough rested overnight</MudText>
+                <MudDivider Light="light" Class="my-3" />
+                <MudText Typo="Typo.body2">Oven preheated to 250 °C</MudText>
+            </MudPaper>
+        </MudItem>
+    }
+</MudGrid>

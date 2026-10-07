@@ -1,0 +1,26 @@
+<div class="matrix-scroll" role="region" aria-label="Avatar sizes and shapes" tabindex="0">
+    <table class="matrix">
+        <caption>MudAvatar: Size × shape</caption>
+        <thead>
+            <tr>
+                <th scope="col"><span class="matrix-axis">Size ↓ · Shape →</span></th>
+                <th scope="col">Circle (default)</th>
+                <th scope="col">Rounded</th>
+                <th scope="col">Square</th>
+                <th scope="col">Elevation 3</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var size in Enum.GetValues<Size>())
+            {
+                <tr>
+                    <th scope="row">@size</th>
+                    <td><MudAvatar Size="size" Color="Color.Tertiary">RB</MudAvatar></td>
+                    <td><MudAvatar Size="size" Color="Color.Tertiary" Rounded="true">RB</MudAvatar></td>
+                    <td><MudAvatar Size="size" Color="Color.Tertiary" Square="true">RB</MudAvatar></td>
+                    <td><MudAvatar Size="size" Color="Color.Tertiary" Elevation="3">RB</MudAvatar></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
