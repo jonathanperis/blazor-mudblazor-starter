@@ -2,7 +2,7 @@
 
 <MudGrid Spacing="4">
     <MudItem xs="12" sm="7">
-        <MudDropContainer T="Track" Items="_tracks" ItemsSelector="(_, _) => true" ItemDropped="OnDropped">
+        <MudDropContainer @ref="_container" T="Track" Items="_tracks" ItemsSelector="(_, _) => true" ItemDropped="OnDropped">
             <ChildContent>
                 <MudPaper Outlined="true" Class="pa-2">
                     <MudDropZone T="Track" Identifier="playlist" AllowReorder="true" Class="d-flex flex-column gap-1" />
@@ -11,7 +11,8 @@
             <ItemRenderer>
                 @* Only the handle starts a drag, so the rest of the row can hold text people select and controls they press. *@
                 <MudPaper Elevation="0" Class="d-flex align-center gap-2 pa-2 mud-background-gray">
-                    <MudDragHandle T="Track" Class="d-flex cursor-grab" title="Drag to reorder">
+                    @* The handle is a pointer affordance; the arrow buttons are the keyboard and screen-reader route. *@
+                    <MudDragHandle T="Track" Class="d-flex cursor-grab" title="Drag to reorder" aria-hidden="true">
                         <MudIcon Icon="@Icons.Material.Outlined.DragIndicator" Size="Size.Small" />
                     </MudDragHandle>
                     <MudText Typo="Typo.body2" Class="flex-grow-1">@context.Title</MudText>
@@ -40,12 +41,21 @@
 
     private readonly List<Track> _tracks = [new("Overture", "3:12", 0), new("Harbour lights", "4:05", 1), new("Night ferry", "5:40", 2), new("Lantern song", "2:58", 3)];
 
-    private void OnDropped(MudItemDropInfo<Track> drop) => _tracks.UpdateOrder(drop, track => track.Order);
+    private MudDropContainer<Track>? _container;
+
+    private void OnDropped(MudItemDropInfo<Track> drop)
+    {
+        _tracks.UpdateOrder(drop, track => track.Order);
+        _tracks.Sort((left, right) => left.Order.CompareTo(right.Order));
+    }
 
     // The buttons do what the handle does, for keyboard and switch users.
     private void Move(Track track, int offset)
     {
         var neighbour = _tracks.Single(other => other.Order == track.Order + offset);
         (neighbour.Order, track.Order) = (track.Order, neighbour.Order);
+        // The container lists items in collection order, so sort the list and ask it to re-read the items.
+        _tracks.Sort((left, right) => left.Order.CompareTo(right.Order));
+        _container?.Refresh();
     }
 }
