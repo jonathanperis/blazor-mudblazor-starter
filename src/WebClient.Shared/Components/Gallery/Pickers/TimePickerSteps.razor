@@ -1,0 +1,20 @@
+<MudGrid Spacing="3">
+    <MudItem xs="12" md="6">
+        <MudTimePicker @bind-Time="_meeting" Label="Meeting (15-minute steps)" MinuteSelectionStep="15" Variant="Variant.Outlined"
+                       HelperText="Minutes snap to :00, :15, :30 and :45" />
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudTimePicker @bind-Time="_meeting" Label="Reminder (opens on minutes)" OpenTo="OpenTo.Minutes" MinuteSelectionStep="5" Variant="Variant.Outlined"
+                       HelperText="Starts on the minute dial, 5-minute steps" />
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudTimePicker @bind-Time="_meeting" Label="Change the hour only" TimeEditMode="TimeEditMode.OnlyHours" Variant="Variant.Outlined" />
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudTimePicker @bind-Time="_meeting" Label="Change the minutes only" TimeEditMode="TimeEditMode.OnlyMinutes" Variant="Variant.Outlined" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private TimeSpan? _meeting = new TimeSpan(10, 30, 0);
+}

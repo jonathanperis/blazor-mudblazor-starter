@@ -1,0 +1,16 @@
+@page "/components/date-picker"
+@attribute [ComponentPage("Date picker", GalleryGroup.Pickers, "A text field that opens a calendar. Choose it when people pick one day and benefit from seeing the week around it; for dates they know by heart, such as a birthday, allow typing too.", MudDocs = "datepicker", Types = ["MudDatePicker", "DateMask"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(DatePickerBasic)" Title="Basic usage" Description="Bind a nullable DateTime to Date (two-way, with @@bind-Date). Null means no date has been chosen yet." />
+    <Example Of="typeof(DatePickerVariants)" Title="Inline, dialog and static" Description="PickerVariant decides where the calendar lives: in a popover beside the field, in a modal dialog, or always visible on the page." />
+    <Example Of="typeof(DatePickerCombinations)" Title="Every field variant and adornment" Description="The closed field follows the same Variant as a text field. The adornment places the calendar button; with None, the field itself opens the calendar." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(DatePickerStatic)" Title="Static calendars" Description="Portrait and landscape orientation, a theme color, week numbers, a Monday start and a calendar without its toolbar." />
+    <Example Of="typeof(DatePickerConstraints)" Title="Minimum, maximum and disabled dates" Description="MinDate and MaxDate bound the calendar; IsDateDisabledFunc rules out individual days; AdditionalDateClassesFunc marks days without disabling them." />
+    <Example Of="typeof(DatePickerViews)" Title="Open to the year or the month" Description="OpenTo starts on the year or month list. Fix the day, or the month and day, to pick a month or a year instead of a date." />
+    <Example Of="typeof(DatePickerCulture)" Title="Cultures and formats" Description="One date, three cultures. Culture supplies month and day names, the first day of the week and the default format." />
+    <Example Of="typeof(DatePickerEditable)" Title="Typing a date" Description="Editable fields accept typed dates. A DateMask guides the entry and Clearable adds a button that empties the field." />
+    <Example Of="typeof(DatePickerActions)" Title="Action buttons" Description="PickerActions adds buttons under the calendar. With AutoClose off, a choice is only committed when OK is pressed." />
+    <Example Of="typeof(DatePickerStates)" Title="Disabled, read-only and required" Description="Disabled fields cannot be focused; read-only fields show a value without opening; required fields explain what is missing." />
+    <Example Of="typeof(DatePickerPlayground)" Title="Playground" Description="Change the parameters; the markup below lists only what differs from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

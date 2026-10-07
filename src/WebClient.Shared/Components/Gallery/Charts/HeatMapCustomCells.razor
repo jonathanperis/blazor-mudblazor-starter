@@ -1,0 +1,31 @@
+@using MudBlazor.Utilities
+
+<MudChart T="double" ChartType="ChartType.HeatMap" ChartSeries="_series" ChartLabels="_hours" ChartOptions="_options" Width="100%" Height="240px">
+    @foreach (var column in _closedColumns)
+    {
+        @* Sunday afternoon: the café is closed, which is not the same as zero customers. *@
+        <MudHeatMapCell Row="2" Column="column" MudColor="_closed">
+            <text dominant-baseline="middle" text-anchor="middle" font-size="12" fill="#1C1B19">Closed</text>
+        </MudHeatMapCell>
+    }
+</MudChart>
+
+@code {
+    private readonly string[] _hours = ["10h", "11h", "12h", "13h", "14h", "15h", "16h", "17h"];
+    private readonly int[] _closedColumns = [4, 5, 6, 7];
+    private readonly MudColor _closed = "#B9B5AC";
+
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "Fri", Data = new double[] { 14, 18, 35, 32, 14, 13, 17, 26 } },
+        new() { Name = "Sat", Data = new double[] { 42, 45, 40, 33, 27, 24, 20, 15 } },
+        new() { Name = "Sun", Data = new double[] { 33, 38, 30, 18, 0, 0, 0, 0 } }
+    ];
+
+    private readonly HeatMapChartOptions _options = new()
+    {
+        ChartPalette = ["#D5ECE8", "#7CC4B9", "#0B9585", "#05584F"],
+        ShowLabels = true,
+        ValueFormatString = "0"
+    };
+}

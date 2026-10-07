@@ -1,0 +1,11 @@
+@page "/components/file-upload"
+@attribute [ComponentPage("File upload", GalleryGroup.Pickers, "A file picker with any activator you like: a button, an icon or a drop zone. It hands you IBrowserFile objects; where the bytes go next is your decision, and in this gallery they never leave the app.", MudDocs = "fileupload", Types = ["MudFileUpload", "IBrowserFile"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(FileUploadButton)" Title="Button activators" Description="CustomContent receives the upload component; call OpenFilePickerAsync from any button. An icon-only activator still needs an accessible name." />
+    <Example Of="typeof(FileUploadDragAndDrop)" Title="Drag-and-drop zone" Description="DragAndDrop lets files be dropped on the content. Keep a visible Browse button too: dropping is impossible from a keyboard." />
+    <Example Of="typeof(FileUploadMultiple)" Title="Multiple files with removal" Description="Bind a read-only list of IBrowserFile for several files. AppendMultipleFiles adds to the selection instead of replacing it, and RemoveFileAsync drops one file." />
+    <Example Of="typeof(FileUploadValidation)" Title="Accepted types and a size bound" Description="Accept only filters the browser's file dialog, so check the extension in code too. MaxFileSize removes oversized files and reports them itself." />
+    <Example Of="typeof(FileUploadReadInBrowser)" Title="Processing a file without uploading it" Description="Read the stream with a size limit and a cancellation token. Nothing is posted to any endpoint: in WebAssembly the bytes stay in the browser; on Blazor Server they travel only over this app's own circuit." />
+    <Example Of="typeof(FileUploadStates)" Title="Disabled and required" Description="Disabled blocks the activator; Required joins form validation like any other input." />
+</ComponentPageFrame>

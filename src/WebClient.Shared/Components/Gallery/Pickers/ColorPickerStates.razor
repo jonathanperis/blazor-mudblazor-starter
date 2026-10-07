@@ -1,0 +1,19 @@
+@using MudBlazor.Utilities
+
+<MudGrid Spacing="3">
+    <MudItem xs="12" md="4">
+        <MudColorPicker @bind-Value="_brand" Label="Brand color" Variant="Variant.Outlined" Editable="true" ShowAlpha="false"
+                        HelperText="Type a hex or rgb() value" />
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudColorPicker Value="_locked" Label="Locked by the template" Variant="Variant.Outlined" Disabled="true" HelperText="Disabled" />
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudColorPicker Value="_locked" Label="Inherited from the series" Variant="Variant.Outlined" ReadOnly="true" HelperText="Read-only" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private MudColor _brand = "#7A5C14";
+    private readonly MudColor _locked = "#2A2824";
+}

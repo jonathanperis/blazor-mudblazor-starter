@@ -1,0 +1,30 @@
+<MudChart T="double" ChartType="ChartType.Bar" ChartSeries="_series" ChartLabels="_quarters" ChartOptions="_options" Width="100%" Height="320px" />
+
+<MudStack Row Wrap="Wrap.Wrap" Spacing="4" AlignItems="AlignItems.Center" Class="mt-2">
+    <MudSwitch T="bool" @bind-Value="_options.YAxisLines" Label="Horizontal grid lines" Color="Color.Primary" />
+    <MudSwitch T="bool" @bind-Value="_options.XAxisLines" Label="Vertical grid lines" Color="Color.Primary" />
+    <MudSelect T="int" @bind-Value="_options.YAxisTicks" Label="Tick spacing" Variant="Variant.Outlined" Margin="Margin.Dense" Style="max-width: 10rem">
+        @foreach (var step in new[] { 10, 25, 50 }) { <MudSelectItem Value="step">@step thousand</MudSelectItem> }
+    </MudSelect>
+</MudStack>
+
+@code {
+    private readonly string[] _quarters = ["Q1", "Q2", "Q3", "Q4"];
+
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "2025", Data = new double[] { 61, 74, 88, 95 } },
+        new() { Name = "2026", Data = new double[] { 70, 83, 97, 104 } }
+    ];
+
+    private readonly BarChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1", "#D9622B", "#0B9585", "#B07D0E", "#A65DB0", "#4F9A2E"],
+        YAxisTicks = 25,
+        YAxisSuggestedMax = 150, // leaves headroom for next year's growth
+        YAxisLines = true,
+        XAxisLines = false,
+        YAxisToStringFunc = value => $"€{value:0}k",
+        YAxisTitle = "Revenue"
+    };
+}

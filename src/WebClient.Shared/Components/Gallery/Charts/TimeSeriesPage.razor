@@ -1,0 +1,9 @@
+@page "/components/time-series"
+@attribute [ComponentPage("Time series", GalleryGroup.Charts, "A line chart whose x-axis is real time. Points carry their own timestamps, so series sampled at different rates or with gaps line up correctly. Choose it for sensor readings and logs.", MudDocs = "charts/timeseries", Types = ["MudChart", "TimeValue", "TimeSeriesChartOptions"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(TimeSeriesBasic)" Title="One night of sky readings" Description="ChartType.Timeseries places each TimeValue by its DateTime. TimeLabelSpacing and TimeLabelFormat choose the axis labels." />
+    <Example Of="typeof(TimeSeriesIrregular)" Title="Different sampling rates" Description="One sensor reports every 5 minutes, the other every 20 and misses an hour. No labels are needed: the timestamps align the series." />
+    <Example Of="typeof(TimeSeriesLabels)" Title="Time labels and rounding" Description="Label spacing, rounding to whole intervals and padding the series to the rounded range." />
+    <Example Of="typeof(TimeSeriesLive)" Title="A live feed" Description="A reading arrives every second and the window keeps the last two minutes. Pausing cancels the loop; leaving the page disposes it." />
+</ComponentPageFrame>

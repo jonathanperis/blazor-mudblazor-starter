@@ -1,0 +1,66 @@
+<Playground Code="@Code">
+    <Preview>
+        <div style="min-width: 14rem">
+            <MudTimePicker @bind-Time="_time" Label="@_label" Variant="_variant" PickerVariant="_pickerVariant" Color="_color"
+                           Orientation="_orientation" AmPm="_amPm" MinuteSelectionStep="_step" TimeEditMode="_editMode"
+                           Clearable="_clearable" Editable="_editable" Disabled="_disabled" />
+        </div>
+    </Preview>
+    <Controls>
+        <MudTextField @bind-Value="_label" Label="Label" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSelect @bind-Value="_variant" Label="Variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_pickerVariant" Label="Picker variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<PickerVariant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_orientation" Label="Orientation" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Orientation>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_editMode" Label="Time edit mode" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<TimeEditMode>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_step" Label="Minute step" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in new[] { 1, 5, 10, 15, 30 }) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_amPm" Label="12-hour clock" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_clearable" Label="Clearable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_editable" Label="Editable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private TimeSpan? _time = new TimeSpan(19, 45, 0);
+    private string _label = "Doors open";
+    private Variant _variant = Variant.Outlined;
+    private PickerVariant _pickerVariant = PickerVariant.Inline;
+    private Color _color = Color.Primary;
+    private Orientation _orientation = Orientation.Portrait;
+    private TimeEditMode _editMode = TimeEditMode.Normal;
+    private int _step = 1;
+    private bool _amPm;
+    private bool _clearable;
+    private bool _editable;
+    private bool _disabled;
+
+    // MudTimePicker defaults: Variant.Text, PickerVariant.Inline, Color.Primary, Orientation.Portrait, TimeEditMode.Normal, 1-minute steps.
+    private string Code => Snippet.Element("MudTimePicker",
+    [
+        ("@bind-Time", "_time"),
+        ("Label", _label),
+        ("Variant", Snippet.Enum(_variant, Variant.Text)),
+        ("PickerVariant", Snippet.Enum(_pickerVariant, PickerVariant.Inline)),
+        ("Color", Snippet.Enum(_color, Color.Primary)),
+        ("Orientation", Snippet.Enum(_orientation, Orientation.Portrait)),
+        ("TimeEditMode", Snippet.Enum(_editMode, TimeEditMode.Normal)),
+        ("MinuteSelectionStep", _step == 1 ? null : _step.ToString()),
+        ("AmPm", Snippet.Flag(_amPm)),
+        ("Clearable", Snippet.Flag(_clearable)),
+        ("Editable", Snippet.Flag(_editable)),
+        ("Disabled", Snippet.Flag(_disabled))
+    ]);
+}

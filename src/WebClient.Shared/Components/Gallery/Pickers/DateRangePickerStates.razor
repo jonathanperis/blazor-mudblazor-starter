@@ -1,0 +1,24 @@
+<MudForm @ref="_form">
+    <MudGrid Spacing="3">
+        <MudItem xs="12" md="6">
+            <MudDateRangePicker DateRange="_lastTerm" Label="Previous term" Disabled="true" Variant="Variant.Outlined" HelperText="Disabled" />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudDateRangePicker DateRange="_currentTerm" Label="Current term" ReadOnly="true" Variant="Variant.Outlined" HelperText="Read-only" />
+        </MudItem>
+        <MudItem xs="12" md="6">
+            <MudDateRangePicker @bind-DateRange="_nextTerm" Label="Next term" Required="true" RequiredError="Choose when the next term runs."
+                                Variant="Variant.Outlined" />
+        </MudItem>
+        <MudItem xs="12">
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@(() => _form.ValidateAsync())">Validate</MudButton>
+        </MudItem>
+    </MudGrid>
+</MudForm>
+
+@code {
+    private MudForm _form = null!;
+    private readonly DateRange _lastTerm = new(new DateTime(2026, 2, 2), new DateTime(2026, 6, 26));
+    private readonly DateRange _currentTerm = new(new DateTime(2026, 8, 3), new DateTime(2026, 12, 18));
+    private DateRange _nextTerm = new();
+}

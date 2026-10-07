@@ -1,0 +1,19 @@
+@using MudBlazor.Utilities
+
+<MudStack Row Wrap="Wrap.Wrap" Spacing="4" AlignItems="AlignItems.Center">
+    <div style="width: 18rem">
+        <MudColorPicker @bind-Value="_cover" Label="Notebook cover" Variant="Variant.Outlined" ShowAlpha="false" />
+    </div>
+    <MudStack Row Spacing="2" AlignItems="AlignItems.Center">
+        <div style="@($"width: 2.5rem; height: 3.25rem; border-radius: 3px 6px 6px 3px; background: {_cover}; border: 1px solid var(--mud-palette-lines-default)")"
+             role="img" aria-label="@($"Notebook cover preview, {_cover.Value}")"></div>
+        <MudText Typo="Typo.body2">
+            @_cover.ToString(MudColorOutputFormats.Hex)<br />
+            @_cover.ToString(MudColorOutputFormats.RGB)
+        </MudText>
+    </MudStack>
+</MudStack>
+
+@code {
+    private MudColor _cover = "#1F5F5B";
+}

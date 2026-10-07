@@ -1,0 +1,8 @@
+@page "/components/radar-chart"
+@attribute [ComponentPage("Radar chart", GalleryGroup.Charts, "A radar chart plots several measures on spokes around a centre, so each series becomes a shape. Choose it to compare profiles on the same scale; keep to a few series and five to eight spokes.", MudDocs = "charts/radar", Types = ["MudChart", "RadarChartOptions"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(RadarChartBasic)" Title="One profile" Description="Labels become the spokes and each value sits on its spoke. AxisSuggestedMax fixes the outer ring at the top of the scale." />
+    <Example Of="typeof(RadarChartCompare)" Title="Comparing profiles" Description="Translucent fills let overlapping shapes stay readable. CanHideSeries lets the reader isolate one." />
+    <Example Of="typeof(RadarChartStyling)" Title="Grid, angle and fill" Description="Grid levels, the starting angle, fill opacity, stroke width, markers and axis values." />
+</ComponentPageFrame>

@@ -1,0 +1,20 @@
+<MudGrid Spacing="3">
+    <MudItem xs="12" md="6">
+        <MudDatePicker @bind-Date="_returnDate" Label="Return date (ISO)" Variant="Variant.Outlined"
+                       Editable="true" Clearable="true" Mask="@(new DateMask("0000-00-00"))" DateFormat="yyyy-MM-dd"
+                       Placeholder="yyyy-mm-dd" HelperText="Type the digits; the dashes are added for you" />
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudDatePicker @bind-Date="_returnDate" Label="Data de devolução (pt-BR)" Variant="Variant.Outlined"
+                       Editable="true" Clearable="true" Mask="@(new DateMask("dd/MM/yyyy"))" DateFormat="dd/MM/yyyy"
+                       Culture="@(System.Globalization.CultureInfo.GetCultureInfo("pt-BR"))"
+                       Placeholder="dd/mm/aaaa" HelperText="Same value, day first" />
+    </MudItem>
+    <MudItem xs="12">
+        <MudText Typo="Typo.body2" role="status">Bound value: @(_returnDate?.ToString("yyyy-MM-dd") ?? "null")</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private DateTime? _returnDate = new DateTime(2026, 11, 2);
+}

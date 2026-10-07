@@ -1,0 +1,8 @@
+@page "/components/scatter-plot"
+@attribute [ComponentPage("Scatter plot", GalleryGroup.Charts, "Each point is one observation placed by two measurements, which reveals correlation, clusters and outliers. Choose it when both axes are numbers; keep to two or three series so the colors stay distinct.", MudDocs = "charts/scatterplot", Types = ["MudChart", "ScatterPlotChartOptions", "ScatterSeriesDisplayOverride"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ScatterPlotBasic)" Title="Two groups of observations" Description="Points are (x, y) tuples. Both axes are numeric, so XAxisTicks and YAxisTicks set the spacing of each." />
+    <Example Of="typeof(ScatterPlotTrendLine)" Title="A fitted trend line" Description="A second series with two points, drawn as a line by a ScatterSeriesDisplayOverride, shows a least-squares fit computed in C#." />
+    <Example Of="typeof(ScatterPlotOptions)" Title="Points, labels and tooltips" Description="Point radius, value labels beside the points, tooltips and vertical grid lines." />
+</ComponentPageFrame>

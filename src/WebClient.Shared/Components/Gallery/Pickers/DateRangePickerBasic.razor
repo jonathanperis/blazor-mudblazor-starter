@@ -1,0 +1,12 @@
+<MudStack Spacing="2" Style="max-width: 24rem">
+    <MudDateRangePicker @bind-DateRange="_stay" Label="Stay at the field station" Variant="Variant.Outlined" HelperText="Arrival and departure" />
+    <MudText Typo="Typo.body2" role="status">@Summary</MudText>
+</MudStack>
+
+@code {
+    private DateRange _stay = new(new DateTime(2026, 11, 9), new DateTime(2026, 11, 13));
+
+    private string Summary => _stay is { Start: { } start, End: { } end }
+        ? $"{(end - start).Days} nights, from {start:D} to {end:D}."
+        : "Choose an arrival and a departure date.";
+}

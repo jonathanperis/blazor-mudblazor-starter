@@ -1,0 +1,39 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="7">
+        <MudChart T="double" ChartType="ChartType.Pie" ChartSeries="_series" ChartLabels="_categories" ChartOptions="_options"
+                  @bind-SelectedIndex="_selected" Width="100%" Height="260px" />
+    </MudItem>
+    <MudItem xs="12" md="5">
+        <MudPaper Outlined="true" Class="pa-4" role="status">
+            @if (_selected < 0)
+            {
+                <MudText Typo="Typo.body2">Click a slice to see its details.</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.overline">Selected</MudText>
+                <MudText Typo="Typo.h6" HtmlTag="p">@_categories[_selected]</MudText>
+                <MudText Typo="Typo.body2">@Spent(_selected).ToString("N0") € · @((Spent(_selected) / Total).ToString("P0")) of the grant</MudText>
+            }
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private int _selected = -1;
+    private readonly string[] _categories = ["Telescopes", "Outreach", "Repairs", "Travel"];
+
+    // How the observatory spent this year's research grant.
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "Spending (€)", Data = new double[] { 18500, 7200, 4300, 2600 } }
+    ];
+
+    private readonly PieChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1", "#D9622B", "#0B9585", "#B07D0E", "#A65DB0", "#4F9A2E"]
+    };
+
+    private double Spent(int index) => _series[0].Data.Values[index];
+    private double Total => _series[0].Data.Values.Sum();
+}

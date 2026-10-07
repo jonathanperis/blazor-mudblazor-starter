@@ -1,0 +1,15 @@
+<MudStack Row Wrap="Wrap.Wrap" Spacing="6" AlignItems="AlignItems.Start">
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Portrait, 24-hour</MudText>
+        <MudTimePicker @bind-Time="_alarm" PickerVariant="PickerVariant.Static" PopupAriaLabel="Alarm time" />
+    </MudStack>
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Landscape, 12-hour, secondary color</MudText>
+        <MudTimePicker @bind-Time="_alarm" PickerVariant="PickerVariant.Static" Orientation="Orientation.Landscape" AmPm="true"
+                       Color="Color.Secondary" PopupAriaLabel="Alarm time" />
+    </MudStack>
+</MudStack>
+
+@code {
+    private TimeSpan? _alarm = new TimeSpan(6, 45, 0);
+}

@@ -1,0 +1,11 @@
+@page "/components/pie-chart"
+@attribute [ComponentPage("Pie, donut and rose", GalleryGroup.Charts, "Radial charts show how parts make up a whole. Use them for a handful of slices whose shares differ clearly; with many or similar slices, a bar chart is easier to read.", MudDocs = "charts/pie", Types = ["MudChart", "PieChartOptions", "DonutChartOptions", "RoseChartOptions"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(PieChartBasic)" Title="Pie" Description="One series, one slice per label. ShowValues prints each slice, as an amount or as a percentage of the whole." />
+    <Example Of="typeof(PieChartDonut)" Title="Donut with a centre label" Description="CustomGraphics draws inside the chart's SVG, here the total in the hole. DonutRingRatio sets the ring's thickness." />
+    <Example Of="typeof(PieChartRose)" Title="Rose" Description="A rose gives every slice the same angle and encodes the value in the radius. AngleOffset turns the chart; ScaleFactor sizes it." />
+    <Example Of="typeof(PieChartLegend)" Title="Legend positions" Description="LegendPosition places the legend around any chart type." />
+    <Example Of="typeof(PieChartSelection)" Title="Selecting a slice" Description="@@bind-SelectedIndex returns the clicked slice, ready to drive a detail panel." />
+    <Example Of="typeof(PieChartAggregation)" Title="Several series in one pie" Description="With more than one series, AggregationOption decides the slices: one per label, summed across series, or one per series." />
+</ComponentPageFrame>

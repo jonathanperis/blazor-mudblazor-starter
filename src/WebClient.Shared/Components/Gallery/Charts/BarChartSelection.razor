@@ -1,0 +1,32 @@
+<MudChart T="double" ChartType="ChartType.Bar" ChartSeries="_series" ChartLabels="_branches" ChartOptions="_options"
+          @bind-SelectedIndex="_selected" Width="100%" Height="300px" />
+
+<MudText Typo="Typo.body2" role="status" Class="mt-2">
+    @if (_selected < 0)
+    {
+        <span>Click a bar to select its series.</span>
+    }
+    else
+    {
+        <span><strong>@_series[_selected].Name</strong>: @_series[_selected].Data.Values.Sum().ToString("N0") visits across all branches.</span>
+    }
+</MudText>
+
+@code {
+    private int _selected = -1; // -1 means nothing is selected; 0 is the first series.
+    private readonly string[] _branches = ["Harbour", "Old town", "University", "Station"];
+
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "Weekday visits", Data = new double[] { 1240, 980, 2110, 1560 } },
+        new() { Name = "Weekend visits", Data = new double[] { 1630, 1420, 640, 870 } }
+    ];
+
+    private readonly BarChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1", "#D9622B", "#0B9585", "#B07D0E", "#A65DB0", "#4F9A2E"],
+        YAxisTicks = 500,
+        TooltipTitleFormat = "{{SERIES_NAME}}",
+        TooltipSubtitleFormat = "{{X_VALUE}}: {{Y_VALUE}} visits"
+    };
+}

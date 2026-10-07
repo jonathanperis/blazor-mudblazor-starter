@@ -1,0 +1,38 @@
+@using MudBlazor.Charts
+
+<MudChart T="double" ChartType="ChartType.Sankey" ChartSeries="_series" ChartOptions="_options" Width="100%" Height="380px" />
+
+@code {
+    // One year of energy in the town, in gigawatt-hours.
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new()
+        {
+            Name = "Energy (GWh)",
+            Data = new List<SankeyEdge<double>>
+            {
+                new("Wind", "Grid", 264),
+                new("Biomass", "Heat network", 38),
+                new("Solar", "Grid", 150),
+                new("Solar", "Homes", 32),
+                new("Gas", "Grid", 141),
+                new("Hydro", "Grid", 96),
+                new("Grid", "Homes", 240),
+                new("Grid", "Industry", 230),
+                new("Grid", "Transport", 95),
+                new("Grid", "Losses", 86),
+                new("Heat network", "Homes", 30),
+                new("Heat network", "Losses", 8)
+            }
+        }
+    ];
+
+    // One color for every node keeps the focus on the widths; the labels name the nodes.
+    private readonly SankeyChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1"],
+        ShowNodeValues = true,
+        EdgeOpacity = 0.35,
+        NodeWidth = 12
+    };
+}

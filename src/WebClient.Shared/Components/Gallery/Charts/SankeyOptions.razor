@@ -1,0 +1,52 @@
+@using MudBlazor.Charts
+
+<MudChart T="double" ChartType="ChartType.Sankey" ChartSeries="_series" ChartOptions="_options" Width="100%" Height="320px" />
+
+<MudGrid Spacing="2" Class="mt-2">
+    <MudItem xs="12" sm="6" md="4"><MudSwitch T="bool" @bind-Value="_options.ShowLabels" Label="Node labels" Color="Color.Primary" /></MudItem>
+    <MudItem xs="12" sm="6" md="4"><MudSwitch T="bool" @bind-Value="_options.ShowNodeValues" Label="Node values" Color="Color.Primary" /></MudItem>
+    <MudItem xs="12" sm="6" md="4"><MudSwitch T="bool" @bind-Value="_options.ShowEdgeLabels" Label="Edge values" Color="Color.Primary" /></MudItem>
+    <MudItem xs="12" sm="6" md="4"><MudSwitch T="bool" @bind-Value="_options.HighlightOnHover" Label="Highlight on hover" Color="Color.Primary" /></MudItem>
+    <MudItem xs="12" sm="6" md="4"><MudSwitch T="bool" @bind-Value="_options.OrderNodesByValue" Label="Order nodes by value" Color="Color.Primary" /></MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSlider T="double" @bind-Value="_options.NodeWidth" Min="4" Max="30" Color="Color.Primary">Node width: @_options.NodeWidth</MudSlider>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSlider T="double" @bind-Value="_options.EdgeOpacity" Min="0.1" Max="0.8" Step="0.05" Color="Color.Primary">Edge opacity: @_options.EdgeOpacity.ToString("0.00")</MudSlider>
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudSlider T="double" @bind-Value="_options.MinVerticalSpacing" Min="2" Max="30" Color="Color.Primary">Node spacing: @_options.MinVerticalSpacing</MudSlider>
+    </MudItem>
+</MudGrid>
+
+@code {
+    // Books moving through the bookshop in one month: where they came from and where they went.
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new()
+        {
+            Name = "Books",
+            Data = new List<SankeyEdge<double>>
+            {
+                new("Publishers", "Shelves", 820),
+                new("Second-hand buy-ins", "Shelves", 260),
+                new("Shelves", "Sold in shop", 690),
+                new("Shelves", "Sold online", 240),
+                new("Shelves", "Returned to publishers", 110),
+                new("Shelves", "Donated", 40)
+            }
+        }
+    ];
+
+    private readonly SankeyChartOptions _options = new()
+    {
+        ChartPalette = ["#0B9585"],
+        ShowLabels = true,
+        ShowNodeValues = true,
+        ShowEdgeLabels = false,
+        HighlightOnHover = true,
+        NodeWidth = 12,
+        EdgeOpacity = 0.35,
+        MinVerticalSpacing = 10
+    };
+}

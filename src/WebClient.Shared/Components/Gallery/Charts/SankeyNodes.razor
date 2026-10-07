@@ -1,0 +1,62 @@
+@using MudBlazor.Charts
+@using MudBlazor.Utilities
+
+<MudStack Row Wrap="Wrap.Wrap" Spacing="4" Class="mb-2" aria-label="Node roles">
+    @foreach (var (role, color) in _roles)
+    {
+        <MudStack Row Spacing="1" AlignItems="AlignItems.Center">
+            <span style="@($"width: .75rem; height: .75rem; border-radius: 2px; background: {color}")"></span>
+            <MudText Typo="Typo.caption">@role</MudText>
+        </MudStack>
+    }
+</MudStack>
+
+<MudChart T="double" @ref="_chart" ChartType="ChartType.Sankey" ChartSeries="_series" ChartOptions="_options"
+          @bind-SelectedIndex="_selected" Width="100%" Height="360px" />
+
+<MudText Typo="Typo.body2" role="status" Class="mt-2">
+    @(SelectedNode is { } node ? $"Selected: {node.Name} (column {node.Column + 1})" : "Click a node to select it.")
+</MudText>
+
+@code {
+    private MudChart<double>? _chart;
+    private int _selected = -1;
+
+    private static readonly MudColor Source = "#2F7FC1";
+    private static readonly MudColor Carrier = "#0B9585";
+    private static readonly MudColor Use = "#D9622B";
+    private static readonly MudColor Loss = "#8E877A";
+    private readonly (string Role, MudColor Color)[] _roles = [("Source", Source), ("Network", Carrier), ("End use", Use), ("Losses", Loss)];
+
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new()
+        {
+            Name = "Energy (GWh)",
+            Data = new List<SankeyEdge<double>>
+            {
+                new("Wind", "Grid", 264), new("Biomass", "Heat network", 38), new("Solar", "Grid", 150),
+                new("Solar", "Homes", 32), new("Gas", "Grid", 141), new("Hydro", "Grid", 96),
+                new("Grid", "Homes", 240), new("Grid", "Industry", 230), new("Grid", "Transport", 95), new("Grid", "Losses", 86),
+                new("Heat network", "Homes", 30), new("Heat network", "Losses", 8)
+            }
+        }
+    ];
+
+    private readonly SankeyChartOptions _options = new()
+    {
+        ShowNodeValues = true,
+        EdgeOpacity = 0.3,
+        NodeWidth = 12,
+        // Each override names a node, its column (0 is the leftmost) and its color.
+        NodeOverrides =
+        [
+            new("Wind", 0, Source), new("Solar", 0, Source), new("Gas", 0, Source), new("Hydro", 0, Source), new("Biomass", 0, Source),
+            new("Grid", 1, Carrier), new("Heat network", 1, Carrier),
+            new("Homes", 2, Use), new("Industry", 2, Use), new("Transport", 2, Use), new("Losses", 2, Loss)
+        ]
+    };
+
+    private SankeyNode? SelectedNode =>
+        _selected >= 0 && _chart?.ChartReference is Sankey<double> sankey && _selected < sankey.Nodes.Count ? sankey.Nodes.ElementAt(_selected) : null;
+}

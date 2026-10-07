@@ -1,0 +1,46 @@
+@using MudBlazor.Charts
+
+<MudChart T="double" ChartType="ChartType.Timeseries" ChartSeries="_series" ChartOptions="_options" Width="100%" Height="300px" />
+
+<MudGrid Spacing="3" Class="mt-2">
+    <MudItem xs="12" sm="6">
+        <MudSelect T="TimeSpan" @bind-Value="_options.TimeLabelSpacing" Label="Label every" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var spacing in _spacings) { <MudSelectItem Value="spacing">@spacing.TotalMinutes minutes</MudSelectItem> }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSwitch T="bool" @bind-Value="_options.TimeLabelSpacingRounding" Label="Round to the spacing" Color="Color.Primary" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSwitch T="bool" @bind-Value="_options.TimeLabelSpacingRoundingPadSeries" Label="Pad the series" Color="Color.Primary" Disabled="@(!_options.TimeLabelSpacingRounding)" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSlider T="int" @bind-Value="_options.XAxisLabelRotation" Min="0" Max="60" Step="15" Color="Color.Primary">Rotation: @_options.XAxisLabelRotation°</MudSlider>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private readonly TimeSpan[] _spacings = [TimeSpan.FromMinutes(15), TimeSpan.FromMinutes(30), TimeSpan.FromMinutes(60)];
+    private List<ChartSeries<double>> _series = [];
+
+    private readonly TimeSeriesChartOptions _options = new()
+    {
+        ChartPalette = ["#0B9585"],
+        TimeLabelSpacing = TimeSpan.FromMinutes(30),
+        TimeLabelFormat = "HH:mm",
+        YAxisTitle = "Relative humidity (%)",
+        YAxisTicks = 5,
+        ShowLegend = false
+    };
+
+    protected override void OnInitialized()
+    {
+        // Readings start at an awkward 21:07, which is where rounding helps.
+        var start = new DateTime(2026, 11, 14, 21, 7, 0);
+        var noise = new Random(42);
+        var readings = Enumerable.Range(0, 30)
+            .Select(i => new TimeValue<double>(start.AddMinutes(7 * i), Math.Round(71 + i * 0.6 + noise.NextDouble() * 3, 1)))
+            .ToArray();
+        _series = [new() { Name = "Humidity", Data = readings }];
+    }
+}
