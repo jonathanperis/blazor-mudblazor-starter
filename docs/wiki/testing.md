@@ -10,7 +10,7 @@ dotnet publish src/WebClient.Wasm -c Release --no-restore -o artifacts/wasm
 dotnet list package --vulnerable --include-transitive
 ```
 
-Tests use xUnit, bUnit, ASP.NET Core's in-process server, and real SQLite migrations. Test databases live in task-owned directories under the test build output and are removed after the test host shuts down.
+Tests use xUnit v3 (the `xunit.v3.mtp-off` package, so `dotnet test` keeps running them through VSTest), bUnit, ASP.NET Core's in-process server, and real SQLite migrations. Test databases live in task-owned directories under the test build output and are removed after the test host shuts down.
 
 ## What the tests prove
 

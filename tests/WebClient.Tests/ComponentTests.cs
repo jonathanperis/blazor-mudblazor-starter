@@ -18,11 +18,8 @@ using WebClient.Shared.Features.Learning;
 
 namespace WebClient.Tests;
 
-public sealed class ComponentTests : BunitContext, IAsyncLifetime
+public sealed class ComponentTests : BunitContext
 {
-    public Task InitializeAsync() => Task.CompletedTask;
-    Task IAsyncLifetime.DisposeAsync() => DisposeAsync().AsTask();
-
     internal static readonly LearningHost ServerHost = new()
     {
         Name = "Blazor Server", IsStaticDemo = false, ScopeLifetime = "circuit", WorkLocation = "server", NotebookStorage = "SQLite",
