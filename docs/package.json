@@ -13,15 +13,17 @@
     "preview": "astro preview",
     "check:types": "tsc --noEmit",
     "check:drift": "python3 ../scripts/check-docs-drift.py",
-    "check:rendered": "python3 ../scripts/check-docs-rendered-html.py"
+    "check:rendered": "python3 ../scripts/check-docs-rendered-html.py",
+    "check:demo": "node scripts/check-demo.mjs"
   },
   "dependencies": {
-    "@astrojs/markdown-satteri": "^0.4.1",
+    "@astrojs/markdown-satteri": "^0.4.3",
     "@astrojs/sitemap": "^3.7.4",
-    "astro": "^7.3.3"
+    "astro": "^7.3.6"
   },
   "devDependencies": {
     "@tailwindcss/vite": "^4.3.3",
+    "playwright": "^1.63.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2"
   }

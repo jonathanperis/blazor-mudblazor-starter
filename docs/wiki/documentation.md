@@ -1,6 +1,6 @@
 # Documentation site
 
-The guide is an Astro 7 static site with the Sätteri Markdown processor, Vite 8, and TypeScript 7. GitHub Pages hosts the built HTML; no server adapter is required. The [maintainer README](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/docs/README.md) maps the source directories and commands.
+The guide is an Astro 7 static site with the Sätteri Markdown processor, Vite 8, and TypeScript 7. GitHub Pages hosts the built HTML together with the WebAssembly live demo under `/demo/`; no server adapter is required. The [maintainer README](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/docs/README.md) maps the source directories and commands.
 
 ## Commands
 
@@ -12,8 +12,11 @@ npm run check:drift
 npm run check:types
 npm run build
 npm run check:rendered
+npm run check:demo
 bun audit
 ```
+
+`check:demo` needs the demo in `out/demo/`; see the [testing guide](../testing/) for the publish step.
 
 Bun manages the committed lockfile. `npm run` uses the Node executable on PATH for the Astro CLI; it does not select a runtime version. Optional `PUBLIC_GA_ID` enables analytics in the generated site; omit it for a local-only guide.
 
@@ -28,20 +31,24 @@ Bun manages the committed lockfile. `npm run` uses the Node executable on PATH f
 - These are rendered-site links, not GitHub Markdown-file links. Navigate the published guide to follow them; use full GitHub `blob/main/` URLs when linking implementation files.
 - Keep source versions in the README/configuration reference rather than repeating them in marketing copy.
 
-The build validates sidebar/page coverage. The source drift check compares SDK/package facts, toolchain pins, landing-page stack badges and locked-restore instructions, lab routes, and release-job documentation with their sources. Rendered checks validate every generated route, product identity, distinct topic descriptions, canonical URLs, unique IDs, local links/anchors/assets, repository source-file links, code blocks, tables, and complete sitemap coverage.
+The build validates sidebar/page coverage. The source drift check compares SDK/package facts, toolchain pins, landing-page stack badges and locked-restore instructions, lab routes, and release-job documentation with their sources. Rendered checks validate every generated route, product identity, unique titles, distinct topic descriptions, canonical URLs, document language, one current-page link per guide page, unique IDs, local links/anchors/assets (including links that escape the repository base path), repository source-file links, code blocks, tables, the 404 page, the demo entry point, and complete sitemap coverage.
 
-`check:types` checks TypeScript files and configuration; the Astro build validates template compilation. These offline checks do not execute browser interactions or request external URLs. Audit GitHub About and the deployed site separately when product identity, dependencies, or hosting changes.
+`check:types` checks TypeScript files and configuration; the Astro build validates template compilation. These offline checks do not request external URLs; `check:demo` is the only browser check. Audit GitHub About and the deployed site separately when product identity, dependencies, or hosting changes.
 
 ## Navigation and accessibility
 
 The sidebar highlights the current page and provides topic filtering with a result announcement. On mobile, closed navigation is inert. Opening it moves focus, traps keyboard focus within navigation, and makes content inert; Escape closes it and restores focus. A skip link targets the main content.
 
-The shared styles support light/dark schemes, visible focus indicators, table/code overflow, and reduced-motion preferences. Manual browser/assistive-technology verification remains a separate test layer.
+The shared styles support light/dark schemes, visible focus indicators, table/code overflow, and reduced-motion preferences. Wide tables are wrapped in a focusable scroll region that keeps native table semantics, and overflowing code blocks become focusable so keyboard users can scroll them. The site loads no web fonts; it uses Roboto when installed and system fonts otherwise. Manual browser/assistive-technology verification remains a separate test layer.
 
 ## Dependency updates
 
-Update direct dependency ranges deliberately, then run `bun update` to refresh the compatible transitive graph. Review `bun.lock`, run the checks above, and confirm `bun install --frozen-lockfile` succeeds. The previous smol-toml, PostCSS, and nanoid overrides were removed after the refreshed upstream graph passed the vulnerability audit. Do not force a transitive dependency across its consumer's major-version range; PostCSS, for example, consumes nanoid 3.
+Update direct dependency ranges deliberately, then run `bun update` to refresh the compatible transitive graph. Review `bun.lock`, run the checks above, and confirm `bun install --frozen-lockfile` succeeds. `bun audit` runs in every pull request. When an advisory has a fix within the consumers' ranges, `bun update` resolves it; use `overrides` in `package.json` only when a consumer pins a vulnerable range, and remove them once upstream catches up. Do not force a transitive dependency across its consumer's major-version range; PostCSS, for example, consumes nanoid 3.
+
+## Analytics and privacy
+
+Setting the `PUBLIC_GA_ID` repository secret loads Google Analytics 4 on every page of the published guide. The ID must look like `G-XXXXXXX`; anything else is ignored. There is no consent banner, so set the secret only if your privacy notice and audience allow it. The demo never loads analytics.
 
 ## Publishing
 
-[`deploy.yml`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/.github/workflows/deploy.yml) calls the shared `pages-docs-deploy.yml` workflow at a reviewed full commit SHA and passes the selected Node version. PR validation runs the docs checks before merge. The shared publishing workflow installs and builds independently; it selects the latest Bun release, while PR CI pins the version recorded in `package.json`.
+The Build Check `pages` job builds the guide, publishes the WebAssembly demo into `out/demo/`, and runs every check above with the Node and Bun versions pinned in `.node-version` and `package.json`. On `main`, the same job uploads the checked site and the Main Release workflow's `deploy-pages` job deploys it, so the published site is exactly what was validated. See [Docker and hosting](../deployment/) for the deep-link redirect.

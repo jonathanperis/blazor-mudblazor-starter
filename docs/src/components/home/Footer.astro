@@ -1,5 +1,7 @@
 ---
 const repoUrl = 'https://github.com/jonathanperis/blazor-mudblazor-starter';
+// Base-absolute links also work on the 404 page, which GitHub Pages serves at any unknown path.
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
 <footer>
@@ -8,9 +10,10 @@ const repoUrl = 'https://github.com/jonathanperis/blazor-mudblazor-starter';
     <p>Working examples. Clear lifetimes. Room to experiment.</p>
   </div>
   <div class="footer-links">
-    <a href="./docs/getting-started/">Run locally</a>
+    <a href={`${base}/demo/`}>Live demo</a>
+    <a href={`${base}/docs/getting-started/`}>Run locally</a>
     <a href={repoUrl} target="_blank" rel="noopener noreferrer">GitHub</a>
-    <a href="./docs/">Documentation</a>
+    <a href={`${base}/docs/`}>Documentation</a>
   </div>
   <div class="credits">by <a href="https://github.com/jonathanperis" target="_blank" rel="noopener noreferrer">jonathanperis</a></div>
 </footer>

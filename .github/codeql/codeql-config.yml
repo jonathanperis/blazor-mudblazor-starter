@@ -1,6 +1,9 @@
 name: "CodeQL Config"
+# paths-ignore applies to interpreted languages (actions, JavaScript/TypeScript). C# is analyzed from
+# the solution build, which already excludes generated output.
 paths-ignore:
-  - 'src/**/obj/**'
-  - 'src/**/bin/**'
-  - '**/*.g.cs'
-  - '**/*.designer.cs'
+  - 'docs/out/**'
+  - 'docs/node_modules/**'
+  - 'artifacts/**'
+  - '**/bin/**'
+  - '**/obj/**'

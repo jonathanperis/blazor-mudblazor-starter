@@ -11,18 +11,20 @@ on:
 
 permissions:
   contents: read
-  security-events: write
 
 jobs:
   analyze:
     name: Analyze (csharp)
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      security-events: write
 
     steps:
       - name: Checkout Repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          fetch-depth: 0
           persist-credentials: false
 
       - name: Setup .NET SDK
@@ -39,7 +41,7 @@ jobs:
           config-file: .github/codeql/codeql-config.yml
 
       - name: Build for CodeQL
-        run: dotnet build ./src/WebClient/WebClient.csproj -c Release
+        run: dotnet build WebClient.sln -c Release
 
       - name: Perform CodeQL Analysis
         uses: github/codeql-action/analyze@b96794f015dfd88f77b49b1c93e0fa7110f94c63 # v4
@@ -49,6 +51,10 @@ jobs:
   analyze-scripts:
     name: Analyze (${{ matrix.language }})
     runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      security-events: write
     strategy:
       fail-fast: false
       matrix:

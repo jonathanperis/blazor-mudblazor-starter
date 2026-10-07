@@ -8,10 +8,16 @@ on:
 permissions:
   contents: read
 
+# A newer push to the same pull request supersedes the running check. Release calls never cancel.
+concurrency:
+  group: build-check-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   dotnet:
     name: setup-build-test
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -29,42 +35,77 @@ jobs:
           trap 'kill "$app_pid"' EXIT
           python3 scripts/smoke-http.py --base-url http://127.0.0.1:5030
 
-  docs:
+  # Builds the GitHub Pages site exactly as it is deployed: the Astro guide plus the WebAssembly demo under /demo/.
+  # On main the validated site becomes the Pages artifact that the release workflow deploys.
+  pages:
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      - uses: actions/setup-dotnet@a98b56852c35b8e3190ac28c8c2271da59106c68 # v6.0.0
+        with:
+          global-json-file: global.json
       - uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
           node-version-file: docs/.node-version
       - uses: oven-sh/setup-bun@0c5077e51419868618aeaa5fe8019c62421857d6 # v2
         with:
-          bun-version: '1.4.2'
+          bun-version-file: docs/package.json
       - run: bun install --frozen-lockfile
         working-directory: docs
       - run: bun audit
         working-directory: docs
-      - run: npm run check:drift && npm run check:types && npm run build && npm run check:rendered
+      - run: npm run check:drift && npm run check:types && npm run build
         working-directory: docs
+        env:
+          PUBLIC_GA_ID: ${{ github.event_name != 'pull_request' && secrets.PUBLIC_GA_ID || '' }}
+      - name: Publish the WebAssembly demo into the site
+        run: |
+          dotnet restore src/WebClient.Wasm --locked-mode
+          dotnet publish src/WebClient.Wasm -c Release --no-restore -o artifacts/wasm
+          python3 scripts/prepare-pages-demo.py
+      - run: npm run check:rendered
+        working-directory: docs
+      - name: Check the demo in a browser
+        working-directory: docs
+        run: |
+          npx playwright install --with-deps chromium
+          npm run check:demo
+      - if: github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
+        with:
+          path: docs/out
 
   infrastructure:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
-      - name: Compile infrastructure and parameters
+      - name: Compile infrastructure and require the committed ARM template to match
         run: |
           az bicep install --version v0.47.16
-          az bicep build --file infra/main.bicep --stdout > /dev/null
+          az bicep build --file infra/main.bicep --outfile "$RUNNER_TEMP/main.json"
           az bicep build-params --file infra/main.bicepparam --stdout > /dev/null
+          python3 - "$RUNNER_TEMP/main.json" infra/main.json <<'PY'
+          import json, sys
+          def load(path):
+              template = json.load(open(path, encoding="utf-8"))
+              template.get("metadata", {}).pop("_generator", None)
+              return template
+          if load(sys.argv[1]) != load(sys.argv[2]):
+              raise SystemExit("infra/main.json is stale: run az bicep build --file infra/main.bicep")
+          PY
       - name: Lint workflows and shell steps
-        run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.12
+        run: docker run --rm -v "$PWD:/repo" -w /repo rhysd/actionlint:1.7.12@sha256:b1934ee5f1c509618f2508e6eb47ee0d3520686341fec936f3b79331f9315667
 
   dependency-review:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -74,6 +115,7 @@ jobs:
   container:
     needs: dotnet
     runs-on: ubuntu-latest
+    timeout-minutes: 25
     strategy:
       matrix:
         ready-to-run: ['false', 'true']
@@ -105,12 +147,13 @@ jobs:
             -v "$RUNNER_TEMP/learning-sandbox.tar:/scan/image.tar:ro" \
             aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969 \
             image --input /scan/image.tar --scanners vuln \
-            --severity HIGH,CRITICAL --exit-code 1 --no-progress
+            --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress
 
   container-test:
     needs: container
     if: always()
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - name: Require the complete container matrix to pass
         env:

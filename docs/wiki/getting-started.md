@@ -1,5 +1,9 @@
 # Getting started
 
+## Try it without installing
+
+Open the [live WebAssembly demo](https://jonathanperis.github.io/blazor-mudblazor-starter/demo/). It runs the same labs in your browser; the API, notebook, sign-in, culture and diagnostics labs use labeled browser stand-ins. Run the server app below for the full experience.
+
 ## Prerequisites
 
 - Install the .NET SDK specified in the repository's `global.json`.
@@ -28,8 +32,10 @@ If your local HTTPS certificate is not trusted, follow the .NET SDK's developmen
 
 1. Open `/counter` and increment both counts.
 2. Visit `/labs/forms`, then return.
-3. Observe that component state resets while circuit state survives.
+3. Observe that component state resets while scoped (circuit) state survives.
 4. Reload the page and observe a new circuit.
+
+In the WebAssembly demo there is no circuit: the scoped count lives for the browser tab's app instance, and a reload resets it too.
 
 Continue with [learning paths](../learning-path/).
 
@@ -41,6 +47,14 @@ docker run --rm -p 5000:5000 -v learning-data:/app/App_Data blazor-learning
 ```
 
 The named volume retains notebook data and workspace-protection keys. Demo login is disabled in the default container; use the Development launch profile to study authentication locally.
+
+## Run the WebAssembly host
+
+```sh
+dotnet run --project src/WebClient.Wasm
+```
+
+Open **http://localhost:5100/**. This is the host behind the live demo. Compare a lab in both hosts, for example the notebook, and read the lab's host note.
 
 ## Common setup questions
 

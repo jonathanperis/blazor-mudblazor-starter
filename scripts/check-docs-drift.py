@@ -23,28 +23,34 @@ def main():
     require(f"SDK {sdk}" in readme, "README SDK version differs from global.json")
     require(f'"version": "{sdk}"' in read("docs/wiki/configuration.md"), "configuration guide SDK version differs")
     require(f"dotnet/sdk:{sdk}" in read("src/WebClient/Dockerfile"), "Docker SDK differs from global.json")
-    project = ET.fromstring(read("src/WebClient/WebClient.csproj"))
-    for package in project.findall(".//PackageReference"):
-        if package.get("PrivateAssets") == "all":
-            continue
-        require(f"| {package.get('Include')} | {package.get('Version')} |" in readme, f"README package differs: {package.get('Include')}")
-    target_major = project.findtext(".//TargetFramework", default="").removeprefix("net").split(".")[0]
-    mud_major = project.findall(".//PackageReference[@Include='MudBlazor']")[0].attrib["Version"].split(".")[0]
+    projects = {path.relative_to(ROOT).as_posix(): ET.fromstring(path.read_text(encoding="utf-8")) for path in sorted((ROOT / "src").glob("*/*.csproj"))}
+    require(set(projects) == {"src/WebClient/WebClient.csproj", "src/WebClient.Shared/WebClient.Shared.csproj", "src/WebClient.Wasm/WebClient.Wasm.csproj"}, "update the docs for the changed project set")
+    for path, project in projects.items():
+        for package in project.findall(".//PackageReference"):
+            if package.get("PrivateAssets") == "all":
+                continue
+            require(f"| {package.get('Include')} | {package.get('Version')} |" in readme, f"README package differs: {package.get('Include')} ({path})")
+        require(f"`{path.split('/')[1]}`" in read("README.md") or f"`src/{path.split('/')[1]}/`" in readme, f"README structure misses {path}")
+    target_major = projects["src/WebClient/WebClient.csproj"].findtext(".//TargetFramework", default="").removeprefix("net").split(".")[0]
+    mud_major = projects["src/WebClient.Shared/WebClient.Shared.csproj"].findall(".//PackageReference[@Include='MudBlazor']")[0].attrib["Version"].split(".")[0]
     hero = read("docs/src/components/home/Hero.astro")
     for label in [f".NET {target_major}", f"MudBlazor {mud_major}"]:
         require(f">{label}</span>" in hero, f"landing-page stack differs: {label}")
     require("dotnet restore --locked-mode" in read("docs/src/components/home/Dashboard.astro"), "landing quickstart missing locked restore")
-    for path in ["src/WebClient/packages.lock.json", "tests/WebClient.Tests/packages.lock.json", "docs/bun.lock"]:
+    for path in [*(project.replace(Path(project).name, "packages.lock.json") for project in projects), "tests/WebClient.Tests/packages.lock.json", "docs/bun.lock"]:
         require((ROOT / path).is_file(), f"missing lockfile: {path}")
 
-    catalog = read("src/WebClient/Features/Learning/LabCatalog.cs")
-    labs = re.findall(r'new\("([^\"]+)",\s*"[^\"]+",\s*"([^\"]+)".*?,\s*"([^\"]+\.razor)"\)', catalog, re.S)
-    require(bool(labs), "could not read lab catalog")
-    for slug, route, source in labs:
-        path = ROOT / "src/WebClient/Components/Pages" / source
+    catalog = read("src/WebClient.Shared/Features/Learning/LabCatalog.cs")
+    labs = re.findall(r'new\("([^"]+)",\s*"([^"]+)",\s*"([^"]+)",\s*"[^"]+",\s*(\d+),.*?"(src/[^"]+\.razor)"\)', catalog, re.S)
+    require(len(labs) == catalog.count('new("') and labs, "could not read every lab catalog entry")
+    learning_path = read("docs/wiki/learning-path.md")
+    for slug, title, route, minutes, source in labs:
+        path = ROOT / source
         require(path.is_file() and f'@page "{route}"' in path.read_text(), f"catalog route/source differs: {slug}")
         require(f"`{route}`" in readme, f"README missing lab: {route}")
-        require(f'"{route}"' in read("scripts/smoke-http.py"), f"HTTP smoke missing lab: {route}")
+        require(f'"{route}": "{title}"' in read("scripts/smoke-http.py"), f"HTTP smoke missing lab heading: {route}")
+        require(f"| {title} (`{route}`) | {minutes} min |" in learning_path, f"learning path differs from catalog: {route}")
+        require(f'"{title}"' in read("docs/scripts/check-demo.mjs") or f"'{title}'" in read("docs/scripts/check-demo.mjs") or slug == "observability", f"demo browser check misses lab: {title}")
 
     sidebar = read("docs/src/lib/sidebar.config.ts")
     ids = [slug for group in re.findall(r"ids:\s*\[([^\]]+)\]", sidebar) for slug in re.findall(r"'([^']+)'", group)]
@@ -57,27 +63,29 @@ def main():
     release_guide = deployment.split("## Release flow\n", 1)[1].split("\n## ", 1)[0]
     documented_jobs = re.findall(r"^\d+\. \*\*([^*]+)\*\*", release_guide, re.M)
     require(sorted(jobs) == sorted(documented_jobs), "deployment guide release jobs differ (including obsolete jobs)")
-    pages_workflow = "pages-docs-deploy.yml@d7e3c753530db86cb01b9510ab045c99b172ba03"
-    require(pages_workflow in read(".github/workflows/deploy.yml"), "Pages workflow delegation changed; review the pin and update docs")
-    require(pages_workflow in read("docs/wiki/deployment.md"), "Pages delegation missing from guide")
+    release_workflow = read(".github/workflows/main-release.yml")
+    build_checks = read(".github/workflows/build-check.yml")
+    require("actions/upload-pages-artifact@" in build_checks and "actions/deploy-pages@" in release_workflow, "Pages artifact/deploy steps moved; update the deployment guide")
+    require(not (ROOT / ".github/workflows/deploy.yml").exists(), "a separate Pages workflow returned; update the deployment guide")
+    for step in ["prepare-pages-demo.py", "npm run check:rendered", "npm run check:demo"]:
+        require(step in build_checks and step in read("docs/wiki/deployment.md") + read("docs/wiki/testing.md"), f"Pages pipeline step undocumented or missing: {step}")
     require("Renovate" in readme and (ROOT / "renovate.json").is_file(), "dependency management docs/config differ")
 
     package = json.loads(read("docs/package.json"))
     node = read("docs/.node-version").strip()
     bun = package["packageManager"].removeprefix("bun@")
-    build_checks = read(".github/workflows/build-check.yml")
-    require("node-version-file: docs/.node-version" in build_checks, "PR checks must use the docs Node pin")
-    require(f"node-version: '{node}'" in read(".github/workflows/deploy.yml"), "Pages Node version differs from docs pin")
-    require(f"bun-version: '{bun}'" in build_checks, "PR Bun version differs from packageManager")
+    require("node-version-file: docs/.node-version" in build_checks, "CI must use the docs Node pin")
+    require("bun-version-file: docs/package.json" in build_checks, "CI must use the Bun version from packageManager")
     for path in ["docs/README.md", "docs/wiki/documentation.md"]:
         guide = read(path)
         require(f"Node.js {node}" in guide and f"Bun {bun}" in guide and "Python 3" in guide, f"docs toolchain differs: {path}")
     for path in ["README.md", "docs/README.md", "docs/wiki/documentation.md", "AGENTS.md", ".github/workflows/build-check.yml"]:
-        for command in ["check:drift", "check:types", "build", "check:rendered"]:
+        for command in ["check:drift", "check:types", "build", "check:rendered", "check:demo"]:
             require(f"npm run {command}" in read(path), f"missing docs command {command}: {path}")
     require(package["dependencies"]["astro"].startswith("^7."), "update the Astro major-version guide")
     require(package["engines"]["node"] == ">=22.12.0", "update documented Node requirements")
-    require(all(option in build_checks for option in ["aquasec/trivy:", "--scanners vuln", "--severity HIGH,CRITICAL", "--exit-code 1"]), "container scan claim differs from CI")
+    require(all(option in build_checks for option in ["aquasec/trivy:", "--scanners vuln", "--severity HIGH,CRITICAL", "--ignore-unfixed", "--exit-code 1"]), "container scan claim differs from CI")
+    require("--ignore-unfixed" in read("docs/wiki/deployment.md"), "deployment guide misses the Trivy fix policy")
     print(f"Source-backed docs checks passed ({len(labs)} labs, {len(wiki)} guide pages)")
 
 

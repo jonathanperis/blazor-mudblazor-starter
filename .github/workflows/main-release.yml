@@ -15,10 +15,12 @@ concurrency:
 jobs:
   validate:
     uses: ./.github/workflows/build-check.yml
+    secrets: inherit
 
   publish:
     needs: validate
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
       packages: write
@@ -29,6 +31,7 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           persist-credentials: false
+      # Only the small runtime stage runs emulated; the SDK stage cross-publishes on the runner's architecture.
       - uses: docker/setup-qemu-action@99012661954931238ded8c8b007157a8430204e1 # v4
       - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
       - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
@@ -41,7 +44,7 @@ jobs:
         env:
           REPOSITORY: ${{ github.repository }}
         run: echo "image=ghcr.io/${REPOSITORY,,}" >> "$GITHUB_OUTPUT"
-      - name: Publish both architectures atomically
+      - name: Publish both architectures under the commit tag
         id: image
         uses: docker/build-push-action@c3c9e263c25d99ce0380d002d59b67737d91b0dc # v7
         with:
@@ -49,6 +52,101 @@ jobs:
           file: ./src/WebClient/Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: |
-            ${{ steps.name.outputs.image }}:sha-${{ github.sha }}
-            ${{ steps.name.outputs.image }}:latest
+          tags: ${{ steps.name.outputs.image }}:sha-${{ github.sha }}
+
+  # Runs the exact pushed digest on each architecture natively before anything points at it.
+  verify:
+    needs: publish
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      packages: read
+    strategy:
+      matrix:
+        include:
+          - platform: linux/amd64
+            runner: ubuntu-latest
+          - platform: linux/arm64
+            runner: ubuntu-24.04-arm
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Check readiness and prerendered routes of the published digest
+        env:
+          REFERENCE: ${{ needs.publish.outputs.image }}@${{ needs.publish.outputs.digest }}
+          PLATFORM: ${{ matrix.platform }}
+        run: |
+          docker run -d --name learning-release --platform "$PLATFORM" -p 5030:5000 "$REFERENCE"
+          trap 'docker logs learning-release; docker rm -f learning-release' EXIT
+          python3 scripts/smoke-http.py --base-url http://127.0.0.1:5030
+      - name: Scan the published digest
+        env:
+          REFERENCE: ${{ needs.publish.outputs.image }}@${{ needs.publish.outputs.digest }}
+        # The runner pulled only its own platform from the multi-arch digest in the previous step.
+        run: |
+          docker image save --output "$RUNNER_TEMP/release.tar" "$REFERENCE"
+          docker run --rm \
+            -v "$RUNNER_TEMP/release.tar:/scan/image.tar:ro" \
+            aquasec/trivy:0.74.0@sha256:62b1e65e8869bc4b4c6aa4fa2b21595256c7c2f6018a9d9ad61caf87187c1969 \
+            image --input /scan/image.tar --scanners vuln \
+            --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 --no-progress
+
+  promote:
+    needs: [publish, verify]
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+      attestations: write
+    steps:
+      - uses: docker/setup-buildx-action@f87e5991a6d7451dcb8d9637bfbc97413f497069 # v4
+      - uses: docker/login-action@dbcb813823bdd20940b903addbd779551569679f # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Point latest at the verified digest
+        env:
+          IMAGE: ${{ needs.publish.outputs.image }}
+          DIGEST: ${{ needs.publish.outputs.digest }}
+        run: |
+          docker buildx imagetools create --tag "$IMAGE:latest" "$IMAGE@$DIGEST"
+          {
+            echo "### Verified container image"
+            echo
+            echo "\`$IMAGE@$DIGEST\`"
+            echo
+            echo "Tags: \`sha-$GITHUB_SHA\`, \`latest\`. Smoke-tested and scanned on linux/amd64 and linux/arm64."
+          } >> "$GITHUB_STEP_SUMMARY"
+      - uses: actions/attest-build-provenance@4d101475d8b20a2381f78447822ac1eab6504dd8 # v4.2.2
+        with:
+          subject-name: ${{ needs.publish.outputs.image }}
+          subject-digest: ${{ needs.publish.outputs.digest }}
+          push-to-registry: true
+
+  # Deploys the Pages site (guide and WebAssembly demo) that the validate job built and checked.
+  deploy-pages:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      pages: write
+      id-token: write
+    concurrency:
+      group: github-pages
+      cancel-in-progress: false
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@368f82528645a54fb793d4d04e342629a3f51346 # v5
