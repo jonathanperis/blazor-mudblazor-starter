@@ -1,0 +1,28 @@
+<MudDynamicTabs @bind-ActivePanelIndex="_index" AddTab="AddSheet" CloseTab="CloseSheet"
+                AddIconToolTip="New tally sheet" CloseIconToolTip="Close this sheet" Outlined="true" Rounded="true" ApplyEffectsToContainer="true" TabPanelsClass="pa-4">
+    @foreach (var sheet in _sheets)
+    {
+        <MudTabPanel ID="sheet.Id" Text="@sheet.Name" ShowCloseIcon="_sheets.Count > 1">
+            <MudText Typo="Typo.body2">@sheet.Name: bird count started at the @sheet.Site hide.</MudText>
+        </MudTabPanel>
+    }
+</MudDynamicTabs>
+<MudText Typo="Typo.body2" Class="mt-3" role="status">Open sheets: @_sheets.Count. The last one cannot be closed.</MudText>
+
+@code {
+    private sealed record Sheet(int Id, string Name, string Site);
+
+    private static readonly string[] Sites = ["reed bed", "estuary", "woodland edge", "meadow"];
+    private readonly List<Sheet> _sheets = [new(1, "Sheet 1", "reed bed"), new(2, "Sheet 2", "estuary")];
+    private int _nextId = 3;
+    private int _index;
+
+    private void AddSheet()
+    {
+        var id = _nextId++;
+        _sheets.Add(new Sheet(id, $"Sheet {id}", Sites[id % Sites.Length]));
+        _index = _sheets.Count - 1;
+    }
+
+    private void CloseSheet(MudTabPanel panel) => _sheets.RemoveAll(sheet => Equals(sheet.Id, panel.ID));
+}

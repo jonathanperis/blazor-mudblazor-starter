@@ -1,0 +1,23 @@
+<MudBreakpointProvider OnBreakpointChanged="breakpoint => _current = breakpoint">
+    <MudStack Spacing="3">
+        <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="2">
+            @foreach (var (breakpoint, from) in Sizes)
+            {
+                <MudChip T="string" Color="@(breakpoint == _current ? Color.Primary : Color.Default)"
+                         Variant="@(breakpoint == _current ? Variant.Filled : Variant.Outlined)">@breakpoint · from @from</MudChip>
+            }
+        </MudStack>
+        <MudText Typo="Typo.body2" role="status">Current breakpoint: <strong>@(_current is null ? "measuring…" : _current.ToString())</strong></MudText>
+    </MudStack>
+</MudBreakpointProvider>
+
+@code {
+    private static readonly (Breakpoint Breakpoint, string From)[] Sizes =
+    [
+        (Breakpoint.Xs, "0 px"), (Breakpoint.Sm, "600 px"), (Breakpoint.Md, "960 px"),
+        (Breakpoint.Lg, "1280 px"), (Breakpoint.Xl, "1920 px"), (Breakpoint.Xxl, "2560 px")
+    ];
+
+    // Null until the browser reports its size: the server cannot know it.
+    private Breakpoint? _current;
+}

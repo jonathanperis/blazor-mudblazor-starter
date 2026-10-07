@@ -1,0 +1,15 @@
+<MudGrid Spacing="6">
+    @foreach (var elevation in new[] { 0, 2, 8 })
+    {
+        foreach (var dense in new[] { false, true })
+        {
+            <MudItem xs="12" md="6">
+                <MudText Typo="Typo.overline" HtmlTag="p">Elevation @elevation · @(dense ? "dense, 48 px" : "regular, 64 px")</MudText>
+                <MudAppBar Fixed="false" Dense="dense" Elevation="elevation" Color="Color.Primary" Class="rounded">
+                    <MudIcon Icon="@Icons.Material.Outlined.BakeryDining" Class="mr-3" />
+                    <MudText Typo="Typo.subtitle1" HtmlTag="span">Crumb &amp; Co. bakery</MudText>
+                </MudAppBar>
+            </MudItem>
+        }
+    }
+</MudGrid>

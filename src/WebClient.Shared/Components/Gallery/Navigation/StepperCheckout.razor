@@ -1,0 +1,65 @@
+@using System.Text.RegularExpressions
+<MudPaper Outlined="true" Class="pa-4">
+    <MudStepper OnPreviewInteraction="ValidateStepAsync">
+        <ChildContent>
+            <MudStep Title="Basket">
+                <MudSimpleTable Dense="true" Elevation="0">
+                    <tbody>
+                        <tr><td>Country sourdough</td><td class="text-right">£4.80</td></tr>
+                        <tr><td>Six cardamom buns</td><td class="text-right">£9.00</td></tr>
+                        <tr><td><strong>Total</strong></td><td class="text-right"><strong>£13.80</strong></td></tr>
+                    </tbody>
+                </MudSimpleTable>
+            </MudStep>
+            <MudStep Title="Collection">
+                <MudForm @ref="_collectionForm">
+                    <MudTextField @bind-Value="_name" Label="Name for the order" Required="true" RequiredError="Enter a name." Variant="Variant.Outlined" />
+                    <MudSelect @bind-Value="_slot" Label="Collection time" Required="true" RequiredError="Choose a time." Variant="Variant.Outlined">
+                        @foreach (var slot in Slots) { <MudSelectItem Value="slot">@slot</MudSelectItem> }
+                    </MudSelect>
+                </MudForm>
+            </MudStep>
+            <MudStep Title="Payment">
+                <MudForm @ref="_paymentForm">
+                    <MudRadioGroup @bind-Value="_payWithVoucher">
+                        <MudRadio Value="false" Color="Color.Primary">Pay at the counter</MudRadio>
+                        <MudRadio Value="true" Color="Color.Primary">Use a gift voucher</MudRadio>
+                    </MudRadioGroup>
+                    @if (_payWithVoucher)
+                    {
+                        <MudTextField @bind-Value="_voucher" Label="Voucher code" HelperText="Four letters, a dash and four digits, such as CRMB-2041"
+                                      Required="true" RequiredError="Enter the voucher code." Validation="@(new Func<string, string?>(CheckVoucher))" Variant="Variant.Outlined" />
+                    }
+                </MudForm>
+            </MudStep>
+        </ChildContent>
+        <CompletedContent>
+            <MudAlert Severity="Severity.Success" Variant="Variant.Outlined">
+                Thank you, @_name. Your order is ready at @_slot@(_payWithVoucher ? $", paid with voucher {_voucher}" : "; pay when you collect").
+            </MudAlert>
+        </CompletedContent>
+    </MudStepper>
+</MudPaper>
+
+@code {
+    private static readonly string[] Slots = ["Saturday 08:00", "Saturday 10:00", "Saturday 12:00"];
+    private MudForm? _collectionForm;
+    private MudForm? _paymentForm;
+    private string _name = "";
+    private string? _slot;
+    private bool _payWithVoucher;
+    private string _voucher = "";
+
+    // Pressing next raises a Complete action for the current step; cancel it while that step's form is invalid.
+    private async Task ValidateStepAsync(StepperInteractionEventArgs args)
+    {
+        if (args.Action != StepAction.Complete) return;
+        var form = args.StepIndex switch { 1 => _collectionForm, 2 => _paymentForm, _ => null };
+        if (form is null) return;
+        await form.ValidateAsync();
+        args.Cancel = !form.IsValid;
+    }
+
+    private static string? CheckVoucher(string code) =>
+        Regex.IsMatch(code ?? "", "^[A-Z]{4}-[0-9]{4}$") ? null : "Use the format ABCD-1234.";
+}

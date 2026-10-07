@@ -1,0 +1,11 @@
+<MudGrid Spacing="2">
+    @foreach (var number in Enumerable.Range(1, 12))
+    {
+        <MudItem xs="12" sm="6" md="4" lg="3" xl="2" xxl="1">
+            <MudPaper Outlined="true" Class="pa-3 text-center">@number</MudPaper>
+        </MudItem>
+    }
+</MudGrid>
+<MudText Typo="Typo.body2" Class="mt-4">
+    One per row on phones, two from sm, three from md, four from lg, six from xl and twelve from xxl.
+</MudText>

@@ -1,0 +1,28 @@
+<MudStack Spacing="1">
+    @foreach (var (level, title) in Outline)
+    {
+        @* Level 1 maps to h3 because the page and the example title already use h1 and h2. *@
+        <MudElement HtmlTag="@($"h{level + 2}")" Class="ma-0" Style="@($"padding-left: {(level - 1) * 24}px")">
+            <MudText Typo="@TypoFor(level)" HtmlTag="span">@title</MudText>
+        </MudElement>
+    }
+</MudStack>
+
+@code {
+    private static readonly (int Level, string Title)[] Outline =
+    [
+        (1, "Field guide to the estuary"),
+        (2, "Birds"),
+        (3, "Waders"),
+        (4, "Curlew"),
+        (2, "Plants")
+    ];
+
+    private static Typo TypoFor(int level) => level switch
+    {
+        1 => Typo.h5,
+        2 => Typo.h6,
+        3 => Typo.subtitle1,
+        _ => Typo.subtitle2
+    };
+}

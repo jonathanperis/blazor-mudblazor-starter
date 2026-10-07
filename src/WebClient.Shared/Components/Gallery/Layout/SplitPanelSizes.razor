@@ -1,0 +1,25 @@
+<MudStack Spacing="3">
+    <MudPaper Outlined="true" Height="12rem" Class="overflow-hidden" Style="background-color: var(--mud-palette-lines-default)">
+        <MudSplitPanel @ref="_split" Class="mud-height-full" FirstPanelInitialSize="160" MinPanelSize="120">
+            <FirstPanel>
+                <div class="pa-4"><MudText Typo="Typo.body2">At least 120 px wide.</MudText></div>
+            </FirstPanel>
+            <SecondPanel>
+                <div class="pa-4"><MudText Typo="Typo.body2">So is this one, however far you drag.</MudText></div>
+            </SecondPanel>
+        </MudSplitPanel>
+    </MudPaper>
+    <MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="2">
+        <MudButton Variant="Variant.Outlined" OnClick="ReadAsync">Read position</MudButton>
+        <MudButton Variant="Variant.Outlined" OnClick="() => _split!.SetDividerPositionAsync(320)">Move to 320 px</MudButton>
+        <MudButton Variant="Variant.Text" OnClick="() => _split!.ResetDividerPositionAsync()">Reset</MudButton>
+        <MudText Typo="Typo.body2" role="status">@_position</MudText>
+    </MudStack>
+</MudStack>
+
+@code {
+    private MudSplitPanel? _split;
+    private string _position = "";
+
+    private async Task ReadAsync() => _position = $"Divider at {await _split!.GetDividerPositionAsync()} px.";
+}

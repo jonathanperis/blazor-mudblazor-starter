@@ -1,0 +1,53 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudPaper Outlined="true" Class="py-2" Style="width: min(100%, 18rem)">
+            <MudNavMenu Color="_color" Dense="_dense" Margin="_margin" Bordered="_bordered" Rounded="_rounded">
+                <MudNavLink Href="components/nav-menu" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home" IconColor="_iconColor">Front desk</MudNavLink>
+                <MudNavGroup Title="Collections" Icon="@Icons.Material.Outlined.Collections" IconColor="_iconColor" Expanded="true">
+                    <MudNavLink Href="components/tabs" Match="NavLinkMatch.All">Maps and charts</MudNavLink>
+                    <MudNavLink Href="components/stepper" Match="NavLinkMatch.All">Letters</MudNavLink>
+                </MudNavGroup>
+                <MudNavLink Href="components/drawer" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Help" IconColor="_iconColor">Ask a librarian</MudNavLink>
+            </MudNavMenu>
+        </MudPaper>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_iconColor" Label="Icon color (links)" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_margin" Label="Margin" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Margin>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_bordered" Label="Bordered" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_rounded" Label="Rounded (needs Bordered)" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private Color _color = Color.Primary;
+    private Color _iconColor = Color.Default;
+    private Margin _margin = Margin.None;
+    private bool _dense;
+    private bool _bordered = true;
+    private bool _rounded;
+
+    // MudNavMenu defaults: Color.Default, Margin.None, Dense, Bordered and Rounded false.
+    private string Code => Snippet.Element("MudNavMenu",
+    [
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("Margin", Snippet.Enum(_margin, Margin.None)),
+        ("Dense", Snippet.Flag(_dense)),
+        ("Bordered", Snippet.Flag(_bordered)),
+        ("Rounded", Snippet.Flag(_rounded))
+    ], "\n    " + Snippet.Element("MudNavLink",
+    [
+        ("Href", "components/nav-menu"),
+        ("Match", "NavLinkMatch.All"),
+        ("Icon", "@Icons.Material.Outlined.Home"),
+        ("IconColor", Snippet.Enum(_iconColor, Color.Default))
+    ], "Front desk") + "\n");
+}

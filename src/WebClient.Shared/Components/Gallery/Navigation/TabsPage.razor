@@ -1,0 +1,13 @@
+@page "/components/tabs"
+@attribute [ComponentPage("Tabs", GalleryGroup.Navigation, "Tabs switch between related views of the same subject without leaving the page. Use them for a handful of peer sections; use a stepper when the order matters.", MudDocs = "tabs", Types = ["MudTabs", "MudTabPanel", "MudDynamicTabs"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(TabsBasic)" Title="Basic tabs" Description="Each MudTabPanel has a Text and content. Bind ActivePanelIndex to read or set the selected tab from code; disabled tabs stay visible but cannot be chosen." />
+    <Example Of="typeof(TabsPositions)" Title="Positions" Description="Position puts the header on any side. Start and End follow the reading direction; Left and Right do not." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(TabsColors)" Title="Colors" Description="Color paints the whole header, slider included. Every Color value; SliderColor and IconColor can be set separately in the playground." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(TabsIconsAndBadges)" Title="Icons, badges and centering" Description="Icons sit beside the text, and badges carry counts, dots or status icons. Centered gathers the header in the middle; Outlined, Rounded and Border change the frame." />
+    <Example Of="typeof(TabsScrollable)" Title="Many tabs" Description="When the tabs do not fit, scroll buttons appear. MinimumTabWidth controls how narrow each tab may become; AlwaysShowScrollButtons keeps the buttons visible." />
+    <Example Of="typeof(TabsKeepAlive)" Title="Keeping panels alive" Description="By default a panel is rebuilt each time it is shown, so unsaved input is lost. KeepPanelsAlive renders every panel once and hides the inactive ones instead. Type a note, switch tabs and come back." />
+    <Example Of="typeof(TabsDynamic)" Title="Adding and closing tabs" Description="MudDynamicTabs adds an add button and per-tab close buttons. The tabs come from your own list: the component only raises AddTab and CloseTab." />
+    <Example Of="typeof(TabsPlayground)" Title="Playground" Description="Change any parameter; the markup below shows only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

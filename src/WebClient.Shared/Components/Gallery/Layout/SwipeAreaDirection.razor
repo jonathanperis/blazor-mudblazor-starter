@@ -1,0 +1,22 @@
+<MudStack Spacing="3">
+    <MudSlider @bind-Value="_sensitivity" Min="20" Max="300" Step="20" Color="Color.Primary" Style="max-width: 24rem">Sensitivity: @_sensitivity px</MudSlider>
+    <MudSwipeArea OnSwipeEnd="OnSwipeEnd" Sensitivity="_sensitivity"
+                  Class="d-flex align-center justify-center rounded border-2 border-dashed mud-border-primary" Style="height: 12rem; user-select: none">
+        <MudText Typo="Typo.body1">Swipe here</MudText>
+    </MudSwipeArea>
+    <MudText Typo="Typo.body2" role="status">
+        @(_direction is null ? "No swipe yet." : $"{_direction} over {_delta:0} px.")
+    </MudText>
+</MudStack>
+
+@code {
+    private int _sensitivity = 100;
+    private SwipeDirection? _direction;
+    private double _delta;
+
+    private void OnSwipeEnd(SwipeEventArgs args)
+    {
+        _direction = args.SwipeDirection;
+        _delta = Math.Abs(args.SwipeDelta ?? 0);
+    }
+}

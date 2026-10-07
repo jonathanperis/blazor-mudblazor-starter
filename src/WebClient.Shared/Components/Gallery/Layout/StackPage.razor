@@ -1,0 +1,11 @@
+@page "/components/stack"
+@attribute [ComponentPage("Stack", GalleryGroup.Layout, "A flex container that lines its children up in a row or a column with even spacing. Reach for it first for small layouts: form rows, button groups, card bodies.", MudDocs = "stack", Types = ["MudStack"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(StackDirection)" Title="Row, column and breakpoint" Description="A stack is a column by default and a row with Row. Breakpoint switches the direction at a screen size, so a row of fields can stack up on phones." />
+    <Example Of="typeof(StackSpacing)" Title="Spacing" Description="Spacing sets the gap between children in steps of 4 pixels, from 0 to 20. The default is 3, or 12 pixels." />
+    <Example Of="typeof(StackAlignment)" Title="Justify and AlignItems" Description="In a row, Justify places children along the row and AlignItems across it. Every combination of the two enums, with children of different heights." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(StackWrapAndReverse)" Title="Wrap and reverse" Description="Wrap decides what happens when children do not fit: NoWrap keeps one line and lets it overflow (scroll the first frame), Wrap starts a new line, WrapReverse starts it above. Reverse flips the order without changing the markup." />
+    <Example Of="typeof(StackStretch)" Title="Stretching items" Description="StretchItems lets chosen children grow to fill the free space along the main axis: the first, the last, both, those in between, or all of them." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(StackPlayground)" Title="Playground" Description="Change any parameter; the markup below shows only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

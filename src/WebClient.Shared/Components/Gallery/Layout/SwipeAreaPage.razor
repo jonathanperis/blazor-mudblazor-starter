@@ -1,0 +1,8 @@
+@page "/components/swipe-area"
+@attribute [ComponentPage("Swipe area", GalleryGroup.Layout, "A region that reports swipe gestures from touch, pen or mouse: the direction and the distance travelled. Use it for gesture shortcuts, and always offer a button for the same action.", MudDocs = "swipearea", Types = ["MudSwipeArea"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(SwipeAreaDirection)" Title="Direction and distance" Description="OnSwipeEnd reports the direction and the distance in pixels once a swipe is longer than Sensitivity. Drag across the area with a mouse, or swipe with a finger." />
+    <Example Of="typeof(SwipeAreaLive)" Title="Following a swipe" Description="OnSwipeMove reports both axes while the pointer moves, and OnSwipeLeave fires if it leaves the area. PreventDefault stops the page from scrolling under a vertical swipe on touch screens." />
+    <Example Of="typeof(SwipeAreaCards)" Title="Swiping through cards" Description="A realistic use: swipe left or right to browse tonight's targets. The buttons do the same thing for keyboard and mouse users." />
+</ComponentPageFrame>

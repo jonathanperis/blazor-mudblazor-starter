@@ -1,0 +1,41 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudPaper Outlined="true" Class="overflow-hidden" Style="width: min(100%, 34rem)">
+            <MudAppBar Fixed="false" Color="_color" Dense="_dense" Gutters="_gutters" Elevation="_elevation">
+                <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Edge="Edge.Start" aria-label="Open navigation" />
+                <MudText Typo="Typo.h6" HtmlTag="span" Class="ml-2">@_title</MudText>
+                <MudSpacer />
+                <MudIconButton Icon="@Icons.Material.Outlined.Settings" Color="Color.Inherit" Edge="Edge.End" aria-label="Settings" />
+            </MudAppBar>
+            <div style="height: 5rem"></div>
+        </MudPaper>
+    </Preview>
+    <Controls>
+        <MudTextField @bind-Value="_title" Label="Title" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_elevation" Label="Elevation" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in new[] { 0, 1, 2, 4, 8, 16, 24 }) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_gutters" Label="Gutters" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private string _title = "Field notes";
+    private Color _color = Color.Default;
+    private int _elevation = 4;
+    private bool _dense;
+    private bool _gutters = true;
+
+    // MudAppBar defaults: Color.Default, Elevation 4, Dense false, Gutters true.
+    private string Code => Snippet.Element("MudAppBar",
+    [
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("Elevation", _elevation == 4 ? null : _elevation.ToString()),
+        ("Dense", Snippet.Flag(_dense)),
+        ("Gutters", _gutters ? null : "false")
+    ], $"\n    <MudText Typo=\"Typo.h6\">{_title}</MudText>\n    <MudSpacer />\n");
+}

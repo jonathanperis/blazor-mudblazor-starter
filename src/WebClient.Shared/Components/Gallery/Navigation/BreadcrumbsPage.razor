@@ -1,0 +1,9 @@
+@page "/components/breadcrumbs"
+@attribute [ComponentPage("Breadcrumbs", GalleryGroup.Navigation, "A trail of links from the top of a hierarchy to the current page. Use breadcrumbs where pages nest several levels deep and readers arrive from search.", MudDocs = "breadcrumbs", Types = ["MudBreadcrumbs", "BreadcrumbItem"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(BreadcrumbsBasic)" Title="Basic trail" Description="Items are BreadcrumbItem records: text, an address and an optional Disabled flag. Mark the current page disabled so it reads as a location, not a link." />
+    <Example Of="typeof(BreadcrumbsSeparators)" Title="Separators" Description="Separator takes any string; SeparatorTemplate takes markup such as an icon. Separators are decorative and hidden from screen readers." />
+    <Example Of="typeof(BreadcrumbsIcons)" Title="Icons and item templates" Description="Each item may carry an icon. ItemTemplate replaces the rendering of every item, here with chips." />
+    <Example Of="typeof(BreadcrumbsCollapsed)" Title="Collapsing long trails" Description="MaxItems collapses the middle of a long trail behind an expander. Choose a limit and click the ellipsis to expand." />
+</ComponentPageFrame>

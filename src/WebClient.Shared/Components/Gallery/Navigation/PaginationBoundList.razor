@@ -1,0 +1,46 @@
+<MudStack Spacing="3" Style="max-width: 32rem">
+    <MudTextField @bind-Value="_filter" Label="Filter by title or author" Immediate="true" Variant="Variant.Outlined" Margin="Margin.Dense"
+                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" Clearable="true" />
+    @if (Matches.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Dense="true">No books match “@_filter”.</MudAlert>
+    }
+    else
+    {
+        <MudPaper Outlined="true">
+            <MudList T="string" Dense="true">
+                @foreach (var book in Matches.Skip((Page - 1) * PageSize).Take(PageSize))
+                {
+                    <MudListItem T="string" Icon="@Icons.Material.Outlined.Book" Text="@book.Title" SecondaryText="@book.Author" />
+                }
+            </MudList>
+        </MudPaper>
+        <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+            <MudText Typo="Typo.body2" role="status">@Matches.Count books · page @Page of @PageCount</MudText>
+            <MudPagination Count="PageCount" Selected="Page" SelectedChanged="page => _page = page" Size="Size.Small" />
+        </MudStack>
+    }
+</MudStack>
+
+@code {
+    private const int PageSize = 4;
+    private string _filter = "";
+    private int _page = 1;
+
+    private static readonly (string Title, string Author)[] Books =
+    [
+        ("The Lighthouse Keeper's Almanac", "Ines Varga"), ("Salt and Cedar", "Tomasz Brennan"), ("A Field Guide to Fog", "Mireille Achebe"),
+        ("Night Trains of the North", "Oskar Lindqvist"), ("The Cartographer's Daughter", "Priya Raman"), ("Bread Before Dawn", "Hugo Salles"),
+        ("Small Hours at the Observatory", "Agnes Okafor"), ("Tidal Notebooks", "Ruth Calloway"), ("The Glass Orchard", "Kenji Morrow"),
+        ("Letters from the Reading Room", "Clara Duval"), ("Winter Moths", "Felix Arendt"), ("An Atlas of Quiet Places", "Noor Haddad"),
+        ("The Ferryman's Ledger", "Ivo Petrenko"), ("Copper and Rain", "Lena Moreau")
+    ];
+
+    private List<(string Title, string Author)> Matches =>
+        Books.Where(book => $"{book.Title} {book.Author}".Contains(_filter ?? "", StringComparison.OrdinalIgnoreCase)).ToList();
+
+    private int PageCount => Math.Max(1, (Matches.Count + PageSize - 1) / PageSize);
+
+    // Clamp, so that narrowing the filter never leaves the reader on a page that no longer exists.
+    private int Page => Math.Min(_page, PageCount);
+}

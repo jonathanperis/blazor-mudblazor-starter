@@ -1,0 +1,10 @@
+@page "/components/nav-menu"
+@attribute [ComponentPage("Nav menu", GalleryGroup.Navigation, "A vertical list of navigation links with optional collapsible groups, usually placed in a drawer. Links highlight themselves when their address matches the current page.", MudDocs = "navmenu", Types = ["MudNavMenu", "MudNavLink", "MudNavGroup"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(NavMenuBasic)" Title="Links and the active page" Description="MudNavLink is a NavLink: with Match set to All it is active only on its exact address. These links point at real gallery pages, so the one for this page is highlighted." />
+    <Example Of="typeof(NavMenuGroups)" Title="Nested groups" Description="MudNavGroup collapses a set of links under a title. Groups nest, can start expanded, and bind Expanded for control from code. Disabled links stay visible but inert." />
+    <Example Of="typeof(NavMenuAppearance)" Title="Density, margins and borders" Description="Dense tightens each row, Margin adds space between links, and Bordered marks the active link with an edge that Rounded softens." />
+    <Example Of="typeof(NavMenuColors)" Title="Active link colors" Description="Color tints the active link of a bordered menu. Every value of Color, with the active page highlighted in each." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(NavMenuPlayground)" Title="Playground" Description="Change the menu's parameters; the markup below shows only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

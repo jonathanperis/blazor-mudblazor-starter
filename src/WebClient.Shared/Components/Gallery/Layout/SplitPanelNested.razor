@@ -1,0 +1,28 @@
+<MudPaper Outlined="true" Height="18rem" Class="overflow-hidden" Style="background-color: var(--mud-palette-lines-default)">
+    <MudSplitPanel Class="mud-height-full" FirstPanelInitialSize="150" MinPanelSize="100">
+        <FirstPanel>
+            <MudList T="string" Dense="true">
+                <MudListItem T="string" Icon="@Icons.Material.Outlined.Inbox" Text="Inbox" />
+                <MudListItem T="string" Icon="@Icons.Material.Outlined.Star" Text="Starred" />
+                <MudListItem T="string" Icon="@Icons.Material.Outlined.Send" Text="Sent" />
+            </MudList>
+        </FirstPanel>
+        <SecondPanel>
+            <MudSplitPanel Class="mud-height-full" FirstPanelInitialSize="220" MinPanelSize="140" Style="background-color: var(--mud-palette-lines-default)">
+                <FirstPanel>
+                    <MudList T="string" Dense="true">
+                        <MudListItem T="string" Text="Shelf audit" SecondaryText="Clara Duval" />
+                        <MudListItem T="string" Text="Autumn reading list" SecondaryText="Hugo Salles" />
+                        <MudListItem T="string" Text="Signed copies" SecondaryText="Noor Haddad" />
+                    </MudList>
+                </FirstPanel>
+                <SecondPanel>
+                    <div class="pa-4">
+                        <MudText Typo="Typo.subtitle1" HtmlTag="h3">Shelf audit</MudText>
+                        <MudText Typo="Typo.body2">Travel writing is three books short; two copies of “Salt and Cedar” were shelved under poetry.</MudText>
+                    </div>
+                </SecondPanel>
+            </MudSplitPanel>
+        </SecondPanel>
+    </MudSplitPanel>
+</MudPaper>

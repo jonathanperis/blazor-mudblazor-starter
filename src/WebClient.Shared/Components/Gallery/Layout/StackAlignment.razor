@@ -1,0 +1,17 @@
+<EnumMatrix TRow="Justify" TColumn="AlignItems" Caption="MudStack Row: Justify × AlignItems">
+    <Cell>
+        <MudPaper Outlined="true" Class="pa-2" Style="width: 6rem">
+            <MudStack Row="true" Spacing="1" Justify="@context.Row" AlignItems="@context.Column" Style="height: 4.5rem">
+                @foreach (var (height, label) in Boxes)
+                {
+                    <div class="mud-theme-primary rounded px-2" style="min-height: @(height)px; font-size: @(height / 2)px">@label</div>
+                }
+            </MudStack>
+        </MudPaper>
+    </Cell>
+</EnumMatrix>
+
+@code {
+    // Different font sizes make the Baseline column meaningful.
+    private static readonly (int Height, string Label)[] Boxes = [(24, "a"), (40, "b"), (32, "c")];
+}

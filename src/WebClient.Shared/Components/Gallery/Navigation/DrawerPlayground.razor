@@ -1,0 +1,63 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudPaper Outlined="true" Height="16rem" Class="overflow-hidden" Style="position: relative; transform: translateZ(0); width: min(100%, 36rem)">
+            <MudDrawerContainer Class="mud-height-full">
+                @* @key recreates the drawer when its variant, anchor or width changes, so it registers afresh with the container. *@
+                <MudDrawer @key="(_variant, _anchor, _width)" @bind-Open="_open" Variant="_variant" Anchor="_anchor" Color="_color" Elevation="_elevation" Width="@(_width == "" ? null : _width)"
+                           Overlay="_overlay" Breakpoint="Breakpoint.None" Fixed="false">
+                    <MudNavMenu>
+                        <MudNavLink Icon="@Icons.Material.Outlined.Inbox" OnClick="@(() => _folder = "Inbox")">Inbox</MudNavLink>
+                        <MudNavLink Icon="@Icons.Material.Outlined.Send" OnClick="@(() => _folder = "Sent")">Sent</MudNavLink>
+                        <MudNavLink Icon="@Icons.Material.Outlined.Archive" OnClick="@(() => _folder = "Archive")">Archive</MudNavLink>
+                    </MudNavMenu>
+                </MudDrawer>
+                <div class="pa-4">
+                    <MudButton Variant="Variant.Outlined" OnClick="() => _open = !_open">@(_open ? "Close" : "Open")</MudButton>
+                    <MudText Typo="Typo.body2" Class="mt-3">Folder: @_folder</MudText>
+                </div>
+            </MudDrawerContainer>
+        </MudPaper>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_variant" Label="Variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in new[] { DrawerVariant.Persistent, DrawerVariant.Mini, DrawerVariant.Temporary }) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_anchor" Label="Anchor" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in new[] { Anchor.Start, Anchor.End }) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_width" Label="Width" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in new[] { "", "180px", "320px" }) { <MudSelectItem Value="value">@(value == "" ? "Theme default" : value)</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_elevation" Label="Elevation" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in new[] { 0, 1, 2, 4, 8 }) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_open" Label="Open" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_overlay" Label="Overlay (temporary)" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private bool _open = true;
+    private DrawerVariant _variant = DrawerVariant.Persistent;
+    private Anchor _anchor = Anchor.Start;
+    private Color _color = Color.Default;
+    private string _width = "";
+    private int _elevation = 1;
+    private bool _overlay = true;
+    private string _folder = "Inbox";
+
+    // MudDrawer defaults: Variant.Responsive, Anchor.Start, Color.Default, Elevation 1, Overlay true; Width comes from the theme.
+    private string Code => Snippet.Element("MudDrawer",
+    [
+        ("@bind-Open", "_open"),
+        ("Variant", Snippet.Enum(_variant, DrawerVariant.Responsive)),
+        ("Anchor", Snippet.Enum(_anchor, Anchor.Start)),
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("Width", _width == "" ? null : _width),
+        ("Elevation", _elevation == 1 ? null : _elevation.ToString()),
+        ("Overlay", _overlay || _variant != DrawerVariant.Temporary ? null : "false")
+    ], "\n    <MudNavMenu>…</MudNavMenu>\n");
+}

@@ -1,0 +1,21 @@
+<MudPaper Outlined="true" Class="pa-4">
+    <MudStepper @bind-ActiveIndex="_index" NonLinear="true" CenterLabels="true" ShowSkip="true"
+                CurrentStepColor="Color.Secondary" CompletedStepColor="Color.Success" ErrorStepColor="Color.Error" SkippedStepColor="Color.Warning">
+        <MudStep Title="Survey" Completed="true">
+            <MudText Typo="Typo.body2">Completed steps take CompletedStepColor.</MudText>
+        </MudStep>
+        <MudStep Title="Permits" HasError="true" SecondaryText="Missing signature">
+            <MudText Typo="Typo.body2">Steps in error take ErrorStepColor.</MudText>
+        </MudStep>
+        <MudStep Title="Drone flight" Skippable="true" Skipped="true">
+            <MudText Typo="Typo.body2">Skipped steps take SkippedStepColor.</MudText>
+        </MudStep>
+        <MudStep Title="Report">
+            <MudText Typo="Typo.body2">The active step takes CurrentStepColor.</MudText>
+        </MudStep>
+    </MudStepper>
+</MudPaper>
+
+@code {
+    private int _index = 3;
+}

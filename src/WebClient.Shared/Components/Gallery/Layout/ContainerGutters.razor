@@ -1,0 +1,13 @@
+<MudStack Spacing="4">
+    @foreach (var gutters in new[] { true, false })
+    {
+        <div>
+            <MudText Typo="Typo.overline" HtmlTag="p">Gutters @(gutters ? "true" : "false")</MudText>
+            <MudContainer MaxWidth="MaxWidth.Small" Gutters="gutters" Class="border border-dashed mud-border-lines-default py-2">
+                <div class="mud-background-gray rounded pa-3">
+                    <MudText Typo="Typo.body2">Opening hours: Tuesday to Saturday, 9:00 to 17:30.</MudText>
+                </div>
+            </MudContainer>
+        </div>
+    }
+</MudStack>

@@ -1,0 +1,25 @@
+<EnumMatrix TRow="Justify" TColumn="AlignItems" Caption="MudGrid: Justify × align-items" ColumnValues="[AlignItems.Start, AlignItems.Center, AlignItems.End, AlignItems.Stretch]">
+    <Cell>
+        <MudPaper Outlined="true" Class="pa-2" Style="width: 8rem">
+            <MudGrid Spacing="1" Justify="@context.Row" Class="@AlignClass(context.Column)" Style="height: 5.5rem">
+                @foreach (var height in new[] { 24, 48, 32 })
+                {
+                    <MudItem xs="3">
+                        @* height: 100% lets a stretched item show its full height. *@
+                        <div class="mud-theme-primary rounded" style="min-height: @(height)px; height: 100%"></div>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudPaper>
+    </Cell>
+</EnumMatrix>
+
+@code {
+    private static string AlignClass(AlignItems align) => align switch
+    {
+        AlignItems.Start => "align-start",
+        AlignItems.Center => "align-center",
+        AlignItems.End => "align-end",
+        _ => "align-stretch"
+    };
+}

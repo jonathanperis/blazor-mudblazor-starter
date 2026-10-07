@@ -1,0 +1,11 @@
+@page "/components/pagination"
+@attribute [ComponentPage("Pagination", GalleryGroup.Navigation, "Page buttons for moving through a long, ordered list one page at a time. Choose it when readers need to jump to or return to a specific page; prefer infinite scrolling for casual browsing.", MudDocs = "pagination", Types = ["MudPagination"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(PaginationBasic)" Title="Basic pagination" Description="Count is the number of pages; bind Selected to know the current one. Pages are numbered from 1." />
+    <Example Of="typeof(PaginationCombinations)" Title="Every color and variant" Description="All 36 combinations of Color and Variant. The selected page takes the color; the others stay neutral." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(PaginationSizes)" Title="Sizes and shapes" Description="Three sizes, with round buttons or Rectangular ones. DropShadow, on by default, can be switched off in the playground." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(PaginationCounts)" Title="Boundary and middle counts" Description="With many pages the middle is elided. BoundaryCount sets how many pages stay at each end, MiddleCount how many surround the current one. First and last buttons jump to the ends." />
+    <Example Of="typeof(PaginationBoundList)" Title="Paging a list" Description="Pagination bound to a filtered list. The page count follows the filter, the current page is clamped when the list shrinks, and an empty result says so." />
+    <Example Of="typeof(PaginationPlayground)" Title="Playground" Description="Change any parameter; the markup below shows only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

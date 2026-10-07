@@ -1,0 +1,10 @@
+@page "/components/grid"
+@attribute [ComponentPage("Grid", GalleryGroup.Layout, "A twelve-column responsive grid. Choose it when items should line up in columns whose widths change with the screen size; for a single row or column of items, a stack is simpler.", MudDocs = "grid", Types = ["MudGrid", "MudItem"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(GridBasic)" Title="Columns" Description="Each MudItem takes a number of the twelve columns. xs=&quot;12&quot; spans the whole row, 6 half of it, 4 a third." />
+    <Example Of="typeof(GridBreakpoints)" Title="Breakpoints" Description="A width per breakpoint, from xs to xxl. Each applies from its breakpoint upwards until a larger one overrides it. Resize the window to watch the twelve items reflow." />
+    <Example Of="typeof(GridSpacing)" Title="Spacing" Description="Spacing sets the gutter between items in steps of 4 pixels, from 0 to 20. The default is 6, or 24 pixels." />
+    <Example Of="typeof(GridAlignment)" Title="Justify and align" Description="Justify places items along the row when they do not fill it. The grid is a flex container, so the align-* utility classes align items of different heights. Every Justify value against every vertical alignment." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(GridNested)" Title="Nested grids" Description="An item can contain another MudGrid with its own twelve columns, here a reading-room dashboard." />
+</ComponentPageFrame>
