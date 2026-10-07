@@ -38,7 +38,7 @@
         ("Placement", Snippet.Enum(_placement, Placement.Bottom)),
         ("Color", Snippet.Enum(_color, Color.Default)),
         ("Arrow", Snippet.Flag(_arrow)),
-        ("Delay", _delay == 0 ? null : _delay.ToString(CultureInfo.InvariantCulture)),
+        ("Delay", _delay <= 0 ? null : _delay.ToString(CultureInfo.InvariantCulture)),
         ("ShowOnHover", _hover ? null : "false"),
         ("ShowOnFocus", _focus ? null : "false"),
         ("ShowOnClick", Snippet.Flag(_click))

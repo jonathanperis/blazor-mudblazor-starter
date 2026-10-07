@@ -100,7 +100,8 @@ public sealed class IntegrationTests
         await using var factory = new SandboxFactory();
         using var client = factory.BrowserClient();
         Assert.Equal(HttpStatusCode.Unauthorized, (await client.GetAsync("/api/instructor")).StatusCode);
-        Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsync("/auth/demo", new FormUrlEncodedContent(new Dictionary<string, string> { ["persona"] = "instructor" }))).StatusCode);
+        using var withoutToken = new FormUrlEncodedContent(new Dictionary<string, string> { ["persona"] = "instructor" });
+        Assert.Equal(HttpStatusCode.BadRequest, (await client.PostAsync("/auth/demo", withoutToken)).StatusCode);
         foreach (var (persona, expected) in new[] { ("student", HttpStatusCode.Forbidden), ("instructor", HttpStatusCode.OK) })
         {
             var token = await Token(client, "/labs/auth");
@@ -170,10 +171,11 @@ public sealed class IntegrationTests
         return document.QuerySelector("input[name='__RequestVerificationToken']")!.GetAttribute("value")!;
     }
 
-    private static Task<HttpResponseMessage> Post(HttpClient client, string route, string token, string? name = null, string? value = null)
+    private static async Task<HttpResponseMessage> Post(HttpClient client, string route, string token, string? name = null, string? value = null)
     {
         var form = new Dictionary<string, string> { ["__RequestVerificationToken"] = token };
         if (name is not null) form[name] = value!;
-        return client.PostAsync(route, new FormUrlEncodedContent(form));
+        using var content = new FormUrlEncodedContent(form);
+        return await client.PostAsync(route, content);
     }
 }

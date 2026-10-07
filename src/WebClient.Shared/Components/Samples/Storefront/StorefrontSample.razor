@@ -127,6 +127,13 @@
 </SamplePageFrame>
 
 @code {
+    // One predicate per facet, so each filter reads on its own line.
+    private bool InCategory(Book book) => _categories.Count == 0 || _categories.Contains(book.Category);
+    private bool WithinFilters(Book book) => book.Price <= _maxPrice && book.Rating >= _minRating && (!_inStockOnly || book.InStock);
+    private bool MatchesSearch(Book book) => string.IsNullOrWhiteSpace(_search)
+        || book.Title.Contains(_search, StringComparison.OrdinalIgnoreCase)
+        || book.Author.Contains(_search, StringComparison.OrdinalIgnoreCase);
+
     private const int PageSize = 6;
     private readonly HashSet<string> _categories = [];
     private readonly HashSet<int> _saved = [3, 18];
@@ -149,14 +156,7 @@
     {
         get
         {
-            var books = StorefrontData.Books.Where(book =>
-                (_categories.Count == 0 || _categories.Contains(book.Category))
-                && book.Price <= _maxPrice
-                && book.Rating >= _minRating
-                && (!_inStockOnly || book.InStock)
-                && (string.IsNullOrWhiteSpace(_search)
-                    || book.Title.Contains(_search, StringComparison.OrdinalIgnoreCase)
-                    || book.Author.Contains(_search, StringComparison.OrdinalIgnoreCase)));
+            var books = StorefrontData.Books.Where(book => InCategory(book) && WithinFilters(book) && MatchesSearch(book));
             return (_sort switch
             {
                 BookSort.PriceLowToHigh => books.OrderBy(book => book.Price),
@@ -211,7 +211,11 @@
         {
             options.Action = "Undo";
             options.ActionColor = Color.Primary;
-            options.OnClick = _ => InvokeAsync(() => { if (!_basket.Contains(line)) _basket.Add(line); StateHasChanged(); });
+            options.OnClick = _ => InvokeAsync(() =>
+            {
+                if (!_basket.Contains(line)) _basket.Add(line);
+                StateHasChanged();
+            });
         });
     }
 }

@@ -94,13 +94,16 @@ public sealed class MemberDirectory
         _members.RemoveAll(member => cards.Contains(member.CardNumber));
     }
 
-    private IEnumerable<LibraryMember> Filter(MemberQuery query) => _members.Where(member =>
-        (query.Branch is null || member.Branch == query.Branch)
-        && (query.Status is null || member.Status == query.Status)
-        && (string.IsNullOrWhiteSpace(query.Search)
-            || member.Name.Contains(query.Search, StringComparison.OrdinalIgnoreCase)
-            || member.Email.Contains(query.Search, StringComparison.OrdinalIgnoreCase)
-            || member.CardNumber.Contains(query.Search, StringComparison.OrdinalIgnoreCase)));
+    private IEnumerable<LibraryMember> Filter(MemberQuery query) =>
+        _members.Where(member => InFacets(member, query) && MatchesSearch(member, query.Search));
+
+    private static bool InFacets(LibraryMember member, MemberQuery query) =>
+        (query.Branch is null || member.Branch == query.Branch) && (query.Status is null || member.Status == query.Status);
+
+    private static bool MatchesSearch(LibraryMember member, string? search) => string.IsNullOrWhiteSpace(search)
+        || member.Name.Contains(search, StringComparison.OrdinalIgnoreCase)
+        || member.Email.Contains(search, StringComparison.OrdinalIgnoreCase)
+        || member.CardNumber.Contains(search, StringComparison.OrdinalIgnoreCase);
 
     // A real API would accept only known sort keys; unknown ones fall back to the card number.
     private static IEnumerable<LibraryMember> Sort(IEnumerable<LibraryMember> members, string? sortBy, bool descending)

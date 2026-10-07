@@ -39,7 +39,7 @@
         var start = new DateTime(2026, 11, 14, 21, 7, 0);
         var noise = new Random(42);
         var readings = Enumerable.Range(0, 30)
-            .Select(i => new TimeValue<double>(start.AddMinutes(7 * i), Math.Round(71 + i * 0.6 + noise.NextDouble() * 3, 1)))
+            .Select(i => new TimeValue<double>(start.AddMinutes(7.0 * i), Math.Round(71 + i * 0.6 + noise.NextDouble() * 3, 1)))
             .ToArray();
         _series = [new() { Name = "Humidity", Data = readings }];
     }

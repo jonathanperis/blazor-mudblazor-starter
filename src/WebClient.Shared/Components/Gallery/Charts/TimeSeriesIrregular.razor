@@ -21,13 +21,13 @@
     {
         // Outside: every 5 minutes, cooling steadily after sunset.
         var outside = Enumerable.Range(0, 37)
-            .Select(i => new TimeValue<double>(Start.AddMinutes(5 * i), Math.Round(6.0 - 0.06 * i, 1)))
+            .Select(i => new TimeValue<double>(Start.AddMinutes(5.0 * i), Math.Round(6.0 - 0.06 * i, 1)))
             .ToArray();
 
         // Inside the dome: every 20 minutes, with an hour lost to a logger restart.
         var dome = Enumerable.Range(0, 10)
             .Where(i => i is < 3 or > 5)
-            .Select(i => new TimeValue<double>(Start.AddMinutes(20 * i), Math.Round(8.5 - 0.3 * i, 1)))
+            .Select(i => new TimeValue<double>(Start.AddMinutes(20.0 * i), Math.Round(8.5 - 0.3 * i, 1)))
             .ToArray();
 
         _series =

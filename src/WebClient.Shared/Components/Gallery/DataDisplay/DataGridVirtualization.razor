@@ -17,6 +17,6 @@
 
     // One reading every ten minutes, computed rather than random so every visit shows the same numbers.
     private readonly Reading[] _readings = Enumerable.Range(1, 10_000)
-        .Select(i => new Reading(i, new DateTime(2026, 1, 1).AddMinutes(i * 10), 9 + 3 * Math.Sin(i / 900.0), 0.6 + 0.4 * Math.Abs(Math.Sin(i / 37.0))))
+        .Select(i => new Reading(i, new DateTime(2026, 1, 1).AddMinutes(i * 10.0), 9 + 3 * Math.Sin(i / 900.0), 0.6 + 0.4 * Math.Abs(Math.Sin(i / 37.0))))
         .ToArray();
 }

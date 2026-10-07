@@ -12,7 +12,7 @@ public sealed record PasswordRule(string Text, bool Met);
 /// <summary>How strong a new password is, with the rules behind the score.</summary>
 public sealed record PasswordStrength(int Score, string Label, Color Color, IReadOnlyList<PasswordRule> Rules)
 {
-    public double Percent => Score * 25;
+    public double Percent => Score * 25.0;
 }
 
 /// <summary>
