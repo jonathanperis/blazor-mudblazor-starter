@@ -1,0 +1,13 @@
+@page "/components/slider"
+@attribute [ComponentPage("Slider", GalleryGroup.Inputs, "A thumb on a track for choosing a value within a range. Use it when the position matters more than the exact number, such as volume or brightness, and pair it with a numeric field when exactness matters too.", MudDocs = "slider", Types = ["MudSlider"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(SliderBasics)" Title="A labeled slider" Description="Child content becomes the label. Immediate updates the value while dragging; without it the value updates when the thumb is released. Variant.Filled colors the track up to the thumb." />
+    <Example Of="typeof(SliderStepsAndTicks)" Title="Steps, tick marks and labels" Description="Step snaps the thumb to multiples. TickMarks draws a mark per step, and TickMarkLabels names them in order." />
+    <Example Of="typeof(SliderCombinations)" Title="Every color and size" Description="The palette colors the slider styles, against its three sizes. Size changes the thumb and track thickness, not the length." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(SliderValueLabel)" Title="Value labels" Description="ValueLabel shows the value above the thumb while it moves. ValueLabelFormat and Culture format it; ValueLabelContent replaces it entirely." />
+    <Example Of="typeof(SliderVertical)" Title="Vertical sliders" Description="Vertical sliders take the height of their container; give that container a height." />
+    <Example Of="typeof(SliderWithNumericField)" Title="With a numeric field, and a price range" Description="Bind a slider and a numeric field to the same value so people can drag or type. MudBlazor 9.11 has no range slider, so two bounded sliders make a range." />
+    <Example Of="typeof(SliderStates)" Title="Nullable and disabled" Description="NullableValue binds a T? so “not set” is possible until the thumb moves. Disabled sliders keep their value visible." />
+    <Example Of="typeof(SliderPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

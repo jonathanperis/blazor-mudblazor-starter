@@ -1,0 +1,14 @@
+<MudStack Row Wrap="Wrap.Wrap" Spacing="4">
+    <MudCheckBox @bind-Value="_favorite" Label="Favorite" Color="Color.Error" UncheckedColor="Color.Default"
+                 CheckedIcon="@Icons.Material.Filled.Favorite" UncheckedIcon="@Icons.Material.Outlined.FavoriteBorder" />
+    <MudCheckBox @bind-Value="_bookmarked" Label="Saved for later" Color="Color.Primary"
+                 CheckedIcon="@Icons.Material.Filled.Bookmark" UncheckedIcon="@Icons.Material.Outlined.BookmarkBorder" />
+    <MudCheckBox @bind-Value="_notify" Label="Notify when back in stock" Color="Color.Secondary"
+                 CheckedIcon="@Icons.Material.Filled.NotificationsActive" UncheckedIcon="@Icons.Material.Outlined.NotificationsNone" />
+</MudStack>
+
+@code {
+    private bool _favorite = true;
+    private bool _bookmarked;
+    private bool _notify = true;
+}

@@ -1,0 +1,19 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Average of 128 reviews</MudText>
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+            @* A rating shows whole icons, so round the average and print the exact value beside it. *@
+            <MudRating SelectedValue="@((int)Math.Round(Average))" ReadOnly="true" Color="Color.Warning" />
+            <MudText Typo="Typo.body1">@Average.ToString("0.0") out of 5</MudText>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Rate after delivery</MudText>
+        <MudRating SelectedValue="0" Disabled="true" />
+        <MudText Typo="Typo.caption" HtmlTag="p">Available once your order arrives.</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private const double Average = 4.3;
+}

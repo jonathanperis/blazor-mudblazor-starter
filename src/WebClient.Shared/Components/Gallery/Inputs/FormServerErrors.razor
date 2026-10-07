@@ -1,0 +1,56 @@
+@implements IDisposable
+
+<MudStack Spacing="3" Style="max-width: 30rem">
+    @if (_formError is not null)
+    {
+        <MudAlert Severity="Severity.Error" Variant="Variant.Outlined">@_formError</MudAlert>
+    }
+    <MudTextField @bind-Value="_handle" Label="Reader handle" Variant="Variant.Outlined" Immediate="true"
+                  Error="_handleError is not null" ErrorText="@_handleError" HelperText="Try “nightowl”, which is taken"
+                  Adornment="Adornment.Start" AdornmentText="@("@")" />
+    <MudSwitch @bind-Value="_simulateOutage" Label="Simulate a service outage" Color="Color.Warning" />
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="ReserveAsync" Disabled="_checking" Style="align-self: start">
+        @(_checking ? "Checking…" : "Reserve handle")
+    </MudButton>
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+@code {
+    private readonly CancellationTokenSource _cancel = new();
+    private readonly HashSet<string> _taken = new(StringComparer.OrdinalIgnoreCase) { "nightowl", "bookworm", "admin" };
+    private string _handle = "";
+    private bool _simulateOutage;
+    private bool _checking;
+    private string? _handleError;
+    private string? _formError;
+    private string _status = "";
+
+    private async Task ReserveAsync()
+    {
+        (_handleError, _formError, _status, _checking) = (null, null, "", true);
+        try
+        {
+            await Task.Delay(700, _cancel.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        _checking = false;
+
+        if (_simulateOutage)
+            _formError = "The reservation service did not answer. Nothing was saved; try again in a minute.";
+        else if (string.IsNullOrWhiteSpace(_handle))
+            _handleError = "Enter a handle first";
+        else if (_taken.Contains(_handle.Trim()))
+            _handleError = $"@{_handle.Trim()} is already taken";
+        else
+            _status = $"@{_handle.Trim()} is yours.";
+    }
+
+    public void Dispose()
+    {
+        _cancel.Cancel();
+        _cancel.Dispose();
+    }
+}

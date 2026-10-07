@@ -1,0 +1,50 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="6">
+        <MudSelect T="string" @bind-SelectedValues="_stops" Label="Accessible stops" Variant="Variant.Outlined"
+                   MultiSelection="true" SelectAll="true" SelectAllText="Every stop"
+                   MultiSelectionTextFunc="@(new Func<IReadOnlyList<string>, string>(Summarize))">
+            @foreach (var stop in _allStops)
+            {
+                <MudSelectItem Value="stop">@stop</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudSelect T="string" @bind-SelectedValues="_amenities" Label="Amenities" Variant="Variant.Outlined"
+                   MultiSelection="true" Delimiter=" · " HelperText="Default summary with a custom delimiter">
+            @foreach (var amenity in _allAmenities)
+            {
+                <MudSelectItem Value="amenity">@amenity</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12">
+        <MudChipSet T="string" AllClosable="true" OnClose="Remove" aria-label="Selected stops">
+            @foreach (var stop in _stops)
+            {
+                <MudChip Value="stop" Text="@stop" Variant="Variant.Outlined" Color="Color.Secondary" />
+            }
+        </MudChipSet>
+        @if (_stops.Count == 0)
+        {
+            <MudText Typo="Typo.body2">No stops selected.</MudText>
+        }
+    </MudItem>
+</MudGrid>
+
+@code {
+    private readonly string[] _allStops = ["Old Market", "Ferry Terminal", "Museum Quarter", "Central Station", "Botanic Garden", "Northgate"];
+    private readonly string[] _allAmenities = ["Step-free access", "Bike racks", "Toilets", "Ticket machine", "Shelter"];
+    private IReadOnlyCollection<string> _stops = ["Ferry Terminal", "Central Station"];
+    private IReadOnlyCollection<string> _amenities = ["Step-free access", "Shelter"];
+
+    private string Summarize(IReadOnlyList<string> selected) => selected.Count switch
+    {
+        0 => "",
+        _ when selected.Count == _allStops.Length => "Every stop",
+        1 => selected[0],
+        _ => $"{selected.Count} stops"
+    };
+
+    private void Remove(MudChip<string> chip) => _stops = _stops.Where(stop => stop != chip.Value).ToList();
+}

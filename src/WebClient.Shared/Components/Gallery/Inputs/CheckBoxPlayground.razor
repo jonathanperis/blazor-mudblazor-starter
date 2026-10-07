@@ -1,0 +1,48 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudCheckBox @bind-Value="_value" Label="@_label" Color="_color" Size="_size" LabelPlacement="_placement"
+                     TriState="_triState" Dense="_dense" Disabled="_disabled" ReadOnly="_readOnly" />
+    </Preview>
+    <Controls>
+        <MudTextField @bind-Value="_label" Label="Label" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_size" Label="Size" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Size>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_placement" Label="Label placement" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Placement>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_triState" Label="Tri-state" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_readOnly" Label="Read-only" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private bool? _value = true;
+    private string _label = "Email me the receipt";
+    private Color _color = Color.Primary;
+    private Size _size = Size.Medium;
+    private Placement _placement = Placement.End;
+    private bool _triState;
+    private bool _dense;
+    private bool _disabled;
+    private bool _readOnly;
+
+    // MudCheckBox defaults: Color.Default, Size.Medium, LabelPlacement Placement.End.
+    private string Code => Snippet.Element("MudCheckBox",
+    [
+        ("@bind-Value", "_emailReceipt"),
+        ("Label", _label),
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("Size", Snippet.Enum(_size, Size.Medium)),
+        ("LabelPlacement", Snippet.Enum(_placement, Placement.End)),
+        ("TriState", Snippet.Flag(_triState)),
+        ("Dense", Snippet.Flag(_dense)),
+        ("Disabled", Snippet.Flag(_disabled)),
+        ("ReadOnly", Snippet.Flag(_readOnly))
+    ]);
+}

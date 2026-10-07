@@ -1,0 +1,14 @@
+@page "/components/text-field"
+@attribute [ComponentPage("Text field", GalleryGroup.Inputs, "A labeled single- or multi-line text input with helper text, adornments, counters and validation. Use it whenever people type free text; switch to a select or autocomplete when the answer comes from a known list.", MudDocs = "textfield", Types = ["MudTextField"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(TextFieldBasics)" Title="Labels, placeholders and helper text" Description="The label names the field, the placeholder shows the expected shape, and helper text explains the rules before anyone gets them wrong." />
+    <Example Of="typeof(TextFieldCombinations)" Title="Every variant and margin" Description="Variant sets the outline style; Margin sets the vertical rhythm. Dense margins suit toolbars and filters, Normal margins suit long forms." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(TextFieldAdornments)" Title="Adornments, icons and clearing" Description="Icons and short text sit at the start or end of the input. A clickable adornment needs an accessible name; Clearable adds a clear button once there is text." />
+    <Example Of="typeof(TextFieldCounterAndMultiline)" Title="Counters, multiple lines and auto-grow" Description="Counter with MaxLength shows the remaining room. Lines fixes the height of a text area; Sizing.Auto grows it with the content up to MaxLines." />
+    <Example Of="typeof(TextFieldPasswordAndTypes)" Title="Passwords and input types" Description="InputType picks the browser keyboard and autofill behavior. A password field can offer a reveal button that toggles the type." />
+    <Example Of="typeof(TextFieldUpdateTiming)" Title="Immediate and debounced updates" Description="By default the value updates on blur or Enter. Immediate updates on every keystroke; DebounceInterval waits for a pause in typing, which suits searches." />
+    <Example Of="typeof(TextFieldValidation)" Title="Validation" Description="Required fields, data-annotation attributes and custom functions all report through the same error slot under the field." />
+    <Example Of="typeof(TextFieldStates)" Title="Disabled, read-only and error states" Description="Disabled fields are skipped by the keyboard and not submitted; read-only fields stay focusable and copyable. Your own code can also set Error." />
+    <Example Of="typeof(TextFieldPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

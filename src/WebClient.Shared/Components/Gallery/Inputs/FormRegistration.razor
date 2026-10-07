@@ -1,0 +1,121 @@
+@using System.ComponentModel.DataAnnotations
+@implements IDisposable
+
+<EditForm EditContext="_editContext" OnValidSubmit="RegisterAsync" OnInvalidSubmit="() => _status = string.Empty" @key="_editContext">
+    <DataAnnotationsValidator />
+    <MudGrid Spacing="4">
+        <MudItem xs="12" md="7">
+            <MudPaper Outlined="true" Class="pa-4">
+                <MudText Typo="Typo.h6" HtmlTag="h3" Class="mb-2">Riverside Library card</MudText>
+                @if (FormErrors.Any())
+                {
+                    <MudAlert Severity="Severity.Error" Variant="Variant.Outlined" Dense="true" Class="mb-3">
+                        @foreach (var error in FormErrors) { <div>@error</div> }
+                    </MudAlert>
+                }
+                <MudStack Spacing="2">
+                    <MudTextField @bind-Value="_model.FullName" For="() => _model.FullName" Label="Full name" Variant="Variant.Outlined" />
+                    <MudTextField @bind-Value="_model.Email" For="() => _model.Email" Label="Email" Variant="Variant.Outlined" InputType="InputType.Email" />
+                    <MudStack Row Spacing="3">
+                        <MudSelect @bind-Value="_model.CardType" For="() => _model.CardType" Label="Card type" Variant="Variant.Outlined">
+                            @foreach (var type in Enum.GetValues<CardType>()) { <MudSelectItem Value="type">@type</MudSelectItem> }
+                        </MudSelect>
+                        <MudNumericField @bind-Value="_model.BirthYear" For="() => _model.BirthYear" Label="Year of birth" Variant="Variant.Outlined" HideSpinButtons="true" />
+                    </MudStack>
+                    <MudTextField @bind-Value="_model.Password" For="() => _model.Password" Label="Password" Variant="Variant.Outlined" InputType="InputType.Password"
+                                  HelperText="At least 10 characters" />
+                    <MudTextField @bind-Value="_model.ConfirmPassword" For="() => _model.ConfirmPassword" Label="Repeat password" Variant="Variant.Outlined" InputType="InputType.Password" />
+                    <MudCheckBox @bind-Value="_model.AcceptsRules" For="() => _model.AcceptsRules" Label="I agree to the library rules" Color="Color.Primary" />
+                    <MudStack Row Spacing="2">
+                        <MudButton ButtonType="ButtonType.Submit" Variant="Variant.Filled" Color="Color.Primary" Disabled="_saving">
+                            @(_saving ? "Registering…" : "Register")
+                        </MudButton>
+                        <MudButton Variant="Variant.Text" OnClick="Reset" Disabled="_saving">Start again</MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" md="5">
+            <MudPaper Outlined="true" Class="pa-4">
+                <MudText Typo="Typo.subtitle2" HtmlTag="h3">Validation summary</MudText>
+                <MudText Typo="Typo.body2" Color="Color.Error" HtmlTag="div" Class="pl-4"><ValidationSummary /></MudText>
+                <MudText Typo="Typo.body2" role="status">@_status</MudText>
+            </MudPaper>
+        </MudItem>
+    </MudGrid>
+</EditForm>
+
+@code {
+    private RegistrationModel _model = new();
+    private EditContext _editContext = null!;
+    private readonly CancellationTokenSource _cancel = new();
+    private bool _saving;
+    private string _status = "Submit the empty form to see every rule.";
+
+    // Messages that IValidatableObject returns without a member name belong to the model itself.
+    private IEnumerable<string> FormErrors => _editContext.GetValidationMessages(new FieldIdentifier(_model, ""));
+
+    protected override void OnInitialized() => _editContext = new EditContext(_model);
+
+    private async Task RegisterAsync()
+    {
+        _saving = true;
+        _status = "Registering…";
+        try
+        {
+            await Task.Delay(800, _cancel.Token);
+            _status = $"Welcome, {_model.FullName}. Your {_model.CardType.ToString().ToLowerInvariant()} card is ready to collect.";
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        _saving = false;
+    }
+
+    // A new EditContext, used as the form's @key, discards every value and message.
+    private void Reset()
+    {
+        _model = new RegistrationModel();
+        _editContext = new EditContext(_model);
+        _status = "Form cleared.";
+    }
+
+    public void Dispose()
+    {
+        _cancel.Cancel();
+        _cancel.Dispose();
+    }
+
+    public enum CardType { Adult, Junior, Concession }
+
+    public sealed class RegistrationModel : IValidatableObject
+    {
+        [Required(ErrorMessage = "Enter your full name"), StringLength(60, ErrorMessage = "Use at most 60 characters")]
+        public string FullName { get; set; } = "";
+
+        [Required(ErrorMessage = "Enter an email address"), EmailAddress(ErrorMessage = "Enter a valid email address")]
+        public string Email { get; set; } = "";
+
+        public CardType CardType { get; set; } = CardType.Adult;
+
+        [Required(ErrorMessage = "Enter your year of birth"), Range(1900, 2026, ErrorMessage = "Enter a year between 1900 and 2026")]
+        public int? BirthYear { get; set; }
+
+        [Required(ErrorMessage = "Choose a password"), MinLength(10, ErrorMessage = "Use at least 10 characters")]
+        public string Password { get; set; } = "";
+
+        [Compare(nameof(Password), ErrorMessage = "The passwords do not match")]
+        public string ConfirmPassword { get; set; } = "";
+
+        [Range(typeof(bool), "true", "true", ErrorMessage = "Accept the rules to get a card")]
+        public bool AcceptsRules { get; set; }
+
+        // Runs after every attribute passes. No member name: the error concerns the form as a whole.
+        public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+        {
+            if (CardType == CardType.Junior && BirthYear < 2010)
+                yield return new ValidationResult("Junior cards are for readers born in 2010 or later. Choose another card type or check the year.");
+        }
+    }
+}

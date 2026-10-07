@@ -1,0 +1,12 @@
+@page "/components/numeric-field"
+@attribute [ComponentPage("Numeric field", GalleryGroup.Inputs, "A text field bound to a number, with bounds, steps, spin buttons and culture-aware formatting. Use it for quantities and measurements people type; use a slider when the rough position matters more than the exact value.", MudDocs = "numericfield", Types = ["MudNumericField"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(NumericFieldBasics)" Title="Bounds and steps" Description="Min and Max clamp the value; Step sets how far the spin buttons, arrow keys and mouse wheel move it. The type parameter decides integer or decimal input." />
+    <Example Of="typeof(NumericFieldFormats)" Title="Formats and cultures" Description="Format is a .NET numeric format string; Culture decides the decimal and group separators. The bound value stays a plain number in every culture." />
+    <Example Of="typeof(NumericFieldNullable)" Title="Nullable values" Description="Bind a nullable type when “no answer” differs from zero. Clearable returns the field to null." />
+    <Example Of="typeof(NumericFieldSpinButtons)" Title="Spin buttons and variants" Description="Spin buttons help with small adjustments. Hide them for long numbers such as years or postcodes, where nobody clicks up a thousand times." />
+    <Example Of="typeof(NumericFieldOrder)" Title="An order form" Description="Quantities, prices and a discount that recalculate the total on every keystroke." />
+    <Example Of="typeof(NumericFieldStates)" Title="Validation, disabled and read-only" Description="Validation functions see the parsed number. Disabled and read-only fields keep their formatting." />
+    <Example Of="typeof(NumericFieldPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

@@ -1,0 +1,12 @@
+@page "/components/autocomplete"
+@attribute [ComponentPage("Autocomplete", GalleryGroup.Inputs, "A text field that searches as you type and offers matching options. Use it for long lists such as places, products or people, and when results come from a slow source that must be searched rather than loaded whole.", MudDocs = "autocomplete", Types = ["MudAutocomplete"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(AutocompleteBasics)" Title="Search a list" Description="SearchFunc receives the typed text and returns the options to show. An empty search usually returns everything, so the list is browsable on focus." />
+    <Example Of="typeof(AutocompleteAsync)" Title="Asynchronous search with debounce and cancellation" Description="DebounceInterval waits for a pause before searching. When a new search starts, MudAutocomplete cancels the token of the previous one; pass it on so stale work stops." />
+    <Example Of="typeof(AutocompleteObjects)" Title="Objects and item templates" Description="Bind records: ToStringFunc gives the field text, ItemTemplate draws each option and ItemDisabledFunc grays out options that cannot be chosen." />
+    <Example Of="typeof(AutocompleteStrictAndCoerce)" Title="Strict, coerced and free text" Description="Strict decides whether reopening filters by the selected text. CoerceValue accepts typed text that matches no option, for fields where suggestions are only a help." />
+    <Example Of="typeof(AutocompleteTemplates)" Title="Minimum characters and list templates" Description="MinCharacters delays the search until enough is typed. Templates explain an empty result, a truncated list, or offer an action below the options." />
+    <Example Of="typeof(AutocompleteStates)" Title="Validation, disabled and read-only" Description="Validation and Required behave as on other inputs. ResetValueOnEmptyText clears the value when the text is deleted." />
+    <Example Of="typeof(AutocompletePlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

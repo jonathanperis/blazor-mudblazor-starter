@@ -1,0 +1,7 @@
+<EnumMatrix TRow="Size" TColumn="Color" Caption="MudRadio: Size × Color (selected)">
+    <Cell>
+        <MudRadioGroup T="string" Value="@("on")">
+            <MudRadio Value="@("on")" Size="@context.Row" Color="@context.Column" AriaLabel="@($"{context.Row} {context.Column}")" />
+        </MudRadioGroup>
+    </Cell>
+</EnumMatrix>

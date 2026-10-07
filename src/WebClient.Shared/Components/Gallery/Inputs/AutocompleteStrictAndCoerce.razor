@@ -1,0 +1,28 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="4">
+        <MudAutocomplete T="string" @bind-Value="_strict" SearchFunc="Search" Label="Strict (default)" Variant="Variant.Outlined"
+                         HelperText="Reopening filters by the chosen text" />
+        <MudText Typo="Typo.body2" Class="mt-2">Value: @(_strict ?? "null")</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudAutocomplete T="string" @bind-Value="_loose" SearchFunc="Search" Label="Strict off" Variant="Variant.Outlined"
+                         Strict="false" HelperText="Reopening shows every option" />
+        <MudText Typo="Typo.body2" Class="mt-2">Value: @(_loose ?? "null")</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudAutocomplete T="string" @bind-Value="_freeText" SearchFunc="Search" Label="Filter or free text" Variant="Variant.Outlined"
+                         CoerceValue="true" HelperText="Any text is kept as the value" />
+        <MudText Typo="Typo.body2" Class="mt-2">Value: @(_freeText ?? "null")</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string? _strict = "Comet";
+    private string? _loose = "Comet";
+    private string? _freeText;
+
+    private readonly string[] _filters = ["Comet", "Galaxy", "Globular cluster", "Nebula", "Open cluster", "Planet", "Variable star"];
+
+    private Task<IEnumerable<string>> Search(string? text, CancellationToken token) =>
+        Task.FromResult(string.IsNullOrWhiteSpace(text) ? _filters : _filters.Where(filter => filter.Contains(text, StringComparison.OrdinalIgnoreCase)));
+}

@@ -1,0 +1,37 @@
+<MudForm>
+    <MudGrid Spacing="4">
+        <MudItem xs="12" sm="6">
+            <MudSelect T="string" @bind-Value="_reason" Label="Reason for refund" Variant="Variant.Outlined"
+                       Required="true" RequiredError="Choose a reason">
+                <MudSelectItem Value="@("Delayed service")" />
+                <MudSelectItem Value="@("Canceled service")" />
+                <MudSelectItem Value="@("Charged twice")" />
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudSelect T="string" @bind-Value="_seat" Label="Seat class" Variant="Variant.Outlined"
+                       Validation="@(new Func<string, string?>(CheckSeat))">
+                <MudSelectItem Value="@("Standard")" />
+                <MudSelectItem Value="@("First")" />
+                <MudSelectItem Value="@("Sleeper")" />
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudSelect T="string" Value="@("Zone 1–3")" Label="Disabled" Variant="Variant.Outlined" Disabled="true">
+                <MudSelectItem Value="@("Zone 1–3")" />
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudSelect T="string" Value="@("Monthly pass")" Label="Read-only" Variant="Variant.Outlined" ReadOnly="true">
+                <MudSelectItem Value="@("Monthly pass")" />
+            </MudSelect>
+        </MudItem>
+    </MudGrid>
+</MudForm>
+
+@code {
+    private string? _reason;
+    private string _seat = "Sleeper";
+
+    private static string? CheckSeat(string seat) => seat == "Sleeper" ? "Sleeper berths are not sold on day trains" : null;
+}

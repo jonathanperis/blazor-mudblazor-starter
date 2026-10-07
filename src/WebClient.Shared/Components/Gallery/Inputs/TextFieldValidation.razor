@@ -1,0 +1,46 @@
+@using System.ComponentModel.DataAnnotations
+
+<MudForm @ref="_form">
+    <MudGrid Spacing="4">
+        <MudItem xs="12" sm="6">
+            <MudTextField @bind-Value="_name" Label="Full name" Variant="Variant.Outlined"
+                          Required="true" RequiredError="Tell us who the card is for" />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            @* Any ValidationAttribute works and keeps its own message. *@
+            <MudTextField @bind-Value="_email" Label="Email" Variant="Variant.Outlined" InputType="InputType.Email"
+                          Validation="@(new EmailAddressAttribute { ErrorMessage = "That does not look like an email address" })" />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField @bind-Value="_cardNumber" Label="Library card number" Variant="Variant.Outlined" Immediate="true"
+                          Validation="@(new Func<string, IEnumerable<string>>(CheckCard))" HelperText="LIB followed by six digits" />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField @bind-Value="_displayName" Label="Display name" Variant="Variant.Outlined"
+                          Validation="@(new Func<string, string?>(CheckDisplayName))" HelperText="Shown next to your reviews" />
+        </MudItem>
+        <MudItem xs="12">
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="() => _form.ValidateAsync()">Check every field</MudButton>
+        </MudItem>
+    </MudGrid>
+</MudForm>
+
+@code {
+    private MudForm _form = null!;
+    private string _name = "";
+    private string _email = "reader@";
+    private string _cardNumber = "LIB12";
+    private string _displayName = "";
+
+    // Several messages at once: return every rule that fails.
+    private static IEnumerable<string> CheckCard(string value)
+    {
+        if (string.IsNullOrWhiteSpace(value)) yield break;
+        if (!value.StartsWith("LIB", StringComparison.Ordinal)) yield return "Card numbers start with LIB";
+        if (value.Length != 9 || !value.Skip(3).All(char.IsAsciiDigit)) yield return "Six digits follow the prefix";
+    }
+
+    // One message, or null when the value is fine.
+    private static string? CheckDisplayName(string value) =>
+        value?.Trim().Equals("admin", StringComparison.OrdinalIgnoreCase) == true ? "That name is reserved for staff" : null;
+}

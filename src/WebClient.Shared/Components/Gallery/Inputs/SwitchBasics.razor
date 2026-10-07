@@ -1,0 +1,14 @@
+<MudStack Spacing="1">
+    <MudSwitch @bind-Value="_domeLights" Label="Dome lights" Color="Color.Primary" />
+    <MudSwitch @bind-Value="_redLightMode" Color="Color.Secondary">
+        Red-light mode <MudText Typo="Typo.caption" HtmlTag="span">(protects night vision)</MudText>
+    </MudSwitch>
+    <MudText Typo="Typo.body2" Class="mt-2" role="status">
+        Dome lights @(_domeLights ? "on" : "off"); red-light mode @(_redLightMode ? "on" : "off").
+    </MudText>
+</MudStack>
+
+@code {
+    private bool _domeLights;
+    private bool _redLightMode = true;
+}

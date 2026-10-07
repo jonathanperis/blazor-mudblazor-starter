@@ -1,0 +1,44 @@
+<MudPaper Outlined="true" Class="pa-4" Style="max-width: 40rem">
+    <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="mb-3">
+        <MudText Typo="Typo.h6" HtmlTag="h3">Membership</MudText>
+        <MudButton Size="Size.Small" Variant="Variant.Outlined" StartIcon="@(_editing ? Icons.Material.Outlined.Check : Icons.Material.Outlined.Edit)"
+                   OnClick="() => _editing = !_editing">@(_editing ? "Done" : "Edit")</MudButton>
+    </MudStack>
+    <MudGrid Spacing="3">
+        <MudItem xs="12" sm="6">
+            @if (_editing)
+            {
+                <MudTextField @bind-Value="_name" Label="Name" Variant="Variant.Outlined" />
+            }
+            else
+            {
+                <MudField Label="Name" Variant="Variant.Outlined">@_name</MudField>
+            }
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudField Label="Member number" Variant="Variant.Outlined" HelperText="Cannot be changed">LIB-004127</MudField>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            @if (_editing)
+            {
+                <MudSelect @bind-Value="_branch" Label="Home branch" Variant="Variant.Outlined">
+                    @foreach (var branch in _branches) { <MudSelectItem Value="branch">@branch</MudSelectItem> }
+                </MudSelect>
+            }
+            else
+            {
+                <MudField Label="Home branch" Variant="Variant.Outlined">@_branch</MudField>
+            }
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudField Label="Renews on" Variant="Variant.Outlined" Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.Event">1 March 2027</MudField>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+
+@code {
+    private readonly string[] _branches = ["Riverside", "Old Town", "Harbour"];
+    private bool _editing;
+    private string _name = "Ada Lindqvist";
+    private string _branch = "Riverside";
+}

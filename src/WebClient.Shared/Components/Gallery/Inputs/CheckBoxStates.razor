@@ -1,0 +1,22 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudStack Spacing="0">
+            <MudCheckBox T="bool" Value="true" Label="Disabled, checked" Disabled="true" />
+            <MudCheckBox T="bool" Value="false" Label="Disabled, unchecked" Disabled="true" />
+            <MudCheckBox T="bool" Value="true" Label="Read-only" ReadOnly="true" Color="Color.Primary" />
+            <MudCheckBox T="bool" Value="true" Label="Dense" Dense="true" Color="Color.Primary" />
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudForm @ref="_form">
+            <MudCheckBox @bind-Value="_acceptTerms" Label="I accept the delivery terms" Color="Color.Primary"
+                         Required="true" RequiredError="Accept the terms to place the order" />
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Class="mt-2" Style="align-self: flex-start" OnClick="() => _form.ValidateAsync()">Place order</MudButton>
+        </MudForm>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private MudForm _form = null!;
+    private bool _acceptTerms;
+}

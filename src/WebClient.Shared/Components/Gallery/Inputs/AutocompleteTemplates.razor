@@ -1,0 +1,37 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="6">
+        <MudAutocomplete T="string" @bind-Value="_title" SearchFunc="Search" Label="Search the library" Variant="Variant.Outlined"
+                         MinCharacters="2" MaxItems="5" HelperText="At least two characters; at most five results">
+            <NoItemsTemplate>
+                <MudText Typo="Typo.body2" Class="px-4 py-2">No titles match. Check the spelling or try the author's name.</MudText>
+            </NoItemsTemplate>
+            <MoreItemsTemplate>
+                <MudText Typo="Typo.caption" Class="px-4 py-1">More titles match. Keep typing to narrow the list.</MudText>
+            </MoreItemsTemplate>
+            <AfterItemsTemplate>
+                <div class="pa-2">
+                    <MudButton Size="Size.Small" StartIcon="@Icons.Material.Outlined.Add" OnClick="RequestTitle">Request a title we do not stock</MudButton>
+                </div>
+            </AfterItemsTemplate>
+        </MudAutocomplete>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.body2" role="status" Class="mt-4">@_status</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string? _title;
+    private string _status = "Try “the”, then “zz”.";
+
+    private readonly string[] _titles =
+    [
+        "The Cartographer's Daughter", "The Salt Road", "Theory of Small Weather", "The Winter Orchard", "The Night Ferry",
+        "A Field Guide to Clouds", "Northern Lights for Beginners", "Bread Without Hurry", "The Patient Telescope"
+    ];
+
+    private Task<IEnumerable<string>> Search(string? text, CancellationToken token) =>
+        Task.FromResult(_titles.Where(title => title.Contains(text ?? "", StringComparison.OrdinalIgnoreCase)));
+
+    private void RequestTitle() => _status = "Request form opened. We will email you when it arrives.";
+}

@@ -1,0 +1,46 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudStack AlignItems="AlignItems.Center" Spacing="1">
+            <MudRating @bind-SelectedValue="_value" MaxValue="_maxValue" Color="_color" Size="_size"
+                       FullIcon="@(_hearts ? Icons.Material.Filled.Favorite : Icons.Material.Filled.Star)"
+                       EmptyIcon="@(_hearts ? Icons.Material.Outlined.FavoriteBorder : Icons.Material.Filled.StarBorder)"
+                       ReadOnly="_readOnly" Disabled="_disabled" />
+            <MudText Typo="Typo.caption">@_value of @_maxValue</MudText>
+        </MudStack>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_size" Label="Size" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Size>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudNumericField @bind-Value="_maxValue" Label="Max value" Variant="Variant.Outlined" Margin="Margin.Dense" Min="1" Max="10" />
+        <MudSwitch @bind-Value="_hearts" Label="Heart icons" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_readOnly" Label="Read-only" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private int _value = 3;
+    private int _maxValue = 5;
+    private Color _color = Color.Warning;
+    private Size _size = Size.Medium;
+    private bool _hearts;
+    private bool _readOnly;
+    private bool _disabled;
+
+    // MudRating defaults: MaxValue 5, Color.Default, Size.Medium, star icons.
+    private string Code => Snippet.Element("MudRating",
+    [
+        ("@bind-SelectedValue", "_score"),
+        ("MaxValue", _maxValue == 5 ? null : $"{_maxValue}"),
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("Size", Snippet.Enum(_size, Size.Medium)),
+        ("FullIcon", _hearts ? "@Icons.Material.Filled.Favorite" : null),
+        ("EmptyIcon", _hearts ? "@Icons.Material.Outlined.FavoriteBorder" : null),
+        ("ReadOnly", Snippet.Flag(_readOnly)),
+        ("Disabled", Snippet.Flag(_disabled))
+    ]);
+}

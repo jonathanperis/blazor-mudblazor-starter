@@ -1,0 +1,37 @@
+<MudStack Spacing="3" Style="max-width: 32rem">
+    <MudAutocomplete T="Instrument" @bind-Value="_instrument" SearchFunc="Search" Label="Book an instrument" Variant="Variant.Outlined"
+                     ToStringFunc="@(instrument => instrument?.Name ?? "")" ItemDisabledFunc="@(instrument => instrument.UnderMaintenance)">
+        <ItemTemplate Context="instrument">
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="3">
+                <MudIcon Icon="@instrument.Icon" Color="Color.Secondary" />
+                <div>
+                    <MudText Typo="Typo.body1">@instrument.Name</MudText>
+                    <MudText Typo="Typo.caption">@instrument.Site · @(instrument.UnderMaintenance ? "under maintenance" : $"{instrument.ApertureCm} cm")</MudText>
+                </div>
+            </MudStack>
+        </ItemTemplate>
+    </MudAutocomplete>
+    <MudText Typo="Typo.body2" role="status">
+        @(_instrument is null ? "No instrument booked." : $"Booked: {_instrument.Name} at {_instrument.Site}.")
+    </MudText>
+</MudStack>
+
+@code {
+    private Instrument? _instrument;
+
+    private readonly Instrument[] _instruments =
+    [
+        new("North dome refractor", "Ridge station", 20, false, Icons.Material.Outlined.Visibility),
+        new("Solar telescope", "Ridge station", 15, false, Icons.Material.Outlined.WbSunny),
+        new("Spectrograph bench", "Valley lab", 40, true, Icons.Material.Outlined.Science),
+        new("Wide-field camera", "Valley lab", 11, false, Icons.Material.Outlined.PhotoCamera),
+        new("Radio dish", "Plateau array", 1200, false, Icons.Material.Outlined.SettingsInputAntenna)
+    ];
+
+    private Task<IEnumerable<Instrument>> Search(string? text, CancellationToken token) =>
+        Task.FromResult(_instruments.Where(instrument => string.IsNullOrWhiteSpace(text)
+            || instrument.Name.Contains(text, StringComparison.OrdinalIgnoreCase)
+            || instrument.Site.Contains(text, StringComparison.OrdinalIgnoreCase)));
+
+    private sealed record Instrument(string Name, string Site, int ApertureCm, bool UnderMaintenance, string Icon);
+}

@@ -1,0 +1,22 @@
+<MudGrid Spacing="4">
+    @foreach (var variant in Enum.GetValues<Variant>())
+    {
+        <MudItem xs="12" sm="4">
+            <MudNumericField @bind-Value="_eyepieces" Label="@($"Eyepieces ({variant})")" Variant="variant" Min="0" Max="20" />
+        </MudItem>
+    }
+    <MudItem xs="12" sm="6">
+        <MudNumericField @bind-Value="_year" Label="Year of first light" Variant="Variant.Outlined" Min="1600" Max="2100"
+                         HideSpinButtons="true" HelperText="Spin buttons hidden" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudNumericField @bind-Value="_catalog" Label="Messier number" Variant="Variant.Outlined" Min="1" Max="110"
+                         Adornment="Adornment.Start" AdornmentText="M" HideSpinButtons="true" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private int _eyepieces = 4;
+    private int _year = 1897;
+    private int _catalog = 31;
+}

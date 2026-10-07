@@ -1,0 +1,13 @@
+<MudStack Spacing="2">
+    <MudText Typo="Typo.subtitle2" HtmlTag="h3" id="crust-label">Crust</MudText>
+    <MudRadioGroup @bind-Value="_crust" aria-labelledby="crust-label">
+        <MudRadio Value="@("Thin")" Color="Color.Primary">Thin</MudRadio>
+        <MudRadio Value="@("Classic")" Color="Color.Primary">Classic</MudRadio>
+        <MudRadio Value="@("Deep pan")" Color="Color.Primary">Deep pan</MudRadio>
+    </MudRadioGroup>
+    <MudText Typo="Typo.body2" role="status">@_crust crust, coming up.</MudText>
+</MudStack>
+
+@code {
+    private string _crust = "Classic";
+}

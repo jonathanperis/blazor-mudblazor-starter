@@ -1,0 +1,25 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3" id="slice-label">Horizontal (default)</MudText>
+        <MudRadioGroup @bind-Value="_slices" aria-labelledby="slice-label">
+            <MudRadio Value="4" Color="Color.Secondary">4 slices</MudRadio>
+            <MudRadio Value="6" Color="Color.Secondary">6 slices</MudRadio>
+            <MudRadio Value="8" Color="Color.Secondary">8 slices</MudRadio>
+        </MudRadioGroup>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3" id="collection-label">Vertical</MudText>
+        <MudRadioGroup @bind-Value="_collection" aria-labelledby="collection-label">
+            <MudStack Spacing="0">
+                <MudRadio Value="@("Counter")" Color="Color.Secondary">Collect from the counter</MudRadio>
+                <MudRadio Value="@("Locker")" Color="Color.Secondary">Collect from the pick-up locker on Mill Lane</MudRadio>
+                <MudRadio Value="@("Courier")" Color="Color.Secondary">Deliver by bicycle courier (within 3 km)</MudRadio>
+            </MudStack>
+        </MudRadioGroup>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private int _slices = 6;
+    private string _collection = "Locker";
+}
