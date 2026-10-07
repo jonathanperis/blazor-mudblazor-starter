@@ -1,0 +1,28 @@
+<MudStack Row Wrap="Wrap.Wrap" Spacing="6" Style="min-height: 9rem">
+    <div>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" EndIcon="@Icons.Material.Outlined.ExpandMore"
+                   aria-expanded="@(_paperOpen ? "true" : "false")" OnClick="() => _paperOpen = !_paperOpen">Opening times</MudButton>
+        <MudPopover Open="_paperOpen" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Class="pa-4">
+            <MudText Typo="Typo.subtitle2">Museum Quarter stop</MudText>
+            <MudText Typo="Typo.body2">First bus 05:40 · Last bus 00:15</MudText>
+            <MudButton Size="Size.Small" Color="Color.Primary" Class="mt-2" OnClick="() => _paperOpen = false">Close</MudButton>
+        </MudPopover>
+    </div>
+    <div>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" EndIcon="@Icons.Material.Outlined.ExpandMore"
+                   aria-expanded="@(_outlinedOpen ? "true" : "false")" OnClick="() => _outlinedOpen = !_outlinedOpen">Fares, outlined</MudButton>
+        @* Paper=false removes the built-in surface and shadow; the MudPaper inside provides an outlined one. *@
+        <MudPopover Open="_outlinedOpen" Paper="false" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft">
+            <MudPaper Outlined="true" Class="pa-4 mt-1">
+                <MudText Typo="Typo.subtitle2">Single journey</MudText>
+                <MudText Typo="Typo.body2">Adult £2.10 · Child £1.05</MudText>
+                <MudButton Size="Size.Small" Color="Color.Primary" Class="mt-2" OnClick="() => _outlinedOpen = false">Close</MudButton>
+            </MudPaper>
+        </MudPopover>
+    </div>
+</MudStack>
+
+@code {
+    private bool _paperOpen;
+    private bool _outlinedOpen;
+}

@@ -1,0 +1,8 @@
+@page "/components/overlay"
+@attribute [ComponentPage("Overlay", GalleryGroup.Feedback, "An overlay covers the page, or one container, to block interaction and focus attention: behind a loading indicator, a custom panel or a spotlight message.", MudDocs = "overlay", Types = ["MudOverlay"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(OverlayBackgrounds)" Title="Dark, light and transparent, inside a container" Description="Absolute confines the overlay to the nearest positioned ancestor, here each card with position: relative. DarkBackground and LightBackground use theme colors." />
+    <Example Of="typeof(OverlayFullScreen)" Title="Full screen with auto-close" Description="Without Absolute the overlay covers the window. AutoClose hides it on click and raises OnClosed." />
+    <Example Of="typeof(OverlayLoading)" Title="Loading over a card" Description="An overlay with a progress indicator blocks a card while it refreshes. The work can be canceled, and it stops if you leave the page." />
+</ComponentPageFrame>

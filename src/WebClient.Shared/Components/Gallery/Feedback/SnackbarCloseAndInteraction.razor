@@ -1,0 +1,31 @@
+@inject ISnackbar Snackbar
+
+<MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="RequireInteraction">Stay until dismissed</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="WithoutCloseIcon">No close icon, 2 seconds</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="CustomIcon">Custom icon</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="NoIcon">No icon</MudButton>
+</MudStack>
+
+@code {
+    private void RequireInteraction() =>
+        Snackbar.Add("Your ticket expires at midnight. Dismiss this when you have read it.", Severity.Warning,
+            options => options.RequireInteraction = true);
+
+    private void WithoutCloseIcon() =>
+        Snackbar.Add("Route saved.", Severity.Success, options =>
+        {
+            options.ShowCloseIcon = false;
+            options.VisibleStateDuration = 2000;
+        });
+
+    private void CustomIcon() =>
+        Snackbar.Add("Bike racks are now available at North Station.", Severity.Info, options =>
+        {
+            options.Icon = Icons.Material.Outlined.PedalBike;
+            options.IconColor = Color.Secondary;
+        });
+
+    private void NoIcon() =>
+        Snackbar.Add("Timetable downloaded.", Severity.Normal, options => options.HideIcon = true);
+}

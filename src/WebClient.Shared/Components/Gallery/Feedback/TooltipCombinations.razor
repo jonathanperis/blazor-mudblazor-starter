@@ -1,0 +1,8 @@
+<EnumMatrix TRow="Placement" TColumn="Color" Caption="MudTooltip: Placement × Color, Arrow on">
+    <Cell>
+        <MudTooltip Text="@($"{context.Row}, {context.Column}")" Placement="@context.Row" Color="@context.Column" Arrow="true">
+            <MudIconButton Icon="@Icons.Material.Outlined.Lens" Size="Size.Small" Color="@context.Column"
+                           aria-label="@($"Tooltip placed {context.Row} in {context.Column}")" />
+        </MudTooltip>
+    </Cell>
+</EnumMatrix>

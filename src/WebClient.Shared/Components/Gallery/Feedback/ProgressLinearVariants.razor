@@ -1,0 +1,28 @@
+<MudStack Spacing="4" Style="max-width: 34rem">
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.caption">Indeterminate</MudText>
+        <MudProgressLinear Indeterminate="true" Color="Color.Primary" aria-label="Checking availability" />
+    </MudStack>
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.caption">Buffer: played 30, loaded 55</MudText>
+        <MudProgressLinear Value="30" Buffer="true" BufferValue="55" Color="Color.Secondary" aria-label="Audiobook played 30 percent" />
+    </MudStack>
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.caption">Striped and rounded, large</MudText>
+        <MudProgressLinear Value="64" Striped="true" Rounded="true" Size="Size.Large" Color="Color.Tertiary" aria-label="Archive scan 64 percent" />
+    </MudStack>
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.caption">ShowBackground off</MudText>
+        <MudProgressLinear Value="40" ShowBackground="false" Color="Color.Info" aria-label="Sync 40 percent" />
+    </MudStack>
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.caption">Min 1, Max 12: chapter 9 of 12</MudText>
+        <MudProgressLinear Value="9" Min="1" Max="12" Color="Color.Primary" aria-label="Chapter 9 of 12" />
+    </MudStack>
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.caption">Large, with a value label</MudText>
+        <MudProgressLinear Value="82" Size="Size.Large" Rounded="true" Color="Color.Success" aria-label="Fundraiser 82 percent of goal">
+            <MudText Typo="Typo.caption" Style="color: var(--mud-palette-success-text)"><strong>£8,200 of £10,000</strong></MudText>
+        </MudProgressLinear>
+    </MudStack>
+</MudStack>

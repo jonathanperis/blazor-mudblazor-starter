@@ -1,0 +1,20 @@
+@inject ISnackbar Snackbar
+
+<MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="() => Show(SnackbarDuplicatesBehavior.Prevent)">Prevent duplicates</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="() => Show(SnackbarDuplicatesBehavior.Allow)">Allow duplicates</MudButton>
+    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => Snackbar.RemoveByKey(DelayKey))">Remove by key</MudButton>
+    <MudButton Variant="Variant.Text" Color="Color.Error" OnClick="Snackbar.Clear">Clear all</MudButton>
+</MudStack>
+
+@code {
+    private const string DelayKey = "line-7-delay";
+
+    // Press each button several times: Prevent shows the message once while it is visible, Allow stacks copies.
+    private void Show(SnackbarDuplicatesBehavior behavior) =>
+        Snackbar.Add("Line 7 is delayed by signal works.", Severity.Warning, options =>
+        {
+            options.DuplicatesBehavior = behavior;
+            options.VisibleStateDuration = 8000;
+        }, key: DelayKey);
+}

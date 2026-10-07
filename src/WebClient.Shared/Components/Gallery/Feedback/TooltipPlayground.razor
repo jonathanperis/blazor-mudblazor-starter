@@ -1,0 +1,46 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudTooltip Text="@_text" Placement="_placement" Color="_color" Arrow="_arrow" Delay="_delay"
+                    ShowOnHover="_hover" ShowOnFocus="_focus" ShowOnClick="_click">
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary">Hover or focus me</MudButton>
+        </MudTooltip>
+    </Preview>
+    <Controls>
+        <MudTextField @bind-Value="_text" Label="Text" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSelect @bind-Value="_placement" Label="Placement" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Placement>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudNumericField @bind-Value="_delay" Label="Delay (ms)" Min="0" Max="2000" Step="100" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSwitch @bind-Value="_arrow" Label="Arrow" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_hover" Label="Show on hover" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_focus" Label="Show on focus" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_click" Label="Show on click" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private string _text = "Next train in 4 minutes";
+    private Placement _placement = Placement.Top;
+    private Color _color = Color.Default;
+    private double _delay;
+    private bool _arrow = true;
+    private bool _hover = true;
+    private bool _focus = true;
+    private bool _click;
+
+    // MudTooltip defaults: Placement.Bottom, Color.Default, Delay 0, hover and focus on, click off.
+    private string Code => Snippet.Element("MudTooltip",
+    [
+        ("Text", _text),
+        ("Placement", Snippet.Enum(_placement, Placement.Bottom)),
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("Arrow", Snippet.Flag(_arrow)),
+        ("Delay", _delay == 0 ? null : _delay.ToString(CultureInfo.InvariantCulture)),
+        ("ShowOnHover", _hover ? null : "false"),
+        ("ShowOnFocus", _focus ? null : "false"),
+        ("ShowOnClick", Snippet.Flag(_click))
+    ], "\n    <MudButton Variant=\"Variant.Outlined\" Color=\"Color.Primary\">Hover or focus me</MudButton>\n");
+}

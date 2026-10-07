@@ -1,0 +1,32 @@
+<MudStack Spacing="2">
+    @foreach (var notice in _notices)
+    {
+        <MudAlert @key="notice" Severity="notice.Severity" Variant="Variant.Outlined" Icon="@notice.Icon"
+                  ShowCloseIcon="true" CloseIconClicked="() => _notices.Remove(notice)">@notice.Text</MudAlert>
+    }
+    @if (_notices.Count == 0)
+    {
+        <MudText Typo="Typo.body2" Class="mud-text-secondary">All notices dismissed.</MudText>
+    }
+    @if (_notices.Count < Notices.Length)
+    {
+        <div>
+            <MudButton Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Replay" OnClick="Restore">Restore dismissed notices</MudButton>
+        </div>
+    }
+</MudStack>
+
+@code {
+    private sealed record Notice(Severity Severity, string Icon, string Text);
+
+    private static readonly Notice[] Notices =
+    [
+        new(Severity.Info, Icons.Material.Outlined.LocalShipping, "Your order of three paperbacks has shipped."),
+        new(Severity.Success, Icons.Material.Outlined.CardGiftcard, "A gift card worth £20 was added to your account."),
+        new(Severity.Warning, Icons.Material.Outlined.Schedule, "The poetry reading starts in 15 minutes.")
+    ];
+
+    private List<Notice> _notices = [.. Notices];
+
+    private void Restore() => _notices = [.. Notices];
+}

@@ -1,0 +1,67 @@
+@implements IDisposable
+
+<MudStack Spacing="3">
+    <MudSimpleTable Dense="true" Outlined="true" Style="max-width: 40rem" aria-busy="@(_rows is null ? "true" : "false")">
+        <thead>
+            <tr><th style="width: 50%">Title</th><th style="width: 35%">Author</th><th style="width: 15%; text-align: end">Copies</th></tr>
+        </thead>
+        <tbody>
+            @if (_rows is null)
+            {
+                @for (var i = 0; i < 4; i++)
+                {
+                    <tr>
+                        <td><MudSkeleton Width="70%" /></td>
+                        <td><MudSkeleton Width="50%" /></td>
+                        <td><MudSkeleton Width="2rem" Style="margin-left: auto" /></td>
+                    </tr>
+                }
+            }
+            else
+            {
+                @foreach (var (title, author, copies) in _rows)
+                {
+                    <tr><td>@title</td><td>@author</td><td style="text-align: end">@copies</td></tr>
+                }
+            }
+        </tbody>
+    </MudSimpleTable>
+    <div>
+        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Refresh" Disabled="_rows is null" OnClick="LoadAsync">Load again</MudButton>
+    </div>
+</MudStack>
+
+@code {
+    private static readonly (string Title, string Author, int Copies)[] Catalogue =
+    [
+        ("Salt and Stone", "Inés Vidal", 3),
+        ("A Field Guide to Moths", "Peter Okonkwo", 1),
+        ("Winter Orbit", "Hana Sato", 5),
+        ("The Lighthouse Keeper", "Elif Demir", 2)
+    ];
+
+    private readonly CancellationTokenSource _disposed = new();
+    private (string Title, string Author, int Copies)[]? _rows;
+
+    protected override Task OnInitializedAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _rows = null;
+        try
+        {
+            await Task.Delay(2200, _disposed.Token);
+            _rows = Catalogue;
+        }
+        catch (OperationCanceledException)
+        {
+            // The example left the page; there is nothing to update.
+        }
+    }
+
+    public void Dispose()
+    {
+        _disposed.Cancel();
+        _disposed.Dispose();
+    }
+}

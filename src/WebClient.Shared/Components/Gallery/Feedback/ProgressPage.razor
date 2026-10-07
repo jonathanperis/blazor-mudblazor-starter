@@ -1,0 +1,12 @@
+@page "/components/progress"
+@attribute [ComponentPage("Progress", GalleryGroup.Feedback, "Progress indicators show that work is happening: determinate when you know how much is done, indeterminate when you do not. Circular suits buttons and small areas; linear suits pages, cards and uploads.", MudDocs = "progress", Types = ["MudProgressCircular", "MudProgressLinear"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ProgressCircularBasics)" Title="Circular: determinate, indeterminate and labelled" Description="Set Value (0 to 100 by default) for determinate progress, or Indeterminate when the amount is unknown. ChildContent puts a label in the middle." />
+    <Example Of="typeof(ProgressCircularCombinations)" Title="Circular: every size and color" Description="All combinations of Size and Color at 70 percent. StrokeWidth and Rounded adjust the ring." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(ProgressLinearCombinations)" Title="Linear: every size and color" Description="All combinations of Size and Color at 60 percent." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(ProgressLinearVariants)" Title="Linear: buffer, striped, rounded, ranges and labels" Description="Buffer shows a second, lighter value, as a video player does. Min and Max change the scale; ChildContent writes a label on a large bar." />
+    <Example Of="typeof(ProgressVertical)" Title="Vertical bars" Description="Vertical turns a linear bar on its side. Give the container a height." />
+    <Example Of="typeof(ProgressUpload)" Title="An upload with progress and cancel" Description="Determinate progress for a simulated upload, announced once at start and once at the end rather than at every step." />
+    <Example Of="typeof(ProgressPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

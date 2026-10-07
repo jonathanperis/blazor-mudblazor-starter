@@ -1,0 +1,22 @@
+<MudStack Row Spacing="6" AlignItems="AlignItems.End">
+    @foreach (var (shelf, filled, color) in Shelves)
+    {
+        <MudStack AlignItems="AlignItems.Center" Spacing="1">
+            <div style="height: 9rem">
+                <MudProgressLinear Vertical="true" Value="filled" Color="color" Size="Size.Large" Rounded="true" aria-label="@($"{shelf} shelf {filled} percent full")" />
+            </div>
+            <MudText Typo="Typo.caption">@shelf</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">@filled%</MudText>
+        </MudStack>
+    }
+</MudStack>
+
+@code {
+    private static readonly (string Shelf, double Filled, Color Color)[] Shelves =
+    [
+        ("Poetry", 35, Color.Secondary),
+        ("History", 80, Color.Primary),
+        ("Science", 55, Color.Info),
+        ("Travel", 95, Color.Warning)
+    ];
+}

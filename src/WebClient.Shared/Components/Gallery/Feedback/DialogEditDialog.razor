@@ -1,0 +1,37 @@
+@using System.ComponentModel.DataAnnotations
+
+<MudDialog>
+    <DialogContent>
+        <MudForm @ref="_form">
+            <MudStack Spacing="3">
+                <MudTextField @bind-Value="Volunteer.Name" Label="Name" Required="true" RequiredError="Enter a name." Variant="Variant.Outlined" />
+                <MudTextField @bind-Value="Volunteer.Email" Label="Email" Required="true" RequiredError="Enter an email address."
+                              Validation="@(new EmailAddressAttribute { ErrorMessage = "Enter a valid email address." })" InputType="InputType.Email" Variant="Variant.Outlined" />
+                <MudSelect T="string" @bind-Value="Volunteer.Shift" Label="Shift" Variant="Variant.Outlined">
+                    @foreach (var shift in Shifts) { <MudSelectItem Value="shift">@shift</MudSelectItem> }
+                </MudSelect>
+                <MudNumericField @bind-Value="Volunteer.HoursPerWeek" Label="Hours per week" Min="1" Max="20" HelperText="Between 1 and 20." Variant="Variant.Outlined" />
+            </MudStack>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => Dialog.Cancel()">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveAsync">Save</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private static readonly string[] Shifts = ["Saturday morning", "Sunday afternoon", "Weekday evenings"];
+
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = null!;
+    /// <summary>A copy owned by this dialog; the caller decides whether to keep it.</summary>
+    [Parameter, EditorRequired] public DialogEditCopy.Volunteer Volunteer { get; set; } = null!;
+
+    private MudForm _form = null!;
+
+    private async Task SaveAsync()
+    {
+        await _form.ValidateAsync();
+        if (_form.IsValid) Dialog.Close(DialogResult.Ok(Volunteer));
+    }
+}

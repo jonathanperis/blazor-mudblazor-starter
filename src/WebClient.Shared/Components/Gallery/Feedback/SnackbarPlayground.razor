@@ -1,0 +1,62 @@
+@inject ISnackbar Snackbar
+
+<Playground Code="@Code">
+    <Preview>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Notifications" OnClick="Show">Show snackbar</MudButton>
+    </Preview>
+    <Controls>
+        <MudTextField @bind-Value="_message" Label="Message" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSelect @bind-Value="_severity" Label="Severity" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Severity>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_variant" Label="Snackbar variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudTextField @bind-Value="_action" Label="Action text (optional)" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudNumericField @bind-Value="_seconds" Label="Visible for (seconds)" Min="1" Max="30" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSwitch @bind-Value="_showCloseIcon" Label="Close icon" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_requireInteraction" Label="Require interaction" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_hideIcon" Label="Hide icon" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private string _message = "Seat 14B is reserved for you.";
+    private Severity _severity = Severity.Success;
+    private Variant _variant = Variant.Outlined;
+    private string _action = "";
+    private int _seconds = 5;
+    private bool _showCloseIcon = true;
+    private bool _requireInteraction;
+    private bool _hideIcon;
+
+    private void Show() => Snackbar.Add(_message, _severity, options =>
+    {
+        options.SnackbarVariant = _variant;
+        options.VisibleStateDuration = _seconds * 1000;
+        options.ShowCloseIcon = _showCloseIcon;
+        if (_requireInteraction) options.RequireInteraction = true;
+        options.HideIcon = _hideIcon;
+        if (!string.IsNullOrWhiteSpace(_action)) options.Action = _action;
+    });
+
+    // Defaults: Severity.Normal, Variant.Filled, 5000 ms, close icon shown. A message with an Action stays until dismissed.
+    private string Code
+    {
+        get
+        {
+            List<string> lines = [];
+            if (_variant != Variant.Filled) lines.Add($"options.SnackbarVariant = Variant.{_variant};");
+            if (_seconds != 5) lines.Add($"options.VisibleStateDuration = {_seconds * 1000};");
+            if (!_showCloseIcon) lines.Add("options.ShowCloseIcon = false;");
+            if (_requireInteraction) lines.Add("options.RequireInteraction = true;");
+            if (_hideIcon) lines.Add("options.HideIcon = true;");
+            if (!string.IsNullOrWhiteSpace(_action)) lines.Add($"options.Action = \"{_action}\";");
+
+            var severity = _severity == Severity.Normal ? "" : $", Severity.{_severity}";
+            return lines.Count == 0
+                ? $"Snackbar.Add(\"{_message}\"{severity});"
+                : $"Snackbar.Add(\"{_message}\"{(severity.Length == 0 ? ", Severity.Normal" : severity)}, options =>\n{{\n    {string.Join("\n    ", lines)}\n}});";
+        }
+    }
+}

@@ -1,0 +1,45 @@
+@inject ISnackbar Snackbar
+
+<MudStack Spacing="3" Style="max-width: 30rem">
+    <MudPaper Outlined="true">
+        @foreach (var stop in _favourites)
+        {
+            <MudStack @key="stop" Row AlignItems="AlignItems.Center" Spacing="3" Class="px-4 py-1">
+                <MudIcon Icon="@Icons.Material.Outlined.DirectionsBus" Color="Color.Secondary" />
+                <MudText Class="flex-grow-1">@stop</MudText>
+                <MudIconButton Icon="@Icons.Material.Outlined.StarOutline" Size="Size.Small" aria-label="@($"Remove {stop} from favourites")" OnClick="() => Remove(stop)" />
+            </MudStack>
+        }
+        @if (_favourites.Count == 0)
+        {
+            <MudText Typo="Typo.body2" Class="mud-text-secondary pa-4">No favourite stops.</MudText>
+        }
+    </MudPaper>
+    <div>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="ShowRichMessage">Show a message with markup</MudButton>
+    </div>
+</MudStack>
+
+@code {
+    private readonly List<string> _favourites = ["Harbour Street", "Museum Quarter", "North Station"];
+
+    private void Remove(string stop)
+    {
+        var index = _favourites.IndexOf(stop);
+        _favourites.RemoveAt(index);
+        Snackbar.Add($"Removed {stop} from favourites.", Severity.Normal, options =>
+        {
+            options.Action = "Undo";
+            options.ActionColor = Color.Primary;
+            options.OnClick = _ => InvokeAsync(() =>
+            {
+                // The callback runs from the snackbar, so re-render this component explicitly.
+                _favourites.Insert(Math.Min(index, _favourites.Count), stop);
+                StateHasChanged();
+            });
+        });
+    }
+
+    private void ShowRichMessage() =>
+        Snackbar.Add(@<span>Next departure from <strong>North Station</strong> in 6 minutes.</span>, Severity.Info);
+}

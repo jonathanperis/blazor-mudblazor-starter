@@ -1,0 +1,42 @@
+@implements IDisposable
+@inject ISnackbar Snackbar
+
+<MudStack Spacing="3">
+    @foreach (var edge in Positions.GroupBy(position => position.Edge))
+    {
+        <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="2">
+            <MudText Typo="Typo.overline" Style="min-width: 4.5rem">@edge.Key</MudText>
+            @foreach (var position in edge)
+            {
+                <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small" OnClick="() => Show(position.Name, position.Class)">@position.Name</MudButton>
+            }
+        </MudStack>
+    }
+</MudStack>
+
+@code {
+    private static readonly (string Edge, string Name, string Class)[] Positions =
+    [
+        ("Top", "Top start", Defaults.Classes.Position.TopStart), ("Top", "Top left", Defaults.Classes.Position.TopLeft),
+        ("Top", "Top center", Defaults.Classes.Position.TopCenter), ("Top", "Top right", Defaults.Classes.Position.TopRight),
+        ("Top", "Top end", Defaults.Classes.Position.TopEnd),
+        ("Bottom", "Bottom start", Defaults.Classes.Position.BottomStart), ("Bottom", "Bottom left", Defaults.Classes.Position.BottomLeft),
+        ("Bottom", "Bottom center", Defaults.Classes.Position.BottomCenter), ("Bottom", "Bottom right", Defaults.Classes.Position.BottomRight),
+        ("Bottom", "Bottom end", Defaults.Classes.Position.BottomEnd)
+    ];
+
+    private string _appPosition = "";
+
+    protected override void OnInitialized() => _appPosition = Snackbar.Configuration.PositionClass;
+
+    private void Show(string name, string positionClass)
+    {
+        // One container holds every snackbar, so messages already shown would move too. Start from an empty stack.
+        Snackbar.Clear();
+        Snackbar.Configuration.PositionClass = positionClass;
+        Snackbar.Add($"Shown at the {name.ToLowerInvariant()} position.", Severity.Normal);
+    }
+
+    // The configuration is shared by the whole app: put it back when this example goes away.
+    public void Dispose() => Snackbar.Configuration.PositionClass = _appPosition;
+}

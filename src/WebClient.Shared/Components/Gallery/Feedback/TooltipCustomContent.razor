@@ -1,0 +1,22 @@
+<MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="4">
+    <MudTooltip Arrow="true" Placement="Placement.Top">
+        <ChildContent>
+            <MudIconButton Icon="@Icons.Material.Outlined.Save" Variant="Variant.Outlined" aria-label="Save observation log" />
+        </ChildContent>
+        <TooltipContent>
+            <span>Save observation log <kbd>Ctrl</kbd> + <kbd>S</kbd></span>
+        </TooltipContent>
+    </MudTooltip>
+
+    <MudTooltip Arrow="true" Placement="Placement.Right" Color="Color.Dark">
+        <ChildContent>
+            <MudChip T="string" Icon="@Icons.Material.Outlined.Star" Color="Color.Secondary" Variant="Variant.Outlined">Betelgeuse</MudChip>
+        </ChildContent>
+        <TooltipContent>
+            <MudStack Spacing="0" Class="pa-1" Style="text-align: start; max-width: 15rem">
+                <MudText Typo="Typo.subtitle2">Betelgeuse (α Orionis)</MudText>
+                <MudText Typo="Typo.caption">Red supergiant, about 550 light years away. Apparent magnitude 0.0 to 1.6.</MudText>
+            </MudStack>
+        </TooltipContent>
+    </MudTooltip>
+</MudStack>

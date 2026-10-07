@@ -1,0 +1,29 @@
+<MudStack Spacing="3">
+    <MudSwitch @bind-Value="_visible" Label="Show overlays" Color="Color.Primary" />
+    <MudGrid Spacing="3">
+        @foreach (var (name, dark, light) in Kinds)
+        {
+            <MudItem xs="12" sm="4">
+                <MudPaper Outlined="true" Class="pa-4" Style="position: relative; height: 9rem; overflow: hidden">
+                    <MudText Typo="Typo.subtitle2">Platform 2</MudText>
+                    <MudText Typo="Typo.body2">09:12 to Harbour Street</MudText>
+                    <MudText Typo="Typo.body2">09:20 to North Station</MudText>
+                    <MudOverlay Visible="_visible" Absolute="true" DarkBackground="dark" LightBackground="light">
+                        <MudChip T="string" Color="Color.Default" Variant="Variant.Filled">@name</MudChip>
+                    </MudOverlay>
+                </MudPaper>
+            </MudItem>
+        }
+    </MudGrid>
+</MudStack>
+
+@code {
+    private static readonly (string Name, bool Dark, bool Light)[] Kinds =
+    [
+        ("DarkBackground", true, false),
+        ("LightBackground", false, true),
+        ("Transparent", false, false)
+    ];
+
+    private bool _visible = true;
+}

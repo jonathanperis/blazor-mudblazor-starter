@@ -1,0 +1,55 @@
+@implements IDisposable
+
+<MudPaper Outlined="true" Class="pa-4" Style="max-width: 30rem">
+    <MudStack Row AlignItems="AlignItems.Center" Spacing="3">
+        <MudIcon Icon="@Icons.Material.Outlined.Description" Color="Color.Secondary" />
+        <MudStack Spacing="0" Class="flex-grow-1">
+            <MudText Typo="Typo.body2">observatory-log-2026.csv</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">@($"{_percent * 48 / 100} of 48 MB")</MudText>
+        </MudStack>
+        @if (_cts is null)
+        {
+            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" DropShadow="false" OnClick="UploadAsync">@(_percent == 100 ? "Upload again" : "Upload")</MudButton>
+        }
+        else
+        {
+            <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Error" OnClick="() => _cts?.Cancel()">Cancel</MudButton>
+        }
+    </MudStack>
+    <MudProgressLinear Value="_percent" Color="@(_percent == 100 ? Color.Success : Color.Primary)" Rounded="true" Class="mt-3" aria-label="Upload progress" />
+    <MudText Typo="Typo.caption" role="status" Class="mt-1 d-block">@_status</MudText>
+</MudPaper>
+
+@code {
+    private CancellationTokenSource? _cts;
+    private int _percent;
+    private string _status = "Ready to upload.";
+
+    private async Task UploadAsync()
+    {
+        _cts = new CancellationTokenSource();
+        _percent = 0;
+        _status = "Uploading…";
+        try
+        {
+            while (_percent < 100)
+            {
+                await Task.Delay(120, _cts.Token);
+                _percent = Math.Min(100, _percent + 4);
+                StateHasChanged();
+            }
+            _status = "Upload complete.";
+        }
+        catch (OperationCanceledException)
+        {
+            _status = $"Upload canceled at {_percent}%.";
+        }
+        finally
+        {
+            _cts.Dispose();
+            _cts = null;
+        }
+    }
+
+    public void Dispose() => _cts?.Cancel();
+}

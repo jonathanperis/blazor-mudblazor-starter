@@ -1,0 +1,7 @@
+@page "/components/scroll-to-top"
+@attribute [ComponentPage("Scroll to top", GalleryGroup.Feedback, "A button that appears after the reader scrolls down and takes them back to the top. Use it on long pages or long scrollable panels; without Selector it follows the window.", MudDocs = "scrolltotop", Types = ["MudScrollToTop"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ScrollToTopContainer)" Title="Inside a scrollable panel" Description="Selector attaches the button to one scrolling element. The absolute class keeps it in the panel's corner instead of the window's." />
+    <Example Of="typeof(ScrollToTopReading)" Title="Custom button, scroll events and behavior" Description="Any content can be the button. OnScroll reports the position, here turned into reading progress; ScrollBehavior chooses a smooth or instant jump." />
+</ComponentPageFrame>
