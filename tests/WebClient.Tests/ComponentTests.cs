@@ -159,9 +159,10 @@ public sealed class ComponentTests : BunitContext, IAsyncLifetime
         var page = Render<WebClient.Shared.Components.Pages.Labs.Files>();
         var processing = page.FindAll("button").Single(button => button.TextContent.Trim() == "Start processing").ClickAsync(new MouseEventArgs());
         page.WaitForAssertion(() => Assert.Contains("Running", page.Markup));
-        page.FindAll("button").Single(button => button.TextContent.Contains("Reset experiment")).Click();
+        // Progress re-renders every 50 ms; find and click inside the retry so a re-render cannot retire the handler.
+        page.WaitForAssertion(() => page.FindAll("button").Single(button => button.TextContent.Contains("Reset experiment")).Click());
         await processing;
-        Assert.Contains("Idle", page.Markup);
+        page.WaitForAssertion(() => Assert.Contains("Idle", page.Markup));
         Assert.DoesNotContain("Canceled", page.Markup);
     }
 

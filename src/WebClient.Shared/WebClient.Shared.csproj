@@ -23,4 +23,9 @@
     <InternalsVisibleTo Include="WebClient.Tests" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Gallery examples show their own source; ExampleSources reads these resources by relative path. -->
+    <EmbeddedResource Include="Components/Gallery/**/*.razor" LogicalName="%(RelativeDir)%(Filename)%(Extension)" WithCulture="false" />
+  </ItemGroup>
+
 </Project>
