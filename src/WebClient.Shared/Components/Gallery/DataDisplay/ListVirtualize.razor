@@ -1,0 +1,23 @@
+<MudStack Spacing="2">
+    <MudText Typo="Typo.body2" role="status">@_entries.Count.ToString("N0") log entries · only the rows in view exist in the page</MudText>
+    @* Fixed height plus ItemSize lets MudVirtualize work out which rows are visible without measuring each one. *@
+    <MudPaper Outlined="true" Style="height: 18rem; overflow-y: auto" tabindex="0" role="region" aria-label="Observatory log">
+        <MudList T="string" ReadOnly="true" Dense="true" aria-label="Observatory log entries">
+            <MudVirtualize Items="_entries" ItemSize="52" OverscanCount="6" Context="entry">
+                <MudListItem Text="@entry.Message" SecondaryText="@entry.Time" Icon="@entry.Icon" />
+            </MudVirtualize>
+        </MudList>
+    </MudPaper>
+</MudStack>
+
+@code {
+    private sealed record LogEntry(string Time, string Message, string Icon);
+
+    private static readonly string[] Events = ["Dome opened", "Guiding locked", "Exposure started", "Exposure saved", "Cloud passed", "Focus adjusted"];
+    private static readonly string[] EventIcons = [Icons.Material.Outlined.Roofing, Icons.Material.Outlined.GpsFixed, Icons.Material.Outlined.Camera, Icons.Material.Outlined.Save, Icons.Material.Outlined.Cloud, Icons.Material.Outlined.CenterFocusStrong];
+
+    // Ten thousand entries, one every 20 seconds through a long night.
+    private readonly List<LogEntry> _entries = Enumerable.Range(0, 10_000)
+        .Select(index => new LogEntry(new DateTime(2026, 3, 14, 19, 0, 0).AddSeconds(20.0 * index).ToString("ddd HH:mm:ss"), $"{Events[index % Events.Length]} · frame {index + 1:N0}", EventIcons[index % EventIcons.Length]))
+        .ToList();
+}

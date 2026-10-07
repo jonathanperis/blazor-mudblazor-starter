@@ -1,0 +1,17 @@
+<div class="d-flex flex-wrap gap-4">
+    @foreach (var (label, value, color) in Readings)
+    {
+        @* Borders, backgrounds and text all come from palette variables, so dark mode needs no extra rules. *@
+        <div style="@($"min-width: 10rem; padding: 1rem 1.25rem; border-radius: var(--mud-default-borderradius); background: var(--mud-palette-surface); border: 1px solid var(--mud-palette-lines-default); border-left: 4px solid var(--mud-palette-{color})")">
+            <MudText Typo="Typo.overline" Style="color: var(--mud-palette-text-secondary)">@label</MudText>
+            <MudText Typo="Typo.h5" HtmlTag="p" Style="@($"color: var(--mud-palette-{color})")">@value</MudText>
+        </div>
+    }
+</div>
+
+@code {
+    private static readonly (string Label, string Value, string Color)[] Readings =
+    [
+        ("Seeing", "1.4″", "success"), ("Humidity", "82%", "warning"), ("Wind", "31 km/h", "error"), ("Sky quality", "21.3", "info")
+    ];
+}

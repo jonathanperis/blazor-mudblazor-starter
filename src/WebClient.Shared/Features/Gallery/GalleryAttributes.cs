@@ -10,7 +10,8 @@ public enum GalleryGroup
     Charts,
     Feedback,
     Navigation,
-    Layout
+    Layout,
+    Theming
 }
 
 /// <summary>

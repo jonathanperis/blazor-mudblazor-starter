@@ -1,0 +1,30 @@
+<MudStack Spacing="5">
+    @foreach (var (group, colors) in Groups)
+    {
+        <section aria-labelledby="@($"palette-{group}")">
+            <MudText Typo="Typo.overline" HtmlTag="h3" id="@($"palette-{group}")">@group</MudText>
+            <div style="display: grid; gap: .75rem; grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr))">
+                @foreach (var color in colors)
+                {
+                    <div>
+                        <div style="height: 3.25rem; border-radius: var(--mud-default-borderradius); border: 1px solid var(--mud-palette-lines-default); background: var(--mud-palette-@color)"></div>
+                        <MudText Typo="Typo.body2" Class="mt-1">@Title(color)</MudText>
+                        <code style="font-size: .72rem">--mud-palette-@color</code>
+                    </div>
+                }
+            </div>
+        </section>
+    }
+</MudStack>
+
+@code {
+    private static readonly (string Group, string[] Colors)[] Groups =
+    [
+        ("Brand", ["primary", "secondary", "tertiary"]),
+        ("Status", ["info", "success", "warning", "error", "dark"]),
+        ("Surfaces", ["background", "surface", "appbar-background", "drawer-background"]),
+        ("Text and lines", ["text-primary", "text-secondary", "action-default", "lines-default", "lines-inputs", "divider"])
+    ];
+
+    private static string Title(string variable) => char.ToUpperInvariant(variable[0]) + variable[1..].Replace('-', ' ');
+}

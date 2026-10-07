@@ -1,0 +1,43 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="8">
+        @* The scroll container and each section's id and class are what the navigation's scroll spy follows. *@
+        <div id="field-guide" style="height: 22rem; overflow-y: auto; padding-inline-end: 1rem" tabindex="0" role="region" aria-label="Field guide">
+            @foreach (var section in Sections)
+            {
+                <section id="@section.Id" class="field-guide-section" style="padding-bottom: 2.5rem">
+                    <MudText Typo="Typo.h6" HtmlTag="h3">@section.Title</MudText>
+                    @foreach (var paragraph in section.Paragraphs)
+                    {
+                        <MudText Typo="Typo.body2" Class="mt-2">@paragraph</MudText>
+                    }
+                </section>
+            }
+        </div>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudPageContentNavigation @ref="_navigation" Headline="In this guide" ScrollContainerSelector="#field-guide"
+                                  SectionClassSelector="field-guide-section" ActivateFirstSectionAsDefault="true" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private MudPageContentNavigation? _navigation;
+
+    private sealed record Section(string Id, string Title, string[] Paragraphs);
+
+    private static readonly Section[] Sections =
+    [
+        new("before-you-go", "Before you go", ["Check the tide table: the causeway floods two hours either side of high water.", "Pack a red torch, layers and a flask. The ridge is colder than the harbour by five degrees.", "Tell the warden's office when you expect to be back."]),
+        new("the-ridge-path", "The ridge path", ["The path climbs 180 metres from the car park in about forty minutes.", "Keep to the marked stones after the second gate; the heather hides old drainage cuts.", "The dome sits behind the last cairn and is lit dim red after sunset."]),
+        new("at-the-dome", "At the dome", ["Volunteers run the 40 cm reflector from 20:00 on clear nights.", "Let your eyes adapt for twenty minutes before you look; phones go in the box by the door.", "Ask for the Andromeda galaxy in autumn and the Orion nebula in winter."]),
+        new("coming-back", "Coming back", ["Walk down in a group and keep torches pointed at the ground.", "The last bus leaves the harbour at 23:40; the warden can call a taxi."])
+    ];
+
+    // Sections register after the first render, when their elements exist for the scroll spy to find.
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (!firstRender || _navigation is null) return;
+        for (var index = 0; index < Sections.Length; index++)
+            _navigation.AddSection(Sections[index].Title, Sections[index].Id, forceUpdate: index == Sections.Length - 1);
+    }
+}

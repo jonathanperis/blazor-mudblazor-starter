@@ -1,0 +1,43 @@
+<MudPaper Outlined="true" Style="overflow: hidden">
+    @* The contextual bar replaces the normal bar while something is selected, and offers actions for the selection only. *@
+    @if (_selected.Count == 0)
+    {
+        <MudAppBar Fixed="false" Dense="true" Elevation="0">
+            <MudText Typo="Typo.subtitle1">Field photos</MudText>
+            <MudSpacer />
+            <MudText Typo="Typo.caption">@_photos.Count photos</MudText>
+        </MudAppBar>
+    }
+    <MudContextualActionBar Visible="@(_selected.Count > 0)" Fixed="false" Dense="true" Color="Color.Primary" Elevation="0">
+        <MudIconButton Icon="@Icons.Material.Outlined.Close" Color="Color.Inherit" aria-label="Clear selection" OnClick="() => _selected.Clear()" />
+        <MudText Typo="Typo.subtitle1" role="status">@_selected.Count selected</MudText>
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Outlined.Share" Color="Color.Inherit" aria-label="Share selected photos" OnClick="@(() => Act("Shared"))" />
+        <MudIconButton Icon="@Icons.Material.Outlined.Archive" Color="Color.Inherit" aria-label="Archive selected photos" OnClick="@(() => Act("Archived"))" />
+    </MudContextualActionBar>
+    <MudList T="string" SelectionMode="SelectionMode.MultiSelection" @bind-SelectedValues="SelectedValues" CheckBoxColor="Color.Primary" aria-label="Field photos">
+        @foreach (var photo in _photos)
+        {
+            <MudListItem Value="photo" Text="@photo" Icon="@Icons.Material.Outlined.Image" />
+        }
+    </MudList>
+    <MudText Typo="Typo.caption" Class="px-4 pb-3 d-block">@_status</MudText>
+</MudPaper>
+
+@code {
+    private readonly List<string> _photos = ["Tidal pool, 06:40", "Kelp line, 07:15", "Shore crab, 07:52", "Rock arch, 08:30"];
+    private HashSet<string> _selected = [];
+    private string _status = "Select photos to see the contextual actions.";
+
+    private IReadOnlyCollection<string> SelectedValues
+    {
+        get => _selected;
+        set => _selected = [.. value];
+    }
+
+    private void Act(string verb)
+    {
+        _status = $"{verb} {_selected.Count} photo{(_selected.Count == 1 ? "" : "s")}.";
+        _selected = [];
+    }
+}

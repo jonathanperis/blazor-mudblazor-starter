@@ -1,0 +1,37 @@
+<MudStack Spacing="3">
+    <MudSwitch T="bool" @bind-Value="_rightToLeft" Color="Color.Primary" Label="Right-to-left" />
+    <MudRTLProvider RightToLeft="_rightToLeft">
+        <MudPaper Outlined="true" Style="overflow: hidden" lang="ar">
+            <MudToolBar Dense="true" Class="mud-background-gray">
+                <MudIconButton Icon="@Icons.Material.Outlined.Menu" aria-label="القائمة" />
+                <MudText Typo="Typo.subtitle1">مكتبة الميناء</MudText>
+                <MudSpacer />
+                <MudIconButton Icon="@Forward" aria-label="التالي" />
+            </MudToolBar>
+            <MudStack Spacing="3" Class="pa-4">
+                <MudBreadcrumbs Items="_crumbs" />
+                <MudTextField T="string" Label="ابحث عن كتاب" Variant="Variant.Outlined" Margin="Margin.Dense"
+                              Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" AdornmentAriaLabel="بحث" />
+                <MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+                    <MudChip T="string" Icon="@Icons.Material.Outlined.MenuBook">روايات</MudChip>
+                    <MudChip T="string" Icon="@Icons.Material.Outlined.Science">علوم</MudChip>
+                    <MudChip T="string" Icon="@Icons.Material.Outlined.Map">رحلات</MudChip>
+                </MudStack>
+                <MudStack Row Spacing="2">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Bookmark">احجز</MudButton>
+                    <MudButton Variant="Variant.Outlined" EndIcon="@Forward">التفاصيل</MudButton>
+                </MudStack>
+                <MudPagination Count="5" @bind-Selected="_page" Size="Size.Small" />
+            </MudStack>
+        </MudPaper>
+    </MudRTLProvider>
+    <MudText Typo="Typo.caption">Harbour library: search for a book, browse fiction, science and travel, reserve or see details.</MudText>
+</MudStack>
+
+@code {
+    private bool _rightToLeft = true;
+    // Layout mirrors on its own; an arrow is a picture and points where you draw it, so pick it by direction.
+    private string Forward => _rightToLeft ? Icons.Material.Outlined.ArrowBack : Icons.Material.Outlined.ArrowForward;
+    private int _page = 1;
+    private readonly List<BreadcrumbItem> _crumbs = [new("الرئيسية", "#"), new("الكتب", "#"), new("الرحلات", null, disabled: true)];
+}

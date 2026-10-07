@@ -1,0 +1,6 @@
+@page "/components/page-content-navigation"
+@attribute [ComponentPage("Page content navigation", GalleryGroup.Navigation, "MudPageContentNavigation lists the sections of a long page and highlights the one in view as the reader scrolls. Use it for documentation and long forms; register each section once it has rendered.", MudDocs = "pagecontentnavigation", Types = ["MudPageContentNavigation", "MudPageContentSection"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(PageContentNavigationBasic)" Title="Follow the reader through a page" Description="Sections carry an id and a shared class; the navigation watches them inside the scroll container named by ScrollContainerSelector. Scroll the article, or pick a section to jump to it." />
+</ComponentPageFrame>

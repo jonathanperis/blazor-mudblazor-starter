@@ -18,6 +18,7 @@ export const GROUP_TITLES: Record<string, string> = {
   Feedback: 'Feedback and overlays',
   Navigation: 'Navigation',
   Layout: 'Layout and structure',
+  Theming: 'Theming and globalization',
 };
 export const GROUP_ORDER = Object.keys(GROUP_TITLES);
 

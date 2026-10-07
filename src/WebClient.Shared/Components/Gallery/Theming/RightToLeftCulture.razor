@@ -1,0 +1,26 @@
+@using System.Globalization
+
+<MudSimpleTable Dense="true" Outlined="true" Style="max-width: 44rem">
+    <thead>
+        <tr><th>Culture</th><th>Direction</th><th>Number</th><th>Date</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var name in Cultures)
+        {
+            var culture = CultureInfo.GetCultureInfo(name);
+            <tr>
+                <td>@culture.EnglishName</td>
+                <td>@(culture.TextInfo.IsRightToLeft ? "Right-to-left" : "Left-to-right")</td>
+                @* dir and lang on the cell let the browser shape and order the text correctly. *@
+                <td dir="@(culture.TextInfo.IsRightToLeft ? "rtl" : "ltr")" lang="@culture.TwoLetterISOLanguageName">@Visitors.ToString("N0", culture)</td>
+                <td dir="@(culture.TextInfo.IsRightToLeft ? "rtl" : "ltr")" lang="@culture.TwoLetterISOLanguageName">@Opening.ToString("D", culture)</td>
+            </tr>
+        }
+    </tbody>
+</MudSimpleTable>
+
+@code {
+    private static readonly string[] Cultures = ["en-GB", "ar-SA", "he-IL", "fa-IR", "ur-PK"];
+    private const int Visitors = 1284503;
+    private static readonly DateTime Opening = new(2026, 9, 16);
+}

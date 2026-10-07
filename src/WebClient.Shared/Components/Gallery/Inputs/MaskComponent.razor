@@ -1,0 +1,12 @@
+<MudStack Spacing="3" Style="max-width: 24rem">
+    @* MudMask is the input that MudTextField uses when you set its Mask parameter, available on its own. *@
+    <MudMask @bind-Value="_postcode" Mask="@(new PatternMask("LL00 0LL") { MaskChars = [new('L', "[A-Z]"), new('0', "[0-9]")], Transformation = char.ToUpperInvariant })"
+             Label="Station postcode" aria-label="Station postcode" Variant="Variant.Outlined" HelperText="Two letters, two digits, a space, a digit and two letters" Clearable="true" />
+    <MudMask @bind-Value="_platform" Mask="@(new PatternMask("P-00"))" Label="Platform" aria-label="Platform" Variant="Variant.Outlined" />
+    <MudText Typo="Typo.body2" role="status">Postcode: @(string.IsNullOrEmpty(_postcode) ? "—" : _postcode) · Platform: @(string.IsNullOrEmpty(_platform) ? "—" : _platform)</MudText>
+</MudStack>
+
+@code {
+    private string _postcode = "";
+    private string _platform = "";
+}
