@@ -1,0 +1,26 @@
+@inject IDialogService DialogService
+
+<MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+    <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Outlined.EventBusy" OnClick="AskAsync">Cancel the baking class</MudButton>
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+@code {
+    private string _status = "";
+
+    private async Task AskAsync()
+    {
+        var message = new MessageBoxOptions
+        {
+            Title = "Cancel the croissant class?",
+            // MarkupMessage is rendered as HTML: only ever pass text you wrote, never user input.
+            MarkupMessage = (MarkupString)"All <strong>12 participants</strong> will be refunded and notified by email.",
+            YesText = "Cancel class",
+            CancelText = "Keep the class"
+        };
+        var options = new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, Position = DialogPosition.TopCenter, CloseOnEscapeKey = true };
+
+        bool? result = await DialogService.ShowMessageBoxAsync(message, options);
+        _status = result == true ? "The class was canceled and refunds issued." : "The class goes ahead.";
+    }
+}

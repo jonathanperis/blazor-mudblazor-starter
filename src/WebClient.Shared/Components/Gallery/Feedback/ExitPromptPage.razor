@@ -1,0 +1,6 @@
+@page "/components/exit-prompt"
+@attribute [ComponentPage("Exit prompt", GalleryGroup.Feedback, "An exit prompt asks for confirmation before the user leaves a page with unsaved work. Enable it only while there is something to lose.", MudDocs = "exitprompt", Types = ["MudExitPrompt"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ExitPromptEditor)" Title="Protect unsaved changes" Description="Disabled stays true until the text changes. Links inside the app then ask with a MudBlazor message box, or the browser's confirm when UseNativePrompt is on. Closing the tab or reloading always uses the browser's own prompt." />
+</ComponentPageFrame>

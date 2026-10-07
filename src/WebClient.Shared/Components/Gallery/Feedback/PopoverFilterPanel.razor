@@ -1,0 +1,47 @@
+<MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+    <div>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.FilterList"
+                   aria-expanded="@(_open ? "true" : "false")" aria-haspopup="dialog" OnClick="Open">Filter departures</MudButton>
+        <MudPopover Open="_open" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Class="pa-4" Style="min-width: 16rem">
+            <div role="dialog" aria-label="Filter departures">
+                <MudText Typo="Typo.subtitle2" HtmlTag="h3">Show</MudText>
+                @foreach (var mode in Modes)
+                {
+                    <MudCheckBox T="bool" Value="_draft.Contains(mode)" ValueChanged="selected => Toggle(mode, selected)" Label="@mode" Color="Color.Primary" Dense="true" />
+                }
+                <MudStack Row Justify="Justify.FlexEnd" Spacing="1" Class="mt-2">
+                    <MudButton Size="Size.Small" OnClick="() => _open = false">Cancel</MudButton>
+                    <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Primary" OnClick="Apply">Apply</MudButton>
+                </MudStack>
+            </div>
+        </MudPopover>
+    </div>
+    <MudText Typo="Typo.body2" role="status">Showing: @(_applied.Count == 0 ? "nothing" : string.Join(", ", Modes.Where(_applied.Contains)))</MudText>
+
+    @* Transparent and behind the popover: a click anywhere else closes it without applying. *@
+    <MudOverlay @bind-Visible="_open" AutoClose="true" />
+</MudStack>
+
+@code {
+    private static readonly string[] Modes = ["Buses", "Trams", "Ferries"];
+    private HashSet<string> _applied = ["Buses", "Trams"];
+    private HashSet<string> _draft = [];
+    private bool _open;
+
+    private void Open()
+    {
+        _draft = [.. _applied];
+        _open = true;
+    }
+
+    private void Toggle(string mode, bool selected)
+    {
+        if (selected) _draft.Add(mode); else _draft.Remove(mode);
+    }
+
+    private void Apply()
+    {
+        _applied = [.. _draft];
+        _open = false;
+    }
+}

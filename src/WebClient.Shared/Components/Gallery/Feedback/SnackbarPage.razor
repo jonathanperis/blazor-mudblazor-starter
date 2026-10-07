@@ -1,0 +1,12 @@
+@page "/components/snackbar"
+@attribute [ComponentPage("Snackbar", GalleryGroup.Feedback, "Snackbars confirm what just happened with a brief message at the edge of the screen, optionally with one action such as Undo. Choose them for transient news; use an alert for messages that must stay.", MudDocs = "snackbar", Types = ["ISnackbar", "MudSnackbarProvider", "SnackbarOptions"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(SnackbarSeverities)" Title="Severities" Description="Inject ISnackbar and call Add. Severity picks the icon and color; a MudSnackbarProvider in the layout renders the stack." />
+    <Example Of="typeof(SnackbarCombinations)" Title="Every severity and variant" Description="SnackbarVariant is set per message through the configure callback. Each button shows that combination." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(SnackbarPositions)" Title="Positions" Description="In MudBlazor 9.11 the position belongs to the shared Configuration, not to a single message, so this example clears the stack, moves it, and restores the app's position when you leave the page." />
+    <Example Of="typeof(SnackbarActions)" Title="Actions and rich content" Description="Action adds a button and OnClick runs when it is pressed: the classic Undo. A RenderFragment message can contain markup." />
+    <Example Of="typeof(SnackbarDuplicates)" Title="Duplicates and keys" Description="A key identifies a message. DuplicatesBehavior decides whether a second message with the same key appears; RemoveByKey and Clear take messages away." />
+    <Example Of="typeof(SnackbarCloseAndInteraction)" Title="Close icons, duration and interaction" Description="RequireInteraction keeps a message until it is dismissed; VisibleStateDuration sets how long the others stay. Icons can be replaced or hidden." />
+    <Example Of="typeof(SnackbarPlayground)" Title="Playground" Description="Configure a message and show it; the call below updates with only the options that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

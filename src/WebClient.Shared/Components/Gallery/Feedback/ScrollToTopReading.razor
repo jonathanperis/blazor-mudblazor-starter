@@ -1,0 +1,39 @@
+<MudStack Spacing="2" Style="max-width: 34rem">
+    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+        <MudRadioGroup T="ScrollBehavior" @bind-Value="_behavior">
+            <MudRadio Value="ScrollBehavior.Smooth" Color="Color.Primary">Smooth</MudRadio>
+            <MudRadio Value="ScrollBehavior.Auto" Color="Color.Primary">Instant (Auto)</MudRadio>
+        </MudRadioGroup>
+        <MudText Typo="Typo.caption" Class="mud-text-secondary">Read @_percent%</MudText>
+    </MudStack>
+    <MudProgressLinear Value="_percent" Color="Color.Primary" Size="Size.Small" aria-label="Reading progress" />
+    <div style="position: relative">
+        <div id="field-notes" tabindex="0" role="region" aria-label="Field notes"
+             style="height: 16rem; overflow-y: auto; padding: 1rem 1.25rem; border: 1px solid var(--mud-palette-lines-default); border-radius: 6px">
+            @foreach (var (night, note) in Notes)
+            {
+                <MudText Typo="Typo.subtitle2" HtmlTag="h3">@night</MudText>
+                <MudText Typo="Typo.body2" Class="mb-4">@note</MudText>
+            }
+        </div>
+        <MudScrollToTop Selector="#field-notes" TopOffset="80" ScrollBehavior="_behavior" OnScroll="Track"
+                        VisibleCssClass="visible absolute" HiddenCssClass="hidden absolute">
+            <MudButton Variant="Variant.Filled" Color="Color.Secondary" Size="Size.Small" StartIcon="@Icons.Material.Outlined.VerticalAlignTop">Back to top</MudButton>
+        </MudScrollToTop>
+    </div>
+</MudStack>
+
+@code {
+    private static readonly (string Night, string Note)[] Notes = Enumerable.Range(1, 12)
+        .Select(n => ($"Night {n}", $"Seeing {(n % 4) + 2} of 5. Logged {n * 3 + 4} variable stars and one satellite pass. The dew heater held the corrector plate clear until {1 + n % 3}:30."))
+        .ToArray();
+
+    private ScrollBehavior _behavior = ScrollBehavior.Smooth;
+    private int _percent;
+
+    private void Track(ScrollEventArgs e)
+    {
+        var range = e.ScrollHeight - e.ClientHeight;
+        _percent = range <= 0 ? 100 : (int)Math.Round(100.0 * e.ScrollTop / range);
+    }
+}

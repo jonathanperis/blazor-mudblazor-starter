@@ -1,0 +1,33 @@
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6">Reserve “@BookTitle”</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudStack Spacing="3">
+            <MudText Typo="Typo.body2">@Available copies are on the shelf.</MudText>
+            <MudSelect T="string" @bind-Value="_branch" Label="Pick up at" Variant="Variant.Outlined">
+                @foreach (var branch in Branches) { <MudSelectItem Value="branch">@branch</MudSelectItem> }
+            </MudSelect>
+            <MudNumericField @bind-Value="_copies" Label="Copies" Min="1" Max="Available" Variant="Variant.Outlined" />
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => Dialog.Cancel()">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="Reserve">Reserve</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    public sealed record Reservation(string BookTitle, string Branch, int Copies);
+
+    private static readonly string[] Branches = ["Harbour Street", "Old Town", "University"];
+
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = null!;
+    [Parameter, EditorRequired] public string BookTitle { get; set; } = "";
+    [Parameter] public int Available { get; set; } = 1;
+
+    private string _branch = Branches[0];
+    private int _copies = 1;
+
+    private void Reserve() => Dialog.Close(DialogResult.Ok(new Reservation(BookTitle, _branch, _copies)));
+}

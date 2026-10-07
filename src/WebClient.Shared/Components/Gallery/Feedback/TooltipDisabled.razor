@@ -1,0 +1,39 @@
+<MudStack Spacing="4">
+    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+        <MudTooltip Text="Booking opens 48 hours before the session">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="true">Book dome 2</MudButton>
+        </MudTooltip>
+        <MudText Typo="Typo.body2" Class="mud-text-secondary">Booking opens 48 hours before the session.</MudText>
+    </MudStack>
+
+    <MudStack Spacing="1">
+        <MudSwitch @bind-Value="_showLabels" Label="Show labels on the toolbar" Color="Color.Primary" />
+        <MudStack Row Spacing="1">
+            @foreach (var (icon, label) in Tools)
+            {
+                @* With labels visible, the tooltip would only repeat them, so it is disabled. *@
+                <MudTooltip Text="@label" Disabled="_showLabels">
+                    @if (_showLabels)
+                    {
+                        <MudButton Variant="Variant.Text" StartIcon="@icon">@label</MudButton>
+                    }
+                    else
+                    {
+                        <MudIconButton Icon="@icon" aria-label="@label" />
+                    }
+                </MudTooltip>
+            }
+        </MudStack>
+    </MudStack>
+</MudStack>
+
+@code {
+    private static readonly (string Icon, string Label)[] Tools =
+    [
+        (Icons.Material.Outlined.CenterFocusStrong, "Focus"),
+        (Icons.Material.Outlined.Exposure, "Exposure"),
+        (Icons.Material.Outlined.PhotoCamera, "Capture")
+    ];
+
+    private bool _showLabels;
+}

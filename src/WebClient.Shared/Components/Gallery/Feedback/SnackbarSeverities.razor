@@ -1,0 +1,9 @@
+@inject ISnackbar Snackbar
+
+<MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+    <MudButton Variant="Variant.Outlined" OnClick="@(() => Snackbar.Add("Draft saved.", Severity.Normal))">Normal</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Info" OnClick="@(() => Snackbar.Add("The 7:40 bus is running four minutes late.", Severity.Info))">Info</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Success" OnClick="@(() => Snackbar.Add("Your monthly pass was renewed.", Severity.Success))">Success</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Warning" OnClick="@(() => Snackbar.Add("Line 4 is diverted around the market this weekend.", Severity.Warning))">Warning</MudButton>
+    <MudButton Variant="Variant.Outlined" Color="Color.Error" OnClick="@(() => Snackbar.Add("Payment declined. No ticket was issued.", Severity.Error))">Error</MudButton>
+</MudStack>

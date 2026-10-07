@@ -1,0 +1,26 @@
+<MudStack Spacing="3">
+    <MudRadioGroup T="OverflowBehavior" @bind-Value="_behavior">
+        @foreach (var behavior in Enum.GetValues<OverflowBehavior>())
+        {
+            <MudRadio Value="behavior" Color="Color.Primary">@behavior</MudRadio>
+        }
+    </MudRadioGroup>
+    <MudText Typo="Typo.body2" Class="mud-text-secondary">Scroll until this example sits near the bottom of the window, then open the list.</MudText>
+    <div>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" aria-expanded="@(_open ? "true" : "false")" OnClick="() => _open = !_open">
+            @(_open ? "Hide stops" : "Show stops on line 7")
+        </MudButton>
+        <MudPopover Open="_open" OverflowBehavior="_behavior" AnchorOrigin="Origin.BottomLeft" TransformOrigin="Origin.TopLeft" Class="py-2">
+            @foreach (var stop in Stops)
+            {
+                <MudText Typo="Typo.body2" Class="px-4 py-1">@stop</MudText>
+            }
+        </MudPopover>
+    </div>
+</MudStack>
+
+@code {
+    private static readonly string[] Stops = ["North Station", "Canal Bridge", "Market Square", "Museum Quarter", "Harbour Street", "Lighthouse Road", "Ferry Terminal"];
+    private OverflowBehavior _behavior = OverflowBehavior.FlipOnOpen;
+    private bool _open;
+}

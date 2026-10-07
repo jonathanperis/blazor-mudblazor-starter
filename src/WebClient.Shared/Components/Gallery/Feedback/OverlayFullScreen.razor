@@ -1,0 +1,19 @@
+<MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Fullscreen" OnClick="() => _visible = true">Show the service notice</MudButton>
+    <MudText Typo="Typo.body2" role="status">@(_closedCount == 0 ? "Not shown yet." : $"Closed {_closedCount} time(s).")</MudText>
+
+    <MudOverlay @bind-Visible="_visible" DarkBackground="true" AutoClose="true" OnClosed="() => _closedCount++">
+        <MudPaper Class="pa-6" Style="max-width: 26rem">
+            <MudText Typo="Typo.h6" HtmlTag="h3">Night service tonight</MudText>
+            <MudText Typo="Typo.body2" Class="mt-2">Trams run every 30 minutes after 23:00 while the tracks on Canal Bridge are renewed.</MudText>
+            @* The overlay closes on any click, including this button; it is here so keyboard users have something to press. *@
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-4">Close</MudButton>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary mt-2 d-block">A click anywhere closes this notice.</MudText>
+        </MudPaper>
+    </MudOverlay>
+</MudStack>
+
+@code {
+    private bool _visible;
+    private int _closedCount;
+}

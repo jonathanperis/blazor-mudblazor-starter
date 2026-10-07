@@ -1,0 +1,9 @@
+@page "/components/skeleton"
+@attribute [ComponentPage("Skeleton", GalleryGroup.Feedback, "Skeletons hold the shape of content that is still loading, so the layout does not jump when it arrives. Use them for the first load of cards, lists and tables; use a progress indicator for actions.", MudDocs = "skeleton", Types = ["MudSkeleton"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(SkeletonShapes)" Title="Shapes and sizes" Description="Text follows the font size, Circle suits avatars and Rectangle suits media. Width and Height take any CSS length." />
+    <Example Of="typeof(SkeletonCombinations)" Title="Every shape and animation" Description="All combinations of SkeletonType and Animation. Pulse is the default; Animation.False keeps it still for people who prefer reduced motion." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(SkeletonCard)" Title="A loading card that swaps to content" Description="The skeleton mirrors the card's real layout. The container reports aria-busy while it loads, and leaving the page cancels the work." />
+    <Example Of="typeof(SkeletonTable)" Title="A table placeholder" Description="Skeleton rows keep the header and column widths stable until the data arrives." />
+</ComponentPageFrame>

@@ -1,0 +1,12 @@
+@page "/components/tooltip"
+@attribute [ComponentPage("Tooltip", GalleryGroup.Feedback, "Tooltips name or briefly explain a control on hover and keyboard focus. Use them for supplementary hints; never hide information a user needs to complete a task inside one.", MudDocs = "tooltip", Types = ["MudTooltip"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(TooltipBasic)" Title="Basic tooltips" Description="Wrap the element in MudTooltip and set Text. Icon-only buttons still need their own aria-label; the tooltip is a visual hint." />
+    <Example Of="typeof(TooltipPlacements)" Title="Placements" Description="Placement puts the tooltip on any side. Start and End follow the reading direction. Turn on the switch to show all six at once." />
+    <Example Of="typeof(TooltipCombinations)" Title="Every placement and color, with arrows" Description="All 54 combinations of Placement and Color, each with Arrow pointing at its target. Hover or focus a cell." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(TooltipActivation)" Title="Activation, delay and duration" Description="ShowOnHover, ShowOnFocus and ShowOnClick choose what opens the tooltip. Delay waits before showing; Duration sets the fade." />
+    <Example Of="typeof(TooltipCustomContent)" Title="Custom content" Description="TooltipContent accepts markup when a sentence is not enough, such as a keyboard shortcut or a short summary." />
+    <Example Of="typeof(TooltipDisabled)" Title="Disabled elements and disabled tooltips" Description="A disabled button cannot take focus, so keyboard users never see its tooltip: say why it is disabled in visible text as well. Disabled on the tooltip turns the hint off." />
+    <Example Of="typeof(TooltipPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

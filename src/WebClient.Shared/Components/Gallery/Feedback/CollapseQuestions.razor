@@ -1,0 +1,39 @@
+<MudStack Spacing="2" Style="max-width: 36rem">
+    <MudStack Row Spacing="1">
+        <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Primary" OnClick="() => _open.UnionWith(Enumerable.Range(0, Questions.Length))">Open all</MudButton>
+        <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Primary" OnClick="_open.Clear">Close all</MudButton>
+    </MudStack>
+    <MudPaper Outlined="true">
+        @for (var i = 0; i < Questions.Length; i++)
+        {
+            var index = i;
+            var expanded = _open.Contains(index);
+            @if (index > 0) { <MudDivider /> }
+            <div class="px-2 py-1">
+                <MudButton Variant="Variant.Text" FullWidth="true" Class="justify-space-between"
+                           EndIcon="@(expanded ? Icons.Material.Outlined.Remove : Icons.Material.Outlined.Add)"
+                           aria-expanded="@(expanded ? "true" : "false")" aria-controls="@($"bakery-answer-{index}")"
+                           OnClick="() => Toggle(index)">@Questions[index].Question</MudButton>
+                <MudCollapse Expanded="expanded">
+                    <MudText id="@($"bakery-answer-{index}")" Typo="Typo.body2" Class="px-2 pb-3">@Questions[index].Answer</MudText>
+                </MudCollapse>
+            </div>
+        }
+    </MudPaper>
+</MudStack>
+
+@code {
+    private static readonly (string Question, string Answer)[] Questions =
+    [
+        ("Can I order a cake for collection?", "Yes. Order at least three days ahead in the shop or by phone; collection is from 9:00."),
+        ("Do you bake anything gluten-free?", "Our almond cake and macarons have no gluten ingredients, but they are baked in a kitchen that uses wheat."),
+        ("What happens to unsold bread?", "Each evening it goes to the community fridge on Canal Street.")
+    ];
+
+    private readonly HashSet<int> _open = [];
+
+    private void Toggle(int index)
+    {
+        if (!_open.Remove(index)) _open.Add(index);
+    }
+}

@@ -1,0 +1,12 @@
+@page "/components/alert"
+@attribute [ComponentPage("Alert", GalleryGroup.Feedback, "Alerts put a short, important message inline with the content it concerns. Choose one when the message must stay visible; use a snackbar for transient confirmations.", MudDocs = "alert", Types = ["MudAlert"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(AlertSeverities)" Title="Severities" Description="Severity sets the icon and color together, so the meaning never depends on color alone. Normal is for neutral notes." />
+    <Example Of="typeof(AlertCombinations)" Title="Every severity and variant" Description="All 15 combinations of Severity and Variant. Text is the quietest; filled is for messages that must interrupt." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(AlertDenseAndShape)" Title="Dense, square, elevated and icon-free" Description="Dense trims the padding for toolbars and tables. Square, Elevation and NoIcon adjust the surface." />
+    <Example Of="typeof(AlertCloseAndIcons)" Title="Close buttons and custom icons" Description="ShowCloseIcon adds a dismiss button; CloseIconClicked tells you which alert to remove. Icon and CloseIcon replace the defaults." />
+    <Example Of="typeof(AlertAlignment)" Title="Content alignment" Description="ContentAlignment positions the message. Start and End follow the reading direction; Left and Right do not." />
+    <Example Of="typeof(AlertActions)" Title="Alerts with actions" Description="Put buttons in the content for the obvious next step, or make the whole alert clickable with OnClick." />
+    <Example Of="typeof(AlertPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

@@ -1,0 +1,55 @@
+@inject IDialogService DialogService
+
+<MudStack Spacing="2" Style="max-width: 36rem">
+    <MudPaper Outlined="true">
+        @foreach (var volunteer in _volunteers)
+        {
+            <MudStack @key="volunteer.Id" Row AlignItems="AlignItems.Center" Spacing="3" Class="px-4 py-2">
+                <MudStack Spacing="0" Class="flex-grow-1">
+                    <MudText>@volunteer.Name</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">@volunteer.Email · @volunteer.Shift · @volunteer.HoursPerWeek h/week</MudText>
+                </MudStack>
+                <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" aria-label="@($"Edit {volunteer.Name}")" OnClick="() => EditAsync(volunteer)" />
+            </MudStack>
+        }
+    </MudPaper>
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+@code {
+    public sealed class Volunteer
+    {
+        public int Id { get; init; }
+        public string Name { get; set; } = "";
+        public string Email { get; set; } = "";
+        public string Shift { get; set; } = "";
+        public int HoursPerWeek { get; set; }
+
+        public Volunteer Copy() => (Volunteer)MemberwiseClone();
+    }
+
+    private readonly List<Volunteer> _volunteers =
+    [
+        new() { Id = 1, Name = "Ada Okafor", Email = "ada@example.org", Shift = "Saturday morning", HoursPerWeek = 4 },
+        new() { Id = 2, Name = "Tomás Lindqvist", Email = "tomas@example.org", Shift = "Weekday evenings", HoursPerWeek = 6 }
+    ];
+    private string _status = "Edit a volunteer. The list keeps its values until you save.";
+
+    private async Task EditAsync(Volunteer volunteer)
+    {
+        // The dialog receives a copy, so typing in the form never touches the list.
+        var parameters = new DialogParameters<DialogEditDialog> { { x => x.Volunteer, volunteer.Copy() } };
+        var options = new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true, CloseOnEscapeKey = true };
+
+        var dialog = await DialogService.ShowAsync<DialogEditDialog>($"Edit {volunteer.Name}", parameters, options);
+        var result = await dialog.Result;
+        if (result is not { Canceled: false, Data: Volunteer edited })
+        {
+            _status = "Canceled: the list is unchanged.";
+            return;
+        }
+
+        _volunteers[_volunteers.IndexOf(volunteer)] = edited;
+        _status = $"Saved changes to {edited.Name}.";
+    }
+}

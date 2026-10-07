@@ -1,0 +1,21 @@
+@* A small reusable dialog. The title comes from ShowAsync, so this component only fills the content. *@
+<MudDialog>
+    <DialogContent>
+        <MudText>@Message</MudText>
+    </DialogContent>
+    <DialogActions>
+        @if (CancelText is not null)
+        {
+            <MudButton OnClick="() => Dialog.Cancel()">@CancelText</MudButton>
+        }
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => Dialog.Close(DialogResult.Ok(true))">@ConfirmText</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = null!;
+    [Parameter] public string Message { get; set; } = "";
+    [Parameter] public string ConfirmText { get; set; } = "OK";
+    /// <summary>Text of the cancel button; null hides it.</summary>
+    [Parameter] public string? CancelText { get; set; } = "Cancel";
+}

@@ -1,0 +1,34 @@
+@inject IDialogService DialogService
+
+<MudDialog>
+    <DialogContent>
+        <MudText>@Steps[Level - 1]</MudText>
+        <MudText Typo="Typo.body2" Class="mud-text-secondary mt-2">Level @Level of @Steps.Length</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => Dialog.CancelAll()">Close all</MudButton>
+        <MudButton OnClick="() => Dialog.Cancel()">Back</MudButton>
+        @if (Level < Steps.Length)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenNextAsync">Next level</MudButton>
+        }
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private static readonly string[] Steps =
+    [
+        "Telescope booking: choose the dome for tonight's session.",
+        "Dome 2 is free. Check the weather window before you confirm.",
+        "Clear skies from 22:00 to 03:00. Nothing more to open."
+    ];
+
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = null!;
+    [Parameter] public int Level { get; set; } = 1;
+
+    private Task OpenNextAsync()
+    {
+        var parameters = new DialogParameters<DialogNestedDialog> { { x => x.Level, Level + 1 } };
+        return DialogService.ShowAsync<DialogNestedDialog>($"Level {Level + 1}", parameters, new DialogOptions { CloseOnEscapeKey = true });
+    }
+}

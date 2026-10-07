@@ -1,0 +1,51 @@
+<Playground Code="@Code">
+    <Preview>
+        <div style="display: grid; place-items: center; width: 7rem; height: 3rem; border: 1px dashed var(--mud-palette-primary); border-radius: 4px">
+            <MudText Typo="Typo.caption">Anchor</MudText>
+            <MudPopover Open="_open" AnchorOrigin="_anchor" TransformOrigin="_transform" OverflowBehavior="_overflow"
+                        Paper="_paper" Elevation="_elevation" Square="_square" Fixed="_fixed" Class="px-4 py-2">
+                <MudText Typo="Typo.body2">Platform 3</MudText>
+            </MudPopover>
+        </div>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_anchor" Label="Anchor origin" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Origin>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_transform" Label="Transform origin" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Origin>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_overflow" Label="Overflow behavior" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<OverflowBehavior>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudNumericField @bind-Value="_elevation" Label="Elevation" Min="0" Max="24" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSwitch @bind-Value="_open" Label="Open" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_paper" Label="Paper" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_square" Label="Square" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_fixed" Label="Fixed" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private Origin _anchor = Origin.BottomCenter;
+    private Origin _transform = Origin.TopCenter;
+    private OverflowBehavior _overflow = OverflowBehavior.FlipOnOpen;
+    private int _elevation = 8;
+    private bool _open = true;
+    private bool _paper = true;
+    private bool _square;
+    private bool _fixed;
+
+    // MudPopover defaults: both origins TopLeft, FlipOnOpen, Paper on, Elevation 8.
+    private string Code => Snippet.Element("MudPopover",
+    [
+        ("Open", _open ? "true" : "false"),
+        ("AnchorOrigin", Snippet.Enum(_anchor, Origin.TopLeft)),
+        ("TransformOrigin", Snippet.Enum(_transform, Origin.TopLeft)),
+        ("OverflowBehavior", Snippet.Enum(_overflow, OverflowBehavior.FlipOnOpen)),
+        ("Elevation", _elevation == 8 ? null : _elevation.ToString()),
+        ("Paper", _paper ? null : "false"),
+        ("Square", Snippet.Flag(_square)),
+        ("Fixed", Snippet.Flag(_fixed))
+    ], "\n    <MudText Typo=\"Typo.body2\">Platform 3</MudText>\n");
+}
