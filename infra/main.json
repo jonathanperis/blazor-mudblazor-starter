@@ -5,7 +5,7 @@
     "_generator": {
       "name": "bicep",
       "version": "0.47.16.16243",
-      "templateHash": "11838315009284831893"
+      "templateHash": "9177013754025650914"
     }
   },
   "parameters": {
@@ -25,9 +25,8 @@
     },
     "containerImage": {
       "type": "string",
-      "defaultValue": "ghcr.io/jonathanperis/blazor-mudblazor-starter:latest",
       "metadata": {
-        "description": "Container image to deploy (e.g. ghcr.io/org/repo:tag)."
+        "description": "Container image to deploy. Prefer the verified digest from the release summary (ghcr.io/org/repo@sha256:...); mutable tags make deployments hard to reproduce."
       }
     },
     "appServicePlanName": {
@@ -367,7 +366,7 @@
             "_generator": {
               "name": "bicep",
               "version": "0.47.16.16243",
-              "templateHash": "13471967881039858036"
+              "templateHash": "14001650434555881499"
             }
           },
           "parameters": {
@@ -414,6 +413,7 @@
                   "healthCheckPath": "/healthz/ready",
                   "http20Enabled": true,
                   "minTlsVersion": "1.2",
+                  "scmMinTlsVersion": "1.2",
                   "ftpsState": "Disabled",
                   "appSettings": [
                     {
@@ -430,7 +430,15 @@
                     },
                     {
                       "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
-                      "value": "false"
+                      "value": "true"
+                    },
+                    {
+                      "name": "Learning__DataDirectory",
+                      "value": "/home/data"
+                    },
+                    {
+                      "name": "ASPNETCORE_FORWARDEDHEADERS_ENABLED",
+                      "value": "true"
                     },
                     {
                       "name": "APPLICATIONINSIGHTS_CONNECTION_STRING",
@@ -439,6 +447,28 @@
                   ]
                 }
               }
+            },
+            {
+              "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+              "apiVersion": "2024-04-01",
+              "name": "[format('{0}/{1}', parameters('webAppName'), 'ftp')]",
+              "properties": {
+                "allow": false
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('webAppName'))]"
+              ]
+            },
+            {
+              "type": "Microsoft.Web/sites/basicPublishingCredentialsPolicies",
+              "apiVersion": "2024-04-01",
+              "name": "[format('{0}/{1}', parameters('webAppName'), 'scm')]",
+              "properties": {
+                "allow": false
+              },
+              "dependsOn": [
+                "[resourceId('Microsoft.Web/sites', parameters('webAppName'))]"
+              ]
             }
           ],
           "outputs": {

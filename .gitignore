@@ -54,17 +54,16 @@ TestResult.xml
 nunit-*.xml
 .DS_Store
 
-# Docs generation
+# Docs generation (the docs use Bun and commit bun.lock)
 node_modules/
 package-lock.json
-# Allow the docs Astro project to commit its lockfile
-!docs/package-lock.json
 
 # Python verification caches
 __pycache__/
 
-# Local specifications, credentials, and learning data
+# Local specifications, task artifacts, credentials, and learning data
 .specs/
+.impeccable/
 .env
 .env.*
 !.env.example

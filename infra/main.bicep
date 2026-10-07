@@ -4,8 +4,8 @@ param location string = 'brazilsouth'
 @description('Name of the resource group (used for tagging).')
 param projectName string = 'github-jonathanperis'
 
-@description('Container image to deploy (e.g. ghcr.io/org/repo:tag).')
-param containerImage string = 'ghcr.io/jonathanperis/blazor-mudblazor-starter:latest'
+@description('Container image to deploy. Prefer the verified digest from the release summary (ghcr.io/org/repo@sha256:...); mutable tags make deployments hard to reproduce.')
+param containerImage string
 
 @description('Name of the App Service Plan.')
 param appServicePlanName string = 'github-jonathanperis'
