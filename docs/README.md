@@ -35,11 +35,15 @@ Run `npm run build` before previewing or checking rendered HTML. To include the 
 | `wiki/*.md` | Learning guide content; `home.md` renders the guide root |
 | `src/lib/sidebar.config.ts` | Topic labels, unique descriptions, navigation groups and order |
 | `src/pages/docs/[...slug].astro` | One static route per topic, sidebar and mobile navigation |
-| `src/pages/index.astro`, `src/components/home/` | Project landing page |
+| `src/pages/index.astro` | Landing page; its contents are read from the app's catalogs at build time |
+| `src/lib/catalog.ts` | Build-time reader for `LabCatalog.cs`, gallery pages and page samples |
+| `src/components/` | Masthead, colophon and optional analytics |
+| `src/styles/site.css`, `src/fonts/` | The lab-manual design system and self-hosted fonts (OFL licenses in `public/fonts/`) |
+| `public/screens/` | Plates on the landing page; regenerate with `node scripts/capture-screens.mjs <app url>` |
 | `src/pages/404.astro` | Site-wide not-found page; redirects demo deep links into the WebAssembly app |
 | `scripts/check-demo.mjs` | Browser check of the published demo |
 | `src/layouts/BaseLayout.astro` | Shared HTML head, product metadata and optional analytics |
-| `src/styles/`, `public/` | Styles and icons |
+| `public/` | Icons, font licenses and screenshots |
 | `astro.config.mjs` | Sätteri processor, sitemap, production base path and output directory |
 | `out/` | Generated output, including `out/demo/` when prepared; ignored by Git |
 | `../scripts/check-docs-*.py` | Offline source and rendered-output verification |

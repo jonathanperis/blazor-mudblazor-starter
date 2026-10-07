@@ -1,21 +1,162 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import Navbar from '@/components/home/Navbar.astro';
-import Hero from '@/components/home/Hero.astro';
-import Dashboard from '@/components/home/Dashboard.astro';
-import Footer from '@/components/home/Footer.astro';
+import Masthead from '@/components/Masthead.astro';
+import Colophon from '@/components/Colophon.astro';
+import { labs, groupedGallery, galleryPages, samples } from '@/lib/catalog';
 
-const title = 'Blazor learning sandbox | MudBlazor labs';
-const description = 'A hands-on Blazor and MudBlazor toolbox. Explore working examples, inspect their source, and experiment with state, APIs, SQLite, authentication, files, and deployment.';
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const demo = (route: string) => `${base}/demo/${route.replace(/^\//, '')}`;
+const allLabs = labs();
+const groups = groupedGallery();
+const componentCount = galleryPages().length;
+const allSamples = samples();
+const totalMinutes = allLabs.reduce((sum, lab) => sum + lab.minutes, 0);
 ---
 
-<BaseLayout title={title} description={description}>
-  <Navbar />
+<BaseLayout>
+  <Masthead current="home" />
+  <main id="main-content" tabindex="-1">
+    <section class="hero" aria-labelledby="hero-title">
+      <div>
+        <p class="kicker">A lab manual for Blazor and MudBlazor</p>
+        <h1 id="hero-title" class="display">Learn by changing <em>working</em> examples.</h1>
+        <p class="lede">
+          Nine labs that explain how Blazor behaves and why. A working example of {componentCount} MudBlazor components,
+          with every parameter combination laid out side by side. {allSamples.length} complete pages built from those parts.
+          Read the source beside each one, change one thing, and see what happens.
+        </p>
+        <div class="actions">
+          <a class="button" href={`${base}/demo/`}>Open the live demo <span aria-hidden="true">→</span></a>
+          <a class="link-arrow" href={`${base}/docs/getting-started/`}>Run it on your machine</a>
+        </div>
+      </div>
+      <figure class="plate" id="plate">
+        <div class="plate-frame" data-plate>
+          <picture>
+            <source srcset={`${base}/screens/gallery-dark.jpg`} media="(prefers-color-scheme: dark)" />
+            <img src={`${base}/screens/gallery-light.jpg`} width="1440" height="900" alt="The Button page of the component gallery: example plates with live buttons, a table of every variant and color, and the Razor source of the example." />
+          </picture>
+        </div>
+        <figcaption>
+          <span><span class="figure-number">Plate 1</span> · <em>The Button page, from the component gallery.</em></span>
+          <button type="button" class="plate-boot" data-boot hidden>Run the demo in this frame</button>
+        </figcaption>
+      </figure>
+    </section>
 
-  <main class="site-main" id="main-content" tabindex="-1">
-    <Hero />
-    <Dashboard />
+    <section class="section" aria-labelledby="contents-title">
+      <div class="section-head">
+        <h2 id="contents-title" class="section-title">Contents</h2>
+        <p class="section-note">Three ways in. Start with the labs if Blazor is new to you, or go straight to the components and samples if you are here for MudBlazor.</p>
+      </div>
+      <div class="chapters">
+        <section aria-labelledby="chapter-labs">
+          <span class="chapter-number">Chapter 01</span>
+          <h3 id="chapter-labs" class="chapter-title"><a href={demo('labs')}>Labs</a></h3>
+          <p class="chapter-summary">{allLabs.length} focused experiments, about {Math.round(totalMinutes / 60)} hours in all. Each states an objective, a common mistake and an exercise.</p>
+          <ol class="leaders">
+            {allLabs.map((lab) => (
+              <li><a href={demo(lab.route)}><span class="leader-label">{lab.title}</span><span class="leader-fill" aria-hidden="true"></span><span class="leader-value">{lab.minutes} min</span></a></li>
+            ))}
+          </ol>
+          <a class="chapter-more" href={`${base}/docs/learning-path/`}>Choose a learning path →</a>
+        </section>
+        <section aria-labelledby="chapter-components">
+          <span class="chapter-number">Chapter 02</span>
+          <h3 id="chapter-components" class="chapter-title"><a href={demo('components')}>Components</a></h3>
+          <p class="chapter-summary">{componentCount} components with live examples, combination tables and playgrounds that write the markup for you.</p>
+          <ol class="leaders">
+            {groups.map((group) => (
+              <li><a href={demo(group.pages[0].route)} title={group.pages.map((page) => page.title).join(', ')}><span class="leader-label">{group.title}</span><span class="leader-fill" aria-hidden="true"></span><span class="leader-value">{group.pages.length}</span></a></li>
+            ))}
+          </ol>
+          <a class="chapter-more" href={demo('components')}>Browse the gallery →</a>
+        </section>
+        <section aria-labelledby="chapter-samples">
+          <span class="chapter-number">Chapter 03</span>
+          <h3 id="chapter-samples" class="chapter-title"><a href={demo('samples')}>Page samples</a></h3>
+          <p class="chapter-summary">Whole screens composed only from MudBlazor components, with synthetic data and real interactions.</p>
+          <ol class="leaders">
+            {allSamples.map((sample) => (
+              <li><a href={demo(sample.route)}><span class="leader-label">{sample.title}</span><span class="leader-fill" aria-hidden="true"></span><span class="leader-value">open</span></a></li>
+            ))}
+          </ol>
+          <a class="chapter-more" href={demo('samples')}>See every sample →</a>
+        </section>
+      </div>
+    </section>
+
+    <section class="section" aria-labelledby="method-title">
+      <div class="section-head">
+        <h2 id="method-title" class="section-title">How to use this manual</h2>
+        <p class="section-note">Every page is built for one small, repeatable experiment. Reset controls take you back to a known state, so you can try again with a new guess.</p>
+      </div>
+      <ol class="method">
+        <li><strong>Predict.</strong> <span>Read the objective and decide what should happen before you touch anything.</span></li>
+        <li><strong>Try.</strong> <span>Change a value, add latency, cancel an operation, switch the culture.</span></li>
+        <li><strong>Inspect.</strong> <span>Open the code beside the example and connect the behavior to the source.</span></li>
+        <li><strong>Reset.</strong> <span>Return to a known state and repeat with a new guess.</span></li>
+      </ol>
+    </section>
+
+    <section class="section" aria-labelledby="hosts-title">
+      <div class="section-head">
+        <h2 id="hosts-title" class="section-title">One library, two hosts</h2>
+        <p class="section-note">The same Razor class library renders on the server and in your browser. Where a lab needs a server, the browser version uses a stand-in and says so.</p>
+      </div>
+      <figure class="figure">
+        <svg viewBox="0 0 980 300" role="img" aria-labelledby="hosts-figure-title hosts-figure-desc" fill="none" stroke="currentColor" stroke-width="1.25">
+          <title id="hosts-figure-title">Architecture</title>
+          <desc id="hosts-figure-desc">WebClient.Shared, holding the labs, the gallery and the page samples, is used by two hosts: WebClient, a Blazor Server app with HTTP, SQLite and cookies, and WebClient.Wasm, the WebAssembly demo on GitHub Pages with browser stand-ins.</desc>
+          <rect x="300" y="18" width="380" height="96" />
+          <text x="490" y="56" text-anchor="middle" fill="currentColor" stroke="none" font-family="Fraunces, Georgia, serif" font-style="italic" font-size="24">WebClient.Shared</text>
+          <text x="490" y="86" text-anchor="middle" fill="currentColor" stroke="none" font-family="IBM Plex Mono, monospace" font-size="13" opacity=".7">labs · gallery · page samples · theme</text>
+          <path d="M420 114 V160 H190 V196" /><path d="M560 114 V160 H790 V196" />
+          <path d="M184 188 L190 198 L196 188" /><path d="M784 188 L790 198 L796 188" />
+          <rect x="30" y="198" width="320" height="84" />
+          <text x="190" y="232" text-anchor="middle" fill="currentColor" stroke="none" font-family="Fraunces, Georgia, serif" font-size="21">WebClient</text>
+          <text x="190" y="260" text-anchor="middle" fill="currentColor" stroke="none" font-family="IBM Plex Mono, monospace" font-size="12.5" opacity=".7">Blazor Server · HTTP · SQLite · cookies</text>
+          <rect x="630" y="198" width="320" height="84" />
+          <text x="790" y="232" text-anchor="middle" fill="currentColor" stroke="none" font-family="Fraunces, Georgia, serif" font-size="21">WebClient.Wasm</text>
+          <text x="790" y="260" text-anchor="middle" fill="currentColor" stroke="none" font-family="IBM Plex Mono, monospace" font-size="12.5" opacity=".7">WebAssembly · GitHub Pages · stand-ins</text>
+        </svg>
+        <figcaption><span class="figure-number">Figure 2</span> · <em>Shared components, honest boundaries.</em> Read <a href={`${base}/docs/project-structure/`}>project structure</a> for the contracts between them.</figcaption>
+      </figure>
+    </section>
+
+    <section class="section quickstart" aria-labelledby="run-title">
+      <div>
+        <h2 id="run-title" class="section-title">Run it on your machine</h2>
+        <ol>
+          <li>Install the .NET 10 SDK named in <code>global.json</code>.</li>
+          <li>Clone, restore exactly the locked packages, and run.</li>
+          <li>Open <code>http://localhost:5000/labs</code> and start with the counter.</li>
+        </ol>
+        <p><a href={`${base}/docs/getting-started/`}>Getting started</a> covers HTTPS, Docker and the WebAssembly host.</p>
+      </div>
+      <pre class="terminal" aria-label="Commands to run the sandbox"><code><span class="prompt">$ </span>git clone https://github.com/jonathanperis/blazor-mudblazor-starter.git
+<span class="prompt">$ </span>cd blazor-mudblazor-starter
+<span class="prompt">$ </span>dotnet restore --locked-mode
+<span class="prompt">$ </span>dotnet run --project src/WebClient</code></pre>
+    </section>
   </main>
+  <Colophon />
 
-  <Footer />
+  <script>
+    // Progressive enhancement: swap the plate's screenshot for the running demo, only when asked.
+    const frame = document.querySelector<HTMLElement>('[data-plate]');
+    const boot = document.querySelector<HTMLButtonElement>('[data-boot]');
+    if (frame && boot) {
+      boot.hidden = false;
+      boot.addEventListener('click', () => {
+        const iframe = document.createElement('iframe');
+        iframe.src = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/demo/components/button`;
+        iframe.title = 'Live demo: the Button page of the component gallery';
+        iframe.loading = 'eager';
+        frame.replaceChildren(iframe);
+        boot.remove();
+        iframe.focus();
+      }, { once: true });
+    }
+  </script>
 </BaseLayout>

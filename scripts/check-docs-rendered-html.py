@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Check rendered identity, navigation, Markdown, local references, the 404/demo entry points and sitemap coverage."""
 import json
+import re
 import xml.etree.ElementTree as ET
 from collections import Counter
 from html.parser import HTMLParser
@@ -87,7 +88,25 @@ def local_reference(href, route=""):
     return relative, unquote(target.fragment)
 
 
+def app_routes():
+    """Routes of the WebAssembly demo, read from the shared library's @page directives."""
+    shared = ROOT / "src/WebClient.Shared/Components"
+    routes = {route for path in shared.rglob("*.razor") for route in re.findall(r'^@page\s+"([^"]+)"', path.read_text(encoding="utf-8"), re.M)}
+    return {route.strip("/") for route in routes}
+
+
+APP_ROUTES = None
+
+
 def exists(relative):
+    global APP_ROUTES
+    if relative == "demo" or relative.startswith("demo/"):
+        # The demo is a single-page app: its routes resolve through demo/index.html (and 404.html for deep links).
+        route = relative.removeprefix("demo").strip("/")
+        if (OUT / relative).is_file():
+            return True
+        APP_ROUTES = APP_ROUTES or app_routes()
+        return (OUT / "demo/index.html").is_file() and route in APP_ROUTES
     return (OUT / relative).is_file() or (OUT / relative / "index.html").is_file()
 
 

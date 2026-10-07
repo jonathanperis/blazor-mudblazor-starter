@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import Navbar from '@/components/home/Navbar.astro';
+import Masthead from '@/components/Masthead.astro';
+import Colophon from '@/components/Colophon.astro';
 
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
@@ -20,19 +21,20 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       }
     })();
   </script>
-  <Navbar />
-  <main class="site-main" id="main-content" tabindex="-1">
+  <Masthead />
+  <main id="main-content" tabindex="-1">
     <section class="hero" aria-labelledby="not-found-title">
-      <div class="hero-copy">
-        <p class="eyebrow">404</p>
-        <h1 id="not-found-title">Page not found</h1>
-        <p class="tagline">This address does not exist. Choose where to continue.</p>
-        <div class="ctas">
-          <a class="btn btn-primary" href={`${base}/docs/`}>Open the learning guide</a>
-          <a class="btn btn-secondary" href={`${base}/demo/`}>Open the live demo</a>
-          <a class="btn btn-secondary" href={`${base}/`}>Project overview</a>
+      <div>
+        <p class="kicker">Error 404 · page not found</p>
+        <h1 id="not-found-title" class="display">This page is <em>missing</em> from the manual.</h1>
+        <p class="lede">The address does not match a page. It may have moved when the guide was reorganized.</p>
+        <div class="actions">
+          <a class="button" href={`${base}/docs/`}>Open the guide <span aria-hidden="true">→</span></a>
+          <a class="link-arrow" href={`${base}/demo/`}>Open the live demo</a>
+          <a class="link-arrow" href={`${base}/`}>Project overview</a>
         </div>
       </div>
     </section>
   </main>
+  <Colophon />
 </BaseLayout>
