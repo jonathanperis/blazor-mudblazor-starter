@@ -23,6 +23,7 @@ The live demo needs no installation. It runs .NET in the browser, so labs that n
 
 | Topic | Purpose |
 |---|---|
+| [Component gallery](./gallery/) | How the MudBlazor examples, combination tables, playgrounds and page samples work |
 | [Configuration](./configuration/) | Runtime, culture, storage, API base URL and optional telemetry |
 | [Docker and hosting](./deployment/) | Publishing modes, the release flow, the Pages demo and the pending Hostinger setup |
 | [Documentation site](./documentation/) | Add pages and verify links |

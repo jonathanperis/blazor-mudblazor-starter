@@ -2,6 +2,7 @@ export const PAGE_METADATA: Record<string, { label: string; description: string 
   home: { label: 'Overview', description: 'Explore the Blazor learning sandbox: local-first MudBlazor labs, guided exercises, working source, and explicit application boundaries.' },
   'getting-started': { label: 'Getting started', description: 'Run the Blazor and MudBlazor labs locally with .NET or Docker, choose a launch profile, and complete your first state experiment.' },
   'learning-path': { label: 'Learning paths', description: 'Follow nine hands-on lessons from component state and forms to APIs, SQLite, authentication, files, and observability.' },
+  gallery: { label: 'Component gallery', description: 'How the MudBlazor component gallery and page samples work: embedded example sources, combination matrices, playgrounds, and how to add a page.' },
   components: { label: 'Lab reference', description: 'Understand the lab implementations: draft editing, DataGrid state, bounded HTTP requests, workspace isolation, CSV validation, and cancellation.' },
   configuration: { label: 'Configuration', description: 'Configure the SDK, internal API address, SQLite storage, demo authentication, culture, publishing options, and optional telemetry.' },
   testing: { label: 'Testing and experiments', description: 'Run component and integration tests, check published routes over HTTP, and measure Blazor experiments with clear verification boundaries.' },
@@ -12,7 +13,7 @@ export const PAGE_METADATA: Record<string, { label: string; description: string 
 
 export const SECTION_CATEGORIES: { label: string; ids: string[] }[] = [
   { label: 'Start here', ids: ['home', 'getting-started', 'learning-path'] },
-  { label: 'Understand the code', ids: ['components', 'configuration', 'testing'] },
+  { label: 'Understand the code', ids: ['components', 'gallery', 'configuration', 'testing'] },
   { label: 'Extend and deploy', ids: ['deployment', 'documentation', 'project-structure'] },
 ];
 export const SECTION_ORDER = SECTION_CATEGORIES.flatMap(({ ids }) => ids);
