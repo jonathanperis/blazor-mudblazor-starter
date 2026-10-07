@@ -1,0 +1,217 @@
+@page "/samples/storefront"
+@attribute [PageSample("Storefront", "A small independent bookshop: faceted filters with removable chips, sorting, paged product cards with drawn covers, and a basket drawer that totals as you change quantities.", Uses = ["MudCard", "MudCheckBox", "MudSlider", "MudRating", "MudSwitch", "MudChip", "MudSelect", "MudPagination", "MudDrawer", "MudNumericField", "MudBadge", "MudSnackbar"])]
+@inject ISnackbar Snackbar
+
+<SamplePageFrame Page="GetType()">
+    <MudPaper Outlined Class="pa-4 pa-md-6 mb-6 d-flex flex-wrap align-center gap-4">
+        <div class="flex-grow-1">
+            <p class="kicker mb-1">Independent since 1987 · 14 Weaver's Row</p>
+            <MudText Typo="Typo.h4" HtmlTag="h2">Marginalia <em style="color: var(--mud-palette-primary)">Books</em></MudText>
+        </div>
+        <MudTextField T="string" Value="_search" ValueChanged="SearchChanged" Immediate DebounceInterval="250" Placeholder="Search titles and authors" Label="Search the shelves"
+                      Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" Clearable Style="min-width: 15rem; max-width: 22rem" />
+        <MudBadge Content="@ItemCount" Visible="@(ItemCount > 0)" Color="Color.Primary" Overlap Bordered BadgeAriaLabel="@($"{ItemCount} items in basket")">
+            <MudButton Variant="Variant.Filled" Color="Color.Dark" StartIcon="@Icons.Material.Outlined.ShoppingBag" OnClick="() => _basketOpen = true">Basket</MudButton>
+        </MudBadge>
+    </MudPaper>
+
+    <MudGrid Spacing="4">
+        <MudItem xs="12" md="3">
+            <MudButton Class="d-md-none mb-2" FullWidth Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Tune" OnClick="() => _filtersOpen = !_filtersOpen" aria-expanded="@(_filtersOpen ? "true" : "false")" aria-controls="shop-filters">
+                @(_filtersOpen ? "Hide filters" : $"Show filters{(ActiveFilterCount > 0 ? $" ({ActiveFilterCount})" : "")}")
+            </MudButton>
+            @* Below the md breakpoint the panel is collapsible; from md up it is always visible. *@
+            <MudPaper Outlined id="shop-filters" Class="@($"pa-4 {(_filtersOpen ? "" : "d-none d-md-block")}")" Style="position: sticky; top: 72px">
+                <MudText Typo="Typo.overline" HtmlTag="h3">Category</MudText>
+                <MudStack Spacing="0" Class="mb-4">
+                    @foreach (var category in StorefrontData.Categories)
+                    {
+                        var count = StorefrontData.Books.Count(book => book.Category == category);
+                        <MudCheckBox T="bool" Value="_categories.Contains(category)" ValueChanged="selected => ToggleCategory(category, selected)" Dense Color="Color.Primary" Label="@($"{category} ({count})")" />
+                    }
+                </MudStack>
+                <MudDivider Class="mb-4" />
+                <MudText Typo="Typo.overline" HtmlTag="h3" id="price-label">Price up to @StorefrontData.Money(_maxPrice)</MudText>
+                <MudSlider T="int" Value="_maxPrice" ValueChanged="PriceChanged" Min="10" Max="40" Step="1" Color="Color.Primary" Immediate="false" aria-labelledby="price-label" Class="mb-4" />
+                <MudDivider Class="mb-4" />
+                <MudText Typo="Typo.overline" HtmlTag="h3">Customer rating</MudText>
+                <div class="d-flex align-center gap-2 mb-1">
+                    <MudRating SelectedValue="_minRating" SelectedValueChanged="RatingChanged" Color="Color.Tertiary" Name="minimum-rating" />
+                    <MudText Typo="Typo.caption" Class="mud-text-secondary">@(_minRating == 0 ? "Any" : $"{_minRating}+ stars")</MudText>
+                </div>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mb-4">Choose the same star again to clear it.</MudText>
+                <MudDivider Class="mb-2" />
+                <MudSwitch T="bool" Value="_inStockOnly" ValueChanged="InStockChanged" Color="Color.Secondary" Label="In stock only" />
+            </MudPaper>
+        </MudItem>
+
+        <MudItem xs="12" md="9">
+            <div class="d-flex flex-wrap align-center gap-3 mb-3">
+                <MudText Typo="Typo.body2" Class="mud-text-secondary flex-grow-1" role="status">
+                    @if (Filtered.Count == 0)
+                    {
+                        <span>No books match</span>
+                    }
+                    else
+                    {
+                        <span>Showing @((_page - 1) * PageSize + 1)–@(Math.Min(_page * PageSize, Filtered.Count)) of @Filtered.Count books</span>
+                    }
+                </MudText>
+                <MudSelect T="BookSort" Value="_sort" ValueChanged="SortChanged" Label="Sort by" Variant="Variant.Outlined" Margin="Margin.Dense" Dense Style="flex: 0 0 14rem">
+                    @foreach (var sort in Enum.GetValues<BookSort>())
+                    {
+                        <MudSelectItem Value="sort">@StorefrontData.SortLabel(sort)</MudSelectItem>
+                    }
+                </MudSelect>
+            </div>
+
+            @if (ActiveFilterCount > 0)
+            {
+                <div class="d-flex flex-wrap align-center gap-1 mb-4" aria-label="Active filters" role="group">
+                    @foreach (var category in _categories.Order())
+                    {
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" OnClose="_ => ToggleCategory(category, false)" aria-label="@($"Remove filter {category}")">@category</MudChip>
+                    }
+                    @if (_maxPrice < StorefrontData.MaxPrice)
+                    {
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" OnClose="_ => PriceChanged((int)StorefrontData.MaxPrice)">Up to @StorefrontData.Money(_maxPrice)</MudChip>
+                    }
+                    @if (_minRating > 0)
+                    {
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" OnClose="_ => RatingChanged(0)">@_minRating+ stars</MudChip>
+                    }
+                    @if (_inStockOnly)
+                    {
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" OnClose="_ => InStockChanged(false)">In stock</MudChip>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(_search))
+                    {
+                        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" OnClose="_ => SearchChanged(null)">“@_search”</MudChip>
+                    }
+                    <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Primary" OnClick="ClearFilters">Clear all</MudButton>
+                </div>
+            }
+
+            @if (Filtered.Count == 0)
+            {
+                <MudPaper Outlined Class="pa-8 d-flex flex-column align-center gap-2" Style="border-style: dashed">
+                    <MudIcon Icon="@Icons.Material.Outlined.MenuBook" Size="Size.Large" Color="Color.Secondary" />
+                    <MudText Typo="Typo.h6" HtmlTag="h3">Nothing on this shelf</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary" Align="Align.Center">No book matches every filter. Loosen one, or ask at the counter: we order anything in print.</MudText>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="ClearFilters" Class="mt-2">Clear all filters</MudButton>
+                </MudPaper>
+            }
+            else
+            {
+                <MudGrid Spacing="3">
+                    @foreach (var book in PageOfBooks)
+                    {
+                        <MudItem xs="6" lg="4" @key="book.Id">
+                            <StorefrontBookCard Book="book" Saved="_saved.Contains(book.Id)" SavedChanged="saved => ToggleSaved(book, saved)" OnAdd="Add" />
+                        </MudItem>
+                    }
+                </MudGrid>
+                @if (PageCount > 1)
+                {
+                    <div class="d-flex justify-center mt-6">
+                        <MudPagination Count="PageCount" Selected="_page" SelectedChanged="page => _page = page" Color="Color.Primary" Variant="Variant.Outlined" Rectangular BoundaryCount="1" MiddleCount="1" aria-label="Product pages" />
+                    </div>
+                }
+            }
+        </MudItem>
+    </MudGrid>
+
+    <MudDrawer @bind-Open="_basketOpen" Anchor="Anchor.End" Variant="DrawerVariant.Temporary" Elevation="2" Width="min(26rem, 100vw)" aria-label="Basket">
+        <StorefrontBasket Lines="_basket" OnClose="() => _basketOpen = false" OnRemove="Remove" OnChange="StateHasChanged" />
+    </MudDrawer>
+</SamplePageFrame>
+
+@code {
+    private const int PageSize = 6;
+    private readonly HashSet<string> _categories = [];
+    private readonly HashSet<int> _saved = [3, 18];
+    private readonly List<BasketLine> _basket = [new(StorefrontData.Books[6])];
+    private string? _search;
+    private int _maxPrice = (int)StorefrontData.MaxPrice;
+    private int _minRating;
+    private bool _inStockOnly;
+    private bool _filtersOpen;
+    private bool _basketOpen;
+    private BookSort _sort;
+    private int _page = 1;
+
+    private int ItemCount => _basket.Sum(line => line.Quantity);
+    private int ActiveFilterCount => _categories.Count + (_maxPrice < StorefrontData.MaxPrice ? 1 : 0) + (_minRating > 0 ? 1 : 0) + (_inStockOnly ? 1 : 0) + (string.IsNullOrWhiteSpace(_search) ? 0 : 1);
+    private int PageCount => (int)Math.Ceiling(Filtered.Count / (double)PageSize);
+    private IEnumerable<Book> PageOfBooks => Filtered.Skip((_page - 1) * PageSize).Take(PageSize);
+
+    private List<Book> Filtered
+    {
+        get
+        {
+            var books = StorefrontData.Books.Where(book =>
+                (_categories.Count == 0 || _categories.Contains(book.Category))
+                && book.Price <= _maxPrice
+                && book.Rating >= _minRating
+                && (!_inStockOnly || book.InStock)
+                && (string.IsNullOrWhiteSpace(_search)
+                    || book.Title.Contains(_search, StringComparison.OrdinalIgnoreCase)
+                    || book.Author.Contains(_search, StringComparison.OrdinalIgnoreCase)));
+            return (_sort switch
+            {
+                BookSort.PriceLowToHigh => books.OrderBy(book => book.Price),
+                BookSort.PriceHighToLow => books.OrderByDescending(book => book.Price),
+                BookSort.TopRated => books.OrderByDescending(book => book.Rating).ThenByDescending(book => book.Reviews),
+                BookSort.TitleAToZ => books.OrderBy(book => book.Title, StringComparer.CurrentCulture),
+                _ => books.OrderBy(book => book.Featured)
+            }).ToList();
+        }
+    }
+
+    // Every filter change returns to the first page, so the shopper never lands on an empty page.
+    private void ToggleCategory(string category, bool selected)
+    {
+        if (selected) _categories.Add(category); else _categories.Remove(category);
+        _page = 1;
+    }
+
+    private void PriceChanged(int value) => (_maxPrice, _page) = (value, 1);
+    private void RatingChanged(int value) => (_minRating, _page) = (value, 1);
+    private void InStockChanged(bool value) => (_inStockOnly, _page) = (value, 1);
+    private void SearchChanged(string? value) => (_search, _page) = (value, 1);
+    private void SortChanged(BookSort value) => (_sort, _page) = (value, 1);
+
+    private void ClearFilters()
+    {
+        _categories.Clear();
+        (_maxPrice, _minRating, _inStockOnly, _search, _page) = ((int)StorefrontData.MaxPrice, 0, false, null, 1);
+    }
+
+    private void ToggleSaved(Book book, bool saved)
+    {
+        if (saved) _saved.Add(book.Id); else _saved.Remove(book.Id);
+        Snackbar.Add(saved ? $"Saved “{book.Title}” to your wish list." : $"Removed “{book.Title}” from your wish list.", Severity.Normal);
+    }
+
+    private void Add(Book book)
+    {
+        var line = _basket.Find(item => item.Book.Id == book.Id);
+        if (line is null) _basket.Add(new BasketLine(book)); else line.Quantity = Math.Min(line.Quantity + 1, BasketLine.MaxQuantity);
+        Snackbar.Add($"Added “{book.Title}” to your basket.", Severity.Success, options =>
+        {
+            options.Action = "View basket";
+            options.OnClick = _ => InvokeAsync(() => { _basketOpen = true; StateHasChanged(); });
+        });
+    }
+
+    private void Remove(BasketLine line)
+    {
+        _basket.Remove(line);
+        Snackbar.Add($"Removed “{line.Book.Title}”.", Severity.Normal, options =>
+        {
+            options.Action = "Undo";
+            options.ActionColor = Color.Primary;
+            options.OnClick = _ => InvokeAsync(() => { if (!_basket.Contains(line)) _basket.Add(line); StateHasChanged(); });
+        });
+    }
+}

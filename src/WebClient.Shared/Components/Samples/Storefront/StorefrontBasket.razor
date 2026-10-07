@@ -1,0 +1,78 @@
+@* The basket drawer: quantities update totals immediately, and free delivery shows how far away it is. *@
+<div class="d-flex flex-column" style="height: 100%">
+    <div class="d-flex align-center px-5 py-3" style="border-bottom: 1px solid var(--mud-palette-lines-default)">
+        <MudText Typo="Typo.h5" HtmlTag="h2" Class="flex-grow-1">Your basket</MudText>
+        <MudIconButton Icon="@Icons.Material.Filled.Close" OnClick="OnClose" aria-label="Close basket" />
+    </div>
+
+    @if (Lines.Count == 0)
+    {
+        <div class="d-flex flex-column align-center justify-center gap-2 pa-8 flex-grow-1">
+            <MudIcon Icon="@Icons.Material.Outlined.ShoppingBag" Size="Size.Large" Color="Color.Secondary" />
+            <MudText Typo="Typo.h6" HtmlTag="p">Your basket is empty</MudText>
+            <MudText Typo="Typo.body2" Class="mud-text-secondary" Align="Align.Center">Add a book from the shelves and it will wait for you here.</MudText>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="OnClose" Class="mt-2">Keep browsing</MudButton>
+        </div>
+    }
+    else
+    {
+        <div class="flex-grow-1 px-5 py-2" style="overflow-y: auto">
+            @foreach (var line in Lines)
+            {
+                <div class="d-flex gap-3 py-4" style="border-bottom: 1px solid var(--mud-palette-lines-default)" @key="line.Book.Id">
+                    <div style="flex: 0 0 3.25rem; aspect-ratio: 2 / 3; border-radius: 2px; overflow: hidden; box-shadow: 2px 3px 8px -4px rgba(0,0,0,.5)">
+                        @((MarkupString)StorefrontData.CoverSvg(line.Book))
+                    </div>
+                    <div class="flex-grow-1" style="min-width: 0">
+                        <MudText Typo="Typo.subtitle2" HtmlTag="h3">@line.Book.Title</MudText>
+                        <MudText Typo="Typo.caption" Class="mud-text-secondary">@line.Book.Author · @StorefrontData.Money(line.Book.Price) each</MudText>
+                        <div class="d-flex align-center gap-2 mt-2">
+                            <div style="width: 6.5rem">
+                                <MudNumericField T="int" Value="line.Quantity" ValueChanged="quantity => SetQuantityAsync(line, quantity)" Min="1" Max="BasketLine.MaxQuantity" Label="Quantity" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                            </div>
+                            <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small" OnClick="() => OnRemove.InvokeAsync(line)" aria-label="@($"Remove {line.Book.Title}")" />
+                        </div>
+                    </div>
+                    <MudText Typo="Typo.subtitle2" HtmlTag="p" Style="white-space: nowrap">@StorefrontData.Money(line.Total)</MudText>
+                </div>
+            }
+        </div>
+
+        <div class="px-5 py-4" style="border-top: 1px solid var(--mud-palette-lines-default); background: var(--mud-palette-background-gray)">
+            @if (Remaining > 0)
+            {
+                <MudText Typo="Typo.body2">Spend <strong>@StorefrontData.Money(Remaining)</strong> more for free delivery.</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.body2" Color="Color.Success" Class="d-flex align-center gap-1"><MudIcon Icon="@Icons.Material.Outlined.LocalShipping" Size="Size.Small" />Free delivery unlocked.</MudText>
+            }
+            <MudProgressLinear Value="@(Math.Min(100, (double)(Subtotal / StorefrontData.FreeShippingThreshold) * 100))" Color="@(Remaining > 0 ? Color.Primary : Color.Success)" Rounded Class="my-3" aria-label="Progress towards free delivery" />
+            <dl class="ma-0" style="display: grid; grid-template-columns: 1fr auto; row-gap: .25rem">
+                <dt>Subtotal</dt><dd class="ma-0" style="text-align: right">@StorefrontData.Money(Subtotal)</dd>
+                <dt>Delivery</dt><dd class="ma-0" style="text-align: right">@(Delivery == 0 ? "Free" : StorefrontData.Money(Delivery))</dd>
+                <dt style="font-weight: 600; font-size: 1.05rem">Total</dt><dd class="ma-0" style="text-align: right; font-weight: 600; font-size: 1.05rem">@StorefrontData.Money(Subtotal + Delivery)</dd>
+            </dl>
+            <MudButton Href="samples/checkout" Variant="Variant.Filled" Color="Color.Primary" FullWidth EndIcon="@Icons.Material.Outlined.ArrowForward" Class="mt-4">Go to checkout</MudButton>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-2" Align="Align.Center">The checkout sample has its own basket.</MudText>
+        </div>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired] public List<BasketLine> Lines { get; set; } = [];
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback<BasketLine> OnRemove { get; set; }
+    /// <summary>Raised after a quantity changes, so the page can refresh its basket badge.</summary>
+    [Parameter] public EventCallback OnChange { get; set; }
+
+    private decimal Subtotal => Lines.Sum(line => line.Total);
+    private decimal Remaining => Math.Max(0, StorefrontData.FreeShippingThreshold - Subtotal);
+    private decimal Delivery => Remaining > 0 ? StorefrontData.ShippingFee : 0;
+
+    private Task SetQuantityAsync(BasketLine line, int quantity)
+    {
+        line.Quantity = Math.Clamp(quantity, 1, BasketLine.MaxQuantity);
+        return OnChange.InvokeAsync();
+    }
+}

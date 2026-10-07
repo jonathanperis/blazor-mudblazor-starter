@@ -1,0 +1,213 @@
+@page "/samples/kanban"
+@attribute [PageSample("Kanban board", "A sprint board for a transit app team: drag cards between columns, respect work-in-progress limits, filter by label or person, and edit cards in a dialog that works on a copy.", Uses = ["MudDropContainer", "MudDropZone", "MudDialog", "MudChipSet", "MudAvatarGroup", "MudDatePicker", "MudSwitch", "MudAlert", "MudSnackbar"])]
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+
+<SamplePageFrame Page="GetType()">
+    <MudPaper Outlined Class="pa-4 pa-md-6 mb-4">
+        <div class="d-flex flex-wrap align-center gap-4">
+            <div class="flex-grow-1">
+                <p class="kicker mb-1">Harbour Line rider app · Sprint 14 · 6–17 October</p>
+                <MudText Typo="Typo.h4" HtmlTag="h2">Make the next bus easy to catch</MudText>
+            </div>
+            <MudAvatarGroup Max="5" Spacing="2" Outlined aria-label="Team">
+                @foreach (var member in KanbanData.Team)
+                {
+                    <MudTooltip Text="@($"{member.Name} · {member.Role}")">
+                        <MudAvatar Color="member.Color" Size="Size.Small" aria-label="@member.Name">@member.Initials</MudAvatar>
+                    </MudTooltip>
+                }
+            </MudAvatarGroup>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Filled.Add" OnClick="() => AddAsync(KanbanData.Backlog)">New card</MudButton>
+        </div>
+        <div class="d-flex align-center gap-3 mt-4">
+            <MudProgressLinear Value="@(100.0 * DonePoints / TotalPoints)" Color="Color.Success" Rounded Size="Size.Medium" Class="flex-grow-1" aria-label="Sprint progress" />
+            <MudText Typo="Typo.caption" Class="mud-text-secondary" Style="white-space: nowrap">@DonePoints of @TotalPoints points done</MudText>
+        </div>
+    </MudPaper>
+
+    <div class="d-flex flex-wrap align-center gap-3 mb-4">
+        <MudTextField T="string" Value="_search" ValueChanged="SearchChanged" Immediate DebounceInterval="200" Placeholder="Filter cards" Label="Filter cards" Variant="Variant.Outlined" Margin="Margin.Dense"
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.FilterList" Clearable Style="max-width: 16rem" />
+        <MudChipSet T="string" SelectedValues="_labelFilter" SelectedValuesChanged="LabelFilterChanged" SelectionMode="SelectionMode.MultiSelection" CheckMark Variant="Variant.Outlined" Size="Size.Small" aria-label="Filter by label">
+            @foreach (var label in KanbanData.Labels)
+            {
+                <MudChip Value="label.Name" SelectedColor="label.Color">@label.Name</MudChip>
+            }
+        </MudChipSet>
+        <MudSpacer />
+        <MudSwitch T="bool" @bind-Value="_enforceLimits" Color="Color.Primary" Label="Enforce WIP limits" />
+    </div>
+
+    @* The container owns every card; each zone shows the cards whose Lane matches its identifier. *@
+    <MudDropContainer T="KanbanCard" @ref="_board" Items="_cards" ItemsSelector="@((card, lane) => card.Lane == lane && Matches(card))" ItemDropped="Dropped"
+                      CanDrop="CanDrop" ApplyDropClassesOnDragStarted CanDropClass="mud-border-success" NoDropClass="mud-border-error">
+        <ChildContent>
+            <div class="d-flex gap-3 pb-2" style="overflow-x: auto">
+                @foreach (var lane in KanbanData.Lanes)
+                {
+                    var count = _cards.Count(card => card.Lane == lane.Id);
+                    var over = lane.Limit is { } limit && count > limit;
+                    var full = lane.Limit is { } cap && count >= cap;
+                    <section class="@($"d-flex flex-column pa-3 rounded {(over ? "mud-border-warning" : "")}")" aria-labelledby="@($"lane-{lane.Id}")"
+                             style="flex: 1 0 16.5rem; min-width: 16.5rem; min-height: 30rem; background: var(--mud-palette-background-gray); border: 1px solid var(--mud-palette-lines-default)">
+                        <div class="d-flex align-center gap-2 mb-2">
+                            <MudIcon Icon="@lane.Icon" Size="Size.Small" Class="mud-text-secondary" />
+                            <MudText Typo="Typo.subtitle2" HtmlTag="h3" id="@($"lane-{lane.Id}")" Class="flex-grow-1">@lane.Title</MudText>
+                            <MudChip T="string" Size="Size.Small" Variant="@(over ? Variant.Filled : Variant.Outlined)" Color="@(over ? Color.Warning : full ? Color.Tertiary : Color.Default)" Class="ma-0"
+                                     aria-label="@(lane.Limit is null ? $"{count} cards" : $"{count} cards, limit {lane.Limit}")">
+                                @(lane.Limit is null ? count.ToString() : $"{count} / {lane.Limit}")
+                            </MudChip>
+                            <MudIconButton Icon="@Icons.Material.Filled.Add" Size="Size.Small" OnClick="() => AddAsync(lane.Id)" aria-label="@($"Add a card to {lane.Title}")" />
+                        </div>
+                        @if (over)
+                        {
+                            <MudAlert Severity="Severity.Warning" Dense Variant="Variant.Outlined" Class="mb-2">Limit is @lane.Limit. Finish work before pulling more.</MudAlert>
+                        }
+                        @if (count > 0 && !_cards.Any(card => card.Lane == lane.Id && Matches(card)))
+                        {
+                            <MudText Typo="Typo.caption" Class="mud-text-secondary d-block pa-2">No card here matches the filters.</MudText>
+                        }
+                        <MudDropZone T="KanbanCard" Identifier="@lane.Id" AllowReorder Class="flex-grow-1 rounded pa-1" Style="border: 1px dashed transparent; min-height: 6rem" />
+                    </section>
+                }
+            </div>
+        </ChildContent>
+        <ItemRenderer>
+            <KanbanCardView Card="context" OnOpen="EditAsync" />
+        </ItemRenderer>
+    </MudDropContainer>
+    <MudText Typo="Typo.caption" Class="mud-text-secondary d-block mt-2">Drag a card to move or reorder it. Without a pointer, open the card and change its column.</MudText>
+</SamplePageFrame>
+
+@code {
+    private readonly List<KanbanCard> _cards = KanbanData.Seed();
+    private MudDropContainer<KanbanCard> _board = null!;
+    private IReadOnlyCollection<string> _labelFilter = [];
+    private string? _search;
+    private bool _enforceLimits;
+    private int _nextId = 100;
+
+    private int TotalPoints => _cards.Sum(card => card.Points);
+    private int DonePoints => _cards.Where(card => card.Lane == KanbanData.Done).Sum(card => card.Points);
+
+    private bool Matches(KanbanCard card) =>
+        (_labelFilter.Count == 0 || card.Labels.Any(_labelFilter.Contains))
+        && (string.IsNullOrWhiteSpace(_search) || card.Title.Contains(_search, StringComparison.OrdinalIgnoreCase)
+            || KanbanData.Member(card.Assignee)?.Name.Contains(_search, StringComparison.OrdinalIgnoreCase) == true);
+
+    // The container caches which card sits in which zone; Refresh asks it to run ItemsSelector again.
+    private void SearchChanged(string? search)
+    {
+        _search = search;
+        _board.Refresh();
+    }
+
+    private void LabelFilterChanged(IReadOnlyCollection<string> labels)
+    {
+        _labelFilter = labels;
+        _board.Refresh();
+    }
+
+    private static KanbanLane Lane(string id) => KanbanData.Lanes.First(lane => lane.Id == id);
+    private int Count(string lane) => _cards.Count(card => card.Lane == lane);
+    private bool HasRoom(string lane) => Lane(lane).Limit is not { } limit || Count(lane) < limit;
+
+    // Moving within a column is always allowed; entering a full column only when limits are advisory.
+    private bool CanDrop(KanbanCard card, string lane) => !_enforceLimits || card.Lane == lane || HasRoom(lane);
+
+    private void Dropped(MudItemDropInfo<KanbanCard> drop)
+    {
+        if (drop.Item is not { } card) return;
+        var from = card.Lane;
+        _cards.Remove(card);
+        card.Lane = drop.DropzoneIdentifier;
+        // IndexInZone counts the visible cards of the target column, so insert relative to those.
+        var visible = _cards.Where(other => other.Lane == card.Lane && Matches(other)).ToList();
+        var index = drop.IndexInZone < visible.Count ? _cards.IndexOf(visible[drop.IndexInZone])
+            : visible.Count > 0 ? _cards.IndexOf(visible[^1]) + 1 : _cards.Count;
+        _cards.Insert(index, card);
+        if (from != card.Lane) Announce(card, from);
+    }
+
+    private void Announce(KanbanCard card, string from)
+    {
+        var lane = Lane(card.Lane);
+        if (lane.Limit is { } limit && Count(lane.Id) > limit)
+            Snackbar.Add($"{lane.Title} is over its limit: {Count(lane.Id)} cards for {limit}.", Severity.Warning);
+        else if (card.Lane == KanbanData.Done)
+            Snackbar.Add($"Done: {card.Title}.", Severity.Success);
+        else
+            Snackbar.Add($"Moved “{card.Title}” from {Lane(from).Title} to {lane.Title}.", Severity.Normal);
+    }
+
+    private async Task AddAsync(string lane)
+    {
+        if (_enforceLimits && !HasRoom(lane))
+        {
+            Snackbar.Add($"{Lane(lane).Title} is full. Finish a card there first, or turn off enforcement.", Severity.Warning);
+            return;
+        }
+        var draft = new KanbanCard { Id = _nextId++, Lane = lane };
+        if (await ShowAsync(draft, isNew: true) is not { } result) return;
+        _cards.Add(result.Card);
+        if (!Matches(result.Card)) Snackbar.Add("Card added. Your filters hide it; clear them to see it.", Severity.Info);
+        _board.Refresh();
+    }
+
+    private async Task EditAsync(KanbanCard card)
+    {
+        if (await ShowAsync(card.Copy(), isNew: false) is not { } result) return;
+        if (result.Delete)
+        {
+            await DeleteAsync(card);
+            return;
+        }
+        var from = card.Lane;
+        card.CopyFrom(result.Card);
+        if (result.Card.Lane != from)
+        {
+            if (_enforceLimits && !HasRoom(result.Card.Lane))
+            {
+                Snackbar.Add($"Saved, but {Lane(result.Card.Lane).Title} is full, so the card stays in {Lane(from).Title}.", Severity.Warning);
+            }
+            else
+            {
+                card.Lane = result.Card.Lane;
+                _cards.Remove(card);
+                _cards.Add(card);
+                Announce(card, from);
+            }
+        }
+        _board.Refresh();
+    }
+
+    private async Task DeleteAsync(KanbanCard card)
+    {
+        var confirmed = await Dialogs.ShowMessageBoxAsync("Delete this card?", $"“{card.Title}” and its checklist will be removed from the board.", yesText: "Delete card", cancelText: "Keep it");
+        if (confirmed != true) return;
+        var index = _cards.IndexOf(card);
+        _cards.Remove(card);
+        _board.Refresh();
+        Snackbar.Add($"Deleted “{card.Title}”.", Severity.Normal, options =>
+        {
+            options.Action = "Undo";
+            options.ActionColor = Color.Primary;
+            options.OnClick = _ => InvokeAsync(() =>
+            {
+                if (!_cards.Contains(card)) _cards.Insert(Math.Min(index, _cards.Count), card);
+                _board.Refresh();
+                StateHasChanged();
+            });
+        });
+    }
+
+    private async Task<KanbanDialogResult?> ShowAsync(KanbanCard card, bool isNew)
+    {
+        var parameters = new DialogParameters<KanbanCardDialog> { { dialog => dialog.Card, card }, { dialog => dialog.IsNew, isNew } };
+        var options = new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true, CloseButton = true };
+        var dialog = await Dialogs.ShowAsync<KanbanCardDialog>(isNew ? "New card" : "Card details", parameters, options);
+        var result = await dialog.Result;
+        return result is { Canceled: false, Data: KanbanDialogResult value } ? value : null;
+    }
+}

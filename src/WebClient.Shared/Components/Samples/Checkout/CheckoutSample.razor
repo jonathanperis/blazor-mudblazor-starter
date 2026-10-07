@@ -1,0 +1,332 @@
+@page "/samples/checkout"
+@attribute [PageSample("Checkout", "A five-step checkout for a tea shop: basket review, a validated address form with masks, delivery options as radio cards, card payment with a checksum, and a review step, beside a live order summary.", Uses = ["MudStepper", "MudStep", "MudForm", "MudTextField", "PatternMask", "MudRadioGroup", "MudNumericField", "MudCheckBox", "MudBadge", "MudChip", "MudSnackbar"])]
+@implements IDisposable
+@inject ISnackbar Snackbar
+
+<SamplePageFrame Page="GetType()">
+    <div class="d-flex flex-wrap align-end gap-4 mb-5">
+        <div class="flex-grow-1">
+            <p class="kicker mb-1">Loose tea since 2009 · @(_placed ? "Order confirmed" : "Secure checkout")</p>
+            <MudText Typo="Typo.h4" HtmlTag="h2">Kettle <em style="color: var(--mud-palette-primary)">&amp;</em> Leaf</MudText>
+        </div>
+        <MudText Typo="Typo.caption" Class="mud-text-secondary d-flex align-center gap-1">
+            <MudIcon Icon="@Icons.Material.Outlined.Lock" Style="font-size: 1rem" />Sample only: nothing is charged or sent.
+        </MudText>
+    </div>
+
+    <MudGrid Spacing="4">
+        <MudItem xs="12" md="7" lg="8">
+            @if (_placed)
+            {
+                <CheckoutConfirmation OrderNumber="@_orderNumber" Address="_address" Delivery="Delivery!" Card="_card" Totals="Totals" OnNewOrder="StartOver" />
+            }
+            else
+            {
+                <MudPaper Outlined Class="pa-2 pa-sm-4">
+                    <MudStepper @ref="_stepper" @bind-ActiveIndex="_step" OnPreviewInteraction="OnStepAsync" ScrollableNavigation
+                                CompletedStepColor="Color.Success" CurrentStepColor="Color.Primary" ErrorStepColor="Color.Error" NavClass="mb-2">
+                        <ChildContent>
+                            <MudStep Title="Basket" HasError="_errors.Contains(0)">
+                                <MudText Typo="Typo.h6" HtmlTag="h3" Class="mb-2">Review your basket</MudText>
+                                @foreach (var line in _cart)
+                                {
+                                    <div class="d-flex flex-wrap align-center gap-3 py-3" style="border-bottom: 1px solid var(--mud-palette-lines-default)" @key="line.Tea.Id">
+                                        <div style="width: 2.75rem; height: 3.6rem; flex: 0 0 auto">@((MarkupString)CheckoutData.TinSvg(line.Tea))</div>
+                                        <div class="flex-grow-1" style="min-width: 10rem">
+                                            <MudText Typo="Typo.subtitle2" HtmlTag="p">@line.Tea.Name</MudText>
+                                            <MudText Typo="Typo.caption" Class="mud-text-secondary">@line.Tea.Origin · @line.Tea.Grams g · @CheckoutData.Money(line.Tea.Price)</MudText>
+                                        </div>
+                                        <div class="d-flex align-center gap-3 ml-auto">
+                                            <div style="width: 6.5rem">
+                                                <MudNumericField T="int" @bind-Value="line.Quantity" Min="1" Max="CartLine.MaxQuantity" Label="Quantity" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                                            </div>
+                                            <MudText Typo="Typo.subtitle2" HtmlTag="p" Style="width: 4.5rem; text-align: right; font-variant-numeric: tabular-nums">@CheckoutData.Money(line.Total)</MudText>
+                                            <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small" OnClick="() => Remove(line)" aria-label="@($"Remove {line.Tea.Name}")" />
+                                        </div>
+                                    </div>
+                                }
+                                @if (_cart.Count == 0)
+                                {
+                                    <MudAlert Severity="@(_errors.Contains(0) ? Severity.Error : Severity.Info)" Variant="Variant.Outlined" Class="my-3">
+                                        Your basket is empty. <MudLink OnClick="RestoreCart" Typo="Typo.body2">Put the sample teas back</MudLink> to continue.
+                                    </MudAlert>
+                                }
+                            </MudStep>
+
+                            <MudStep Title="Address" HasError="_errors.Contains(1)">
+                                <MudText Typo="Typo.h6" HtmlTag="h3" Class="mb-3">Where should we send it?</MudText>
+                                <MudForm @ref="_addressForm" Model="_address">
+                                    <MudGrid Spacing="2">
+                                        <MudItem xs="12">
+                                            <MudTextField @bind-Value="_address.Name" Label="Full name" Variant="Variant.Outlined" Required RequiredError="Enter the recipient's name." autocomplete="name" />
+                                        </MudItem>
+                                        <MudItem xs="12" sm="6">
+                                            <MudTextField @bind-Value="_address.Email" Label="Email" HelperText="For your receipt and tracking." Variant="Variant.Outlined" InputType="InputType.Email"
+                                                          Required RequiredError="Enter an email address." Validation="@(new Func<string?, string?>(CheckoutData.CheckEmail))" autocomplete="email" />
+                                        </MudItem>
+                                        <MudItem xs="12" sm="6">
+                                            <MudTextField @bind-Value="_address.Phone" Label="Mobile number" HelperText="For the courier, 11 digits." Variant="Variant.Outlined" InputType="InputType.Telephone"
+                                                          Mask="_phoneMask" Placeholder="07700 900123" Required RequiredError="Enter a phone number." Validation="@(new Func<string?, string?>(CheckoutData.CheckPhone))" autocomplete="tel" />
+                                        </MudItem>
+                                        <MudItem xs="12">
+                                            <MudTextField @bind-Value="_address.Line1" Label="Address line 1" Variant="Variant.Outlined" Required RequiredError="Enter the street address." autocomplete="address-line1" />
+                                        </MudItem>
+                                        <MudItem xs="12">
+                                            <MudTextField @bind-Value="_address.Line2" Label="Address line 2 (optional)" Variant="Variant.Outlined" autocomplete="address-line2" />
+                                        </MudItem>
+                                        <MudItem xs="12" sm="7">
+                                            <MudTextField @bind-Value="_address.Town" Label="Town or city" Variant="Variant.Outlined" Required RequiredError="Enter the town." autocomplete="address-level2" />
+                                        </MudItem>
+                                        <MudItem xs="12" sm="5">
+                                            <MudTextField @bind-Value="_address.Postcode" Label="Postcode" Variant="Variant.Outlined" Required RequiredError="Enter the postcode."
+                                                          Validation="@(new Func<string?, string?>(CheckoutData.CheckPostcode))" autocomplete="postal-code" Style="text-transform: uppercase" />
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudForm>
+                            </MudStep>
+
+                            <MudStep Title="Delivery" HasError="_errors.Contains(2)">
+                                <MudText Typo="Typo.h6" HtmlTag="h3" Class="mb-3" id="delivery-heading">How fast do you need it?</MudText>
+                                <CheckoutDeliveryOptions Selected="@_deliveryId" SelectedChanged="DeliveryChanged" ShowError="_errors.Contains(2)" />
+                            </MudStep>
+
+                            <MudStep Title="Payment" HasError="_errors.Contains(3)">
+                                <MudText Typo="Typo.h6" HtmlTag="h3" Class="mb-3">Pay by card</MudText>
+                                <MudForm @ref="_paymentForm" Model="_card">
+                                    <MudGrid Spacing="2">
+                                        <MudItem xs="12">
+                                            <MudTextField @bind-Value="_card.Holder" Label="Name on card" Variant="Variant.Outlined" Required RequiredError="Enter the name shown on the card." autocomplete="cc-name" />
+                                        </MudItem>
+                                        <MudItem xs="12">
+                                            <MudTextField @bind-Value="_card.Number" Label="Card number" Variant="Variant.Outlined" Mask="_cardMask" Placeholder="0000 0000 0000 0000" InputMode="InputMode.numeric"
+                                                          Required RequiredError="Enter the card number." Validation="@(new Func<string?, string?>(CheckoutData.CheckCardNumber))" autocomplete="cc-number"
+                                                          Adornment="Adornment.End" AdornmentText="@CheckoutData.CardBrand(_card.Number)"
+                                                          HelperText="Use the test card 4242 4242 4242 4242." />
+                                        </MudItem>
+                                        <MudItem xs="6">
+                                            <MudTextField @bind-Value="_card.Expiry" Label="Expiry" Variant="Variant.Outlined" Mask="_expiryMask" Placeholder="MM/YY" InputMode="InputMode.numeric"
+                                                          Required RequiredError="Enter the expiry date." Validation="@(new Func<string?, string?>(CheckoutData.CheckExpiry))" autocomplete="cc-exp" />
+                                        </MudItem>
+                                        <MudItem xs="6">
+                                            <MudTextField @bind-Value="_card.Cvc" Label="Security code" HelperText="3 digits on the back." Variant="Variant.Outlined" Mask="_cvcMask" InputMode="InputMode.numeric"
+                                                          Required RequiredError="Enter the security code." Validation="@(new Func<string?, string?>(code => PaymentCard.Digits(code).Length is 0 or 3 ? null : "Enter 3 digits."))" autocomplete="cc-csc" />
+                                        </MudItem>
+                                        <MudItem xs="12">
+                                            <MudCheckBox @bind-Value="_billingSame" Color="Color.Primary" Label="The billing address is the delivery address" />
+                                            @if (!_billingSame)
+                                            {
+                                                <MudTextField @bind-Value="_billingPostcode" Label="Billing postcode" Variant="Variant.Outlined" Required RequiredError="Enter the billing postcode."
+                                                              Validation="@(new Func<string?, string?>(CheckoutData.CheckPostcode))" Class="mt-2" Style="max-width: 14rem; text-transform: uppercase" />
+                                            }
+                                        </MudItem>
+                                    </MudGrid>
+                                </MudForm>
+                            </MudStep>
+
+                            <MudStep Title="Review" HasError="_errors.Contains(4)">
+                                <MudText Typo="Typo.h6" HtmlTag="h3" Class="mb-3">Check and place your order</MudText>
+                                <MudGrid Spacing="3">
+                                    <MudItem xs="12" sm="4">
+                                        <CheckoutReviewBlock Title="@(Delivery?.WorkingDays == 0 ? "Your details" : "Delivering to")" OnEdit="() => GoTo(1)">
+                                            @_address.Name<br />
+                                            @_address.Line1<br />
+                                            @if (!string.IsNullOrWhiteSpace(_address.Line2))
+                                            {
+                                                @_address.Line2<br />
+                                            }
+                                            @_address.Town @_address.Postcode.ToUpperInvariant()
+                                        </CheckoutReviewBlock>
+                                    </MudItem>
+                                    <MudItem xs="12" sm="4">
+                                        <CheckoutReviewBlock Title="Delivery" OnEdit="() => GoTo(2)">
+                                            @Delivery?.Title<br /><span class="mud-text-secondary">@Delivery?.Detail</span>
+                                        </CheckoutReviewBlock>
+                                    </MudItem>
+                                    <MudItem xs="12" sm="4">
+                                        <CheckoutReviewBlock Title="Payment" OnEdit="() => GoTo(3)">
+                                            @CheckoutData.CardBrand(_card.Number) •••• @_card.LastFour<br /><span class="mud-text-secondary">Expires @_card.Expiry</span>
+                                        </CheckoutReviewBlock>
+                                    </MudItem>
+                                </MudGrid>
+                                <MudForm @ref="_reviewForm" Class="mt-4">
+                                    <MudCheckBox @bind-Value="_acceptTerms" Color="Color.Primary" Required RequiredError="Accept the terms to place the order."
+                                                 Label="I accept the terms of sale and understand that tea is not returnable once opened." />
+                                </MudForm>
+                            </MudStep>
+                        </ChildContent>
+                        <ActionContent Context="stepper">
+                            <div class="d-flex flex-wrap align-center gap-2 pt-4 px-2" style="width: 100%; border-top: 1px solid var(--mud-palette-lines-default)">
+                                @if (_step > 0)
+                                {
+                                    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.ArrowBack" OnClick="() => stepper.PreviousStepAsync()" Disabled="_placing">Back</MudButton>
+                                }
+                                <MudSpacer />
+                                <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => stepper.NextStepAsync()" Disabled="_placing"
+                                           EndIcon="@(_step == LastStep ? null : Icons.Material.Outlined.ArrowForward)">
+                                    @if (_placing)
+                                    {
+                                        <MudProgressCircular Size="Size.Small" Indeterminate Class="mr-2" />
+                                        <span>Placing order…</span>
+                                    }
+                                    else
+                                    {
+                                        <span>@NextLabel</span>
+                                    }
+                                </MudButton>
+                            </div>
+                        </ActionContent>
+                    </MudStepper>
+                </MudPaper>
+            }
+        </MudItem>
+        <MudItem xs="12" md="5" lg="4">
+            <CheckoutSummary Lines="_cart" Delivery="Delivery" @bind-PromoApplied="_promo" ReadOnly="_placed" />
+        </MudItem>
+    </MudGrid>
+</SamplePageFrame>
+
+@code {
+    private const int LastStep = 4;
+    private int _orders;
+    private readonly CancellationTokenSource _lifetime = new();
+    // Masks keep their own caret state, so each field gets one instance for the page's lifetime. Masked fields are
+    // deliberately not Immediate: re-rendering the page on every key would fight the mask for the caret.
+    private readonly PatternMask _phoneMask = new("00000 000000");
+    private readonly PatternMask _cardMask = new("0000 0000 0000 0000");
+    private readonly PatternMask _expiryMask = new("00/00");
+    private readonly PatternMask _cvcMask = new("000");
+
+    private MudStepper _stepper = null!;
+    private MudForm _addressForm = null!;
+    private MudForm _paymentForm = null!;
+    private MudForm _reviewForm = null!;
+    private List<CartLine> _cart = CheckoutData.StartingCart();
+    private ShippingAddress _address = new();
+    private PaymentCard _card = new();
+    private readonly HashSet<int> _errors = [];
+    private string? _deliveryId;
+    private string? _billingPostcode;
+    private bool _billingSame = true;
+    private bool _acceptTerms;
+    private bool _promo;
+    private bool _placing;
+    private bool _placed;
+    private int _step;
+    private int _furthest;
+    private string _orderNumber = "";
+
+    private DeliveryOption? Delivery => CheckoutData.DeliveryOptions.FirstOrDefault(option => option.Id == _deliveryId);
+    private OrderTotals Totals => OrderTotals.For(_cart, _promo, Delivery);
+
+    private string NextLabel => _step switch
+    {
+        0 => "Continue to address",
+        1 => "Choose delivery",
+        2 => "Continue to payment",
+        3 => "Review order",
+        _ => $"Place order · {CheckoutData.Money(Totals.Total)}"
+    };
+
+    // Next validates the current step; a step header can only open a step already reached.
+    private async Task OnStepAsync(StepperInteractionEventArgs args)
+    {
+        if (args.Action == StepAction.Activate)
+        {
+            args.Cancel = args.StepIndex > _furthest;
+            return;
+        }
+        if (args.Action != StepAction.Complete) return;
+
+        var valid = await ValidateAsync(args.StepIndex);
+        if (valid) _errors.Remove(args.StepIndex); else _errors.Add(args.StepIndex);
+        if (!valid)
+        {
+            args.Cancel = true;
+            return;
+        }
+        if (args.StepIndex == LastStep)
+        {
+            args.Cancel = !await PlaceOrderAsync();
+            return;
+        }
+        _furthest = Math.Max(_furthest, args.StepIndex + 1);
+    }
+
+    private async Task<bool> ValidateAsync(int step)
+    {
+        switch (step)
+        {
+            case 0: return _cart.Count > 0;
+            case 1: await _addressForm.ValidateAsync(); return _addressForm.IsValid;
+            case 2: return Delivery is not null;
+            case 3: await _paymentForm.ValidateAsync(); return _paymentForm.IsValid;
+            default: await _reviewForm.ValidateAsync(); return _reviewForm.IsValid;
+        }
+    }
+
+    private async Task<bool> PlaceOrderAsync()
+    {
+        _placing = true;
+        StateHasChanged();
+        try
+        {
+            await Task.Delay(1400, _lifetime.Token);
+            _orderNumber = $"KL-{20480 + ++_orders}";
+            _placed = true;
+            Snackbar.Add($"Order {_orderNumber} placed. Thank you!", Severity.Success);
+            return true;
+        }
+        catch (OperationCanceledException)
+        {
+            return false;
+        }
+        finally
+        {
+            _placing = false;
+        }
+    }
+
+    private void GoTo(int step) => _step = step;
+
+    private void DeliveryChanged(string? id)
+    {
+        _deliveryId = id;
+        _errors.Remove(2);
+    }
+
+    private void Remove(CartLine line)
+    {
+        var index = _cart.IndexOf(line);
+        _cart.Remove(line);
+        Snackbar.Add($"Removed {line.Tea.Name}.", Severity.Normal, options =>
+        {
+            options.Action = "Undo";
+            options.ActionColor = Color.Primary;
+            options.OnClick = _ => InvokeAsync(() =>
+            {
+                if (!_placed && !_cart.Contains(line)) _cart.Insert(Math.Min(index, _cart.Count), line);
+                StateHasChanged();
+            });
+        });
+    }
+
+    private void RestoreCart()
+    {
+        _cart = CheckoutData.StartingCart();
+        _errors.Remove(0);
+    }
+
+    private void StartOver()
+    {
+        (_cart, _address, _card) = (CheckoutData.StartingCart(), new ShippingAddress(), new PaymentCard());
+        (_deliveryId, _billingPostcode, _billingSame, _acceptTerms, _promo) = (null, null, true, false, false);
+        (_step, _furthest, _placed) = (0, 0, false);
+        _errors.Clear();
+    }
+
+    public void Dispose()
+    {
+        _lifetime.Cancel();
+        _lifetime.Dispose();
+    }
+}
