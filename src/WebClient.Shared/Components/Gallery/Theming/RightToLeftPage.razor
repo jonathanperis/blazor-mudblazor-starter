@@ -1,0 +1,7 @@
+@page "/components/right-to-left"
+@attribute [ComponentPage("Right-to-left", GalleryGroup.Theming, "MudRTLProvider sets dir=\"rtl\" on its content and cascades RightToLeft to every MudBlazor component inside, which mirrors layout, icons and spacing for Arabic, Hebrew, Persian and Urdu.", MudDocs = "rtl-languages", Types = ["MudRTLProvider"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(RightToLeftProvider)" Title="Mirror an interface" Description="Switch direction and watch the toolbar, breadcrumbs, field adornments, buttons, chips and pagination mirror. Directional icons do not flip themselves, so the forward arrow is chosen by direction. Wrap your whole layout in MudRTLProvider to change an app; here it wraps one panel." />
+    <Example Of="typeof(RightToLeftCulture)" Title="Direction is not culture" Description="Direction decides layout; the culture decides digits, calendars and formats. Arabic (Saudi Arabia) uses Eastern Arabic digits and the Islamic calendar, Hebrew uses Western digits, and Persian uses its own digits." />
+</ComponentPageFrame>

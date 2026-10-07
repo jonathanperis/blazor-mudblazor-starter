@@ -1,0 +1,8 @@
+@page "/components/theme"
+@attribute [ComponentPage("Theme", GalleryGroup.Theming, "MudThemeProvider turns a MudTheme into CSS variables that every component reads: palette, typography, shape and shadows. Change the theme once instead of styling components one by one.", MudDocs = "themeprovider", Types = ["MudThemeProvider", "MudTheme", "PaletteLight", "PaletteDark", "Typography", "LayoutProperties"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ThemePaletteVariables)" Title="The palette, as CSS variables" Description="Each palette color becomes a --mud-palette-* variable on the page. These swatches read the variables directly, so the dark-mode switch in the app bar changes them all at once." />
+    <Example Of="typeof(ThemeBuilder)" Title="Theme builder" Description="Pick colors and a corner radius, check the contrast, and copy the MudTheme. The preview overrides the same variables on its own container, so the rest of this page keeps the site's theme." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(ThemeCustomCss)" Title="Your own CSS, theme-aware" Description="Use the palette variables in your own styles and they follow the theme, including dark mode, with no extra code." />
+</ComponentPageFrame>

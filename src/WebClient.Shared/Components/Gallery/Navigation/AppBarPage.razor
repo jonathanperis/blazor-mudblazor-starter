@@ -1,5 +1,5 @@
 @page "/components/app-bar"
-@attribute [ComponentPage("App bar", GalleryGroup.Navigation, "The bar at the top (or bottom) of an application that carries its title, navigation toggle and global actions. Use one per layout; page-level actions belong in a toolbar.", MudDocs = "appbar", Types = ["MudAppBar"])]
+@attribute [ComponentPage("App bar", GalleryGroup.Navigation, "The bar at the top (or bottom) of an application that carries its title, navigation toggle and global actions. Use one per layout; page-level actions belong in a toolbar.", MudDocs = "appbar", Types = ["MudAppBar", "MudContextualActionBar"])]
 
 <ComponentPageFrame Page="GetType()">
     <Example Of="typeof(AppBarBasic)" Title="Basic app bar" Description="A navigation toggle, a title and a few global actions. Every icon-only button carries an accessible name. These previews set Fixed to false so the bar stays inside its frame." />
@@ -7,5 +7,6 @@
     <Example Of="typeof(AppBarDenseAndElevation)" Title="Density and elevation" Description="Dense reduces the bar from 64 to 48 pixels. Elevation sets the shadow; zero suits a bar that sits on a rule or a coloured page." />
     <Example Of="typeof(AppBarBottom)" Title="Bottom app bar" Description="Bottom pins a fixed bar to the bottom of the viewport, within thumb reach on phones. This frame keeps the bar in normal flow at the end of a flex column." />
     <Example Of="typeof(AppBarToolbarContent)" Title="Search, status and account" Description="A realistic header: brand, a live status chip, a search field, notifications with an unread count, and an account menu." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(AppBarContextualActions)" Title="Contextual action bar" Description="MudContextualActionBar is an app bar shown only while Visible is true, typically while items are selected. It names the selection and offers actions for it; clearing the selection brings the normal bar back." />
     <Example Of="typeof(AppBarPlayground)" Title="Playground" Description="Change any parameter; the markup below shows only the values that differ from the defaults." PreviewClass="example-preview-flush" />
 </ComponentPageFrame>

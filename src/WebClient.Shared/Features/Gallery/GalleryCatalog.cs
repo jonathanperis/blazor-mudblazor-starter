@@ -47,6 +47,7 @@ public static class GalleryCatalog
         GalleryGroup.Feedback => "Feedback and overlays",
         GalleryGroup.Navigation => "Navigation",
         GalleryGroup.Layout => "Layout and structure",
+        GalleryGroup.Theming => "Theming and globalization",
         _ => group.ToString()
     };
 
