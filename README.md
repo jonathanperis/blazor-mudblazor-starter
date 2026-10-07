@@ -24,7 +24,7 @@ Open **http://localhost:5000/labs**. For local TLS, run `dotnet run --project sr
 
 ## Component gallery and page samples
 
-`/components` shows MudBlazor 9 components in working examples, each beside the exact Razor that rendered it, with tables of every parameter combination and playgrounds that write the markup. `/samples` holds complete pages — dashboard, sign-in, settings, storefront, kanban, inbox and more — composed only from MudBlazor components. See the [gallery guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/gallery/).
+`/components` shows MudBlazor 9 components in working examples, each beside the exact Razor that rendered it, with tables of every parameter combination and playgrounds that write the markup and share their settings as a link. Press Ctrl+K (⌘K) anywhere to search every lab, component, example and sample. `/samples` holds complete pages — dashboard, sign-in, settings, storefront, kanban, inbox and more — composed only from MudBlazor components. See the [gallery guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/gallery/).
 
 ## Choose a lab
 
