@@ -1,0 +1,39 @@
+@* Radio cards: a real radio group for keyboard and screen readers, drawn as outlined cards with the price and arrival date. *@
+<MudRadioGroup T="string" Value="Selected" ValueChanged="SelectedChanged" Name="delivery" aria-labelledby="delivery-heading" Style="width: 100%">
+    <div class="d-flex flex-column gap-2" style="width: 100%">
+        @foreach (var option in CheckoutData.DeliveryOptions)
+        {
+            var chosen = option.Id == Selected;
+            <MudPaper Outlined Class="@($"pl-2 pr-4 py-2 d-flex align-center gap-2 {(chosen ? "mud-border-primary" : "")}")"
+                      Style="@($"border-width: {(chosen ? 2 : 1)}px; background: {(chosen ? "color-mix(in srgb, var(--mud-palette-primary) 6%, var(--mud-palette-surface))" : "var(--mud-palette-surface)")}")">
+                <MudRadio T="string" Value="option.Id" Color="Color.Primary" Class="flex-grow-1 ma-0">
+                    <span class="d-flex align-center gap-3 py-1">
+                        <MudIcon Icon="@option.Icon" Class="@(chosen ? "mud-primary-text" : "mud-text-secondary")" />
+                        <span>
+                            <span class="d-block" style="font-weight: 600">@option.Title</span>
+                            <span class="d-block mud-text-secondary" style="font-size: .8125rem">@option.Detail</span>
+                            <span class="d-block" style="font-size: .8125rem">@Arrival(option)</span>
+                        </span>
+                    </span>
+                </MudRadio>
+                <MudText Typo="Typo.subtitle1" HtmlTag="span" Style="font-variant-numeric: tabular-nums; font-weight: 600">@(option.Price == 0 ? "Free" : CheckoutData.Money(option.Price))</MudText>
+            </MudPaper>
+        }
+    </div>
+</MudRadioGroup>
+@if (ShowError && Selected is null)
+{
+    <MudText Typo="Typo.body2" Color="Color.Error" Class="mt-2 d-flex align-center gap-1" role="alert">
+        <MudIcon Icon="@Icons.Material.Outlined.ErrorOutline" Size="Size.Small" />Choose how you would like to receive your order.
+    </MudText>
+}
+
+@code {
+    [Parameter] public string? Selected { get; set; }
+    [Parameter] public EventCallback<string?> SelectedChanged { get; set; }
+    [Parameter] public bool ShowError { get; set; }
+
+    private static string Arrival(DeliveryOption option) => option.WorkingDays == 0
+        ? "Ready today from 14:00"
+        : $"Arrives by {CheckoutData.AddWorkingDays(CheckoutData.Today, option.WorkingDays).ToString("dddd d MMMM", CultureInfo.InvariantCulture)}";
+}

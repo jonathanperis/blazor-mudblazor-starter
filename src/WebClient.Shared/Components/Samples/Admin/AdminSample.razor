@@ -1,0 +1,312 @@
+@page "/samples/admin"
+@attribute [PageSample("Admin records", "Member records for a public library: a data grid that pages, sorts and filters on a simulated server with latency, cancellation and failures, plus bulk actions, an edit dialog on a copy, delete confirmation and CSV export.", Uses = ["MudDataGrid", "SelectColumn", "PropertyColumn", "TemplateColumn", "MudDataGridPager", "MudDialog", "MudMessageBox", "MudRadioGroup", "MudNumericField", "MudAlert", "MudSnackbar"])]
+@implements IDisposable
+@inject IDialogService Dialogs
+@inject ISnackbar Snackbar
+@inject IJSRuntime Js
+
+<SamplePageFrame Page="GetType()">
+    <div class="d-flex flex-wrap align-end gap-4 mb-4">
+        <div class="flex-grow-1">
+            <p class="kicker mb-1">Elm Street Public Library · Circulation desk</p>
+            <MudText Typo="Typo.h4" HtmlTag="h2">Members</MudText>
+        </div>
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.FileDownload" OnClick="ExportAsync" Disabled="_exporting">
+            @(Selected.Count > 0 ? $"Export {Selected.Count} selected" : "Export matches as CSV")
+        </MudButton>
+    </div>
+
+    <MudGrid Spacing="3" Class="mb-4">
+        @foreach (var (label, value, note) in Stats)
+        {
+            <MudItem xs="6" md="3">
+                <MudPaper Outlined Class="pa-4" Style="height: 100%">
+                    <MudText Typo="Typo.overline" HtmlTag="p" Class="mud-text-secondary">@label</MudText>
+                    <MudText Typo="Typo.h4" HtmlTag="p" Style="font-variant-numeric: tabular-nums">@value</MudText>
+                    <MudText Typo="Typo.caption" Class="mud-text-secondary">@note</MudText>
+                </MudPaper>
+            </MudItem>
+        }
+    </MudGrid>
+
+    @* The simulation panel is part of the lesson: slow the "server" down or break it, and watch the grid cope. *@
+    <MudPaper Outlined Class="pa-3 mb-4 d-flex flex-wrap align-center gap-4" Style="border-style: dashed">
+        <MudIcon Icon="@Icons.Material.Outlined.Science" Class="mud-text-secondary" />
+        <MudSelect T="int" Value="_latency" ValueChanged="LatencyChanged" Label="Simulated latency" Variant="Variant.Outlined" Margin="Margin.Dense" Dense Style="max-width: 12rem">
+            <MudSelectItem Value="150">Fast · 150 ms</MudSelectItem>
+            <MudSelectItem Value="450">Typical · 450 ms</MudSelectItem>
+            <MudSelectItem Value="1500">Slow · 1.5 s</MudSelectItem>
+        </MudSelect>
+        <MudSwitch T="bool" Value="_directory.Unreliable" ValueChanged="UnreliableChanged" Color="Color.Error" Label="Make the server fail" />
+        <MudText Typo="Typo.caption" Class="mud-text-secondary flex-grow-1" Style="font-family: var(--font-mono)" role="status">@_log</MudText>
+    </MudPaper>
+
+    @if (_error is not null)
+    {
+        <MudAlert Severity="Severity.Error" Variant="Variant.Outlined" Class="mb-4" role="alert">
+            <div class="d-flex flex-wrap align-center gap-3">
+                <span class="flex-grow-1">Could not load members. @_error</span>
+                <MudButton Size="Size.Small" Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Outlined.Refresh" OnClick="RetryAsync">Try again</MudButton>
+            </div>
+        </MudAlert>
+    }
+
+    <div class="d-flex flex-wrap align-center gap-3 mb-3" role="search" aria-label="Filter members">
+        <div style="flex: 1 1 14rem; max-width: 22rem">
+            <MudTextField T="string" Value="_search" ValueChanged="SearchChanged" Immediate DebounceInterval="300" Label="Search members" Placeholder="Name, email or card"
+                          Variant="Variant.Outlined" Margin="Margin.Dense" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" Clearable />
+        </div>
+        <div style="flex: 0 1 10rem">
+            <MudSelect T="string" Value="_branch" ValueChanged="BranchChanged" Label="Branch" Placeholder="All branches" Variant="Variant.Outlined" Margin="Margin.Dense" Dense Clearable>
+                @foreach (var branch in MemberDirectory.Branches)
+                {
+                    <MudSelectItem Value="branch">@branch</MudSelectItem>
+                }
+            </MudSelect>
+        </div>
+        <div style="flex: 0 1 10rem">
+            <MudSelect T="MemberStatus?" Value="_status" ValueChanged="StatusChanged" Label="Status" Placeholder="Any status" Variant="Variant.Outlined" Margin="Margin.Dense" Dense Clearable>
+                @foreach (var status in Enum.GetValues<MemberStatus>())
+                {
+                    <MudSelectItem T="MemberStatus?" Value="status">@status</MudSelectItem>
+                }
+            </MudSelect>
+        </div>
+    </div>
+
+    @if (Selected.Count > 0)
+    {
+        <MudPaper Outlined Class="px-4 py-2 mb-2 d-flex flex-wrap align-center gap-2 mud-border-primary" Style="background: color-mix(in srgb, var(--mud-palette-primary) 7%, var(--mud-palette-surface))">
+            <MudText Typo="Typo.subtitle2" Class="mr-2" role="status">@Selected.Count selected</MudText>
+            <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="ClearSelection">Clear</MudButton>
+            <MudSpacer />
+            <MudButton Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.PauseCircle" OnClick="() => SetStatusAsync(MemberStatus.Suspended)">Suspend</MudButton>
+            <MudButton Size="Size.Small" Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.PlayCircle" OnClick="() => SetStatusAsync(MemberStatus.Active)">Reactivate</MudButton>
+            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Error" StartIcon="@Icons.Material.Outlined.Delete" OnClick="() => DeleteAsync(Selected.ToList())">Delete</MudButton>
+        </MudPaper>
+    }
+
+    <MudDataGrid T="LibraryMember" @ref="_grid" ServerData="LoadAsync" @bind-SelectedItems="_selected" Comparer="MemberComparer.Instance" MultiSelection
+                 Hover Dense Outlined Elevation="0" RowsPerPage="10" Breakpoint="Breakpoint.None" HorizontalScrollbar SortMode="SortMode.Single" Filterable="false" ShowColumnOptions="false"
+                 LoadingProgressColor="Color.Primary">
+        <Columns>
+            <SelectColumn T="LibraryMember" AriaLabelFunc="@(member => member is null ? "Select all on this page" : $"Select {member.Name}")" />
+            <PropertyColumn Property="member => member.Name" Title="Member">
+                <CellTemplate>
+                    <div class="d-flex align-center gap-3" style="min-width: 10.5rem">
+                        <MudAvatar Size="Size.Small" Color="Color.Secondary" Variant="Variant.Outlined" aria-hidden="true">@context.Item.Initials</MudAvatar>
+                        <div style="min-width: 0">
+                            <MudText Typo="Typo.body2" Style="font-weight: 600">@context.Item.Name</MudText>
+                            <MudText Typo="Typo.caption" Class="mud-text-secondary" Style="font-family: var(--font-mono)">@context.Item.CardNumber</MudText>
+                        </div>
+                    </div>
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="member => member.Branch" />
+            <PropertyColumn Property="member => member.Tier" Title="Membership" />
+            <PropertyColumn Property="member => member.Status">
+                <CellTemplate>
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="StatusColor(context.Item.Status)" Icon="@StatusIcon(context.Item.Status)" Class="ma-0">@context.Item.Status</MudChip>
+                </CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="member => member.Joined">
+                <CellTemplate><span style="white-space: nowrap">@context.Item.Joined.ToString("d MMM yyyy", CultureInfo.InvariantCulture)</span></CellTemplate>
+            </PropertyColumn>
+            <PropertyColumn Property="member => member.Loans" HeaderStyle="text-align: right" CellStyle="text-align: right; font-variant-numeric: tabular-nums" />
+            <PropertyColumn Property="member => member.Fines" HeaderStyle="text-align: right" CellStyle="text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap">
+                <CellTemplate>
+                    @if (context.Item.Fines > 0)
+                    {
+                        <span>@Money(context.Item.Fines)</span>
+                    }
+                    else
+                    {
+                        <span class="mud-text-secondary">—</span>
+                    }
+                </CellTemplate>
+            </PropertyColumn>
+            @* Sticky, so the actions stay visible while a narrow screen scrolls the table sideways. *@
+            <TemplateColumn T="LibraryMember" Title="Actions" Sortable="false" StickyRight HeaderStyle="text-align: right">
+                <CellTemplate>
+                    <div class="d-flex justify-end">
+                        <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="() => EditAsync(context.Item)" aria-label="@($"Edit {context.Item.Name}")" />
+                        <MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small" OnClick="() => DeleteAsync([context.Item])" aria-label="@($"Delete {context.Item.Name}")" />
+                    </div>
+                </CellTemplate>
+            </TemplateColumn>
+        </Columns>
+        <NoRecordsContent>
+            @if (_error is not null)
+            {
+                <MudText Typo="Typo.body2" Class="mud-text-secondary pa-6">Nothing to show until the server answers.</MudText>
+            }
+            else
+            {
+                <div class="d-flex flex-column align-center gap-2 pa-8">
+                    <MudIcon Icon="@Icons.Material.Outlined.PersonSearch" Size="Size.Large" Class="mud-text-secondary" />
+                    <MudText Typo="Typo.subtitle1" HtmlTag="p">No members match these filters</MudText>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="ClearFiltersAsync">Clear filters</MudButton>
+                </div>
+            }
+        </NoRecordsContent>
+        <PagerContent>
+            <MudDataGridPager T="LibraryMember" PageSizeOptions="[10, 25, 50]" />
+        </PagerContent>
+    </MudDataGrid>
+</SamplePageFrame>
+
+@code {
+    private readonly MemberDirectory _directory = new();
+    private readonly CancellationTokenSource _lifetime = new();
+    private MudDataGrid<LibraryMember> _grid = null!;
+    private HashSet<LibraryMember> _selected = new(MemberComparer.Instance);
+    private string? _search;
+    private string? _branch;
+    private MemberStatus? _status;
+    private int _latency = 450;
+    private string? _error;
+    private string _log = "Waiting for the first request…";
+    private int _requests;
+    private int _canceled;
+    private bool _exporting;
+
+    private IReadOnlyCollection<LibraryMember> Selected => _selected;
+    private static string Money(decimal amount) => "£" + amount.ToString("0.00", CultureInfo.InvariantCulture);
+
+    // Status is never color alone: each chip also has its own icon and its name.
+    private static Color StatusColor(MemberStatus status) => status switch
+    {
+        MemberStatus.Active => Color.Success,
+        MemberStatus.Suspended => Color.Error,
+        _ => Color.Warning
+    };
+
+    private static string StatusIcon(MemberStatus status) => status switch
+    {
+        MemberStatus.Active => Icons.Material.Outlined.CheckCircle,
+        MemberStatus.Suspended => Icons.Material.Outlined.Block,
+        _ => Icons.Material.Outlined.HourglassBottom
+    };
+
+    private IEnumerable<(string Label, string Value, string Note)> Stats =>
+    [
+        ("Members", _directory.Count.ToString("N0", CultureInfo.InvariantCulture), $"{_directory.JoinedThisMonth} joined this month"),
+        ("Active", _directory.ActiveCount.ToString("N0", CultureInfo.InvariantCulture), $"{100 * _directory.ActiveCount / Math.Max(1, _directory.Count)}% of all cards"),
+        ("On loan", _directory.LoansOut.ToString("N0", CultureInfo.InvariantCulture), "items checked out"),
+        ("Fines owed", Money(_directory.FinesOwed), "across all branches")
+    ];
+
+    private MemberQuery Query(int page = 0, int pageSize = 10, SortDefinition<LibraryMember>? sort = null) =>
+        new(page, pageSize, sort?.SortBy, sort?.Descending ?? false, _search, _branch, _status);
+
+    // The grid cancels the token when a newer request starts; the lifetime token also stops work when the page closes.
+    private async Task<GridData<LibraryMember>> LoadAsync(GridState<LibraryMember> state, CancellationToken token)
+    {
+        var number = ++_requests;
+        using var linked = CancellationTokenSource.CreateLinkedTokenSource(token, _lifetime.Token);
+        var query = Query(state.Page, state.PageSize, state.SortDefinitions.FirstOrDefault());
+        var started = DateTime.UtcNow;
+        try
+        {
+            var page = await _directory.QueryAsync(query, linked.Token);
+            _error = null;
+            var sort = query.SortBy is null ? "" : $", sorted by {query.SortBy} {(query.Descending ? "↓" : "↑")}";
+            _log = $"Request {number}: page {query.Page + 1}{sort}, {page.Total} matches in {(DateTime.UtcNow - started).TotalMilliseconds:0} ms. {_canceled} superseded request{(_canceled == 1 ? "" : "s")} canceled.";
+            return new GridData<LibraryMember> { Items = page.Items, TotalItems = page.Total };
+        }
+        catch (OperationCanceledException) when (linked.IsCancellationRequested)
+        {
+            _canceled++;
+            throw;
+        }
+        catch (HttpRequestException error)
+        {
+            _error = error.Message;
+            _log = $"Request {number} failed after {(DateTime.UtcNow - started).TotalMilliseconds:0} ms.";
+            return new GridData<LibraryMember> { Items = [], TotalItems = 0 };
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+
+    private Task ReloadAsync() => _grid.ReloadServerData();
+    private Task SearchChanged(string? value) { _search = value; return ReloadAsync(); }
+    private Task BranchChanged(string? value) { _branch = value; return ReloadAsync(); }
+    private Task StatusChanged(MemberStatus? value) { _status = value; return ReloadAsync(); }
+    private void LatencyChanged(int value) => (_latency, _directory.Latency) = (value, TimeSpan.FromMilliseconds(value));
+    private Task RetryAsync() => ReloadAsync();
+
+    private Task UnreliableChanged(bool value)
+    {
+        _directory.Unreliable = value;
+        return ReloadAsync();
+    }
+
+    private Task ClearFiltersAsync()
+    {
+        (_search, _branch, _status) = (null, null, null);
+        return ReloadAsync();
+    }
+
+    private void ClearSelection() => _selected = new HashSet<LibraryMember>(MemberComparer.Instance);
+
+    private async Task EditAsync(LibraryMember member)
+    {
+        var parameters = new DialogParameters<AdminMemberDialog> { { dialog => dialog.Member, member.Copy() } };
+        var dialog = await Dialogs.ShowAsync<AdminMemberDialog>("Edit member", parameters, new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true });
+        if (await dialog.Result is not { Canceled: false, Data: LibraryMember changed }) return;
+        _directory.Save(changed);
+        Snackbar.Add($"Saved {changed.Name}.", Severity.Success);
+        await ReloadAsync();
+    }
+
+    private async Task SetStatusAsync(MemberStatus status)
+    {
+        var count = _selected.Count;
+        _directory.SetStatus(_selected, status);
+        ClearSelection();
+        Snackbar.Add($"{(status == MemberStatus.Active ? "Reactivated" : "Suspended")} {count} member{(count == 1 ? "" : "s")}.", Severity.Success);
+        await ReloadAsync();
+    }
+
+    private async Task DeleteAsync(List<LibraryMember> members)
+    {
+        var who = members.Count == 1 ? members[0].Name : $"{members.Count} members";
+        var confirmed = await Dialogs.ShowMessageBoxAsync($"Delete {who}?",
+            "Their card stops working at once and their loan history is removed. This cannot be undone.", yesText: "Delete", cancelText: "Cancel");
+        if (confirmed != true) return;
+        _directory.Delete(members);
+        _selected.ExceptWith(members);
+        Snackbar.Add($"Deleted {who}.", Severity.Normal);
+        await ReloadAsync();
+    }
+
+    private async Task ExportAsync()
+    {
+        _exporting = true;
+        try
+        {
+            // Export reads from the directory, so it always contains the latest saved values.
+            var query = Query(sort: _grid.SortDefinitions.Values.FirstOrDefault());
+            var rows = _selected.Count > 0 ? _directory.Export(query, _selected.Select(member => member.CardNumber)) : _directory.Export(query);
+            await Js.InvokeVoidAsync("learningFiles.download", "library-members.csv", MemberCsv.Export(rows));
+            Snackbar.Add($"Exported {rows.Count} member{(rows.Count == 1 ? "" : "s")} to library-members.csv.", Severity.Success);
+        }
+        catch (JSException)
+        {
+            Snackbar.Add("The browser blocked the download. Allow downloads for this page and try again.", Severity.Error);
+        }
+        finally
+        {
+            _exporting = false;
+        }
+    }
+
+    public void Dispose()
+    {
+        _lifetime.Cancel();
+        _lifetime.Dispose();
+    }
+}

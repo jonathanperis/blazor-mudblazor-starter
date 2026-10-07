@@ -1,0 +1,56 @@
+@* One row of the message list. The open button, the checkbox and the star are separate controls, never nested. *@
+<div class="d-flex align-start gap-1 pl-1 pr-2 py-2" style="@RowStyle">
+    <MudCheckBox T="bool" Value="Checked" ValueChanged="CheckedChanged" Size="Size.Small" Dense Color="Color.Primary" UncheckedColor="Color.Default" aria-label="@($"Select “{Message.Subject}”")" />
+    <button type="button" @onclick="() => OnOpen.InvokeAsync(Message)" aria-current="@(Selected ? "true" : null)"
+            style="display: block; flex: 1; min-width: 0; padding: .35rem .25rem; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; border-radius: 4px">
+        <span class="d-flex align-center gap-2">
+            @if (Message.Unread)
+            {
+                <span aria-hidden="true" style="flex: 0 0 .5rem; height: .5rem; border-radius: 50%; background: var(--mud-palette-primary)"></span>
+                <span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%)">Unread.</span>
+            }
+            <span class="flex-grow-1" style="@($"min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: {(Message.Unread ? 600 : 400)}")">
+                <MudHighlighter Text="@(Message.Folder is MailFolder.Sent or MailFolder.Drafts ? $"To: {Message.To}" : Message.From)" HighlightedText="@Search" Style="@InboxData.MarkStyle" />
+            </span>
+            <span class="mud-text-secondary" style="font-size: .75rem; white-space: nowrap">@InboxData.When(Message.Received)</span>
+        </span>
+        <span class="d-block" style="@($"overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .875rem; font-weight: {(Message.Unread ? 600 : 400)}")">
+            <MudHighlighter Text="@Message.Subject" HighlightedText="@Search" Style="@InboxData.MarkStyle" />
+        </span>
+        <span class="d-block mud-text-secondary" style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .8125rem">
+            <MudHighlighter Text="@Message.Preview" HighlightedText="@Search" Style="@InboxData.MarkStyle" />
+        </span>
+        @if (Message.Labels.Length > 0 || Message.Attachments.Length > 0)
+        {
+            <span class="d-flex align-center gap-2 mt-1" style="font-size: .7rem">
+                @foreach (var label in Message.Labels)
+                {
+                    <span class="@InboxData.LabelClass(label)" style="font-family: var(--font-mono); text-transform: uppercase; letter-spacing: .06em">@label</span>
+                }
+                @if (Message.Attachments.Length > 0)
+                {
+                    <span class="d-flex align-center mud-text-secondary"><MudIcon Icon="@Icons.Material.Outlined.Attachment" Style="font-size: .95rem" />@Message.Attachments.Length</span>
+                }
+            </span>
+        }
+    </button>
+    <MudToggleIconButton Toggled="Message.Starred" ToggledChanged="starred => OnStar.InvokeAsync(Message)" Icon="@Icons.Material.Outlined.StarBorder" ToggledIcon="@Icons.Material.Filled.Star"
+                         ToggledColor="Color.Tertiary" Size="Size.Small" aria-label="@($"Star “{Message.Subject}”")" aria-pressed="@(Message.Starred ? "true" : "false")" />
+</div>
+
+@code {
+    [Parameter, EditorRequired] public InboxMessage Message { get; set; } = null!;
+    [Parameter] public bool Selected { get; set; }
+    [Parameter] public bool Checked { get; set; }
+    [Parameter] public EventCallback<bool> CheckedChanged { get; set; }
+    [Parameter] public string? Search { get; set; }
+    [Parameter] public EventCallback<InboxMessage> OnOpen { get; set; }
+    [Parameter] public EventCallback<InboxMessage> OnStar { get; set; }
+
+    // The open row is tinted and ruled in the accent, checked rows are tinted, unread rows stand out on the surface colour.
+    private string RowStyle =>
+        "border-bottom: 1px solid var(--mud-palette-lines-default); " + (Selected
+            ? "background: color-mix(in srgb, var(--mud-palette-primary) 9%, transparent); box-shadow: inset 3px 0 0 var(--mud-palette-primary)"
+            : Checked ? "background: color-mix(in srgb, var(--mud-palette-primary) 5%, transparent)"
+            : Message.Unread ? "background: var(--mud-palette-surface)" : "background: color-mix(in srgb, var(--mud-palette-background-gray) 55%, transparent)");
+}
