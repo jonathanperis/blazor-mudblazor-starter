@@ -1,16 +1,13 @@
 <MudPaper Outlined="true" Style="overflow: hidden">
-    @* The contextual bar replaces the normal bar while something is selected, and offers actions for the selection only. *@
-    @if (_selected.Count == 0)
-    {
-        <MudAppBar Fixed="false" Dense="true" Elevation="0">
-            <MudText Typo="Typo.subtitle1">Field photos</MudText>
-            <MudSpacer />
-            <MudText Typo="Typo.caption">@_photos.Count photos</MudText>
-        </MudAppBar>
-    }
+    @* A Contextual app bar hosts the contextual action bar: while it is Visible, its content replaces the bar's own. *@
+    <MudAppBar Contextual="true" Fixed="false" Dense="true" Elevation="0">
+        <MudText Typo="Typo.subtitle1">Field photos</MudText>
+        <MudSpacer />
+        <MudText Typo="Typo.caption">@_photos.Count photos</MudText>
+    </MudAppBar>
     <MudContextualActionBar Visible="@(_selected.Count > 0)" Fixed="false" Dense="true" Color="Color.Primary" Elevation="0">
-        <MudIconButton Icon="@Icons.Material.Outlined.Close" Color="Color.Inherit" aria-label="Clear selection" OnClick="() => _selected.Clear()" />
-        <MudText Typo="Typo.subtitle1" role="status">@_selected.Count selected</MudText>
+        <MudIconButton Icon="@Icons.Material.Outlined.Close" Color="Color.Inherit" aria-label="Clear selection" OnClick="Clear" />
+        <MudText Typo="Typo.subtitle1">@_selected.Count selected</MudText>
         <MudSpacer />
         <MudIconButton Icon="@Icons.Material.Outlined.Share" Color="Color.Inherit" aria-label="Share selected photos" OnClick="@(() => Act("Shared"))" />
         <MudIconButton Icon="@Icons.Material.Outlined.Archive" Color="Color.Inherit" aria-label="Archive selected photos" OnClick="@(() => Act("Archived"))" />
@@ -21,7 +18,8 @@
             <MudListItem Value="photo" Text="@photo" Icon="@Icons.Material.Outlined.Image" />
         }
     </MudList>
-    <MudText Typo="Typo.caption" Class="px-4 pb-3 d-block">@_status</MudText>
+    @* The bar's buttons disappear with the selection, so focus moves here and the result is announced. *@
+    <p class="mud-typography mud-typography-caption px-4 pb-3 ma-0" tabindex="-1" role="status" @ref="_statusElement">@_status</p>
 </MudPaper>
 
 @code {
@@ -35,9 +33,27 @@
         set => _selected = [.. value];
     }
 
+    private ElementReference _statusElement;
+    private bool _moveFocus;
+
+    private void Clear()
+    {
+        _selected = [];
+        _status = "Selection cleared.";
+        _moveFocus = true;
+    }
+
     private void Act(string verb)
     {
         _status = $"{verb} {_selected.Count} photo{(_selected.Count == 1 ? "" : "s")}.";
         _selected = [];
+        _moveFocus = true;
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!_moveFocus) return;
+        _moveFocus = false;
+        await _statusElement.FocusAsync();
     }
 }
