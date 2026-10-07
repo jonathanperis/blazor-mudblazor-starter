@@ -203,7 +203,7 @@
         _weekly = Days > 31;
         _buckets = Bucket(DashboardData.Daily(_shop, _start, _end));
         var previousBuckets = Bucket(DashboardData.Daily(_shop, previousStart, previousEnd));
-        var bucketStarts = Enumerable.Range(0, _buckets.Count).Select(index => _start.AddDays(index * (_weekly ? 7 : 1))).ToList();
+        var bucketStarts = Enumerable.Range(0, _buckets.Count).Select(index => _start.AddDays(index * (_weekly ? 7.0 : 1.0))).ToList();
         var labelEvery = (int)Math.Ceiling(bucketStarts.Count / 7.0);
         _revenueLabels = bucketStarts.Select((day, index) => index % labelEvery == 0 ? DashboardData.Date(day, "d MMM") : "").ToArray();
 

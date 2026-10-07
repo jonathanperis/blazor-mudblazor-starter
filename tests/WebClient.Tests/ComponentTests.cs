@@ -147,7 +147,8 @@ public sealed class ComponentTests : BunitContext, IAsyncLifetime
         var loading = page.FindAll("button").Single(button => button.TextContent.Trim() == "Load page").ClickAsync(new MouseEventArgs());
         page.WaitForAssertion(() => Assert.NotNull(page.Find("[aria-label='Loading API page']")));
         page.FindAll("button").Single(button => button.TextContent.Contains("Reset experiment")).Click();
-        handler.Response.SetResult(new HttpResponseMessage(HttpStatusCode.OK) { Content = JsonContent.Create(new ForecastPage(ForecastData.Generate(1), 1)) });
+        using var late = new HttpResponseMessage(HttpStatusCode.OK) { Content = JsonContent.Create(new ForecastPage(ForecastData.Generate(1), 1)) };
+        handler.Response.SetResult(late);
         await loading;
         Assert.Contains("Experiment reset. Load a new page.", page.Markup);
         Assert.Empty(page.FindAll("table"));

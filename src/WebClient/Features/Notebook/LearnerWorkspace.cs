@@ -27,7 +27,11 @@ public sealed class LearnerWorkspace(string id = "")
         if (context.Request.Cookies.TryGetValue(CookieName, out var cookie))
         {
             try { id = protector.Unprotect(cookie); }
-            catch (CryptographicException) { }
+            catch (CryptographicException)
+            {
+                // Tampered, or protected by a key that no longer exists: issue a new workspace below.
+                id = null;
+            }
         }
         if (!Guid.TryParseExact(id, "N", out _)) id = Guid.NewGuid().ToString("N");
         context.Response.Cookies.Append(CookieName, protector.Protect(id), new CookieOptions

@@ -54,7 +54,7 @@
         _options.ChartPalette = [$"var(--mud-palette-{Accent.ToString().ToLowerInvariant()})"];
         // A sparkline shows shape, not scale: stretch the range to 0–100 so small movements stay visible.
         var (min, max) = Trend.Count == 0 ? (0, 0) : (Trend.Min(), Trend.Max());
-        var scaled = Trend.Select(value => max == min ? 50 : 6 + 88 * (value - min) / (max - min)).ToArray();
+        var scaled = Trend.Select(value => max <= min ? 50 : 6 + 88 * (value - min) / (max - min)).ToArray();
         var series = new ChartSeries<double> { Name = Label, Data = scaled };
         _series = [series];
         _options.SeriesDisplayOverrides = new Dictionary<IChartSeries, MudBlazor.Charts.SeriesDisplayOverride>
