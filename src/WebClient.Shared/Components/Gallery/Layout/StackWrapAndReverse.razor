@@ -1,0 +1,28 @@
+<MudStack Spacing="5">
+    @foreach (var wrap in Enum.GetValues<Wrap>())
+    {
+        <div>
+            <MudText Typo="Typo.overline" HtmlTag="p">Wrap.@wrap</MudText>
+            <MudPaper Outlined="true" Class="pa-2" Style="max-width: 24rem; overflow-x: auto">
+                <MudStack Row="true" Wrap="wrap" Spacing="2">
+                    @foreach (var genre in Genres)
+                    {
+                        <MudChip T="string" Size="Size.Small" Class="ma-0">@genre</MudChip>
+                    }
+                </MudStack>
+            </MudPaper>
+        </div>
+    }
+    <div>
+        <MudText Typo="Typo.overline" HtmlTag="p">Reverse</MudText>
+        <MudStack Row="true" Reverse="true" Spacing="2">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary">1. Save</MudButton>
+            <MudButton Variant="Variant.Outlined">2. Preview</MudButton>
+            <MudButton Variant="Variant.Text">3. Cancel</MudButton>
+        </MudStack>
+    </div>
+</MudStack>
+
+@code {
+    private static readonly string[] Genres = ["Poetry", "Crime", "Travel", "Natural history", "Biography", "Cookery", "Science fiction"];
+}

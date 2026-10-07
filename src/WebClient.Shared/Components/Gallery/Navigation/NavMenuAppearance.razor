@@ -1,0 +1,25 @@
+<MudGrid Spacing="6">
+    @foreach (var (title, dense, margin, bordered, rounded) in Variants)
+    {
+        <MudItem xs="12" sm="6" md="3">
+            <MudText Typo="Typo.overline" HtmlTag="p">@title</MudText>
+            <MudPaper Outlined="true" Class="py-2">
+                <MudNavMenu Dense="dense" Margin="margin" Bordered="bordered" Rounded="rounded" Color="Color.Primary">
+                    <MudNavLink Href="components/nav-menu" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Menu">Nav menu</MudNavLink>
+                    <MudNavLink Href="components/tabs" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Tab">Tabs</MudNavLink>
+                    <MudNavLink Href="components/stepper" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.LinearScale">Stepper</MudNavLink>
+                </MudNavMenu>
+            </MudPaper>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    private static readonly (string Title, bool Dense, Margin Margin, bool Bordered, bool Rounded)[] Variants =
+    [
+        ("Default", false, Margin.None, false, false),
+        ("Dense", true, Margin.None, false, false),
+        ("Margin.Normal", false, Margin.Normal, false, false),
+        ("Bordered and rounded", false, Margin.Dense, true, true)
+    ];
+}

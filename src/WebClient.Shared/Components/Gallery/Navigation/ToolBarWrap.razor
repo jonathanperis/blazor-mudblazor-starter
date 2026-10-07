@@ -1,0 +1,17 @@
+@* resize: horizontal lets you drag the frame's corner to change its width. *@
+<MudStack Spacing="4">
+    @foreach (var wrap in new[] { false, true })
+    {
+        <div>
+            <MudText Typo="Typo.overline" HtmlTag="p">WrapContent @(wrap ? "true" : "false")</MudText>
+            <MudPaper Outlined="true" Style="width: 20rem; min-width: 12rem; max-width: 100%; resize: horizontal; overflow: hidden">
+                <MudToolBar WrapContent="wrap" Dense="true" Class="gap-2 py-2">
+                    <MudChip T="string" Size="Size.Small">Arrivals</MudChip>
+                    <MudChip T="string" Size="Size.Small">Departures</MudChip>
+                    <MudChip T="string" Size="Size.Small">Platform changes</MudChip>
+                    <MudChip T="string" Size="Size.Small">Cancellations</MudChip>
+                </MudToolBar>
+            </MudPaper>
+        </div>
+    }
+</MudStack>

@@ -1,0 +1,10 @@
+@page "/components/split-panel"
+@attribute [ComponentPage("Split panel", GalleryGroup.Layout, "Two panels with a draggable divider between them, so readers choose how much room each side gets. Use it for list and detail, editor and preview, or code and output.", MudDocs = "splitpanel", Types = ["MudSplitPanel"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(SplitPanelBasic)" Title="Side by side" Description="FirstPanel and SecondPanel sit left and right of a divider. Drag the divider to share the room; double-click it to return to the starting size." />
+    <Example Of="typeof(SplitPanelHorizontal)" Title="Stacked" Description="Horizontal divides the area with a horizontal line, putting the panels one above the other. Give the split panel a height." />
+    <Example Of="typeof(SplitPanelSizes)" Title="Sizes from code" Description="FirstPanelInitialSize sets the starting size in pixels and MinPanelSize the smallest either panel may become. GetDividerPositionAsync, SetDividerPositionAsync and ResetDividerPositionAsync move the divider from code." />
+    <Example Of="typeof(SplitPanelNested)" Title="Nested panels" Description="A panel can hold another split panel, here a three-pane mail layout." />
+    <Example Of="typeof(SplitPanelPlayground)" Title="Playground" Description="Change any parameter; the markup below shows only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

@@ -1,0 +1,8 @@
+@page "/components/spacer"
+@attribute [ComponentPage("Spacer and flex break", GalleryGroup.Layout, "Two tiny flex helpers. MudSpacer grows to push its neighbours apart; MudFlexBreak forces the items after it onto a new line of a wrapping flex container.", MudDocs = "spacer", Types = ["MudSpacer", "MudFlexBreak"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(SpacerPushToEnd)" Title="Pushing items apart" Description="A spacer takes all the free space in a flex row, so whatever follows it sits at the far end. It works in toolbars, app bars, card actions and any d-flex container." />
+    <Example Of="typeof(SpacerDistribute)" Title="Several spacers" Description="Free space is shared equally between spacers, which centers the middle item between the two ends." />
+    <Example Of="typeof(SpacerFlexBreak)" Title="Flex break" Description="In a wrapping flex container, MudFlexBreak ends the current line. The items after it start a new line no matter how much room is left." />
+</ComponentPageFrame>

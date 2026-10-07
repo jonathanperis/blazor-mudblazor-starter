@@ -1,0 +1,10 @@
+@page "/components/stepper"
+@attribute [ComponentPage("Stepper", GalleryGroup.Navigation, "Leads the reader through a task split into ordered steps, showing where they are and what remains. Use it for multi-part forms such as bookings and checkouts.", MudDocs = "stepper", Types = ["MudStepper", "MudStep"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(StepperLinear)" Title="Linear stepper" Description="By default a stepper is linear: each step must be completed before the next can be reached. The built-in buttons move forward and back; CompletedContent replaces the steps at the end." />
+    <Example Of="typeof(StepperNonLinear)" Title="Non-linear stepper and step states" Description="NonLinear lets readers visit steps in any order by clicking their titles. Each step can be marked completed, in error, skippable or disabled; the switches drive those parameters." />
+    <Example Of="typeof(StepperVertical)" Title="Vertical stepper" Description="Vertical stacks the steps and opens the active one in place, which suits narrow columns and long step content." />
+    <Example Of="typeof(StepperCheckout)" Title="Checkout with validation" Description="Each step holds a MudForm. OnPreviewInteraction validates the current form when the reader presses next, and cancels the move while it is invalid." />
+    <Example Of="typeof(StepperColors)" Title="Colors and centered labels" Description="CurrentStepColor, CompletedStepColor, ErrorStepColor and SkippedStepColor tint the step markers. CenterLabels puts the titles under the markers." />
+</ComponentPageFrame>

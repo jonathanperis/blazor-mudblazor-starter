@@ -1,0 +1,48 @@
+<MudDropContainer @ref="_board" T="LabTask" Items="_tasks" ItemsSelector="(task, column) => task.Column == column" ItemDropped="OnDropped"
+                  Class="d-flex flex-wrap gap-4 pa-4">
+    <ChildContent>
+        @foreach (var column in Columns)
+        {
+            <MudPaper Outlined="true" Class="flex-grow-1 pa-3 mud-background-gray" Style="min-width: 13rem; flex-basis: 0">
+                <MudText Typo="Typo.subtitle2" HtmlTag="h3" Class="mb-2">@column (@_tasks.Count(task => task.Column == column))</MudText>
+                <MudDropZone T="LabTask" Identifier="@column" Class="d-flex flex-column gap-2" Style="min-height: 6rem" />
+            </MudPaper>
+        }
+    </ChildContent>
+    <ItemRenderer>
+        <MudPaper Elevation="1" Class="d-flex align-center pa-2 cursor-grab">
+            <MudText Typo="Typo.body2" Class="flex-grow-1">@context.Title</MudText>
+            <MudIconButton Icon="@Icons.Material.Outlined.ChevronLeft" Size="Size.Small" Disabled="context.Column == Columns[0]"
+                           OnClick="() => Move(context, -1)" aria-label="@($"Move {context.Title} to the previous column")" />
+            <MudIconButton Icon="@Icons.Material.Outlined.ChevronRight" Size="Size.Small" Disabled="context.Column == Columns[^1]"
+                           OnClick="() => Move(context, 1)" aria-label="@($"Move {context.Title} to the next column")" />
+        </MudPaper>
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+    private static readonly string[] Columns = ["Planned", "Running", "Done"];
+
+    private sealed class LabTask(string title, string column)
+    {
+        public string Title { get; } = title;
+        public string Column { get; set; } = column;
+    }
+
+    private MudDropContainer<LabTask>? _board;
+
+    private readonly List<LabTask> _tasks =
+    [
+        new("Order pipette tips", "Planned"), new("Calibrate pH meter", "Planned"),
+        new("Culture batch 12", "Running"), new("Write up titration", "Done")
+    ];
+
+    private static void OnDropped(MudItemDropInfo<LabTask> drop) => drop.Item!.Column = drop.DropzoneIdentifier;
+
+    // Changing an item outside a drop needs Refresh, so the container re-sorts its zones.
+    private void Move(LabTask task, int step)
+    {
+        task.Column = Columns[Array.IndexOf(Columns, task.Column) + step];
+        _board?.Refresh();
+    }
+}

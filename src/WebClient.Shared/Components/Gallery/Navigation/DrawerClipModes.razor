@@ -1,0 +1,47 @@
+<MudStack Spacing="0">
+    <MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="4" Class="pa-4">
+        <MudSelect @bind-Value="_clipMode" Label="ClipMode" Variant="Variant.Outlined" Margin="Margin.Dense" Style="min-width: 12rem">
+            @foreach (var value in Enum.GetValues<DrawerClipMode>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_dense" Label="Dense app bar" Color="Color.Primary" />
+    </MudStack>
+    @* The transform makes this paper the containing block for the layout's fixed app bar and drawer. *@
+    <MudPaper Square="true" Elevation="0" Height="20rem" Class="overflow-hidden border-t border-solid mud-border-lines-default" Style="position: relative; transform: translateZ(0)">
+        <MudLayout>
+            <MudAppBar Elevation="0" Dense="_dense" Color="Color.Secondary">
+                <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="() => _open = !_open"
+                               aria-label="Toggle the navigation drawer" aria-expanded="@(_open ? "true" : "false")" />
+                <MudText Typo="Typo.subtitle1" HtmlTag="span" Class="ml-2">Ledger Lab</MudText>
+            </MudAppBar>
+            <MudDrawer @bind-Open="_open" Variant="DrawerVariant.Persistent" ClipMode="_clipMode" Elevation="1">
+                <MudNavMenu Class="pt-2">
+                    @foreach (var experiment in Experiments)
+                    {
+                        <MudNavLink Icon="@Icons.Material.Outlined.Science" OnClick="() => _experiment = experiment">@experiment</MudNavLink>
+                    }
+                </MudNavMenu>
+            </MudDrawer>
+            @* In an application this is MudMainContent. This preview is nested in the site's own layout, whose
+               drawer classes would also offset a nested MudMainContent, so a plain div follows the drawer instead. *@
+            <div class="@(_dense ? "pt-12" : "pt-14")">
+                <MudText Typo="Typo.h6" HtmlTag="h3" Class="px-4 pt-4">@_experiment</MudText>
+                <MudText Typo="Typo.body2" Class="px-4">
+                    ClipMode.@_clipMode: @(_clipMode switch
+                    {
+                        DrawerClipMode.Never => "the drawer runs the full height and the app bar shortens beside it.",
+                        DrawerClipMode.Docked => "the drawer starts below the app bar while it is docked open.",
+                        _ => "the drawer always starts below the app bar."
+                    })
+                </MudText>
+            </div>
+        </MudLayout>
+    </MudPaper>
+</MudStack>
+
+@code {
+    private static readonly string[] Experiments = ["Titration", "Calorimetry", "Microscopy"];
+    private bool _open = true;
+    private bool _dense = true;
+    private DrawerClipMode _clipMode = DrawerClipMode.Never;
+    private string _experiment = Experiments[0];
+}

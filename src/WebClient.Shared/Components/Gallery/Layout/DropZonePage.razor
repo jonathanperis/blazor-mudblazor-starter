@@ -1,0 +1,9 @@
+@page "/components/drop-zone"
+@attribute [ComponentPage("Drop zone", GalleryGroup.Layout, "Drag and drop between named zones. A MudDropContainer owns the items and decides which zone shows each one; MudDropZone marks the places they can go. Pair every drag with a keyboard alternative.", MudDocs = "dropzone", Types = ["MudDropContainer", "MudDropZone"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(DropZoneBetweenZones)" Title="Moving between zones" Description="ItemsSelector places each item in a zone by its Identifier. ItemDropped tells you where an item landed; updating the item is your job." />
+    <Example Of="typeof(DropZoneReorder)" Title="Reordering within a zone" Description="AllowReorder lets items be dropped between their neighbours. IndexInZone in the drop info gives the new position; the UpdateOrder helper renumbers the list." />
+    <Example Of="typeof(DropZoneRules)" Title="Drop rules" Description="CanDrop on a zone accepts or refuses an item. CanDropClass and NoDropClass style the zones while dragging, so the rule is visible before the drop, not only after it." />
+    <Example Of="typeof(DropZoneKanban)" Title="A compact board" Description="Three columns of tasks. Drag a card, or use its arrow buttons, which do the same without a pointer." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

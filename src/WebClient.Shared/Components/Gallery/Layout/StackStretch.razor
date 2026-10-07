@@ -1,0 +1,21 @@
+<div class="matrix-scroll" role="region" aria-label="MudStack StretchItems values" tabindex="0">
+    <table class="matrix">
+        <caption>MudStack Row: StretchItems</caption>
+        <tbody>
+            @foreach (var stretch in Enum.GetValues<StretchItems>())
+            {
+                <tr>
+                    <th scope="row">StretchItems.@stretch</th>
+                    <td style="width: 100%">
+                        <MudStack Row="true" Spacing="2" StretchItems="stretch">
+                            <MudPaper Outlined="true" Class="pa-2">First</MudPaper>
+                            <MudPaper Outlined="true" Class="pa-2">Middle</MudPaper>
+                            <MudPaper Outlined="true" Class="pa-2">Middle</MudPaper>
+                            <MudPaper Outlined="true" Class="pa-2">Last</MudPaper>
+                        </MudStack>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

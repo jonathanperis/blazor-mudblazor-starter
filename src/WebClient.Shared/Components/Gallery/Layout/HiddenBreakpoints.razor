@@ -1,0 +1,30 @@
+@* One provider feeds every MudHidden below, instead of each registering its own resize listener. *@
+<MudBreakpointProvider>
+    <div class="matrix-scroll" role="region" aria-label="MudHidden for every breakpoint" tabindex="0">
+        <table class="matrix">
+            <caption>MudHidden: Breakpoint, with and without Invert</caption>
+            <thead>
+                <tr>
+                    <th scope="col">Breakpoint</th>
+                    <th scope="col">Matches this window?</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var breakpoint in Enum.GetValues<Breakpoint>().Where(value => value != Breakpoint.None))
+                {
+                    <tr>
+                        <th scope="row">Breakpoint.@breakpoint</th>
+                        <td>
+                            <MudHidden Breakpoint="breakpoint" Invert="true">
+                                <MudChip T="string" Size="Size.Small" Color="Color.Success" Icon="@Icons.Material.Outlined.Check">Yes: Invert shows this</MudChip>
+                            </MudHidden>
+                            <MudHidden Breakpoint="breakpoint">
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.Close">No: plain MudHidden shows this</MudChip>
+                            </MudHidden>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</MudBreakpointProvider>

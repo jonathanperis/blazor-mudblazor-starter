@@ -1,0 +1,22 @@
+<MudStack Spacing="3">
+    <MudTabs @bind-ActivePanelIndex="_index" Outlined="true" Rounded="true" ApplyEffectsToContainer="true" TabPanelsClass="pa-5">
+        <MudTabPanel Text="Telescope">
+            <MudText Typo="Typo.body2">A 0.6 metre Ritchey–Chrétien reflector on a fork mount, cooled for two hours before each session.</MudText>
+        </MudTabPanel>
+        <MudTabPanel Text="Camera">
+            <MudText Typo="Typo.body2">A monochrome CMOS sensor with seven filters: luminance, red, green, blue, hydrogen alpha, oxygen III and sulphur II.</MudText>
+        </MudTabPanel>
+        <MudTabPanel Text="Weather station">
+            <MudText Typo="Typo.body2">Wind 11 km/h from the north-west, humidity 54 percent, sky quality 21.3 magnitudes per square arcsecond.</MudText>
+        </MudTabPanel>
+        <MudTabPanel Text="Spectrograph" Disabled="true" />
+    </MudTabs>
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+        <MudText Typo="Typo.body2">Active index: @_index</MudText>
+        <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="() => _index = 2">Show the weather station</MudButton>
+    </MudStack>
+</MudStack>
+
+@code {
+    private int _index;
+}

@@ -1,0 +1,47 @@
+<MudStack Spacing="3">
+    <MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="2">
+        @foreach (var anchor in new[] { Anchor.Left, Anchor.Right, Anchor.Top, Anchor.Bottom })
+        {
+            <MudButton Variant="Variant.Outlined" OnClick="() => Open(anchor)">From the @anchor.ToString().ToLowerInvariant()</MudButton>
+        }
+        <MudSwitch @bind-Value="_overlay" Label="Overlay" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_overlayAutoClose" Label="Close on overlay click" Color="Color.Primary" Disabled="!_overlay" />
+    </MudStack>
+    @* The transform makes this paper the containing block for the drawer's fixed overlay. *@
+    <MudPaper Outlined="true" Height="18rem" Class="overflow-hidden" Style="position: relative; transform: translateZ(0)">
+        <MudDrawerContainer Class="mud-height-full">
+            @* @key gives each anchor its own drawer instance, so switching edges starts from a clean, closed state. *@
+            <MudDrawer @key="_anchor" @bind-Open="_open" Anchor="_anchor" Variant="DrawerVariant.Temporary" Fixed="false" Elevation="2"
+                       Overlay="_overlay" OverlayAutoClose="_overlayAutoClose" Height="@(_anchor is Anchor.Top or Anchor.Bottom ? "9rem" : null)">
+                <MudDrawerHeader Dense="true">
+                    <MudText Typo="Typo.subtitle1" HtmlTag="span">Route filters</MudText>
+                    <MudSpacer />
+                    <MudIconButton Icon="@Icons.Material.Outlined.Close" Size="Size.Small" OnClick="() => _open = false" aria-label="Close the filters" />
+                </MudDrawerHeader>
+                <MudStack Class="px-4" Spacing="0">
+                    <MudCheckBox @bind-Value="_accessibleOnly" Label="Step-free stops only" Color="Color.Primary" Dense="true" />
+                    <MudCheckBox @bind-Value="_nightServices" Label="Night services" Color="Color.Primary" Dense="true" />
+                </MudStack>
+            </MudDrawer>
+            <div class="pa-4">
+                <MudText Typo="Typo.h6" HtmlTag="h3">Route planner</MudText>
+                <MudText Typo="Typo.body2">The drawer opens over this area. Anchor: @_anchor.</MudText>
+            </div>
+        </MudDrawerContainer>
+    </MudPaper>
+</MudStack>
+
+@code {
+    private bool _open;
+    private Anchor _anchor = Anchor.Left;
+    private bool _overlay = true;
+    private bool _overlayAutoClose = true;
+    private bool _accessibleOnly = true;
+    private bool _nightServices;
+
+    private void Open(Anchor anchor)
+    {
+        _anchor = anchor;
+        _open = true;
+    }
+}

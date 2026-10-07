@@ -1,0 +1,8 @@
+<MudStack AlignItems="AlignItems.Center" Spacing="2">
+    <MudPagination Count="12" @bind-Selected="_page" />
+    <MudText Typo="Typo.body2" role="status">Page @_page of 12</MudText>
+</MudStack>
+
+@code {
+    private int _page = 1;
+}

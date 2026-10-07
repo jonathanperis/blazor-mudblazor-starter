@@ -1,0 +1,8 @@
+@page "/components/hidden"
+@attribute [ComponentPage("Hidden and breakpoints", GalleryGroup.Layout, "MudHidden renders its content only at chosen screen sizes, and MudBreakpointProvider shares one breakpoint listener with everything inside it. Use them when content must change, not just rearrange, between phone and desktop.", MudDocs = "hidden", Types = ["MudHidden", "MudBreakpointProvider"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(HiddenCurrentBreakpoint)" Title="The current breakpoint" Description="MudBreakpointProvider raises OnBreakpointChanged whenever the window crosses a breakpoint. Resize the window and the highlighted size follows." />
+    <Example Of="typeof(HiddenBreakpoints)" Title="Every Breakpoint value" Description="MudHidden hides its content at the given breakpoint; Invert shows it only there. Each row pairs the two, so exactly one of them renders for the current window." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(HiddenResponsiveActions)" Title="Labels on wide screens, icons on narrow" Description="A realistic use: full buttons from md upwards, compact icon buttons with accessible names below it." />
+</ComponentPageFrame>

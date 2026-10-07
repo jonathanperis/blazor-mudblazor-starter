@@ -1,0 +1,18 @@
+<MudGrid Spacing="6">
+    @foreach (var dense in new[] { false, true })
+    {
+        foreach (var gutters in new[] { true, false })
+        {
+            <MudItem xs="12" md="6">
+                <MudText Typo="Typo.overline" HtmlTag="p">Dense @(dense ? "true" : "false") · Gutters @(gutters ? "true" : "false")</MudText>
+                <MudPaper Outlined="true">
+                    <MudToolBar Dense="dense" Gutters="gutters">
+                        <MudText Typo="Typo.subtitle2" HtmlTag="span">Shelf 4B</MudText>
+                        <MudSpacer />
+                        <MudIconButton Icon="@Icons.Material.Outlined.FilterList" aria-label="Filter shelf 4B" />
+                    </MudToolBar>
+                </MudPaper>
+            </MudItem>
+        }
+    }
+</MudGrid>

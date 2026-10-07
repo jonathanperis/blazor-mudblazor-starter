@@ -1,0 +1,28 @@
+<MudGrid Spacing="6">
+    <MudItem xs="12" md="4">
+        <MudText Typo="Typo.overline" HtmlTag="p">Column (default)</MudText>
+        <MudStack>
+            <MudPaper Outlined="true" Class="pa-3">Flour</MudPaper>
+            <MudPaper Outlined="true" Class="pa-3">Water</MudPaper>
+            <MudPaper Outlined="true" Class="pa-3">Salt</MudPaper>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" md="8">
+        <MudText Typo="Typo.overline" HtmlTag="p">Row</MudText>
+        <MudStack Row="true">
+            <MudPaper Outlined="true" Class="pa-3">Flour</MudPaper>
+            <MudPaper Outlined="true" Class="pa-3">Water</MudPaper>
+            <MudPaper Outlined="true" Class="pa-3">Salt</MudPaper>
+        </MudStack>
+        <MudText Typo="Typo.overline" HtmlTag="p" Class="mt-6">Row with Breakpoint.Sm: a column on phones</MudText>
+        <MudStack Row="true" Breakpoint="Breakpoint.Sm">
+            <MudTextField @bind-Value="_first" Label="First name" Variant="Variant.Outlined" Margin="Margin.Dense" />
+            <MudTextField @bind-Value="_last" Label="Last name" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _first = "Ada";
+    private string _last = "Okafor";
+}

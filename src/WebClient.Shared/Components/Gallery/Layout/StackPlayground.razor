@@ -1,0 +1,52 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudPaper Outlined="true" Class="pa-2" Style="width: min(100%, 28rem); min-height: 12rem; display: flex">
+            <MudStack Row="_row" Reverse="_reverse" Spacing="_spacing" Justify="_justify" AlignItems="_alignItems" Wrap="_wrap" StretchItems="_stretch" Class="flex-grow-1">
+                @foreach (var (label, height) in Items)
+                {
+                    <MudPaper Outlined="true" Class="pa-2 mud-background-gray" Style="@($"min-height: {height}px")">@label</MudPaper>
+                }
+            </MudStack>
+        </MudPaper>
+    </Preview>
+    <Controls>
+        <MudSwitch @bind-Value="_row" Label="Row" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_reverse" Label="Reverse" Color="Color.Primary" />
+        <MudNumericField @bind-Value="_spacing" Label="Spacing" Min="0" Max="20" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSelect @bind-Value="_justify" Label="Justify" Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Justify>()) { <MudSelectItem T="Justify?" Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_alignItems" Label="AlignItems" Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<AlignItems>()) { <MudSelectItem T="AlignItems?" Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_wrap" Label="Wrap" Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Wrap>()) { <MudSelectItem T="Wrap?" Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_stretch" Label="StretchItems" Clearable="true" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<StretchItems>()) { <MudSelectItem T="StretchItems?" Value="value">@value</MudSelectItem> }
+        </MudSelect>
+    </Controls>
+</Playground>
+
+@code {
+    private static readonly (string Label, int Height)[] Items = [("Telescope", 32), ("Camera", 56), ("Mount", 40)];
+    private bool _row = true;
+    private bool _reverse;
+    private int _spacing = 3;
+    private Justify? _justify;
+    private AlignItems? _alignItems;
+    private Wrap? _wrap;
+    private StretchItems? _stretch;
+
+    // MudStack defaults: a column, Spacing 3; Justify, AlignItems, Wrap and StretchItems unset (null).
+    private string Code => Snippet.Element("MudStack",
+    [
+        ("Row", Snippet.Flag(_row)),
+        ("Reverse", Snippet.Flag(_reverse)),
+        ("Spacing", _spacing == 3 ? null : _spacing.ToString()),
+        ("Justify", _justify is { } justify ? $"Justify.{justify}" : null),
+        ("AlignItems", _alignItems is { } align ? $"AlignItems.{align}" : null),
+        ("Wrap", _wrap is { } wrap ? $"Wrap.{wrap}" : null),
+        ("StretchItems", _stretch is { } stretch ? $"StretchItems.{stretch}" : null)
+    ], "\n    <MudPaper>Telescope</MudPaper>\n    <MudPaper>Camera</MudPaper>\n    <MudPaper>Mount</MudPaper>\n");
+}

@@ -1,0 +1,9 @@
+@page "/components/toolbar"
+@attribute [ComponentPage("Toolbar", GalleryGroup.Navigation, "A horizontal row of actions and controls for the content beside it, such as an editor or a table. Use a toolbar for page-level actions and keep the app bar for the application.", MudDocs = "toolbar", Types = ["MudToolBar"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ToolBarBasic)" Title="Editor toolbar" Description="Groups of icon buttons separated by vertical dividers, with a spacer pushing the last group to the end. Icon-only buttons carry accessible names and tooltips." />
+    <Example Of="typeof(ToolBarDenseAndGutters)" Title="Dense and gutters" Description="Dense lowers the bar from 64 to 48 pixels. Gutters, on by default, adds horizontal padding; turn it off when the toolbar sits inside an already padded container." />
+    <Example Of="typeof(ToolBarWrap)" Title="Wrapping content" Description="By default a toolbar keeps everything on one line. WrapContent lets the items flow onto a second line when the bar is too narrow; drag the narrow frame wider to compare." />
+    <Example Of="typeof(ToolBarTable)" Title="Above a table" Description="A realistic toolbar for a list: a title, a search field, a filter menu and the primary action." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

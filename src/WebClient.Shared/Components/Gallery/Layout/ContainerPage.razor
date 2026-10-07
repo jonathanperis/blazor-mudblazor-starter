@@ -1,0 +1,9 @@
+@page "/components/container"
+@attribute [ComponentPage("Container", GalleryGroup.Layout, "Centers content horizontally and caps its width. Use it for the main column of a page so lines stay readable on wide screens.", MudDocs = "container", Types = ["MudContainer"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ContainerMaxWidths)" Title="Maximum widths" Description="MaxWidth caps the container from ExtraSmall (444 px) to ExtraExtraLarge (2560 px); False removes the cap. This preview is narrower than 960 px, so Medium and wider simply fill it." />
+    <Example Of="typeof(ContainerGutters)" Title="Gutters" Description="Gutters, on by default, pads the content 16 pixels from the edges, 24 from the sm breakpoint. The dashed line marks the container; the filled band is its content." />
+    <Example Of="typeof(ContainerArticle)" Title="A reading column" Description="A realistic use: MaxWidth.Small keeps an article near 70 characters a line, centered in whatever space the layout gives it." />
+    <Example Of="typeof(ContainerPlayground)" Title="Playground" Description="Fixed snaps the maximum width to the minimum width of the current breakpoint instead of following the window smoothly; it shows only when the window is narrower than the cap. Resize the window to compare." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

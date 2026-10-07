@@ -1,0 +1,49 @@
+<Playground Code="@Code">
+    <Preview>
+        <div style="width: min(100%, 32rem); height: 14rem">
+            @* @key rebuilds the panel when its orientation changes, so the divider starts from a valid position. *@
+            <MudSplitPanel @key="_horizontal" Class="mud-height-full" Horizontal="_horizontal" Elevation="_elevation" Rounded="_rounded"
+                           Transparent="_transparent" PanelGap="_panelGap" Padding="_padding" MinPanelSize="_minPanelSize">
+                <FirstPanel>
+                    <div class="mud-background-gray rounded mud-height-full d-flex align-center justify-center">Map</div>
+                </FirstPanel>
+                <SecondPanel>
+                    <div class="mud-background-gray rounded mud-height-full d-flex align-center justify-center">Timetable</div>
+                </SecondPanel>
+            </MudSplitPanel>
+        </div>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_elevation" Label="Elevation" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in new[] { 0, 1, 2, 4, 8 }) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudNumericField @bind-Value="_panelGap" Label="Panel gap (px)" Min="1" Max="24" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudNumericField @bind-Value="_padding" Label="Padding (px)" Min="0" Max="24" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudNumericField @bind-Value="_minPanelSize" Label="Min panel size (px)" Min="20" Max="150" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSwitch @bind-Value="_horizontal" Label="Horizontal" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_rounded" Label="Rounded" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_transparent" Label="Transparent" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private bool _horizontal;
+    private int _elevation = 1;
+    private bool _rounded = true;
+    private bool _transparent;
+    private int _panelGap = 4;
+    private int _padding = 8;
+    private int _minPanelSize = 50;
+
+    // MudSplitPanel defaults: Horizontal false, Elevation 0, Rounded and Transparent false, PanelGap 4, Padding 0, MinPanelSize 50.
+    private string Code => Snippet.Element("MudSplitPanel",
+    [
+        ("Horizontal", Snippet.Flag(_horizontal)),
+        ("Elevation", _elevation == 0 ? null : _elevation.ToString()),
+        ("Rounded", Snippet.Flag(_rounded)),
+        ("Transparent", Snippet.Flag(_transparent)),
+        ("PanelGap", _panelGap == 4 ? null : _panelGap.ToString()),
+        ("Padding", _padding == 0 ? null : _padding.ToString()),
+        ("MinPanelSize", _minPanelSize == 50 ? null : _minPanelSize.ToString())
+    ], "\n    <FirstPanel>Map</FirstPanel>\n    <SecondPanel>Timetable</SecondPanel>\n");
+}

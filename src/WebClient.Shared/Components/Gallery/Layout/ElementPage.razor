@@ -1,0 +1,8 @@
+@page "/components/element"
+@attribute [ComponentPage("Element", GalleryGroup.Layout, "Renders any HTML tag chosen at run time, with attributes, classes and content passed through. Use it when the right tag depends on data, such as a heading level or a link that is sometimes a span.", MudDocs = "element", Types = ["MudElement"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ElementHtmlTag)" Title="Choosing the tag" Description="HtmlTag names the element to render. Change it and inspect the preview: the content and classes stay, only the tag changes." />
+    <Example Of="typeof(ElementHeadingLevels)" Title="Heading levels from data" Description="An outline whose depth comes from data. Each entry picks its tag from its level, so the headings are real h3 to h6 elements and nest correctly for screen readers." />
+    <Example Of="typeof(ElementLinkOrText)" Title="A link only when there is an address" Description="The same markup renders an anchor when an address exists and a plain span when it does not, so readers never meet a link that goes nowhere. Extra attributes such as href pass straight through." />
+</ComponentPageFrame>

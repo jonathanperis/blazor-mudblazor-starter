@@ -1,0 +1,60 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudPagination Count="_count" @bind-Selected="_selected" Variant="_variant" Color="_color" Size="_size" Rectangular="_rectangular"
+                       DropShadow="_dropShadow" BoundaryCount="_boundaryCount" MiddleCount="_middleCount" ShowFirstButton="_showFirstLast"
+                       ShowLastButton="_showFirstLast" ShowPreviousButton="_showPreviousNext" ShowNextButton="_showPreviousNext" Disabled="_disabled" />
+    </Preview>
+    <Controls>
+        <MudNumericField @bind-Value="_count" Label="Count" Min="1" Max="99" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSelect @bind-Value="_variant" Label="Variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_size" Label="Size" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Size>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudNumericField @bind-Value="_boundaryCount" Label="Boundary count" Min="0" Max="5" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudNumericField @bind-Value="_middleCount" Label="Middle count" Min="1" Max="7" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSwitch @bind-Value="_rectangular" Label="Rectangular" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_dropShadow" Label="Drop shadow" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_showFirstLast" Label="First and last" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_showPreviousNext" Label="Previous and next" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private int _count = 10;
+    private int _selected = 5;
+    private Variant _variant = Variant.Filled;
+    private Color _color = Color.Primary;
+    private Size _size = Size.Small;
+    private int _boundaryCount = 2;
+    private int _middleCount = 3;
+    private bool _rectangular;
+    private bool _dropShadow = true;
+    private bool _showFirstLast;
+    private bool _showPreviousNext = true;
+    private bool _disabled;
+
+    // MudPagination defaults: Variant.Text, Color.Primary, Size.Medium, BoundaryCount 2, MiddleCount 3, previous and next shown.
+    private string Code => Snippet.Element("MudPagination",
+    [
+        ("Count", _count.ToString()),
+        ("@bind-Selected", "_page"),
+        ("Variant", Snippet.Enum(_variant, Variant.Text)),
+        ("Color", Snippet.Enum(_color, Color.Primary)),
+        ("Size", Snippet.Enum(_size, Size.Medium)),
+        ("BoundaryCount", _boundaryCount == 2 ? null : _boundaryCount.ToString()),
+        ("MiddleCount", _middleCount == 3 ? null : _middleCount.ToString()),
+        ("Rectangular", Snippet.Flag(_rectangular)),
+        ("DropShadow", _dropShadow ? null : "false"),
+        ("ShowFirstButton", Snippet.Flag(_showFirstLast)),
+        ("ShowLastButton", Snippet.Flag(_showFirstLast)),
+        ("ShowPreviousButton", _showPreviousNext ? null : "false"),
+        ("ShowNextButton", _showPreviousNext ? null : "false"),
+        ("Disabled", Snippet.Flag(_disabled))
+    ]);
+}

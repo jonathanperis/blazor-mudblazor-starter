@@ -1,0 +1,20 @@
+<MudToolBar Class="gap-3 border-b border-solid mud-border-lines-default">
+    <MudText Typo="Typo.h6" HtmlTag="h3">Sample register</MudText>
+    <MudSpacer />
+    <MudTextField @bind-Value="_search" Placeholder="Search samples" aria-label="Search samples" Variant="Variant.Outlined" Margin="Margin.Dense"
+                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" Class="flex-grow-0" Style="width: 14rem" />
+    <MudMenu Label="@_status" StartIcon="@Icons.Material.Outlined.FilterList" Variant="Variant.Outlined" Size="Size.Small">
+        @foreach (var status in Statuses)
+        {
+            <MudMenuItem OnClick="() => _status = status">@status</MudMenuItem>
+        }
+    </MudMenu>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Add" Size="Size.Small">New sample</MudButton>
+</MudToolBar>
+<MudText Typo="Typo.body2" Class="pa-4">Showing @_status.ToLowerInvariant()@(string.IsNullOrWhiteSpace(_search) ? "" : $" matching “{_search}”").</MudText>
+
+@code {
+    private static readonly string[] Statuses = ["All samples", "Awaiting analysis", "Analysed", "Archived"];
+    private string _search = "";
+    private string _status = Statuses[0];
+}

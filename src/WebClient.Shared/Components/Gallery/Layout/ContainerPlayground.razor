@@ -1,0 +1,32 @@
+<Playground Code="@Code">
+    <Preview>
+        <div class="mud-width-full">
+            <MudContainer MaxWidth="_maxWidth" Fixed="_fixed" Gutters="_gutters" Class="border border-dashed mud-border-lines-default py-2">
+                <div class="mud-background-gray rounded pa-3 text-center">
+                    <MudText Typo="Typo.body2">Container content</MudText>
+                </div>
+            </MudContainer>
+        </div>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_maxWidth" Label="MaxWidth" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<MaxWidth>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_fixed" Label="Fixed" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_gutters" Label="Gutters" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private MaxWidth _maxWidth = MaxWidth.ExtraSmall;
+    private bool _fixed;
+    private bool _gutters = true;
+
+    // MudContainer defaults: MaxWidth.Large, Fixed false, Gutters true.
+    private string Code => Snippet.Element("MudContainer",
+    [
+        ("MaxWidth", Snippet.Enum(_maxWidth, MaxWidth.Large)),
+        ("Fixed", Snippet.Flag(_fixed)),
+        ("Gutters", _gutters ? null : "false")
+    ], "\n    …\n");
+}

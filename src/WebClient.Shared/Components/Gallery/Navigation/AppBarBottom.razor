@@ -1,0 +1,18 @@
+<MudPaper Outlined="true" Class="d-flex flex-column mx-auto overflow-hidden" Style="max-width: 22rem; height: 24rem">
+    <div class="flex-grow-1 overflow-auto pa-4">
+        <MudText Typo="Typo.subtitle1" HtmlTag="h3" GutterBottom="true">Tonight at Ridgeline Observatory</MudText>
+        <MudList T="string" Dense="true">
+            <MudListItem T="string" Icon="@Icons.Material.Outlined.NightsStay" Text="Moonrise" SecondaryText="21:42, waning gibbous" />
+            <MudListItem T="string" Icon="@Icons.Material.Outlined.Visibility" Text="Seeing" SecondaryText="Good, 1.4 arcseconds" />
+            <MudListItem T="string" Icon="@Icons.Material.Outlined.Cloud" Text="Cloud cover" SecondaryText="12 percent, clearing after midnight" />
+            <MudListItem T="string" Icon="@Icons.Material.Outlined.Groups" Text="Public session" SecondaryText="22:00 to 23:30, 18 booked" />
+        </MudList>
+    </div>
+    @* Bottom matters for a fixed bar; with Fixed="false" the flex column puts it last. *@
+    <MudAppBar Bottom="true" Fixed="false" Color="Color.Secondary" Elevation="2">
+        <MudIconButton Icon="@Icons.Material.Outlined.Menu" Color="Color.Inherit" Edge="Edge.Start" aria-label="Open navigation" />
+        <MudSpacer />
+        <MudIconButton Icon="@Icons.Material.Outlined.CalendarMonth" Color="Color.Inherit" aria-label="Observing calendar" />
+        <MudIconButton Icon="@Icons.Material.Outlined.Search" Color="Color.Inherit" Edge="Edge.End" aria-label="Search targets" />
+    </MudAppBar>
+</MudPaper>

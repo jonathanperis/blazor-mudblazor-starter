@@ -1,0 +1,33 @@
+<MudPaper Outlined="true">
+    <MudToolBar>
+        @foreach (var (label, icon) in Formatting)
+        {
+            <MudTooltip Text="@label">
+                <MudIconButton Icon="@icon" aria-label="@label" OnClick="() => _lastAction = label" />
+            </MudTooltip>
+        }
+        <MudDivider Vertical="true" FlexItem="true" Class="mx-2 my-3" />
+        <MudTooltip Text="Insert link">
+            <MudIconButton Icon="@Icons.Material.Outlined.Link" aria-label="Insert link" OnClick="@(() => _lastAction = "Insert link")" />
+        </MudTooltip>
+        <MudTooltip Text="Insert image">
+            <MudIconButton Icon="@Icons.Material.Outlined.Image" aria-label="Insert image" OnClick="@(() => _lastAction = "Insert image")" />
+        </MudTooltip>
+        <MudSpacer />
+        <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.Undo" OnClick="@(() => _lastAction = "Undo")">Undo</MudButton>
+    </MudToolBar>
+    <MudDivider />
+    <MudText Typo="Typo.body2" Class="pa-4" role="status">@(_lastAction is null ? "Choose an action." : $"Last action: {_lastAction}.")</MudText>
+</MudPaper>
+
+@code {
+    private string? _lastAction;
+
+    private static readonly (string Label, string Icon)[] Formatting =
+    [
+        ("Bold", Icons.Material.Outlined.FormatBold),
+        ("Italic", Icons.Material.Outlined.FormatItalic),
+        ("Underline", Icons.Material.Outlined.FormatUnderlined),
+        ("Bulleted list", Icons.Material.Outlined.FormatListBulleted)
+    ];
+}

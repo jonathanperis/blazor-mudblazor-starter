@@ -1,0 +1,31 @@
+@* The divider is a gap between the panels, so the paper's background shows through it as a rule. *@
+<MudPaper Outlined="true" Height="16rem" Class="overflow-hidden" Style="background-color: var(--mud-palette-lines-default)">
+    <MudSplitPanel Class="mud-height-full" FirstPanelInitialSize="220">
+        <FirstPanel>
+            <MudList T="string" @bind-SelectedValue="_selected" Dense="true" Color="Color.Primary">
+                @foreach (var specimen in Specimens.Keys)
+                {
+                    <MudListItem T="string" Value="specimen" Text="@specimen" />
+                }
+            </MudList>
+        </FirstPanel>
+        <SecondPanel>
+            <div class="pa-4">
+                <MudText Typo="Typo.h6" HtmlTag="h3">@_selected</MudText>
+                <MudText Typo="Typo.body2">@Specimens[_selected ?? Specimens.Keys.First()]</MudText>
+            </div>
+        </SecondPanel>
+    </MudSplitPanel>
+</MudPaper>
+
+@code {
+    private static readonly Dictionary<string, string> Specimens = new()
+    {
+        ["Ammonite"] = "Jurassic, Dorset coast. Spiral shell with ribbed whorls, 14 cm across.",
+        ["Trilobite"] = "Cambrian, Morocco. Three-lobed body, complete with both eyes.",
+        ["Fern frond"] = "Carboniferous, South Wales. Impression in shale, fine venation visible.",
+        ["Shark tooth"] = "Eocene, Kent. Serrated edge, glossy enamel intact."
+    };
+
+    private string? _selected = "Ammonite";
+}

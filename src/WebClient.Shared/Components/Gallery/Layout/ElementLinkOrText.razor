@@ -1,0 +1,22 @@
+<MudList T="string" Dense="true">
+    @foreach (var (name, address) in Components)
+    {
+        <MudListItem T="string">
+            @* href is an ordinary attribute: MudElement passes it through to whichever tag it renders. *@
+            <MudElement HtmlTag="@(address is null ? "span" : "a")" href="@address" Class="@(address is null ? "mud-text-secondary" : "mud-primary-text")">
+                @name@(address is null ? " (no page yet)" : "")
+            </MudElement>
+        </MudListItem>
+    }
+</MudList>
+
+@code {
+    // Base-relative addresses keep the links working when the app is hosted below the site root.
+    private static readonly (string Name, string? Address)[] Components =
+    [
+        ("Grid", "components/grid"),
+        ("Stack", "components/stack"),
+        ("Masonry", null),
+        ("Element", "components/element")
+    ];
+}

@@ -1,0 +1,19 @@
+<MudStack Spacing="2">
+    @foreach (var (maxWidth, pixels) in Widths)
+    {
+        <MudContainer MaxWidth="maxWidth" Gutters="false">
+            <MudPaper Outlined="true" Class="px-3 py-2 d-flex justify-space-between">
+                <MudText Typo="Typo.body2">MaxWidth.@maxWidth</MudText>
+                <MudText Typo="Typo.caption">@pixels</MudText>
+            </MudPaper>
+        </MudContainer>
+    }
+</MudStack>
+
+@code {
+    private static readonly (MaxWidth MaxWidth, string Pixels)[] Widths =
+    [
+        (MaxWidth.ExtraSmall, "444 px"), (MaxWidth.Small, "600 px"), (MaxWidth.Medium, "960 px"), (MaxWidth.Large, "1280 px"),
+        (MaxWidth.ExtraLarge, "1920 px"), (MaxWidth.ExtraExtraLarge, "2560 px"), (MaxWidth.False, "no limit")
+    ];
+}

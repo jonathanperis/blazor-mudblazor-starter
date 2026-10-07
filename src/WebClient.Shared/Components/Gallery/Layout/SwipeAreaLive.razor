@@ -1,0 +1,44 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="7">
+        <MudSwipeArea @ref="_area" OnSwipeMove="OnSwipeMove" OnSwipeEnd="Reset" OnSwipeLeave="OnSwipeLeave" PreventDefault="true"
+                      Class="d-flex align-center justify-center rounded mud-background-gray" Style="height: 14rem; user-select: none">
+            <MudText Typo="Typo.body1">Drag in any direction</MudText>
+        </MudSwipeArea>
+    </MudItem>
+    <MudItem xs="12" md="5">
+        <MudSimpleTable Dense="true" Elevation="0" Outlined="true">
+            <thead>
+                <tr><th>Axis</th><th>Direction</th><th class="text-right">Delta</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Horizontal</td><td>@_directions[0]</td><td class="text-right">@($"{_deltas[0]:0} px")</td></tr>
+                <tr><td>Vertical</td><td>@_directions[1]</td><td class="text-right">@($"{_deltas[1]:0} px")</td></tr>
+            </tbody>
+        </MudSimpleTable>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private MudSwipeArea? _area;
+    private SwipeDirection[] _directions = [SwipeDirection.None, SwipeDirection.None];
+    private double[] _deltas = [0, 0];
+
+    private void OnSwipeMove(MultiDimensionSwipeEventArgs args)
+    {
+        _directions = [args.SwipeDirections[0], args.SwipeDirections[1]];
+        _deltas = [args.SwipeDeltas[0] ?? 0, args.SwipeDeltas[1] ?? 0];
+    }
+
+    // Leaving the area ends the gesture: cancel it so the next one starts fresh.
+    private void OnSwipeLeave()
+    {
+        _area?.Cancel();
+        Reset();
+    }
+
+    private void Reset()
+    {
+        _directions = [SwipeDirection.None, SwipeDirection.None];
+        _deltas = [0, 0];
+    }
+}

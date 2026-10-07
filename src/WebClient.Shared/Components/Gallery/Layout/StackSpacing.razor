@@ -1,0 +1,13 @@
+<MudStack Spacing="4">
+    <MudSlider @bind-Value="_spacing" Min="0" Max="20" TickMarks="true" Color="Color.Primary" Style="max-width: 28rem">Spacing: @_spacing (@(_spacing * 4) px)</MudSlider>
+    <MudStack Row="true" Spacing="_spacing">
+        @foreach (var stage in new[] { "Mix", "Rest", "Fold", "Shape", "Bake" })
+        {
+            <MudPaper Outlined="true" Class="pa-3">@stage</MudPaper>
+        }
+    </MudStack>
+</MudStack>
+
+@code {
+    private int _spacing = 3;
+}

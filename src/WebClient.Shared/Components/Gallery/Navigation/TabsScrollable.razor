@@ -1,0 +1,20 @@
+<MudStack Spacing="3" Style="max-width: 36rem">
+    <MudSwitch @bind-Value="_alwaysShowButtons" Label="Always show scroll buttons" Color="Color.Primary" />
+    <MudTabs @bind-ActivePanelIndex="_month" MinimumTabWidth="88px" AlwaysShowScrollButtons="_alwaysShowButtons" Outlined="true" TabPanelsClass="pa-4">
+        @for (var i = 0; i < 12; i++)
+        {
+            @* Copy the loop values into locals: the panel content renders later, after the loop has moved on. *@
+            var month = CultureInfo.InvariantCulture.DateTimeFormat.GetMonthName(i + 1);
+            var sessions = Sessions[i];
+            <MudTabPanel Text="@month">
+                <MudText Typo="Typo.body2">Reading-room bookings for @month: @sessions sessions.</MudText>
+            </MudTabPanel>
+        }
+    </MudTabs>
+</MudStack>
+
+@code {
+    private static readonly int[] Sessions = [31, 28, 40, 36, 44, 39, 22, 18, 47, 52, 49, 26];
+    private bool _alwaysShowButtons;
+    private int _month = 9;
+}

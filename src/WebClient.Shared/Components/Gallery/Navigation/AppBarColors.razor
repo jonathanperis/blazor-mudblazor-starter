@@ -1,0 +1,10 @@
+<MudStack Spacing="2">
+    @foreach (var color in Enum.GetValues<Color>())
+    {
+        <MudAppBar Fixed="false" Dense="true" Elevation="0" Color="color" Class="rounded">
+            <MudText Typo="Typo.body2" HtmlTag="span">Color.@color</MudText>
+            <MudSpacer />
+            <MudIconButton Icon="@Icons.Material.Outlined.Notifications" Color="Color.Inherit" Size="Size.Small" aria-label="@($"Notifications ({color} bar)")" />
+        </MudAppBar>
+    }
+</MudStack>

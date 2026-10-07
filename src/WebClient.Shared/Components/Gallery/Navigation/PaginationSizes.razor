@@ -1,0 +1,23 @@
+@* flex-wrap: nowrap keeps each pagination on one line inside the narrow table cells. *@
+<div class="matrix-scroll" role="region" aria-label="MudPagination sizes and shapes" tabindex="0">
+    <table class="matrix">
+        <caption>MudPagination: Size × shape</caption>
+        <thead>
+            <tr>
+                <th scope="col">Size</th>
+                <th scope="col">Round, filled</th>
+                <th scope="col">Rectangular, outlined</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var size in Enum.GetValues<Size>())
+            {
+                <tr>
+                    <th scope="row">@size</th>
+                    <td><MudPagination Size="size" Variant="Variant.Filled" Count="3" Selected="2" Style="flex-wrap: nowrap" /></td>
+                    <td><MudPagination Size="size" Variant="Variant.Outlined" Rectangular="true" Count="3" Selected="2" Style="flex-wrap: nowrap" /></td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

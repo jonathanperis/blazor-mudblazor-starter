@@ -1,0 +1,32 @@
+<MudDropContainer T="Book" Items="_books" ItemsSelector="(book, zone) => book.Shelf == zone" ItemDropped="OnDropped" Class="d-flex flex-wrap gap-4">
+    <ChildContent>
+        @foreach (var shelf in new[] { "To read", "Reading", "Finished" })
+        {
+            <MudPaper Outlined="true" Class="pa-3 flex-grow-1" Style="min-width: 12rem">
+                <MudText Typo="Typo.subtitle2" HtmlTag="h3" Class="mb-2">@shelf</MudText>
+                <MudDropZone T="Book" Identifier="@shelf" Class="d-flex flex-column gap-2" Style="min-height: 8rem" />
+            </MudPaper>
+        }
+    </ChildContent>
+    <ItemRenderer>
+        <MudPaper Elevation="1" Class="pa-2 cursor-grab">
+            <MudText Typo="Typo.body2">@context.Title</MudText>
+        </MudPaper>
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+    private sealed class Book(string title, string shelf)
+    {
+        public string Title { get; } = title;
+        public string Shelf { get; set; } = shelf;
+    }
+
+    private readonly List<Book> _books =
+    [
+        new("Salt and Cedar", "To read"), new("Winter Moths", "To read"),
+        new("Tidal Notebooks", "Reading"), new("The Glass Orchard", "Finished")
+    ];
+
+    private static void OnDropped(MudItemDropInfo<Book> drop) => drop.Item!.Shelf = drop.DropzoneIdentifier;
+}

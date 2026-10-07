@@ -1,0 +1,31 @@
+<MudStack Spacing="4">
+    <MudPaper Outlined="true" Class="pa-4">
+        <MudStepper @bind-ActiveIndex="_index" NonLinear="true" ShowResetButton="true" ShowSkip="true">
+            <MudStep Title="Collect samples" @bind-Completed="_collected">
+                <MudText Typo="Typo.body2">Six soil cores from the north transect, labelled by depth.</MudText>
+            </MudStep>
+            <MudStep Title="Calibrate the scale" HasError="_calibrationError" SecondaryText="@(_calibrationError ? "Reading drifted by 0.4 g" : null)">
+                <MudText Typo="Typo.body2">Zero the balance with the 100 g reference mass.</MudText>
+            </MudStep>
+            <MudStep Title="Photograph" Skippable="true">
+                <MudText Typo="Typo.body2">Optional: photograph each core against the colour chart. Skip it if the light is poor.</MudText>
+            </MudStep>
+            <MudStep Title="Spectrometry" Disabled="!_spectrometerBooked">
+                <MudText Typo="Typo.body2">Run each sample through the spectrometer.</MudText>
+            </MudStep>
+        </MudStepper>
+    </MudPaper>
+    <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="4" AlignItems="AlignItems.Center">
+        <MudSwitch @bind-Value="_collected" Label="Samples completed" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_calibrationError" Label="Calibration error" Color="Color.Error" />
+        <MudSwitch @bind-Value="_spectrometerBooked" Label="Spectrometer booked" Color="Color.Primary" />
+        <MudText Typo="Typo.body2">ActiveIndex: @_index</MudText>
+    </MudStack>
+</MudStack>
+
+@code {
+    private int _index;
+    private bool _collected;
+    private bool _calibrationError = true;
+    private bool _spectrometerBooked;
+}

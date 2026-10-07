@@ -1,0 +1,22 @@
+<MudStack Spacing="3">
+    <MudSelect @bind-Value="_maxItems" Label="MaxItems" Variant="Variant.Outlined" Margin="Margin.Dense" Style="max-width: 12rem">
+        @foreach (byte value in new byte[] { 2, 3, 4, 7 }) { <MudSelectItem Value="value">@value</MudSelectItem> }
+    </MudSelect>
+    @* @key rebuilds the trail when the limit changes, so it collapses again. *@
+    <MudBreadcrumbs @key="_maxItems" Items="_trail" MaxItems="_maxItems" />
+</MudStack>
+
+@code {
+    private byte _maxItems = 3;
+
+    private readonly List<BreadcrumbItem> _trail =
+    [
+        new("Library", href: "components/breadcrumbs"),
+        new("Special collections", href: "components/breadcrumbs"),
+        new("Maritime", href: "components/breadcrumbs"),
+        new("Logbooks", href: "components/breadcrumbs"),
+        new("HMS Endeavour", href: "components/breadcrumbs"),
+        new("Volume 3", href: "components/breadcrumbs"),
+        new("Folio 112", href: null, disabled: true)
+    ];
+}
