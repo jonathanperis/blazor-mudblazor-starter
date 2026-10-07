@@ -1,0 +1,30 @@
+<MudStack Row Wrap="Wrap.Wrap" Spacing="3" role="group" aria-label="Visible monitoring stations">
+    @foreach (var station in _series)
+    {
+        <MudCheckBox T="bool" @bind-Value="station.Visible" Label="@station.Name" Color="Color.Primary" />
+    }
+</MudStack>
+
+<MudChart T="double" ChartType="ChartType.Line" ChartSeries="_series" ChartLabels="_hours" ChartOptions="_options"
+          CanHideSeries="true" Width="100%" Height="300px" />
+
+@code {
+    private readonly string[] _hours = ["06:00", "08:00", "10:00", "12:00", "14:00", "16:00", "18:00", "20:00"];
+
+    // Fine particulate matter (PM2.5, µg/m³) at four monitoring stations.
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "Ring road", Data = new double[] { 18, 34, 27, 22, 21, 29, 38, 25 } },
+        new() { Name = "City park", Data = new double[] { 9, 12, 11, 10, 9, 11, 13, 10 } },
+        new() { Name = "Harbour", Data = new double[] { 14, 19, 23, 26, 24, 20, 18, 16 } },
+        new() { Name = "Old town", Data = new double[] { 12, 22, 19, 17, 16, 21, 27, 19 } }
+    ];
+
+    private readonly LineChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1", "#D9622B", "#0B9585", "#B07D0E", "#A65DB0", "#4F9A2E"],
+        YAxisTitle = "PM2.5 (µg/m³)",
+        YAxisTicks = 10,
+        LineStrokeWidth = 2
+    };
+}

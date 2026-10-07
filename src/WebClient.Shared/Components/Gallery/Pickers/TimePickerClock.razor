@@ -1,0 +1,15 @@
+<MudGrid Spacing="3">
+    <MudItem xs="12" md="4">
+        <MudTimePicker @bind-Time="_departure" Label="Departure (24-hour)" Variant="Variant.Outlined" HelperText="Default clock" />
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudTimePicker @bind-Time="_departure" Label="Departure (12-hour)" AmPm="true" Variant="Variant.Outlined" HelperText="AmPm with its default format" />
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudTimePicker @bind-Time="_departure" Label="Departure (custom text)" AmPm="true" TimeFormat="h:mm tt" Variant="Variant.Outlined" HelperText="TimeFormat=&quot;h:mm tt&quot;" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private TimeSpan? _departure = new TimeSpan(17, 5, 0);
+}

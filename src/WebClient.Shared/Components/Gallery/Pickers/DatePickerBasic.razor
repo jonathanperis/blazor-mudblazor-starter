@@ -1,0 +1,8 @@
+<MudStack Spacing="2" Style="max-width: 22rem">
+    <MudDatePicker @bind-Date="_visit" Label="Observatory visit" HelperText="Public nights start at 20:00" Variant="Variant.Outlined" />
+    <MudText Typo="Typo.body2" role="status">@(_visit is { } date ? $"Booked for {date:D}." : "No night chosen yet.")</MudText>
+</MudStack>
+
+@code {
+    private DateTime? _visit = new DateTime(2026, 11, 14);
+}

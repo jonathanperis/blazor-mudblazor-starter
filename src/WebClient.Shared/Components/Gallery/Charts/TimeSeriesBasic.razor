@@ -1,0 +1,35 @@
+@using MudBlazor.Charts
+
+<MudChart T="double" ChartType="ChartType.Timeseries" ChartSeries="_series" ChartOptions="_options" Width="100%" Height="320px" />
+
+@code {
+    private static readonly DateTime Dusk = new(2026, 11, 14, 18, 0, 0);
+    private List<ChartSeries<double>> _series = [];
+
+    // Sky brightness in magnitudes per square arcsecond: higher is darker.
+    private readonly TimeSeriesChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1"],
+        TimeLabelSpacing = TimeSpan.FromHours(2),
+        TimeLabelFormat = "HH:mm",
+        TooltipTimeLabelFormat = "HH:mm",
+        YAxisTitle = "Sky brightness (mag/arcsec²)",
+        YAxisTicks = 1,
+        ShowLegend = false
+    };
+
+    protected override void OnInitialized()
+    {
+        var noise = new Random(1114); // seeded, so every visit draws the same night
+        var readings = Enumerable.Range(0, 73).Select(step =>
+        {
+            var time = Dusk.AddMinutes(10 * step);
+            var hours = (time - Dusk).TotalHours;
+            // Darkens through twilight, then brightens after moonrise at 02:00.
+            var darkness = 17.5 + 3.8 * (1 - Math.Exp(-hours / 1.2)) - (hours > 8 ? 0.6 * (hours - 8) : 0);
+            return new TimeValue<double>(time, Math.Round(darkness + noise.NextDouble() * 0.15, 2));
+        }).ToArray();
+
+        _series = [new() { Name = "Sky quality meter", Data = readings }];
+    }
+}

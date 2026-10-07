@@ -1,0 +1,21 @@
+<MudChart T="double" ChartType="ChartType.StackedBar" ChartSeries="_series" ChartLabels="_months" ChartOptions="_options"
+          LegendPosition="Position.Top" Width="100%" Height="320px" />
+
+@code {
+    private readonly string[] _months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "Shop counter", Data = new double[] { 12.4, 11.8, 13.1, 14.0, 15.2, 16.9 } },
+        new() { Name = "Café", Data = new double[] { 6.1, 5.9, 6.8, 7.7, 9.3, 11.0 } },
+        new() { Name = "Wholesale", Data = new double[] { 8.0, 8.0, 8.4, 8.4, 8.9, 9.2 } }
+    ];
+
+    private readonly StackedBarChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1", "#D9622B", "#0B9585", "#B07D0E", "#A65DB0", "#4F9A2E"],
+        YAxisTitle = "Takings (thousand €)",
+        YAxisTicks = 5,
+        BarWidthRatio = 0.6
+    };
+}

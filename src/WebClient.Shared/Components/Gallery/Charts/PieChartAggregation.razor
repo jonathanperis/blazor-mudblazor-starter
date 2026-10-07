@@ -1,0 +1,28 @@
+@using MudBlazor.Charts
+
+<MudRadioGroup T="AggregationOption" @bind-Value="_options.AggregationOption">
+    @foreach (var option in Enum.GetValues<AggregationOption>())
+    {
+        <MudRadio Value="option" Color="Color.Primary">@option</MudRadio>
+    }
+</MudRadioGroup>
+
+<MudChart T="double" ChartType="ChartType.Pie" ChartSeries="_series" ChartLabels="_sources" ChartOptions="_options"
+          LegendPosition="Position.Right" Width="100%" Height="280px" />
+
+@code {
+    private readonly string[] _sources = ["Wind", "Solar", "Gas"];
+
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "2025 (GWh)", Data = new double[] { 231, 150, 168 } },
+        new() { Name = "2026 (GWh)", Data = new double[] { 264, 182, 141 } }
+    ];
+
+    private readonly PieChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1", "#D9622B", "#0B9585", "#B07D0E", "#A65DB0", "#4F9A2E"],
+        AggregationOption = AggregationOption.GroupByLabel,
+        ShowValues = true
+    };
+}

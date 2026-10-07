@@ -1,0 +1,43 @@
+@using MudBlazor.Utilities
+
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="5">
+        <MudStack Spacing="3">
+            <MudColorPicker @bind-Value="_paper" Label="Poster background" Variant="Variant.Outlined" ShowAlpha="false" />
+            <MudColorPicker @bind-Value="_ink" Label="Text color" Variant="Variant.Outlined" ShowAlpha="false" />
+            <MudStack Row Spacing="2" AlignItems="AlignItems.Center" role="status">
+                <MudIcon Icon="@(Readable ? Icons.Material.Outlined.CheckCircle : Icons.Material.Outlined.Warning)"
+                         Color="@(Readable ? Color.Success : Color.Warning)" Size="Size.Small" />
+                <MudText Typo="Typo.body2">
+                    Contrast @Contrast.ToString("0.0"):1 · @(Readable ? "passes" : "fails") WCAG AA for body text (4.5:1)
+                </MudText>
+            </MudStack>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" md="7">
+        <MudPaper Outlined="true" Class="pa-6" Style="@($"background: {_paper}; color: {_ink}")">
+            <MudText Typo="Typo.overline" Style="color: inherit">Municipal observatory · open night</MudText>
+            <MudText Typo="Typo.h4" HtmlTag="p" Style="color: inherit">Saturn at opposition</MudText>
+            <MudText Typo="Typo.body1" Style="color: inherit">
+                The rings tilt toward us this autumn. Telescopes on the roof from 20:00; free entry, warm coats advised.
+            </MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private MudColor _paper = "#F4F1EA";
+    private MudColor _ink = "#2B5C8A";
+
+    private bool Readable => Contrast >= 4.5;
+    private double Contrast => (Math.Max(Luminance(_paper), Luminance(_ink)) + 0.05) / (Math.Min(Luminance(_paper), Luminance(_ink)) + 0.05);
+
+    // WCAG relative luminance of an sRGB color.
+    private static double Luminance(MudColor color) => 0.2126 * Channel(color.R) + 0.7152 * Channel(color.G) + 0.0722 * Channel(color.B);
+
+    private static double Channel(byte value)
+    {
+        var c = value / 255.0;
+        return c <= 0.03928 ? c / 12.92 : Math.Pow((c + 0.055) / 1.055, 2.4);
+    }
+}

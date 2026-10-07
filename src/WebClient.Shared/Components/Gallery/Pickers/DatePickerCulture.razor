@@ -1,0 +1,25 @@
+@using System.Globalization
+
+<MudGrid Spacing="3">
+    @foreach (var culture in _cultures)
+    {
+        <MudItem xs="12" md="4">
+            <MudDatePicker @bind-Date="_date" Culture="culture" TitleDateFormat="ddd, d MMM" Variant="Variant.Outlined"
+                           Label="@culture.DisplayName" HelperText="@Describe(culture)" />
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    private DateTime? _date = new DateTime(2026, 3, 9);
+
+    private readonly CultureInfo[] _cultures =
+    [
+        CultureInfo.GetCultureInfo("pt-BR"),
+        CultureInfo.GetCultureInfo("en-US"),
+        CultureInfo.GetCultureInfo("de-DE")
+    ];
+
+    private static string Describe(CultureInfo culture) =>
+        $"{culture.DateTimeFormat.ShortDatePattern} · weeks start on {culture.DateTimeFormat.GetDayName(culture.DateTimeFormat.FirstDayOfWeek)}";
+}

@@ -1,0 +1,39 @@
+<MudForm @ref="_form">
+    <MudStack Spacing="4" AlignItems="AlignItems.Start" Style="max-width: 36rem">
+        <MudFileUpload T="IBrowserFile" Disabled="true">
+            <CustomContent>
+                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Lock" OnClick="@context.OpenFilePickerAsync" Disabled="true">
+                    Uploads close after the deadline
+                </MudButton>
+            </CustomContent>
+            <SelectedTemplate />
+        </MudFileUpload>
+
+        <MudFileUpload T="IBrowserFile" @bind-Files="_proof" Required="true" RequiredError="Attach proof of address to continue.">
+            <CustomContent>
+                <div>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.AttachFile" OnClick="@context.OpenFilePickerAsync">
+                        Proof of address
+                    </MudButton>
+                </div>
+            </CustomContent>
+        </MudFileUpload>
+
+        <MudStack Row Spacing="2" AlignItems="AlignItems.Center">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SubmitAsync">Submit application</MudButton>
+            <MudText Typo="Typo.body2" role="status">@_status</MudText>
+        </MudStack>
+    </MudStack>
+</MudForm>
+
+@code {
+    private MudForm _form = null!;
+    private IBrowserFile? _proof;
+    private string _status = "";
+
+    private async Task SubmitAsync()
+    {
+        await _form.ValidateAsync();
+        _status = _form.IsValid ? $"Ready to submit with {_proof?.Name}." : "Something is missing.";
+    }
+}

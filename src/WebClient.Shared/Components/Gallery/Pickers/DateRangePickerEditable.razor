@@ -1,0 +1,20 @@
+@using System.Globalization
+
+<MudGrid Spacing="3">
+    <MudItem xs="12" md="6">
+        <MudDateRangePicker @bind-DateRange="_leave" Label="Annual leave" Variant="Variant.Outlined"
+                            Editable="true" Clearable="true" PlaceholderStart="First day" PlaceholderEnd="Last day"
+                            DateFormat="yyyy-MM-dd" HelperText="Type yyyy-MM-dd in each half" />
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudDateRangePicker @bind-DateRange="_leave" Label="Férias" Variant="Variant.Outlined"
+                            Editable="true" Clearable="true" PlaceholderStart="Início" PlaceholderEnd="Fim"
+                            Culture="_brazil" TitleDateFormat="dd MMM" SeparatorIcon="@Icons.Material.Outlined.East"
+                            HelperText="pt-BR: dd/MM/yyyy, month names in Portuguese" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private readonly CultureInfo _brazil = CultureInfo.GetCultureInfo("pt-BR");
+    private DateRange _leave = new(new DateTime(2027, 1, 4), new DateTime(2027, 1, 15));
+}

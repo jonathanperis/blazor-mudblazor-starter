@@ -1,0 +1,18 @@
+<MudStack Spacing="2" Style="max-width: 24rem">
+    <MudDateRangePicker @bind-DateRange="_booking" Label="Cabin booking" Variant="Variant.Outlined"
+                        MinDate="_seasonStart" MaxDate="_seasonEnd" StartMonth="_seasonStart"
+                        MinDays="2" MaxDays="7" IsDateDisabledFunc="IsCleaningDay"
+                        HelperText="Season 1 June to 31 August · 2 to 7 days · no Wednesdays" />
+    <MudText Typo="Typo.body2" role="status">
+        @(_booking is { Start: { } start, End: { } end } ? $"{start:d} – {end:d}" : "No booking yet.")
+    </MudText>
+</MudStack>
+
+@code {
+    private readonly DateTime _seasonStart = new(2027, 6, 1);
+    private readonly DateTime _seasonEnd = new(2027, 8, 31);
+    private DateRange _booking = new();
+
+    // A range cannot span a disabled day unless AllowDisabledDatesInRange is true.
+    private static bool IsCleaningDay(DateTime date) => date.DayOfWeek == DayOfWeek.Wednesday;
+}

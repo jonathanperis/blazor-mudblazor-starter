@@ -1,0 +1,17 @@
+<MudForm>
+    <MudStack Spacing="2" Style="max-width: 22rem">
+        <MudTimePicker @bind-Time="_delivery" Label="Flour delivery" Variant="Variant.Outlined" Editable="true" Clearable="true"
+                       Placeholder="hh:mm" Validation="@(new Func<TimeSpan?, string?>(WithinOpeningHours))"
+                       HelperText="The bakery receives deliveries from 05:00 to 11:00" />
+        <MudText Typo="Typo.body2" role="status">Bound value: @(_delivery?.ToString() ?? "null")</MudText>
+    </MudStack>
+</MudForm>
+
+@code {
+    private TimeSpan? _delivery = new TimeSpan(6, 30, 0);
+    private static readonly TimeSpan Opens = new(5, 0, 0);
+    private static readonly TimeSpan Closes = new(11, 0, 0);
+
+    private static string? WithinOpeningHours(TimeSpan? time) =>
+        time is { } value && (value < Opens || value > Closes) ? "Deliveries arrive between 05:00 and 11:00." : null;
+}

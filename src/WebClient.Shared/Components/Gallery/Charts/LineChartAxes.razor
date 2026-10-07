@@ -1,0 +1,22 @@
+<MudChart T="double" ChartType="ChartType.Line" ChartSeries="_series" ChartLabels="_days" ChartOptions="_options" Width="100%" Height="300px" />
+
+<MudSwitch T="bool" @bind-Value="_options.YAxisRequireZeroPoint" Label="Start the y-axis at zero" Color="Color.Primary" Class="mt-2" />
+
+@code {
+    private readonly string[] _days = ["1 Mar", "2 Mar", "3 Mar", "4 Mar", "5 Mar", "6 Mar", "7 Mar"];
+
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "River level at the old bridge (cm)", Data = new double[] { 231, 235, 242, 258, 271, 266, 252 } }
+    ];
+
+    private readonly LineChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1"],
+        YAxisRequireZeroPoint = false,
+        YAxisTicks = 10,
+        MaxNumYAxisTicks = 8, // thins the labels out when the range grows
+        YAxisFormat = "0 cm",
+        ShowDataMarkers = true
+    };
+}
