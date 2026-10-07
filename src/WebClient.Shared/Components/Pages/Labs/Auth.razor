@@ -1,0 +1,15 @@
+@page "/labs/auth"
+@inject LearningHost Host
+
+<LabFrame Slug="auth">
+    <AuthorizeView>
+        <Authorized Context="auth"><MudText Class="mb-3" role="status">Signed in as @auth.User.Identity?.Name.</MudText></Authorized>
+        <NotAuthorized><MudText Class="mb-3" role="status">Current persona: anonymous.</MudText></NotAuthorized>
+    </AuthorizeView>
+    @* Signing in is host-specific: cookie form posts on the server, a browser-only state provider in the static demo. *@
+    <DynamicComponent Type="Host.AuthPanel" />
+    <AuthorizeView Policy="@LearningPolicies.Instructor">
+        <Authorized><MudAlert Severity="Severity.Success" Class="mt-3">Your current identity satisfies the instructor policy in the UI. Only a server can enforce it for data.</MudAlert></Authorized>
+        <NotAuthorized><MudText Class="mt-3">The UI hides instructor content from anonymous and student personas. Hiding content is not authorization.</MudText></NotAuthorized>
+    </AuthorizeView>
+</LabFrame>

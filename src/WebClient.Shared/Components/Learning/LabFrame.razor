@@ -1,0 +1,66 @@
+@inject NavigationManager Navigation
+@inject LearningHost Host
+
+<PageTitle>@Lab.Title · Blazor learning sandbox</PageTitle>
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4 pb-8">
+    <MudLink Href="labs">← All labs</MudLink>
+    <MudText Typo="Typo.h4" HtmlTag="h1" Class="mt-3">@Lab.Title</MudText>
+    <MudText Typo="Typo.body1" Class="my-3">@Lab.Objective</MudText>
+    <MudStack Row Class="flex-wrap mb-4" AlignItems="AlignItems.Center">
+        <MudChip T="string" Size="Size.Small" Color="Color.Primary">@Lab.Level</MudChip>
+        <MudText Typo="Typo.body2">
+            @Lab.Minutes min · Prerequisites:
+            @if (Lab.Prerequisites.Length == 0)
+            {
+                <span>none</span>
+            }
+            @foreach (var (prerequisite, index) in Lab.Prerequisites.Select((slug, index) => (LabCatalog.Get(slug), index)))
+            {
+                @(index > 0 ? ", " : " ")<MudLink Href="@prerequisite.Href" Typo="Typo.body2">@prerequisite.Title</MudLink>
+            }
+        </MudText>
+        <MudLink Href="@Lab.SourceUrl" Target="_blank" rel="noopener noreferrer">View source</MudLink>
+    </MudStack>
+    @if (Host.LabNotes.TryGetValue(Lab.Slug, out var note))
+    {
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-4">In this @Host.Name host: @note</MudAlert>
+    }
+    <MudPaper Class="pa-4 mb-4" Outlined>
+        <ErrorBoundary @ref="_boundary">
+            <ChildContent><div @key="_generation">@ChildContent</div></ChildContent>
+            <ErrorContent>
+                <MudAlert Severity="Severity.Error">This experiment failed. Reset its state or reload the page to try again.</MudAlert>
+                @if (OnReset.HasDelegate)
+                {
+                    <MudButton OnClick="Recover" Class="mt-2">Reset and retry</MudButton>
+                }
+                else
+                {
+                    <MudButton OnClick="Reload" Class="mt-2" StartIcon="@Icons.Material.Filled.Refresh">Reload lab</MudButton>
+                }
+            </ErrorContent>
+        </ErrorBoundary>
+        @if (OnReset.HasDelegate)
+        {
+            <MudButton OnClick="OnReset" Disabled="ResetDisabled" StartIcon="@Icons.Material.Filled.RestartAlt" Class="mt-4">Reset experiment</MudButton>
+        }
+    </MudPaper>
+    <MudText Typo="Typo.h6" HtmlTag="h2">Why it works</MudText>
+    <MudText Class="mt-2 mb-4">@Lab.Explanation</MudText>
+    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-4">Common mistake: @Lab.Pitfall</MudAlert>
+    <MudText Typo="Typo.h6" HtmlTag="h2">Try it yourself</MudText>
+    <MudText Class="mt-2">@Lab.Exercise</MudText>
+</MudContainer>
+
+@code {
+    [Parameter, EditorRequired] public string Slug { get; set; } = "";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public EventCallback OnReset { get; set; }
+    [Parameter] public bool ResetDisabled { get; set; }
+    private Lab Lab => LabCatalog.Get(Slug);
+    private ErrorBoundary? _boundary;
+    private int _generation;
+    private async Task Recover() { await OnReset.InvokeAsync(); _generation++; _boundary?.Recover(); }
+    // A link to the current address is an in-app navigation that keeps the failed boundary; reload instead.
+    private void Reload() => Navigation.Refresh(forceReload: true);
+}

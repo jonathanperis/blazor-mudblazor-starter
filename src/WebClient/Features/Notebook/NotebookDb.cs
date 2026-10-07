@@ -1,15 +1,6 @@
-using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace WebClient.Features.Notebook;
-
-public sealed class NoteDraft
-{
-    [Required, StringLength(120)] public string Title { get; set; } = "";
-    [StringLength(4000)] public string Text { get; set; } = "";
-}
-
-public sealed record NoteSnapshot(Guid Id, string Title, string Text, Guid Version);
 
 public sealed class Note
 {

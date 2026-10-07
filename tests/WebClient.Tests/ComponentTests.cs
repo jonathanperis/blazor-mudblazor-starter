@@ -8,12 +8,13 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.JSInterop;
 using MudBlazor;
 using MudBlazor.Services;
-using WebClient.Components.Pages;
-using WebClient.Components.Learning;
-using WebClient.Components.Weather;
-using WebClient.Features.Forecasts;
-using WebClient.Features.Learning;
+using WebClient.Components.Server;
 using WebClient.Features.Notebook;
+using WebClient.Shared.Components.Learning;
+using WebClient.Shared.Components.Pages;
+using WebClient.Shared.Components.Weather;
+using WebClient.Shared.Features.Forecasts;
+using WebClient.Shared.Features.Learning;
 
 namespace WebClient.Tests;
 
@@ -22,10 +23,15 @@ public sealed class ComponentTests : BunitContext, IAsyncLifetime
     public Task InitializeAsync() => Task.CompletedTask;
     Task IAsyncLifetime.DisposeAsync() => DisposeAsync().AsTask();
 
+    internal static readonly LearningHost ServerHost = new()
+    {
+        Name = "Blazor Server", IsStaticDemo = false, ScopeLifetime = "circuit", WorkLocation = "server", NotebookStorage = "SQLite",
+        AuthPanel = typeof(ServerAuthPanel), CulturePanel = typeof(ServerCulturePanel), DiagnosticsPanel = typeof(ServerDiagnosticsPanel)
+    };
+
     public ComponentTests()
     {
-        Services.AddMudServices();
-        Services.AddScoped<CircuitCounter>();
+        Services.AddLearningLabs(ServerHost);
         JSInterop.Mode = JSRuntimeMode.Loose;
         Render<MudPopoverProvider>();
     }
@@ -96,16 +102,48 @@ public sealed class ComponentTests : BunitContext, IAsyncLifetime
     }
 
     [Fact]
+    public async Task Preferences_degrade_on_interop_failure_and_keep_a_newer_toggle()
+    {
+        JSInterop.Setup<PreferenceSnapshot>("learningPreferences.read").SetException(new JSException("localStorage is null"));
+        JSInterop.Setup<bool>("learningPreferences.write", _ => true).SetException(new JSException("blocked"));
+        var preferences = new UiPreferences(Services.GetRequiredService<IJSRuntime>());
+        await preferences.LoadAsync();
+        Assert.False(preferences.Available);
+        await preferences.SetThemeAsync(true);
+        Assert.True(preferences.IsDarkMode);
+        Assert.False(preferences.Available);
+
+        await using var context = new BunitContext();
+        var pending = context.JSInterop.Setup<PreferenceSnapshot>("learningPreferences.read");
+        context.JSInterop.Setup<bool>("learningPreferences.write", _ => true).SetResult(true);
+        var racing = new UiPreferences(context.Services.GetRequiredService<IJSRuntime>());
+        var load = racing.LoadAsync();
+        await racing.SetThemeAsync(true);
+        pending.SetResult(new(false, true, true));
+        await load;
+        Assert.True(racing.IsDarkMode);
+    }
+
+    [Fact]
+    public void Self_closing_drawer_is_not_persisted()
+    {
+        var preferences = new UiPreferences(Services.GetRequiredService<IJSRuntime>());
+        preferences.ObserveDrawer(false);
+        Assert.False(preferences.DrawerOpen);
+        Assert.DoesNotContain(JSInterop.Invocations, invocation => invocation.Identifier == "learningPreferences.write");
+    }
+
+    [Fact]
     public async Task Api_reset_ignores_a_late_response()
     {
         await using var context = new BunitContext();
-        context.Services.AddMudServices();
+        context.Services.AddLearningLabs(ServerHost);
         context.JSInterop.Mode = JSRuntimeMode.Loose;
         using var handler = new DelayedResponse();
         using var http = new HttpClient(handler) { BaseAddress = new Uri("http://localhost") };
         context.Services.AddSingleton(new ForecastApiClient(http));
         context.Render<MudPopoverProvider>();
-        var page = context.Render<WebClient.Components.Pages.Labs.Api>();
+        var page = context.Render<WebClient.Shared.Components.Pages.Labs.Api>();
         var loading = page.FindAll("button").Single(button => button.TextContent.Trim() == "Load page").ClickAsync(new MouseEventArgs());
         page.WaitForAssertion(() => Assert.NotNull(page.Find("[aria-label='Loading API page']")));
         page.FindAll("button").Single(button => button.TextContent.Contains("Reset experiment")).Click();
@@ -118,7 +156,7 @@ public sealed class ComponentTests : BunitContext, IAsyncLifetime
     [Fact]
     public async Task Reset_cancels_processing_without_overwriting_reset_status()
     {
-        var page = Render<WebClient.Components.Pages.Labs.Files>();
+        var page = Render<WebClient.Shared.Components.Pages.Labs.Files>();
         var processing = page.FindAll("button").Single(button => button.TextContent.Trim() == "Start processing").ClickAsync(new MouseEventArgs());
         page.WaitForAssertion(() => Assert.Contains("Running", page.Markup));
         page.FindAll("button").Single(button => button.TextContent.Contains("Reset experiment")).Click();
@@ -131,9 +169,8 @@ public sealed class ComponentTests : BunitContext, IAsyncLifetime
     public async Task Root_initializes_circuit_workspace_without_a_live_HttpContext()
     {
         await using var context = new BunitContext();
-        context.Services.AddMudServices();
+        context.Services.AddLearningLabs(ServerHost);
         context.Services.AddScoped<LearnerWorkspace>();
-        context.Services.AddScoped<UiPreferences>();
         context.JSInterop.Mode = JSRuntimeMode.Loose;
         context.JSInterop.Setup<PreferenceSnapshot>("learningPreferences.read").SetResult(new(false, true, true));
         var id = Guid.NewGuid().ToString("N");

@@ -1,0 +1,9 @@
+@* The labs live in WebClient.Shared; this host only adds browser-side services. *@
+<CascadingAuthenticationState>
+    <Router AppAssembly="typeof(LabCatalog).Assembly" NotFoundPage="typeof(WebClient.Shared.Components.Pages.NotFound)">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
+            <FocusOnNavigate RouteData="routeData" Selector="h1" />
+        </Found>
+    </Router>
+</CascadingAuthenticationState>

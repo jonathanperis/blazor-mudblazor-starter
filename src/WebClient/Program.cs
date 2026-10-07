@@ -4,26 +4,33 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
-using MudBlazor;
-using MudBlazor.Services;
-using MudBlazor.Translations;
 using WebClient.Components;
+using WebClient.Components.Server;
 using WebClient.Features.Forecasts;
 using WebClient.Features.Identity;
-using WebClient.Features.Learning;
 using WebClient.Features.Notebook;
+using WebClient.Shared.Features.Forecasts;
+using WebClient.Shared.Features.Learning;
+using WebClient.Shared.Features.Notebook;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
-builder.Services.AddMudServices(options => options.SnackbarConfiguration.PositionClass = Defaults.Classes.Position.BottomRight);
-builder.Services.AddMudTranslations();
-builder.Services.AddLocalization();
+builder.Services.AddLearningLabs(new LearningHost
+{
+    Name = "Blazor Server",
+    IsStaticDemo = false,
+    ScopeLifetime = "circuit",
+    WorkLocation = "server",
+    NotebookStorage = "SQLite on the server, scoped to this browser by a protected workspace cookie",
+    AuthPanel = typeof(ServerAuthPanel),
+    CulturePanel = typeof(ServerCulturePanel),
+    DiagnosticsPanel = typeof(ServerDiagnosticsPanel)
+});
 builder.Services.Configure<RequestLocalizationOptions>(options => options
-    .SetDefaultCulture("en-US").AddSupportedCultures(DemoIdentity.Cultures).AddSupportedUICultures(DemoIdentity.Cultures));
+    .SetDefaultCulture(LearningCultures.Default).AddSupportedCultures(LearningCultures.Supported).AddSupportedUICultures(LearningCultures.Supported));
+// The security-header middleware below sends X-Frame-Options: DENY for every response.
+builder.Services.AddAntiforgery(options => options.SuppressXFrameOptionsHeader = true);
 builder.Services.Configure<FormOptions>(options => { options.ValueLengthLimit = 4096; options.ValueCountLimit = 16; });
-builder.Services.AddScoped<CircuitCounter>();
-builder.Services.AddScoped<UiPreferences>();
-builder.Services.AddSingleton<ForecastCatalog>();
 var apiBase = builder.Configuration["Learning:ApiBaseUrl"] ?? "http://127.0.0.1:5000/";
 builder.Services.AddHttpClient<ForecastApiClient>(client => { client.BaseAddress = new Uri(apiBase); client.Timeout = TimeSpan.FromSeconds(10); });
 builder.Services.AddHttpClient("LearningApi", client => { client.BaseAddress = new Uri(apiBase); client.Timeout = TimeSpan.FromSeconds(10); });
@@ -33,7 +40,7 @@ Directory.CreateDirectory(dataDirectory);
 builder.Services.AddDataProtection().PersistKeysToFileSystem(new DirectoryInfo(Path.Combine(dataDirectory, "keys"))).SetApplicationName("BlazorLearningSandbox");
 builder.Services.AddDbContextFactory<NotebookDb>(options => options.UseSqlite($"Data Source={Path.Combine(dataDirectory, "notebook.db")}"));
 builder.Services.AddScoped<LearnerWorkspace>();
-builder.Services.AddScoped<NotebookService>();
+builder.Services.AddScoped<INotebookStore, NotebookService>();
 
 var demoAuth = new DemoAuthOptions(builder.Configuration.GetValue<bool?>("Learning:EnableDemoAuth") ?? builder.Environment.IsDevelopment());
 builder.Services.AddSingleton(demoAuth);
@@ -46,7 +53,7 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
     options.Events.OnRedirectToAccessDenied = context => { context.Response.StatusCode = 403; return Task.CompletedTask; };
     options.Events.OnValidatePrincipal = context => { if (!demoAuth.Enabled) context.RejectPrincipal(); return Task.CompletedTask; };
 });
-builder.Services.AddAuthorization(options => options.AddPolicy(DemoIdentity.InstructorPolicy, policy => policy.RequireAuthenticatedUser().RequireRole("instructor")));
+builder.Services.AddAuthorization(options => options.AddPolicy(LearningPolicies.Instructor, policy => policy.RequireAuthenticatedUser().RequireRole("instructor")));
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddHealthChecks().AddCheck<NotebookHealthCheck>("notebook", tags: ["ready"]);
 if (!string.IsNullOrWhiteSpace(builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"]))
@@ -59,6 +66,8 @@ await using (var scope = app.Services.CreateAsyncScope())
     await using var db = await factory.CreateDbContextAsync();
     await db.Database.MigrateAsync();
 }
+// Behind a TLS-terminating proxy, set ASPNETCORE_FORWARDEDHEADERS_ENABLED=true so Request.IsHttps and client
+// addresses reflect the original request; cookies are then marked Secure. See the deployment guide.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
@@ -66,6 +75,16 @@ if (!app.Environment.IsDevelopment())
 }
 // Configure HTTPS redirection only when the hosting environment supplies a TLS endpoint.
 if (app.Configuration["HTTPS_PORT"] is not null) app.UseHttpsRedirection();
+app.Use(async (context, next) =>
+{
+    // Baseline response headers: no framing (clickjacking) and no MIME sniffing. Interactive pages also get
+    // Blazor's frame-ancestors policy below. A full Content-Security-Policy needs per-page tuning for MudBlazor.
+    var headers = context.Response.Headers;
+    headers.XContentTypeOptions = "nosniff";
+    headers.XFrameOptions = "DENY";
+    headers["Referrer-Policy"] = "strict-origin-when-cross-origin";
+    await next(context);
+});
 app.UseRequestLocalization();
 app.Use(LearnerWorkspace.EstablishAsync);
 app.UseAuthentication();
@@ -82,7 +101,9 @@ app.MapGet("/api/diagnostics", (ILogger<Program> logger) =>
     logger.LogInformation("Learning diagnostic request {TraceId}", traceId);
     return Results.Ok(new { traceId, message = "Find this trace ID in the server console.", utc = DateTimeOffset.UtcNow });
 });
-app.MapRazorComponents<App>().AddInteractiveServerRenderMode();
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode(options => options.ContentSecurityFrameAncestorsPolicy = "'none'")
+    .AddAdditionalAssemblies(typeof(LabCatalog).Assembly);
 app.Run();
 
 public partial class Program;

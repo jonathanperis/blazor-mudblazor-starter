@@ -50,21 +50,6 @@
           "SQLitePCLRaw.core": "2.1.12"
         }
       },
-      "MudBlazor": {
-        "type": "Direct",
-        "requested": "[9.10.0, )",
-        "resolved": "9.10.0",
-        "contentHash": "1TzwlootgzINmTBJn03YAF8GStLz73oLQff383MSDIQexjhPnlryatsynYSvnQ9TJmUfAJo0wsnufyGY76oXOw=="
-      },
-      "MudBlazor.Translations": {
-        "type": "Direct",
-        "requested": "[3.6.0, )",
-        "resolved": "3.6.0",
-        "contentHash": "DsPkgsi4gsaT4AP2TCFpGw8M8/hDNpbXYZbQe1StfXLk2AWhOk5pW+i9OZDFgMTYbc+DFvKpCPaW2SPlvt+B7w==",
-        "dependencies": {
-          "MudBlazor": "9.0.0"
-        }
-      },
       "Azure.Core": {
         "type": "Transitive",
         "resolved": "1.54.0",
@@ -256,6 +241,19 @@
           "System.CodeDom": "6.0.0"
         }
       },
+      "MudBlazor": {
+        "type": "Transitive",
+        "resolved": "9.11.0",
+        "contentHash": "hboxF5cQuMYjB0w6+tScmNt0ACuoCu35TGPsCmCq8OeQgvtPtzQ1s9auAOrINj/J6I/ZyBB1rmUzrcMKj14RFA=="
+      },
+      "MudBlazor.Translations": {
+        "type": "Transitive",
+        "resolved": "3.6.0",
+        "contentHash": "DsPkgsi4gsaT4AP2TCFpGw8M8/hDNpbXYZbQe1StfXLk2AWhOk5pW+i9OZDFgMTYbc+DFvKpCPaW2SPlvt+B7w==",
+        "dependencies": {
+          "MudBlazor": "9.0.0"
+        }
+      },
       "Newtonsoft.Json": {
         "type": "Transitive",
         "resolved": "13.0.4",
@@ -424,6 +422,13 @@
         "type": "Transitive",
         "resolved": "4.5.0",
         "contentHash": "wLBKzFnDCxP12VL9ANydSYhk59fC4cvOr9ypYQLPnAj48NQIhqnjdD2yhP8yEKyBJEjERWS9DisKL7rX5eU25Q=="
+      },
+      "webclient.shared": {
+        "type": "Project",
+        "dependencies": {
+          "MudBlazor": "[9.11.0, )",
+          "MudBlazor.Translations": "[3.6.0, )"
+        }
       }
     },
     "net10.0/linux-arm64": {

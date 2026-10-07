@@ -1,0 +1,18 @@
+@inject DemoAuthOptions Options
+
+@if (Options.Enabled)
+{
+    <form method="post" action="auth/demo" class="lab-form">
+        <AntiforgeryToken />
+        <label for="persona">Local demo persona</label>
+        <select id="persona" name="persona"><option value="student">Student</option><option value="instructor">Instructor</option></select>
+        <button type="submit">Sign in as demo persona</button>
+    </form>
+}
+else
+{
+    <MudAlert Severity="Severity.Info">Demo sign-in is disabled here. Run locally in Development to try it. Learning:EnableDemoAuth is an explicit opt-in outside Development.</MudAlert>
+}
+<form method="post" action="auth/logout" class="lab-form my-3"><AntiforgeryToken /><button type="submit">Sign out</button></form>
+<MudLink Href="api/instructor" Target="_blank">Call the instructor-only endpoint</MudLink>
+<MudText Class="mt-3">Expected endpoint response: 401 when anonymous, 403 as a student, 200 as an instructor. Sign-in and sign-out use full HTTP form posts, antiforgery tokens, and a new circuit after redirect. The notebook workspace is separate from these shared demo personas.</MudText>

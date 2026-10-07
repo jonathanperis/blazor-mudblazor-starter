@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Blazor learning sandbox · WebAssembly demo</title>
+    <meta name="description" content="Live Blazor WebAssembly demo of the Blazor learning sandbox labs. Runs entirely in the browser." />
+    <!-- Publishing for GitHub Pages rewrites this to the demo path (scripts/prepare-pages-demo.py). -->
+    <base href="/" />
+    <script>
+        // GitHub Pages serves 404.html for deep links; it redirects here with the original path in ?p=.
+        (function () {
+            var params = new URLSearchParams(window.location.search);
+            var path = params.get("p");
+            if (path !== null && path.charAt(0) === "/" && path.charAt(1) !== "/") {
+                history.replaceState(null, "", document.baseURI.replace(/\/$/, "") + path);
+            }
+        })();
+    </script>
+    <link rel="preload" id="webassembly" />
+    <link rel="icon" href="favicon.ico" sizes="any" />
+    <link rel="icon" type="image/png" href="favicon.png" />
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="stylesheet" href="_content/MudBlazor/MudBlazor.min.css" />
+    <link rel="stylesheet" href="_content/WebClient.Shared/app.css" />
+    <script type="importmap"></script>
+</head>
+
+<body>
+    <div id="app">
+        <main id="main-content" class="demo-loading">
+            <h1>Blazor learning sandbox</h1>
+            <p role="status">Loading the WebAssembly runtime…</p>
+            <noscript>This live demo runs .NET in your browser and needs JavaScript.</noscript>
+        </main>
+    </div>
+    <div id="blazor-error-ui" role="alert">The app stopped responding. <a href="." class="reload">Reload the page</a>.</div>
+    <script src="_content/WebClient.Shared/learning.js"></script>
+    <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
+    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+</body>
+
+</html>
