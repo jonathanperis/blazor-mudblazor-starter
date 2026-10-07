@@ -20,12 +20,7 @@
     // ISO 7064 mod 97-10: move the first four characters to the end, letters count as 10–35.
     private static bool HasValidCheckDigits(string iban)
     {
-        var remainder = 0;
-        foreach (var c in iban[4..] + iban[..4])
-        {
-            var number = char.IsAsciiDigit(c) ? c - '0' : c - 'A' + 10;
-            remainder = (remainder * (number < 10 ? 10 : 100) + number) % 97;
-        }
-        return remainder == 1;
+        var numbers = (iban[4..] + iban[..4]).Select(c => char.IsAsciiDigit(c) ? c - '0' : c - 'A' + 10);
+        return numbers.Aggregate(0, (remainder, number) => (remainder * (number < 10 ? 10 : 100) + number) % 97) == 1;
     }
 }

@@ -26,10 +26,11 @@
 
     private async Task RefreshAsync()
     {
-        _cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
+        _cts = cts;
         try
         {
-            await Task.Delay(2500, _cts.Token);
+            await Task.Delay(2500, cts.Token);
             _next = (_next + 1) % Statuses.Length;
             _status = Statuses[_next];
             _updated = DateTime.Now.ToString("HH:mm:ss");
@@ -40,7 +41,6 @@
         }
         finally
         {
-            _cts?.Dispose();
             _cts = null;
         }
     }
