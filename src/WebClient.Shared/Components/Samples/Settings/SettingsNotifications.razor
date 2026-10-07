@@ -1,0 +1,49 @@
+@* Each switch row names its setting in text, so the switch itself needs only an accessible label. *@
+<MudStack Spacing="5">
+    <section>
+        <MudText Typo="Typo.overline" HtmlTag="h3" Style="color: var(--mud-palette-text-secondary)">Email</MudText>
+        <MudPaper Outlined>
+            @SwitchRow("Mentions and replies", "When someone tags you on a bake sheet or answers your note.", () => Draft.NotifyMentions, value => Draft.NotifyMentions = value)
+            <MudDivider />
+            @SwitchRow("Shift swaps", "Requests to cover or trade an early shift.", () => Draft.NotifyShiftSwaps, value => Draft.NotifyShiftSwaps = value)
+            <MudDivider />
+            @SwitchRow("Late deliveries", "Flour, butter and dairy running behind schedule.", () => Draft.NotifyDeliveries, value => Draft.NotifyDeliveries = value)
+        </MudPaper>
+    </section>
+
+    <section>
+        <MudText Typo="Typo.overline" HtmlTag="h3" Style="color: var(--mud-palette-text-secondary)">Shop summary</MudText>
+        <MudRadioGroup T="DigestFrequency" @bind-Value="Draft.Digest" @bind-Value:after="Notify" aria-label="Shop summary email">
+            <MudStack Row Wrap="Wrap.Wrap" Spacing="1">
+                <MudRadio Value="DigestFrequency.Daily" Color="Color.Primary">Every morning at 06:00</MudRadio>
+                <MudRadio Value="DigestFrequency.Weekly" Color="Color.Primary">Mondays only</MudRadio>
+                <MudRadio Value="DigestFrequency.Never" Color="Color.Primary">Never</MudRadio>
+            </MudStack>
+        </MudRadioGroup>
+    </section>
+
+    <section>
+        <MudText Typo="Typo.overline" HtmlTag="h3" Style="color: var(--mud-palette-text-secondary)">On this phone</MudText>
+        <MudPaper Outlined>
+            @SwitchRow("Oven timers", "A push alert one minute before each batch is due out.", () => Draft.PushOvenTimers, value => Draft.PushOvenTimers = value)
+            <MudDivider />
+            @SwitchRow("Quiet hours", "Hold everything except oven timers between 20:00 and 03:30.", () => Draft.QuietHours, value => Draft.QuietHours = value)
+        </MudPaper>
+    </section>
+</MudStack>
+
+@code {
+    [Parameter, EditorRequired] public AccountSettings Draft { get; set; } = null!;
+    [Parameter] public EventCallback Changed { get; set; }
+
+    private Task Notify() => Changed.InvokeAsync();
+
+    private RenderFragment SwitchRow(string title, string description, Func<bool> get, Action<bool> set) =>
+        @<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="3" Class="px-4 py-3">
+            <div>
+                <MudText Typo="Typo.body1">@title</MudText>
+                <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">@description</MudText>
+            </div>
+            <MudSwitch T="bool" Value="get()" ValueChanged="value => { set(value); return Notify(); }" Color="Color.Primary" AriaLabel="@title" Class="mr-0" />
+        </MudStack>;
+}

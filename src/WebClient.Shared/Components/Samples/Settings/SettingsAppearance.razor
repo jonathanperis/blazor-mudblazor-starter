@@ -1,0 +1,93 @@
+@* Theme tiles are radios with a picture: the radio carries keyboard and screen reader semantics, the picture is a larger click target. *@
+<MudStack Spacing="5">
+    <section>
+        <MudText Typo="Typo.overline" HtmlTag="h3" Style="color: var(--mud-palette-text-secondary)">Theme</MudText>
+        <MudRadioGroup T="ThemeChoice" @bind-Value="Draft.Theme" @bind-Value:after="Notify" aria-label="Theme">
+            <MudGrid Spacing="3">
+                @foreach (var (choice, label, paper, ink, light) in Tiles)
+                {
+                    var selected = Draft.Theme == choice;
+                    <MudItem xs="12" sm="4">
+                        <MudPaper Outlined Class="pa-2" Style="@($"cursor: pointer; border-width: 2px; border-color: {(selected ? "var(--mud-palette-primary)" : "var(--mud-palette-lines-default)")}")"
+                                  @onclick="() => Choose(choice)">
+                            <div aria-hidden="true" style="@Picture(paper, choice == ThemeChoice.System)">
+                                <div style="@($"height: .5rem; width: 45%; border-radius: 2px; background: {ink}")"></div>
+                                <div style="@($"height: .35rem; width: 75%; margin-top: .45rem; border-radius: 2px; background: {ink}; opacity: .35")"></div>
+                                <div style="@($"height: .35rem; width: 60%; margin-top: .3rem; border-radius: 2px; background: {ink}; opacity: .35")"></div>
+                                <div style="@($"height: 1rem; width: 2.75rem; margin-top: .8rem; border-radius: 3px; background: {AccentFor(light)}")"></div>
+                            </div>
+                            <MudRadio Value="choice" Color="Color.Primary" Dense Class="mt-1">@label</MudRadio>
+                        </MudPaper>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudRadioGroup>
+        <MudText Typo="Typo.caption" Class="mt-2 d-block" Style="color: var(--mud-palette-text-secondary)">
+            A preview for the bakery portal; the sandbox's own theme stays on the switch in the app bar.
+        </MudText>
+    </section>
+
+    <section>
+        <MudText Typo="Typo.overline" HtmlTag="h3" Style="color: var(--mud-palette-text-secondary)">Accent</MudText>
+        <MudChipSet T="Color" SelectedValue="Draft.Accent" SelectedValueChanged="ChooseAccent" SelectionMode="SelectionMode.SingleSelection" CheckMark Variant="Variant.Outlined" aria-label="Accent colour">
+            @foreach (var (color, name) in SettingsData.Accents)
+            {
+                <MudChip Value="color" Color="color" Text="@name" />
+            }
+        </MudChipSet>
+    </section>
+
+    <section>
+        <MudText Typo="Typo.overline" HtmlTag="h3" Style="color: var(--mud-palette-text-secondary)">Density</MudText>
+        <MudToggleGroup T="LayoutDensity" @bind-Value="Draft.Density" @bind-Value:after="Notify" Color="Color.Primary" Outlined Delimiters CheckMark Style="max-width: 24rem" aria-label="Density">
+            <MudToggleItem Value="LayoutDensity.Comfortable" Text="Comfortable" />
+            <MudToggleItem Value="LayoutDensity.Compact" Text="Compact" />
+        </MudToggleGroup>
+        <MudText Typo="Typo.body2" Class="mt-2" Style="color: var(--mud-palette-text-secondary)">
+            @(Draft.Density == LayoutDensity.Compact ? "Fits a full day's bake sheet on the shop tablet without scrolling." : "Larger touch targets for floury fingers.")
+        </MudText>
+    </section>
+
+    <MudSwitch T="bool" @bind-Value="Draft.ReduceMotion" @bind-Value:after="Notify" Color="Color.Primary" Label="Reduce motion: no sliding panels or animated charts" />
+</MudStack>
+
+@code {
+    [Parameter, EditorRequired] public AccountSettings Draft { get; set; } = null!;
+    [Parameter] public EventCallback Changed { get; set; }
+
+    // Tile colors are deliberately literal: each tile previews a palette that is not the one currently applied.
+    private static readonly (ThemeChoice Choice, string Label, string Paper, string Ink, bool Light)[] Tiles =
+    [
+        (ThemeChoice.Light, "Light", "#F4F1EA", "#1C1B19", true),
+        (ThemeChoice.Dark, "Dark", "#141311", "#ECE7DD", false),
+        (ThemeChoice.System, "Match device", "#F4F1EA", "#5E5A52", true)
+    ];
+
+    private string AccentFor(bool lightPalette) => (Draft.Accent, lightPalette) switch
+    {
+        (Color.Secondary, true) => "#1F5F5B",
+        (Color.Secondary, false) => "#6FC3B8",
+        (Color.Tertiary, true) => "#7A5C14",
+        (Color.Tertiary, false) => "#E0B85C",
+        (_, true) => "#B4441F",
+        _ => "#FF8A5C"
+    };
+
+    // "Match device" shows both palettes, split diagonally.
+    private static string Picture(string paper, bool split) =>
+        $"height: 6rem; padding: .85rem; border-radius: 4px; background: {(split ? "linear-gradient(135deg, #F4F1EA 0 50%, #141311 50% 100%)" : paper)}";
+
+    private Task Notify() => Changed.InvokeAsync();
+
+    private Task Choose(ThemeChoice choice)
+    {
+        Draft.Theme = choice;
+        return Notify();
+    }
+
+    private Task ChooseAccent(Color accent)
+    {
+        Draft.Accent = accent;
+        return Notify();
+    }
+}

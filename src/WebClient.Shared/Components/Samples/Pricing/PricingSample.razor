@@ -1,0 +1,127 @@
+@page "/samples/pricing"
+@attribute [PageSample("Pricing", "A lab notebook's pricing page: a monthly or yearly toggle with a savings badge, a team-size slider that reprices three plan cards, a feature comparison table and FAQ panels.", Uses = ["MudToggleGroup", "MudSlider", "MudPaper", "MudChip", "MudSimpleTable", "MudExpansionPanels", "MudDialog", "MudSnackbar"])]
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+<SamplePageFrame Page="GetType()">
+    <MudStack Spacing="8">
+        <MudStack AlignItems="AlignItems.Center" Spacing="4" Style="text-align: center">
+            <div>
+                <MudText Typo="Typo.overline" Style="color: var(--mud-palette-text-secondary)">Fieldnote · the shared lab notebook</MudText>
+                <MudText Typo="Typo.h3" HtmlTag="h2">Plans that grow with your bench</MudText>
+                <MudText Typo="Typo.body1" Class="mt-2 mx-auto" Style="max-width: 52ch; color: var(--mud-palette-text-secondary)">
+                    Start free with a small team. Move up when you need more storage, sign-off workflows or an audit trail.
+                </MudText>
+            </div>
+
+            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.Center" Spacing="3" Wrap="Wrap.Wrap">
+                <MudToggleGroup T="Billing" @bind-Value="_billing" Color="Color.Primary" Outlined Delimiters aria-label="Billing period" Style="min-width: 16rem">
+                    <MudToggleItem Value="Billing.Monthly" Text="Monthly" Class="px-4" />
+                    <MudToggleItem Value="Billing.Yearly" Text="Yearly" Class="px-4" />
+                </MudToggleGroup>
+                <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="@(_billing == Billing.Yearly ? Variant.Filled : Variant.Outlined)" Icon="@Icons.Material.Outlined.Savings" Class="ma-0">
+                    Save @PricingData.YearlyDiscount.ToString("0%", PricingData.Culture) yearly
+                </MudChip>
+            </MudStack>
+
+            <div style="width: 100%; max-width: 26rem">
+                <MudSlider T="int" @bind-Value="_seats" Min="1" Max="60" Step="1" Color="Color.Primary" ValueLabel aria-label="Team size">
+                    <MudText Typo="Typo.body2">Team size: <strong style="font-variant-numeric: tabular-nums">@_seats @(_seats == 1 ? "person" : "people")</strong></MudText>
+                </MudSlider>
+            </div>
+        </MudStack>
+
+        <MudGrid Spacing="4" Justify="Justify.Center">
+            @foreach (var plan in PricingData.Plans)
+            {
+                <MudItem xs="12" sm="8" md="4">
+                    <PricingPlanCard Plan="plan" Billing="_billing" Seats="_seats" Choose="ChooseAsync" />
+                </MudItem>
+            }
+        </MudGrid>
+
+        <section>
+            <MudText Typo="Typo.h4" HtmlTag="h2" Class="mb-1">Compare plans</MudText>
+            <MudText Typo="Typo.body2" Class="mb-4" Style="color: var(--mud-palette-text-secondary)">Every feature, side by side. Scroll sideways on small screens.</MudText>
+            @* position: relative keeps the absolutely positioned screen-reader text inside the scroll box. *@
+            <MudPaper Outlined Style="overflow-x: auto; position: relative">
+                <MudSimpleTable Dense Hover Elevation="0" Style="min-width: 38rem">
+                    <thead>
+                        <tr>
+                            <th scope="col" style="width: 40%">Feature</th>
+                            @foreach (var plan in PricingData.Plans)
+                            {
+                                <th scope="col" style="@($"text-align: center; {(plan.Featured ? "color: var(--mud-palette-primary)" : "")}")">@plan.Name</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var group in PricingData.Features.GroupBy(feature => feature.Group))
+                        {
+                            <tr>
+                                <th scope="colgroup" colspan="4" style="background: var(--mud-palette-background); font-family: var(--font-mono); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; color: var(--mud-palette-text-secondary)">@group.Key</th>
+                            </tr>
+                            @foreach (var feature in group)
+                            {
+                                <tr>
+                                    <th scope="row" style="font-weight: 400">@feature.Name</th>
+                                    @foreach (var plan in PricingData.Plans)
+                                    {
+                                        <td style="text-align: center">@Cell(feature.For(plan.Id))</td>
+                                    }
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </MudSimpleTable>
+            </MudPaper>
+        </section>
+
+        <section>
+            <MudGrid Spacing="6">
+                <MudItem xs="12" md="4">
+                    <MudText Typo="Typo.h4" HtmlTag="h2">Questions</MudText>
+                    <MudText Typo="Typo.body2" Class="mt-2" Style="color: var(--mud-palette-text-secondary)">
+                        Still unsure which plan fits? Most groups of four to forty people start a Lab trial and decide after their first month of experiments.
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12" md="8">
+                    <MudExpansionPanels Outlined Elevation="0">
+                        @foreach (var (question, answer) in PricingData.Questions)
+                        {
+                            <MudExpansionPanel Text="@question" Expanded="@(question == PricingData.Questions[0].Question)">
+                                <MudText Typo="Typo.body2">@answer</MudText>
+                            </MudExpansionPanel>
+                        }
+                    </MudExpansionPanels>
+                </MudItem>
+            </MudGrid>
+        </section>
+    </MudStack>
+</SamplePageFrame>
+
+@code {
+    private Billing _billing = Billing.Yearly;
+    private int _seats = 8;
+
+    // "yes" and "" become icons with text for screen readers; anything else is shown as written.
+    private static RenderFragment Cell(string value) => value switch
+    {
+        "yes" => @<span><MudIcon Icon="@Icons.Material.Filled.Check" Color="Color.Success" Size="Size.Small" /><span class="mud-sr-only">Included</span></span>,
+        "" => @<span><span aria-hidden="true" style="color: var(--mud-palette-text-disabled)">—</span><span class="mud-sr-only">Not included</span></span>,
+        _ => @<span>@value</span>
+    };
+
+    private async Task ChooseAsync(PricingPlan plan)
+    {
+        var parameters = new DialogParameters<PricingCheckoutDialog>
+        {
+            { dialog => dialog.Plan, plan },
+            { dialog => dialog.Billing, _billing },
+            { dialog => dialog.Seats, _seats }
+        };
+        var dialog = await DialogService.ShowAsync<PricingCheckoutDialog>(plan.Name, parameters, new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
+        if (await dialog.Result is { Canceled: false, Data: string workspace })
+            Snackbar.Add($"“{workspace}” is ready on {plan.Name}. Simulated: no account or payment was created.", Severity.Success);
+    }
+}

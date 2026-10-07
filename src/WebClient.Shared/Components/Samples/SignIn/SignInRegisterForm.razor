@@ -1,0 +1,127 @@
+@* Create account: live password strength, a matching confirmation, a required agreement and a duplicate-email error. *@
+@implements IDisposable
+
+@if (_createdFor is not null)
+{
+    <MudStack Spacing="4" Class="py-4">
+        <MudAlert Severity="Severity.Success" Variant="Variant.Outlined" role="status">
+            Account created for <strong>@_name</strong>. A confirmation link would now go to <strong>@_createdFor</strong>; in this sample nothing was sent.
+        </MudAlert>
+        <MudStack Row Spacing="2" Wrap="Wrap.Wrap">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Filled.ArrowForward" OnClick="() => Registered.InvokeAsync(new NewAccount(_name.Trim(), _createdFor, _password))">Continue to sign in</MudButton>
+            <MudButton Variant="Variant.Text" OnClick="StartOver">Create another account</MudButton>
+        </MudStack>
+    </MudStack>
+}
+else
+{
+    <MudForm @ref="_form" Spacing="3" Disabled="_submitting" OnEnterPressed="SubmitAsync">
+        @if (_error is not null)
+        {
+            <MudAlert Severity="Severity.Error" Dense role="alert">@_error</MudAlert>
+        }
+        <MudGrid Spacing="3">
+            <MudItem xs="12" sm="6">
+                <MudTextField T="string" @bind-Value="_name" Label="Full name" Variant="Variant.Outlined" autocomplete="name" Required RequiredError="Tell us your name." MaxLength="80" />
+            </MudItem>
+            <MudItem xs="12" sm="6">
+                <MudSelect T="string" @bind-Value="_role" Label="I am a…" Variant="Variant.Outlined" Required RequiredError="Choose the closest role.">
+                    @foreach (var role in SignInData.Roles)
+                    {
+                        <MudSelectItem Value="@role">@role</MudSelectItem>
+                    }
+                </MudSelect>
+            </MudItem>
+        </MudGrid>
+        <MudTextField T="string" @bind-Value="_email" Label="Email" InputType="InputType.Email" Variant="Variant.Outlined" autocomplete="email"
+                      Required RequiredError="Enter your email address." Validation="@(new Func<string?, string?>(SignInData.ValidateEmail))" HelperText="We use it for queue alerts and nothing else." />
+        <div>
+            <MudTextField T="string" @bind-Value="_password" Label="Password" Variant="Variant.Outlined" autocomplete="new-password" Immediate
+                          InputType="@(_showPassword ? InputType.Text : InputType.Password)" Required RequiredError="Choose a password." Validation="@(new Func<string?, string?>(CheckStrength))"
+                          Adornment="Adornment.End" AdornmentIcon="@(_showPassword ? Icons.Material.Outlined.VisibilityOff : Icons.Material.Outlined.Visibility)"
+                          AdornmentAriaLabel="@(_showPassword ? "Hide password" : "Show password")" OnAdornmentClick="() => _showPassword = !_showPassword" />
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="2" Class="mt-2">
+                <MudProgressLinear Value="Strength.Percent" Color="Strength.Color" Rounded Size="Size.Small" Style="flex: 1" aria-label="Password strength" />
+                <MudText Typo="Typo.caption" Style="min-width: 4rem; text-align: right">@Strength.Label</MudText>
+            </MudStack>
+            <MudStack Row Wrap="Wrap.Wrap" Spacing="1" Class="mt-1">
+                @foreach (var rule in Strength.Rules)
+                {
+                    <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="@(rule.Met ? Color.Success : Color.Default)"
+                             Icon="@(rule.Met ? Icons.Material.Filled.CheckCircle : Icons.Material.Outlined.Circle)" Class="ml-0">@rule.Text</MudChip>
+                }
+            </MudStack>
+        </div>
+        <MudTextField T="string" @bind-Value="_confirm" Label="Confirm password" Variant="Variant.Outlined" autocomplete="new-password"
+                      InputType="@(_showPassword ? InputType.Text : InputType.Password)" Required RequiredError="Repeat the password." Validation="@(new Func<string?, string?>(CheckMatch))" />
+        <MudCheckBox T="bool" @bind-Value="_agreed" Color="Color.Primary" Required RequiredError="Accept the observing rules to continue."
+                     Label="I have read the observing rules, including the 22:00 lights-out on the ridge" />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" FullWidth Disabled="_submitting" OnClick="SubmitAsync">
+            @if (_submitting)
+            {
+                <MudProgressCircular Indeterminate Size="Size.Small" Class="mr-2" />
+                <span>Creating account…</span>
+            }
+            else
+            {
+                <span>Create account</span>
+            }
+        </MudButton>
+    </MudForm>
+}
+
+@code {
+    private readonly CancellationTokenSource _lifetime = new();
+    private MudForm _form = null!;
+    private string _name = "", _email = "", _password = "", _confirm = "";
+    private string? _role, _error, _createdFor;
+    private bool _agreed, _showPassword, _submitting;
+
+    [Parameter] public EventCallback<NewAccount> Registered { get; set; }
+    [Parameter] public EventCallback<bool> BusyChanged { get; set; }
+
+    private PasswordStrength Strength => SignInData.Strength(_password);
+
+    private string? CheckStrength(string? password) => SignInData.Strength(password).Score < 3 ? "Meet at least three of the four rules below." : null;
+
+    private string? CheckMatch(string? confirm) => confirm == _password ? null : "The passwords don't match.";
+
+    private async Task SubmitAsync()
+    {
+        if (_submitting) return;
+        await _form.ValidateAsync();
+        if (!_form.IsValid) return;
+
+        _submitting = true;
+        _error = null;
+        await BusyChanged.InvokeAsync(true);
+        try
+        {
+            await Task.Delay(1400, _lifetime.Token); // Stands in for the registration request.
+            if (SignInData.IsTaken(_email))
+                _error = $"An account already uses {_email.Trim()}. Sign in instead, or reset its password.";
+            else
+                _createdFor = _email.Trim();
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        finally
+        {
+            _submitting = false;
+        }
+        await BusyChanged.InvokeAsync(false);
+    }
+
+    private void StartOver()
+    {
+        (_name, _email, _password, _confirm, _role, _agreed, _createdFor) = ("", "", "", "", null, false, null);
+    }
+
+    public void Dispose()
+    {
+        _lifetime.Cancel();
+        _lifetime.Dispose();
+    }
+}

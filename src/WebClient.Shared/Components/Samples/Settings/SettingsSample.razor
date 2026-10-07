@@ -1,0 +1,206 @@
+@page "/samples/settings"
+@attribute [PageSample("Account settings", "A staff portal's settings: sections in a side list, a draft copy with unsaved-change markers, save and discard, a leave-page guard, theme preview tiles, signed-in devices with undo, and a typed confirmation for deleting the account.", Uses = ["MudList", "MudChipSet", "MudTextField", "MudSwitch", "MudRadioGroup", "MudToggleGroup", "MudAvatar", "MudDialog", "MudMessageBox", "MudSnackbar", "MudHidden"])]
+@implements IDisposable
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<SamplePageFrame Page="GetType()">
+    @* Guards in-app links and, through the browser's own prompt, reloads and closing the tab. *@
+    <NavigationLock ConfirmExternalNavigation="IsDirty" OnBeforeInternalNavigation="ConfirmLeaveAsync" />
+
+    <MudStack Spacing="4">
+        <MudStack Row Wrap="Wrap.Wrap" Justify="Justify.SpaceBetween" AlignItems="AlignItems.End" Spacing="2">
+            <div>
+                <MudText Typo="Typo.overline" Style="color: var(--mud-palette-text-secondary)">Larkspur Bakehouse · Staff portal</MudText>
+                <MudText Typo="Typo.h4" HtmlTag="h2">Your account</MudText>
+            </div>
+            <MudChip T="string" Variant="Variant.Outlined" Color="@(IsDirty ? Color.Warning : Color.Success)" Class="ma-0"
+                     Icon="@(IsDirty ? Icons.Material.Outlined.EditNote : Icons.Material.Outlined.CloudDone)">
+                @(IsDirty ? $"{_changed.Count} {(_changed.Count == 1 ? "section" : "sections")} edited" : "Everything saved")
+            </MudChip>
+        </MudStack>
+
+        @if (_deletionScheduled)
+        {
+            <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.AutoDelete">
+                <MudStack Row AlignItems="AlignItems.Center" Spacing="3" Wrap="Wrap.Wrap">
+                    <span>Your account will be deleted on @DateTime.Today.AddDays(14).ToString("d MMMM"). Until then you can restore it.</span>
+                    <MudButton Variant="Variant.Outlined" Size="Size.Small" Color="Color.Warning" OnClick="Restore">Restore account</MudButton>
+                </MudStack>
+            </MudAlert>
+        }
+
+        <MudGrid Spacing="4">
+            <MudItem xs="12" md="3">
+                <MudHidden Breakpoint="Breakpoint.SmAndDown">
+                    <MudPaper Outlined Class="py-2" Style="position: sticky; top: 72px">
+                        <MudList T="SettingsSection" SelectedValue="_section" SelectedValueChanged="Show" SelectionMode="SelectionMode.SingleSelection" Color="Color.Primary" aria-label="Settings sections">
+                            @foreach (var section in Enum.GetValues<SettingsSection>())
+                            {
+                                <MudListItem Value="section" Icon="@SettingsData.Icon(section)">
+                                    <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+                                        <span>@section</span>
+                                        @if (_changed.Contains(section))
+                                        {
+                                            <MudText Typo="Typo.caption" Style="color: var(--mud-palette-warning)">edited</MudText>
+                                        }
+                                    </MudStack>
+                                </MudListItem>
+                            }
+                        </MudList>
+                    </MudPaper>
+                </MudHidden>
+                <MudHidden Breakpoint="Breakpoint.MdAndUp">
+                    <MudChipSet T="SettingsSection" SelectedValue="_section" SelectedValueChanged="Show" SelectionMode="SelectionMode.SingleSelection" SelectedColor="Color.Primary" Variant="Variant.Outlined" aria-label="Settings sections">
+                        @foreach (var section in Enum.GetValues<SettingsSection>())
+                        {
+                            <MudChip Value="section" Icon="@SettingsData.Icon(section)" Text="@(_changed.Contains(section) ? $"{section} · edited" : section.ToString())" />
+                        }
+                    </MudChipSet>
+                </MudHidden>
+            </MudItem>
+
+            <MudItem xs="12" md="9">
+                <MudPaper Outlined Class="pa-4 pa-sm-6">
+                    <MudText Typo="Typo.h5" HtmlTag="h3">@_section</MudText>
+                    <MudText Typo="Typo.body2" Class="mb-5" Style="color: var(--mud-palette-text-secondary)">@Description</MudText>
+                    @switch (_section)
+                    {
+                        case SettingsSection.Profile:
+                            <SettingsProfile Draft="_draft" Changed="Refresh" />
+                            break;
+                        case SettingsSection.Notifications:
+                            <SettingsNotifications Draft="_draft" Changed="Refresh" />
+                            break;
+                        case SettingsSection.Appearance:
+                            <SettingsAppearance Draft="_draft" Changed="Refresh" />
+                            break;
+                        default:
+                            <SettingsSecurity Draft="_draft" Sessions="_sessions" Changed="Refresh" DeleteRequested="ConfirmDeleteAsync" />
+                            break;
+                    }
+                </MudPaper>
+
+                @* With unsaved changes the save bar sticks to the bottom of the viewport, reachable from any section length. *@
+                <MudPaper Outlined Class="mt-4 pa-3 d-flex align-center flex-wrap gap-3"
+                          Style="@(IsDirty ? "position: sticky; bottom: 1rem; z-index: 2; border-color: var(--mud-palette-warning); box-shadow: var(--mud-elevation-6)" : "")">
+                    <MudIcon Icon="@(_problems.Count > 0 ? Icons.Material.Outlined.ErrorOutline : IsDirty ? Icons.Material.Outlined.Info : Icons.Material.Outlined.CheckCircle)"
+                             Color="@(_problems.Count > 0 ? Color.Error : IsDirty ? Color.Warning : Color.Success)" />
+                    <MudText Typo="Typo.body2" role="status" Style="flex: 1 1 14rem">@Status</MudText>
+                    <MudStack Row Spacing="2">
+                        <MudButton Variant="Variant.Text" Disabled="@(!IsDirty || _saving)" OnClick="Discard">Discard</MudButton>
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(!IsDirty || _saving || _problems.Count > 0)" OnClick="SaveAsync">
+                            @if (_saving)
+                            {
+                                <MudProgressCircular Indeterminate Size="Size.Small" Class="mr-2" />
+                                <span>Saving…</span>
+                            }
+                            else
+                            {
+                                <span>Save changes</span>
+                            }
+                        </MudButton>
+                    </MudStack>
+                </MudPaper>
+            </MudItem>
+        </MudGrid>
+    </MudStack>
+</SamplePageFrame>
+
+@code {
+    private readonly CancellationTokenSource _lifetime = new();
+    private readonly List<ActiveSession> _sessions = [.. SettingsData.Sessions];
+    private AccountSettings _saved = SettingsData.Initial();
+    private AccountSettings _draft = null!;
+    private IReadOnlySet<SettingsSection> _changed = new HashSet<SettingsSection>();
+    private List<string> _problems = [];
+    private SettingsSection _section = SettingsSection.Profile;
+    private DateTime? _savedAt;
+    private bool _saving, _deletionScheduled;
+
+    private bool IsDirty => _changed.Count > 0;
+
+    private string Description => _section switch
+    {
+        SettingsSection.Profile => "How you appear to colleagues in the other five shops.",
+        SettingsSection.Notifications => "What reaches your inbox, and what is allowed to buzz your phone.",
+        SettingsSection.Appearance => "How the staff portal looks when you are signed in.",
+        _ => "Sign-in protection, the devices you use, and removing the account."
+    };
+
+    private string Status => (_problems.Count, IsDirty) switch
+    {
+        ( > 0, _) => $"Can't save yet: {_problems[0]}",
+        (_, true) => $"Unsaved changes in {SettingsData.Sentence(_changed)}.",
+        _ when _savedAt is { } at => $"All changes saved at {at:HH:mm}.",
+        _ => "No changes since you opened this page."
+    };
+
+    // Editing never touches _saved: sections bind to the draft copy, and Save replaces the saved copy wholesale.
+    protected override void OnInitialized() => _draft = _saved with { };
+
+    private void Refresh()
+    {
+        _changed = SettingsData.ChangedSections(_saved, _draft);
+        _problems = SettingsData.Problems(_draft).ToList();
+    }
+
+    private void Show(SettingsSection section) => _section = section;
+
+    private void Discard()
+    {
+        _draft = _saved with { };
+        Refresh();
+        Snackbar.Add("Changes discarded.", Severity.Normal);
+    }
+
+    private async Task SaveAsync()
+    {
+        _saving = true;
+        try
+        {
+            await Task.Delay(900, _lifetime.Token); // Stands in for the request that stores the settings.
+            _saved = _draft with { };
+            _savedAt = DateTime.Now;
+            Refresh();
+            Snackbar.Add("Settings saved.", Severity.Success);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        finally
+        {
+            _saving = false;
+        }
+    }
+
+    private async Task ConfirmLeaveAsync(LocationChangingContext context)
+    {
+        if (!IsDirty) return;
+        var leave = await DialogService.ShowMessageBoxAsync("Leave without saving?",
+            $"Your changes to {SettingsData.Sentence(_changed)} haven't been saved.", yesText: "Leave page", cancelText: "Keep editing");
+        if (leave != true) context.PreventNavigation();
+    }
+
+    private async Task ConfirmDeleteAsync()
+    {
+        var parameters = new DialogParameters<SettingsDeleteDialog> { { dialog => dialog.Email, _saved.Email } };
+        var dialog = await DialogService.ShowAsync<SettingsDeleteDialog>("Delete your account?", parameters, new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true });
+        if (await dialog.Result is not { Canceled: false }) return;
+        _deletionScheduled = true;
+        Snackbar.Add("Deletion scheduled. Nothing was actually removed: this is a sample.", Severity.Warning);
+    }
+
+    private void Restore()
+    {
+        _deletionScheduled = false;
+        Snackbar.Add("Account restored.", Severity.Success);
+    }
+
+    public void Dispose()
+    {
+        _lifetime.Cancel();
+        _lifetime.Dispose();
+    }
+}

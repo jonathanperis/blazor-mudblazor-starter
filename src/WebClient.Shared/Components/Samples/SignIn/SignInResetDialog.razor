@@ -1,0 +1,90 @@
+@* Password reset request: validates the address, simulates sending, then confirms without revealing whether the account exists. *@
+@implements IDisposable
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6" HtmlTag="h2">Reset your password</MudText>
+    </TitleContent>
+    <DialogContent>
+        @if (_sent)
+        {
+            <MudStack Spacing="2" AlignItems="AlignItems.Center" Class="py-2" Style="text-align: center">
+                <MudIcon Icon="@Icons.Material.Outlined.MarkEmailRead" Color="Color.Success" Style="font-size: 3rem" />
+                <MudText Typo="Typo.body1" role="status">
+                    If an account exists for <strong>@_email.Trim()</strong>, a reset link is on its way. It expires in 30 minutes.
+                </MudText>
+                <MudText Typo="Typo.caption" Style="color: var(--mud-palette-text-secondary)">Simulated: no email was sent.</MudText>
+            </MudStack>
+        }
+        else
+        {
+            <MudText Typo="Typo.body2" Class="mb-3" Style="color: var(--mud-palette-text-secondary)">
+                Enter the email you use for the observing portal and we'll send a link to choose a new password.
+            </MudText>
+            <MudForm @ref="_form" OnEnterPressed="SendAsync">
+                <MudTextField T="string" @bind-Value="_email" Label="Email" InputType="InputType.Email" Variant="Variant.Outlined" AutoFocus
+                              Validation="@(new Func<string?, string?>(SignInData.ValidateEmail))" Disabled="_sending" autocomplete="email" />
+            </MudForm>
+        }
+    </DialogContent>
+    <DialogActions>
+        @if (_sent)
+        {
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="() => Dialog.Close(DialogResult.Ok(_email.Trim()))">Back to sign in</MudButton>
+        }
+        else
+        {
+            <MudButton OnClick="() => Dialog.Cancel()" Disabled="_sending">Cancel</MudButton>
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SendAsync" Disabled="_sending">
+                @if (_sending)
+                {
+                    <MudProgressCircular Indeterminate Size="Size.Small" Class="mr-2" />
+                    <span>Sending…</span>
+                }
+                else
+                {
+                    <span>Send reset link</span>
+                }
+            </MudButton>
+        }
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private readonly CancellationTokenSource _lifetime = new();
+    private MudForm _form = null!;
+    private bool _sending, _sent;
+
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = null!;
+    /// <summary>Whatever the sign-in form already holds, so the reader does not type it twice.</summary>
+    [Parameter] public string Email { get; set; } = "";
+    private string _email = "";
+
+    protected override void OnInitialized() => _email = Email;
+
+    private async Task SendAsync()
+    {
+        await _form.ValidateAsync();
+        if (!_form.IsValid) return;
+        _sending = true;
+        try
+        {
+            await Task.Delay(1200, _lifetime.Token);
+            _sent = true;
+        }
+        catch (OperationCanceledException)
+        {
+            // The dialog closed while "sending".
+        }
+        finally
+        {
+            _sending = false;
+        }
+    }
+
+    public void Dispose()
+    {
+        _lifetime.Cancel();
+        _lifetime.Dispose();
+    }
+}

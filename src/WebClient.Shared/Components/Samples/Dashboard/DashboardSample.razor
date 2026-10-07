@@ -1,0 +1,255 @@
+@page "/samples/dashboard"
+@attribute [PageSample("Analytics dashboard", "A bakery chain's trading overview: KPI tiles with sparklines, a period-over-period revenue chart, quarter targets, best sellers and an activity log, all filtered by one date range.", Uses = ["MudChart", "MudToggleGroup", "MudDateRangePicker", "MudSelect", "MudTable", "MudTimeline", "MudProgressLinear", "MudChip", "MudGrid"])]
+@implements IDisposable
+@inject ISnackbar Snackbar
+
+<SamplePageFrame Page="GetType()">
+    <MudStack Spacing="5">
+        <MudStack Row Breakpoint="Breakpoint.Sm" Justify="Justify.SpaceBetween" AlignItems="AlignItems.End" Spacing="3">
+            <div>
+                <MudText Typo="Typo.overline" Style="color: var(--mud-palette-text-secondary)">Larkspur Bakehouse · Operations</MudText>
+                <MudText Typo="Typo.h4" HtmlTag="h2">Trading overview</MudText>
+                <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">
+                    @RangeLabel · @DashboardData.ShopName(_shop) · figures to @DashboardData.Date(DashboardData.Today, "dddd d MMMM yyyy")
+                </MudText>
+            </div>
+            <MudStack Row Spacing="2" AlignItems="AlignItems.Center">
+                <MudText Typo="Typo.caption" role="status" Style="color: var(--mud-palette-text-secondary)">@_status</MudText>
+                <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Refresh" Disabled="_refreshing" OnClick="RefreshAsync">Refresh</MudButton>
+            </MudStack>
+        </MudStack>
+
+        <MudPaper Outlined Class="pa-3" Style="position: relative; overflow: hidden">
+            @if (_refreshing)
+            {
+                <MudProgressLinear Indeterminate Color="Color.Primary" Size="Size.Small" Style="position: absolute; inset: 0 0 auto 0" />
+            }
+            <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+                <MudToggleGroup T="DashboardPeriod?" Value="_period" ValueChanged="SelectPeriod" Color="Color.Primary" Size="Size.Small" Outlined Delimiters Style="flex: 1 1 20rem; max-width: 24rem" aria-label="Quick period">
+                    <MudToggleItem Value="@((DashboardPeriod?)DashboardPeriod.Week)" Text="7 days" Class="px-2" Style="white-space: nowrap" />
+                    <MudToggleItem Value="@((DashboardPeriod?)DashboardPeriod.Month)" Text="30 days" Class="px-2" Style="white-space: nowrap" />
+                    <MudToggleItem Value="@((DashboardPeriod?)DashboardPeriod.Quarter)" Text="90 days" Class="px-2" Style="white-space: nowrap" />
+                    <MudToggleItem Value="@((DashboardPeriod?)DashboardPeriod.QuarterToDate)" Text="Q3 to date" Class="px-2" Style="white-space: nowrap" />
+                </MudToggleGroup>
+                <div style="flex: 1 1 17rem; max-width: 22rem">
+                    <MudDateRangePicker DateRange="_range" DateRangeChanged="SelectRange" Label="Date range" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                        Culture="DashboardData.Culture" DateFormat="d MMM yyyy" MinDate="DashboardData.FirstSelectableDay" MaxDate="DashboardData.Today"
+                                        MaxDays="DashboardData.MaxRangeDays" HelperText="@($"Up to {DashboardData.MaxRangeDays} days")" />
+                </div>
+                <div style="flex: 1 1 12rem; max-width: 16rem">
+                    <MudSelect T="string" Value="@_shop" ValueChanged="SelectShop" Label="Shop" Variant="Variant.Outlined" Margin="Margin.Dense" HelperText="Six shops across the Vale">
+                        <MudSelectItem Value="@DashboardData.AllShops">All shops</MudSelectItem>
+                        @foreach (var shop in DashboardData.Shops)
+                        {
+                            <MudSelectItem Value="@shop.Id">@shop.Name, @shop.Town</MudSelectItem>
+                        }
+                    </MudSelect>
+                </div>
+            </MudStack>
+        </MudPaper>
+
+        <MudGrid Spacing="3">
+            <MudItem xs="12" sm="6" lg="3">
+                <DashboardKpiTile Label="Revenue" Icon="@Icons.Material.Outlined.Payments" Accent="Color.Primary" Value="@DashboardData.Currency(_current.Revenue)"
+                                  Delta="Change(_current.Revenue, _previous.Revenue)" Comparison="@Comparison" Trend="@Trend(totals => (double)totals.Revenue)" />
+            </MudItem>
+            <MudItem xs="12" sm="6" lg="3">
+                <DashboardKpiTile Label="Orders" Icon="@Icons.Material.Outlined.ReceiptLong" Accent="Color.Secondary" Value="@_current.Orders.ToString("N0", DashboardData.Culture)"
+                                  Delta="Change(_current.Orders, _previous.Orders)" Comparison="@Comparison" Trend="@Trend(totals => totals.Orders)" />
+            </MudItem>
+            <MudItem xs="12" sm="6" lg="3">
+                <DashboardKpiTile Label="Average basket" Icon="@Icons.Material.Outlined.ShoppingBasket" Accent="Color.Tertiary" Value="@DashboardData.Currency2(_current.AverageBasket)"
+                                  Delta="Change(_current.AverageBasket, _previous.AverageBasket)" Comparison="@Comparison" Trend="@Trend(totals => (double)totals.AverageBasket)" />
+            </MudItem>
+            <MudItem xs="12" sm="6" lg="3">
+                <DashboardKpiTile Label="Bread wasted" Icon="@Icons.Material.Outlined.Recycling" Accent="Color.Info" LowerIsBetter Value="@_current.WasteRate.ToString("0.0%", DashboardData.Culture)"
+                                  Delta="Change((decimal)_current.WasteRate, (decimal)_previous.WasteRate)" Comparison="@Comparison" Trend="@Trend(totals => totals.WasteRate)" />
+            </MudItem>
+
+            <MudItem xs="12" md="8">
+                <MudPaper Outlined Class="pa-4" Style="height: 100%">
+                    <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Start" Wrap="Wrap.Wrap" Spacing="2">
+                        <div>
+                            <MudText Typo="Typo.h6" HtmlTag="h3">Revenue</MudText>
+                            <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">@(_weekly ? "Average day, week by week," : "Daily takings") against the @Comparison.Replace("vs ", "")</MudText>
+                        </div>
+                        <MudText Typo="Typo.h5" HtmlTag="p" Style="font-variant-numeric: tabular-nums">@DashboardData.Currency(_current.Revenue)</MudText>
+                    </MudStack>
+                    @* A fixed-height box: MatchBoundsToSize then fills its width without growing taller on narrow screens. *@
+                    <div style="height: 21rem">
+                        <MudChart T="double" ChartType="ChartType.Line" ChartSeries="_revenueSeries" ChartLabels="_revenueLabels" ChartOptions="_revenueOptions"
+                                  Width="100%" Height="300px" MatchBoundsToSize LegendPosition="Position.Bottom" />
+                    </div>
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" md="4">
+                <DashboardTargets Shop="@_shop" />
+            </MudItem>
+
+            <MudItem xs="12" lg="7">
+                <MudPaper Outlined Style="height: 100%; overflow: hidden">
+                    <div class="pa-4 pb-2">
+                        <MudText Typo="Typo.h6" HtmlTag="h3">Best sellers</MudText>
+                        <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">By revenue, @RangeLabel.ToLowerInvariant()</MudText>
+                    </div>
+                    <MudTable Items="_bestSellers" Dense Hover Elevation="0" Breakpoint="Breakpoint.None" HorizontalScrollbar Loading="_refreshing" LoadingProgressColor="Color.Primary">
+                        <HeaderContent>
+                            <MudTh Style="width: 3rem">#</MudTh>
+                            <MudTh><MudTableSortLabel T="ProductSales" SortBy="product => product.Name">Product</MudTableSortLabel></MudTh>
+                            <MudTh Style="text-align: right"><MudTableSortLabel T="ProductSales" SortBy="product => product.Units">Units</MudTableSortLabel></MudTh>
+                            <MudTh Style="text-align: right"><MudTableSortLabel T="ProductSales" SortBy="product => product.Revenue" InitialDirection="SortDirection.Descending">Revenue</MudTableSortLabel></MudTh>
+                            <MudTh Style="min-width: 9rem">Share</MudTh>
+                        </HeaderContent>
+                        <RowTemplate>
+                            <MudTd DataLabel="Rank" Style="font-family: var(--font-mono); color: var(--mud-palette-text-secondary)">@context.Rank.ToString("00")</MudTd>
+                            <MudTd DataLabel="Product">
+                                <MudText Typo="Typo.body2" Style="font-weight: 500; white-space: nowrap">@context.Name</MudText>
+                                <MudText Typo="Typo.caption" Style="color: var(--mud-palette-text-secondary)">@context.Category</MudText>
+                            </MudTd>
+                            <MudTd DataLabel="Units" Style="text-align: right; font-variant-numeric: tabular-nums">@context.Units.ToString("N0", DashboardData.Culture)</MudTd>
+                            <MudTd DataLabel="Revenue" Style="text-align: right; font-variant-numeric: tabular-nums">@DashboardData.Currency(context.Revenue)</MudTd>
+                            <MudTd DataLabel="Share">
+                                <MudStack Row Spacing="2" AlignItems="AlignItems.Center">
+                                    <MudProgressLinear Value="@(context.Share * 100)" Max="25" Color="Color.Primary" Rounded Size="Size.Small" Style="flex: 1" aria-label="@($"{context.Name} share of revenue")" />
+                                    <MudText Typo="Typo.caption" Style="min-width: 2.75rem; text-align: right; font-variant-numeric: tabular-nums">@context.Share.ToString("0.0%", DashboardData.Culture)</MudText>
+                                </MudStack>
+                            </MudTd>
+                        </RowTemplate>
+                        <NoRecordsContent>
+                            <MudText Typo="Typo.body2" Class="pa-4">No sales in this range.</MudText>
+                        </NoRecordsContent>
+                    </MudTable>
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" lg="5">
+                <DashboardActivity Shop="@_shop" Start="_start" End="_end" />
+            </MudItem>
+        </MudGrid>
+    </MudStack>
+</SamplePageFrame>
+
+@code {
+    private DashboardPeriod? _period = DashboardPeriod.Month;
+    private DateRange _range = null!;
+    private DateTime _start, _end;
+    private string _shop = DashboardData.AllShops;
+    private bool _weekly;
+    private bool _refreshing;
+    private string _status = "";
+    private readonly CancellationTokenSource _lifetime = new();
+
+    private PeriodTotals _current = new(0, 0, 0, 0), _previous = new(0, 0, 0, 0);
+    private IReadOnlyList<PeriodTotals> _buckets = [];
+    private IReadOnlyList<ProductSales> _bestSellers = [];
+    private List<ChartSeries<double>> _revenueSeries = [];
+    private string[] _revenueLabels = [];
+    private readonly LineChartOptions _revenueOptions = new()
+    {
+        ChartPalette = ["var(--mud-palette-primary)", "var(--mud-palette-text-secondary)"],
+        LineStrokeWidth = 2.5, XAxisLines = false, YAxisTicks = 2000, MaxNumYAxisTicks = 5,
+        YAxisToStringFunc = value => $"£{value / 1000:0.#}k"
+    };
+
+    private int Days => (_end - _start).Days + 1;
+    private string RangeLabel => _period switch
+    {
+        DashboardPeriod.Week => "Last 7 days",
+        DashboardPeriod.Month => "Last 30 days",
+        DashboardPeriod.Quarter => "Last 90 days",
+        DashboardPeriod.QuarterToDate => "Quarter to date",
+        _ => $"{DashboardData.Date(_start, "d MMM")} – {DashboardData.Date(_end, "d MMM yyyy")}"
+    };
+    private string Comparison => $"vs previous {Days} days";
+
+    protected override void OnInitialized() => SelectPeriod(_period);
+
+    private void SelectPeriod(DashboardPeriod? period)
+    {
+        // Clicking the selected item again deselects it; keep the current range in that case.
+        if (period is not { } chosen) return;
+        _period = chosen;
+        (_start, _end) = DashboardData.RangeFor(chosen);
+        _range = new DateRange(_start, _end);
+        Recalculate();
+    }
+
+    private void SelectRange(DateRange range)
+    {
+        _range = range;
+        if (range.Start is not { } start || range.End is not { } end) return;
+        (_start, _end) = (start.Date, end.Date);
+        _period = Enum.GetValues<DashboardPeriod>().Cast<DashboardPeriod?>().FirstOrDefault(period => DashboardData.RangeFor(period!.Value) == (_start, _end));
+        Recalculate();
+    }
+
+    private void SelectShop(string shop)
+    {
+        _shop = shop;
+        Recalculate();
+    }
+
+    private void Recalculate()
+    {
+        var previousEnd = _start.AddDays(-1);
+        var previousStart = previousEnd.AddDays(1 - Days);
+        _current = DashboardData.Totals(DashboardData.For(_shop, _start, _end));
+        _previous = DashboardData.Totals(DashboardData.For(_shop, previousStart, previousEnd));
+        _bestSellers = DashboardData.BestSellers(_shop, _start, _end);
+
+        // Long ranges read better as weekly buckets of daily averages (the last week may be short); the previous
+        // period uses the same buckets so the lines align.
+        _weekly = Days > 31;
+        _buckets = Bucket(DashboardData.Daily(_shop, _start, _end));
+        var previousBuckets = Bucket(DashboardData.Daily(_shop, previousStart, previousEnd));
+        var bucketStarts = Enumerable.Range(0, _buckets.Count).Select(index => _start.AddDays(index * (_weekly ? 7 : 1))).ToList();
+        var labelEvery = (int)Math.Ceiling(bucketStarts.Count / 7.0);
+        _revenueLabels = bucketStarts.Select((day, index) => index % labelEvery == 0 ? DashboardData.Date(day, "d MMM") : "").ToArray();
+
+        var current = new ChartSeries<double> { Name = "This period", Data = _buckets.Select(totals => (double)totals.Revenue).ToArray() };
+        var previous = new ChartSeries<double> { Name = "Previous period", Data = previousBuckets.Select(totals => (double)totals.Revenue).ToArray() };
+        _revenueSeries = [current, previous];
+        _revenueOptions.SeriesDisplayOverrides = new Dictionary<IChartSeries, MudBlazor.Charts.SeriesDisplayOverride>
+        {
+            [current] = new() { LineDisplayType = LineDisplayType.Area, FillOpacity = 0.12 },
+            [previous] = new() { StrokeOpacity = 0.55 }
+        };
+    }
+
+    private IReadOnlyList<PeriodTotals> Bucket(IReadOnlyList<(DateTime Day, PeriodTotals Totals)> daily) => _weekly
+        ? daily.Select((entry, index) => (entry, index)).GroupBy(item => item.index / 7).Select(group => DashboardData.AveragePerDay(group.Select(item => item.entry.Totals).ToList())).ToList()
+        : daily.Select(entry => entry.Totals).ToList();
+
+    private IReadOnlyList<double> Trend(Func<PeriodTotals, double> metric) => _buckets.Select(metric).ToList();
+
+    private static double? Change(decimal current, decimal previous) => previous == 0 ? null : (double)((current - previous) / previous);
+
+    private async Task RefreshAsync()
+    {
+        _refreshing = true;
+        _status = "Refreshing…";
+        try
+        {
+            // Stands in for a request to the point-of-sale service; disposal cancels it.
+            await Task.Delay(900, _lifetime.Token);
+            Recalculate();
+            _status = $"Updated {DateTime.Now:t}";
+            Snackbar.Add("Figures are up to date with the tills.", Severity.Success);
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        finally
+        {
+            _refreshing = false;
+        }
+    }
+
+    public void Dispose()
+    {
+        _lifetime.Cancel();
+        _lifetime.Dispose();
+    }
+}

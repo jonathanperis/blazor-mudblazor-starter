@@ -1,0 +1,50 @@
+@* Profile fields edit the draft directly; @bind-Value:after tells the page to recompute what is unsaved. *@
+<MudStack Spacing="5">
+    <MudStack Row AlignItems="AlignItems.Center" Spacing="4" Wrap="Wrap.Wrap">
+        <MudAvatar Color="Draft.Accent" Style="width: 4.5rem; height: 4.5rem; font-family: var(--font-serif); font-size: 1.75rem">@Initials</MudAvatar>
+        <div style="flex: 1; min-width: 12rem">
+            <MudText Typo="Typo.subtitle1">@(string.IsNullOrWhiteSpace(Draft.DisplayName) ? Draft.FullName : Draft.DisplayName)</MudText>
+            <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">
+                Your initials mark the bake sheets you sign off. The colour follows your accent under Appearance.
+            </MudText>
+        </div>
+    </MudStack>
+
+    <MudGrid Spacing="3">
+        <MudItem xs="12" sm="6">
+            <MudTextField T="string" @bind-Value="Draft.FullName" @bind-Value:after="Notify" Label="Full name" Variant="Variant.Outlined" Immediate
+                          Validation="@(new Func<string?, string?>(SettingsData.ValidateName))" autocomplete="name" />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField T="string" @bind-Value="Draft.DisplayName" @bind-Value:after="Notify" Label="Display name" Variant="Variant.Outlined" Immediate
+                          HelperText="Shown on rotas and shift swaps" autocomplete="nickname" />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField T="string" @bind-Value="Draft.Email" @bind-Value:after="Notify" Label="Email" Variant="Variant.Outlined" Immediate InputType="InputType.Email"
+                          Validation="@(new Func<string?, string?>(SettingsData.ValidateEmail))" autocomplete="email" />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudSelect T="string" @bind-Value="Draft.TimeZone" @bind-Value:after="Notify" Label="Time zone" Variant="Variant.Outlined" HelperText="Shift times use this zone">
+                @foreach (var zone in SettingsData.TimeZones)
+                {
+                    <MudSelectItem Value="@zone">@zone.Replace('_', ' ')</MudSelectItem>
+                }
+            </MudSelect>
+        </MudItem>
+        <MudItem xs="12">
+            <MudTextField T="string" @bind-Value="Draft.Bio" @bind-Value:after="Notify" Label="About you" Variant="Variant.Outlined" Immediate Lines="3"
+                          Counter="SettingsData.BioLimit" Validation="@(new Func<string?, string?>(SettingsData.ValidateBio))" HelperText="A line or two for the staff directory" />
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudTextField T="string" Value="@("Head baker, Mill Lane")" Label="Role" Variant="Variant.Outlined" ReadOnly HelperText="Managed by your shop lead" />
+        </MudItem>
+    </MudGrid>
+</MudStack>
+
+@code {
+    [Parameter, EditorRequired] public AccountSettings Draft { get; set; } = null!;
+    [Parameter] public EventCallback Changed { get; set; }
+
+    private Task Notify() => Changed.InvokeAsync();
+    private string Initials => string.IsNullOrWhiteSpace(Draft.FullName) ? "?" : SettingsData.Initials(Draft.FullName);
+}

@@ -1,0 +1,69 @@
+@* Quarter targets ignore the date range: a target belongs to the whole quarter. *@
+<MudPaper Outlined Class="pa-4 d-flex flex-column gap-4" Style="height: 100%">
+    <div>
+        <MudText Typo="Typo.h6" HtmlTag="h3">Q3 target</MudText>
+        <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">
+            @DaysLeft days left · @Elapsed.ToString("0%", DashboardData.Culture) of the quarter gone
+        </MudText>
+    </div>
+
+    <div>
+        <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.End">
+            <MudText Typo="Typo.h3" HtmlTag="p" Style="font-variant-numeric: tabular-nums">@Progress(Taken, Target).ToString("0%", DashboardData.Culture)</MudText>
+            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@(OnPace(Taken, Target) ? Color.Success : Color.Warning)"
+                     Icon="@(OnPace(Taken, Target) ? Icons.Material.Filled.Check : Icons.Material.Filled.PriorityHigh)">
+                @(OnPace(Taken, Target) ? "Ahead of pace" : "Behind pace")
+            </MudChip>
+        </MudStack>
+        <MudProgressLinear Value="@(Progress(Taken, Target) * 100)" Color="@(OnPace(Taken, Target) ? Color.Success : Color.Warning)" Size="Size.Large" Rounded Class="my-2"
+                           aria-label="@($"Quarter target progress for {DashboardData.ShopName(Shop)}")" />
+        <MudText Typo="Typo.body2" Style="font-variant-numeric: tabular-nums">
+            <strong>@DashboardData.Currency(Taken)</strong> of @DashboardData.Currency(Target)
+            · forecast @DashboardData.Currency(Forecast(Taken))
+        </MudText>
+    </div>
+
+    @if (Shop == DashboardData.AllShops)
+    {
+        <MudDivider />
+        <MudStack Spacing="3">
+            @foreach (var shop in DashboardData.Shops)
+            {
+                var taken = TakenBy(shop.Id);
+                <div>
+                    <MudStack Row Justify="Justify.SpaceBetween">
+                        <MudText Typo="Typo.body2">@shop.Name</MudText>
+                        <MudText Typo="Typo.caption" Style="font-variant-numeric: tabular-nums; color: var(--mud-palette-text-secondary)">
+                            @Progress(taken, shop.QuarterTarget).ToString("0%", DashboardData.Culture)@(OnPace(taken, shop.QuarterTarget) ? "" : " · behind")
+                        </MudText>
+                    </MudStack>
+                    <MudProgressLinear Value="@(Progress(taken, shop.QuarterTarget) * 100)" Color="@(OnPace(taken, shop.QuarterTarget) ? Color.Secondary : Color.Warning)" Rounded
+                                       aria-label="@($"{shop.Name} quarter target progress")" />
+                </div>
+            }
+        </MudStack>
+    }
+    else
+    {
+        <MudAlert Severity="Severity.Normal" Variant="Variant.Outlined" Dense Icon="@Icons.Material.Outlined.Insights">
+            To stay on pace, @DashboardData.ShopName(Shop) needs @DashboardData.Currency(Math.Max(0, (Target - Taken) / Math.Max(1, DaysLeft))) a day until 30 September.
+        </MudAlert>
+    }
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired] public string Shop { get; set; } = DashboardData.AllShops;
+
+    private static readonly int QuarterDays = (DashboardData.QuarterEnd - DashboardData.QuarterStart).Days + 1;
+    private static int DaysGone => (DashboardData.Today - DashboardData.QuarterStart).Days + 1;
+    private static int DaysLeft => QuarterDays - DaysGone;
+    private static double Elapsed => (double)DaysGone / QuarterDays;
+
+    private decimal Target => Shop == DashboardData.AllShops ? DashboardData.Shops.Sum(shop => shop.QuarterTarget) : DashboardData.Shops.Single(shop => shop.Id == Shop).QuarterTarget;
+    private decimal Taken => TakenBy(Shop);
+
+    private static decimal TakenBy(string shop) => DashboardData.Totals(DashboardData.For(shop, DashboardData.QuarterStart, DashboardData.Today)).Revenue;
+    private static double Progress(decimal taken, decimal target) => Math.Min(1, (double)(taken / target));
+    private static bool OnPace(decimal taken, decimal target) => (double)(taken / target) >= Elapsed;
+    private static decimal Forecast(decimal taken) => decimal.Round(taken / DaysGone * QuarterDays);
+}

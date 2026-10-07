@@ -1,0 +1,155 @@
+@page "/samples/profile"
+@attribute [PageSample("User profile", "An astronomer's public profile: a header with avatar, stats and a follow button, tabs for an activity timeline, project cards and an about page, and skill chips readers can endorse.", Uses = ["MudAvatar", "MudTabs", "MudTimeline", "MudCard", "MudChipSet", "MudAvatarGroup", "MudMenu", "MudDialog", "MudProgressLinear", "MudList"])]
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<SamplePageFrame Page="GetType()">
+    <MudStack Spacing="4">
+        <MudPaper Outlined Style="overflow: hidden">
+            @* The cover is a contour map drawn inline, tinted by the theme. *@
+            <div aria-hidden="true" style="height: 9rem; background: var(--mud-palette-background-gray); color: var(--mud-palette-secondary)">
+                <svg viewBox="0 0 1200 144" preserveAspectRatio="none" style="display: block; width: 100%; height: 100%">
+                    <g fill="none" stroke="currentColor" vector-effect="non-scaling-stroke" stroke-opacity=".28">
+                        @for (var line = 0; line < 9; line++)
+                        {
+                            var y = 20 + line * 15;
+                            <path vector-effect="non-scaling-stroke" d="@($"M0 {y + 18} C 180 {y - 10}, 340 {y + 40}, 560 {y + 8} S 900 {y - 22}, 1200 {y + 14}")" />
+                        }
+                    </g>
+                    <g fill="var(--mud-palette-primary)">
+                        <circle cx="905" cy="38" r="3" /><circle cx="960" cy="22" r="2" /><circle cx="1010" cy="44" r="2.5" /><circle cx="1068" cy="30" r="2" />
+                    </g>
+                </svg>
+            </div>
+            <div class="px-4 px-sm-6 pb-5">
+                <MudStack Row Wrap="Wrap.Wrap" Justify="Justify.SpaceBetween" AlignItems="AlignItems.End" Spacing="3" Style="margin-top: -3rem">
+                    <MudAvatar Color="Color.Secondary" Style="width: 6rem; height: 6rem; font-family: var(--font-serif); font-size: 2.25rem; border: 4px solid var(--mud-palette-surface)">
+                        @ProfileData.Initials(ProfileData.Name)
+                    </MudAvatar>
+                    <MudStack Row Spacing="2" AlignItems="AlignItems.Center">
+                        <MudButton Variant="@(_following ? Variant.Outlined : Variant.Filled)" Color="Color.Primary" OnClick="ToggleFollow" aria-pressed="@(_following ? "true" : "false")"
+                                   StartIcon="@(_following ? Icons.Material.Filled.Check : Icons.Material.Outlined.PersonAdd)">
+                            @(_following ? "Following" : "Follow")
+                        </MudButton>
+                        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.MailOutline" OnClick="MessageAsync">Message</MudButton>
+                        <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="More profile actions" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+                            <MudMenuItem Icon="@(_muted ? Icons.Material.Outlined.NotificationsActive : Icons.Material.Outlined.NotificationsOff)" OnClick="ToggleMute">
+                                @(_muted ? "Unmute activity" : "Mute activity")
+                            </MudMenuItem>
+                            <MudMenuItem Icon="@Icons.Material.Outlined.EditNote" OnClick="SuggestEdit">Suggest an edit</MudMenuItem>
+                        </MudMenu>
+                    </MudStack>
+                </MudStack>
+
+                <MudText Typo="Typo.h4" HtmlTag="h2" Class="mt-3">@ProfileData.Name</MudText>
+                <MudText Typo="Typo.body1" Style="color: var(--mud-palette-text-secondary)">
+                    @ProfileData.Role at @ProfileData.Organisation · <span style="font-family: var(--font-mono); font-size: .875rem">@@@ProfileData.Handle</span>
+                </MudText>
+                <MudStack Row Spacing="1" AlignItems="AlignItems.Center" Class="mt-1">
+                    <MudIcon Icon="@Icons.Material.Outlined.Place" Size="Size.Small" Style="color: var(--mud-palette-text-secondary)" />
+                    <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">@ProfileData.Location</MudText>
+                    @if (_muted)
+                    {
+                        <MudChip T="string" Size="Size.Small" Icon="@Icons.Material.Outlined.NotificationsOff" Class="ml-2">Muted</MudChip>
+                    }
+                </MudStack>
+
+                <dl class="d-flex flex-wrap mt-5 mb-0" style="gap: 1rem 2.5rem">
+                    @foreach (var (value, label) in Stats)
+                    {
+                        <div class="d-flex flex-column-reverse">
+                            <dt><MudText Typo="Typo.caption" Style="color: var(--mud-palette-text-secondary)">@label</MudText></dt>
+                            <dd class="ma-0"><MudText Typo="Typo.h5" HtmlTag="span" Style="font-variant-numeric: tabular-nums">@value.ToString("N0", System.Globalization.CultureInfo.InvariantCulture)</MudText></dd>
+                        </div>
+                    }
+                </dl>
+            </div>
+        </MudPaper>
+
+        <MudGrid Spacing="4">
+            <MudItem xs="12" md="8">
+                <MudPaper Outlined>
+                    @* MudBlazor capitalises tab labels; TabContent keeps them in sentence case. *@
+                    <MudTabs Elevation="0" ApplyEffectsToContainer Color="Color.Transparent" SliderColor="Color.Primary" TabPanelsClass="pa-4 pa-sm-6" MinimumTabWidth="7rem"
+                             TabHeaderClass="px-2" Style="border-bottom: 0">
+                        <MudTabPanel Icon="@Icons.Material.Outlined.Timeline">
+                            <TabContent><span style="text-transform: none">Activity</span></TabContent>
+                            <ChildContent><ProfileActivityFeed /></ChildContent>
+                        </MudTabPanel>
+                        <MudTabPanel Icon="@Icons.Material.Outlined.FolderOpen" BadgeData="ProfileData.Projects.Count" BadgeColor="Color.Secondary">
+                            <TabContent><span style="text-transform: none">Projects</span></TabContent>
+                            <ChildContent><ProfileProjects /></ChildContent>
+                        </MudTabPanel>
+                        <MudTabPanel Icon="@Icons.Material.Outlined.Badge">
+                            <TabContent><span style="text-transform: none">About</span></TabContent>
+                            <ChildContent><ProfileAbout /></ChildContent>
+                        </MudTabPanel>
+                    </MudTabs>
+                </MudPaper>
+            </MudItem>
+
+            <MudItem xs="12" md="4">
+                <MudStack Spacing="4">
+                    <MudPaper Outlined Class="pa-4">
+                        <MudText Typo="Typo.h6" HtmlTag="h3">Skills</MudText>
+                        <MudText Typo="Typo.body2" Class="mb-3" Style="color: var(--mud-palette-text-secondary)">Select a skill to endorse it.</MudText>
+                        <MudChipSet T="string" @bind-SelectedValues="_endorsed" SelectionMode="SelectionMode.MultiSelection" CheckMark Variant="Variant.Outlined" SelectedColor="Color.Primary" aria-label="Skills">
+                            @foreach (var skill in ProfileData.Skills)
+                            {
+                                <MudChip Value="@skill.Name">@skill.Name <span style="font-family: var(--font-mono); opacity: .7; margin-left: .35rem">@(skill.Endorsements + (_endorsed.Contains(skill.Name) ? 1 : 0))</span></MudChip>
+                            }
+                        </MudChipSet>
+                    </MudPaper>
+
+                    <MudPaper Outlined Class="pa-4">
+                        <MudText Typo="Typo.h6" HtmlTag="h3">Followed by people you know</MudText>
+                        <MudAvatarGroup Max="5" Spacing="2" Outlined OutlineColor="Color.Surface" MaxColor="Color.Dark" Class="my-3">
+                            @foreach (var colleague in ProfileData.MutualFollowers)
+                            {
+                                <MudAvatar Color="colleague.Color" title="@colleague.Name" Style="font-size: .8rem">@ProfileData.Initials(colleague.Name)</MudAvatar>
+                            }
+                        </MudAvatarGroup>
+                        <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">
+                            @ProfileData.MutualFollowers[0].Name, @ProfileData.MutualFollowers[1].Name and @(ProfileData.MutualFollowers.Count - 2) others
+                        </MudText>
+                    </MudPaper>
+                </MudStack>
+            </MudItem>
+        </MudGrid>
+    </MudStack>
+</SamplePageFrame>
+
+@code {
+    private bool _following, _muted;
+    private IReadOnlyCollection<string> _endorsed = [];
+
+    private (int Value, string Label)[] Stats =>
+    [
+        (ProfileData.Observations, "Observations"),
+        (ProfileData.Papers, "Papers"),
+        (ProfileData.Followers + (_following ? 1 : 0), "Followers"),
+        (ProfileData.Following, "Following")
+    ];
+
+    private void ToggleFollow()
+    {
+        _following = !_following;
+        Snackbar.Add(_following ? $"You're following {ProfileData.Name}. Her observing logs will appear in your feed." : $"Unfollowed {ProfileData.Name}.", Severity.Normal);
+    }
+
+    private void ToggleMute()
+    {
+        _muted = !_muted;
+        Snackbar.Add(_muted ? "Activity muted. You can still visit this profile." : "Activity unmuted.", Severity.Normal);
+    }
+
+    private void SuggestEdit() => Snackbar.Add("Thanks. Profile edits go to the observatory's directory team.", Severity.Info);
+
+    private async Task MessageAsync()
+    {
+        var parameters = new DialogParameters<ProfileMessageDialog> { { dialog => dialog.Recipient, ProfileData.Name.Split(' ')[0] } };
+        var dialog = await DialogService.ShowAsync<ProfileMessageDialog>("Message", parameters, new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true });
+        if (await dialog.Result is { Canceled: false })
+            Snackbar.Add("Message queued. In this sample it stays in your browser and is then forgotten.", Severity.Success);
+    }
+}

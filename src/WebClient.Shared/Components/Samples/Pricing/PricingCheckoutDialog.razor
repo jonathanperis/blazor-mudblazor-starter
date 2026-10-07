@@ -1,0 +1,81 @@
+@* Order summary before a trial starts: what the reader chose, what it will cost after the trial, and a simulated confirmation. *@
+@implements IDisposable
+
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6" HtmlTag="h2">@(Plan.MonthlyPrice == 0 ? "Create a Bench workspace" : $"Start your {Plan.Name} trial")</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudStack Spacing="3">
+            <MudSimpleTable Dense Outlined Elevation="0">
+                <tbody>
+                    <tr><th scope="row">Plan</th><td>@Plan.Name</td></tr>
+                    <tr><th scope="row">Seats</th><td>@Seats</td></tr>
+                    <tr><th scope="row">Billing</th><td>@(Plan.MonthlyPrice == 0 ? "None" : Billing.ToString())</td></tr>
+                    <tr><th scope="row">After the trial</th><td style="font-variant-numeric: tabular-nums">@AfterTrial</td></tr>
+                </tbody>
+            </MudSimpleTable>
+            <MudTextField T="string" @bind-Value="_workspace" Label="Workspace name" Variant="Variant.Outlined" Required RequiredError="Name the workspace."
+                          HelperText="Usually your group or lab, for example “Sato lab, Physiology”" Disabled="_starting" Immediate />
+            @if (Plan.MonthlyPrice > 0)
+            {
+                <MudAlert Severity="Severity.Info" Dense Variant="Variant.Outlined">No card needed. We'll remind you 3 days before the trial ends.</MudAlert>
+            }
+        </MudStack>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => Dialog.Cancel()" Disabled="_starting">Not now</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="@(_starting || string.IsNullOrWhiteSpace(_workspace))" OnClick="StartAsync">
+            @if (_starting)
+            {
+                <MudProgressCircular Indeterminate Size="Size.Small" Class="mr-2" />
+                <span>Setting up…</span>
+            }
+            else
+            {
+                <span>@(Plan.MonthlyPrice == 0 ? "Create workspace" : "Start trial")</span>
+            }
+        </MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private readonly CancellationTokenSource _lifetime = new();
+    private string _workspace = "";
+    private bool _starting;
+
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = null!;
+    [Parameter, EditorRequired] public PricingPlan Plan { get; set; } = null!;
+    [Parameter] public Billing Billing { get; set; }
+    [Parameter] public int Seats { get; set; }
+
+    private string AfterTrial
+    {
+        get
+        {
+            if (Plan.MonthlyPrice == 0) return "Free";
+            var monthly = PricingData.MonthlyTotal(Plan, Billing, Seats);
+            return Billing == Billing.Yearly ? $"{PricingData.Money(monthly * 12)} a year" : $"{PricingData.Money(monthly)} a month";
+        }
+    }
+
+    private async Task StartAsync()
+    {
+        _starting = true;
+        try
+        {
+            await Task.Delay(1000, _lifetime.Token); // Stands in for provisioning the workspace.
+            Dialog.Close(DialogResult.Ok(_workspace.Trim()));
+        }
+        catch (OperationCanceledException)
+        {
+            // Closed while setting up; nothing was created.
+        }
+    }
+
+    public void Dispose()
+    {
+        _lifetime.Cancel();
+        _lifetime.Dispose();
+    }
+}
