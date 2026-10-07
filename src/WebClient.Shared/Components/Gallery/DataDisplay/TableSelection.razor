@@ -1,0 +1,40 @@
+<MudTable T="Book" Items="_books" MultiSelection="true" @bind-SelectedItems="_selected" SelectOnRowClick="true"
+          RowDisabledFunc="book => book.Stock == 0" Hover="true" Elevation="0">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6" HtmlTag="h3">Reserve books for collection</MudText>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Title</MudTh>
+        <MudTh>Availability</MudTh>
+        <MudTh Style="text-align: right">Price</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Title">@context.Title</MudTd>
+        <MudTd DataLabel="Availability">@(context.Stock == 0 ? "Sold out" : $"{context.Stock} on the shelf")</MudTd>
+        <MudTd DataLabel="Price" Style="text-align: right">@context.Price.ToString("C", Prices)</MudTd>
+    </RowTemplate>
+</MudTable>
+
+<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="pa-4" Wrap="Wrap.Wrap">
+    <MudText Typo="Typo.body2" role="status">
+        @(_selected.Count == 0 ? "Nothing reserved yet." : $"{_selected.Count} reserved, {_selected.Sum(book => book.Price).ToString("C", Prices)} to pay at the counter.")
+    </MudText>
+    <MudButton Variant="Variant.Outlined" Size="Size.Small" Disabled="_selected.Count == 0" OnClick="() => _selected = []">Clear selection</MudButton>
+</MudStack>
+
+@code {
+    private record Book(string Title, int Stock, decimal Price);
+
+    private static readonly CultureInfo Prices = CultureInfo.GetCultureInfo("en-GB");
+    private HashSet<Book> _selected = [];
+
+    private readonly Book[] _books =
+    [
+        new("The Lighthouse Keeper's Almanac", 12, 18.50m),
+        new("Salt and Ledger", 4, 24.00m),
+        new("Night Trains of Europe", 0, 19.75m),
+        new("A Field Guide to Quiet Rivers", 9, 15.99m),
+        new("A Short History of Ink", 0, 27.00m),
+        new("The Patient Garden", 2, 17.50m)
+    ];
+}

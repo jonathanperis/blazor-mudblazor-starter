@@ -1,0 +1,76 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudDataGrid Items="_books" Dense="_dense" Hover="_hover" Striped="_striped" Bordered="_bordered" Outlined="_outlined"
+                     Elevation="_elevation" SortMode="_sortMode" Filterable="_filterable" FilterMode="_filterMode"
+                     Groupable="_groupable" Hideable="_hideable" ColumnResizeMode="_resizeMode" Style="width: 100%">
+            <Columns>
+                <PropertyColumn Property="book => book.Title" />
+                <PropertyColumn Property="book => book.Genre" />
+                <PropertyColumn Property="book => book.Year" />
+            </Columns>
+        </MudDataGrid>
+    </Preview>
+    <Controls>
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_hover" Label="Hover" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_striped" Label="Striped" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_bordered" Label="Bordered" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_outlined" Label="Outlined" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_filterable" Label="Filterable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_groupable" Label="Groupable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_hideable" Label="Hideable" Color="Color.Primary" />
+        <MudSlider @bind-Value="_elevation" Min="0" Max="12" Step="1" Color="Color.Primary">Elevation: @_elevation</MudSlider>
+        <MudSelect @bind-Value="_sortMode" Label="Sort mode" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<SortMode>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_filterMode" Label="Filter mode" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="!_filterable">
+            @foreach (var value in Enum.GetValues<DataGridFilterMode>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_resizeMode" Label="Column resize mode" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<ResizeMode>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+    </Controls>
+</Playground>
+
+@code {
+    private record Book(string Title, string Genre, int Year);
+
+    private readonly Book[] _books =
+    [
+        new("Salt and Ledger", "History", 2019),
+        new("The Patient Garden", "Nature", 2021),
+        new("Ferries and Fog", "Travel", 2015),
+        new("A Short History of Ink", "History", 2024)
+    ];
+
+    private bool _dense;
+    private bool _hover = true;
+    private bool _striped;
+    private bool _bordered;
+    private bool _outlined = true;
+    private bool _filterable;
+    private bool _groupable;
+    private bool _hideable;
+    private int _elevation;
+    private SortMode _sortMode = SortMode.Multiple;
+    private DataGridFilterMode _filterMode = DataGridFilterMode.Simple;
+    private ResizeMode _resizeMode = ResizeMode.None;
+
+    // MudDataGrid defaults: Elevation 1, SortMode.Multiple, DataGridFilterMode.Simple, ResizeMode.None, switches off.
+    private string Code => Snippet.Element("MudDataGrid",
+    [
+        ("Items", "_books"),
+        ("Dense", Snippet.Flag(_dense)),
+        ("Hover", Snippet.Flag(_hover)),
+        ("Striped", Snippet.Flag(_striped)),
+        ("Bordered", Snippet.Flag(_bordered)),
+        ("Outlined", Snippet.Flag(_outlined)),
+        ("Elevation", _elevation == 1 ? null : _elevation.ToString()),
+        ("SortMode", Snippet.Enum(_sortMode, SortMode.Multiple)),
+        ("Filterable", Snippet.Flag(_filterable)),
+        ("FilterMode", _filterable ? Snippet.Enum(_filterMode, DataGridFilterMode.Simple) : null),
+        ("Groupable", Snippet.Flag(_groupable)),
+        ("Hideable", Snippet.Flag(_hideable)),
+        ("ColumnResizeMode", Snippet.Enum(_resizeMode, ResizeMode.None))
+    ], "\n    <Columns>\n        <PropertyColumn Property=\"book => book.Title\" />\n        …\n    </Columns>\n");
+}

@@ -1,0 +1,35 @@
+<MudTable Items="_books" Hover="true" Elevation="0" Breakpoint="Breakpoint.Sm">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6" HtmlTag="h3">New arrivals at Harbour Books</MudText>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Title</MudTh>
+        <MudTh>Author</MudTh>
+        <MudTh>Genre</MudTh>
+        <MudTh Style="text-align: right">Price</MudTh>
+        <MudTh Style="text-align: right">In stock</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Title">@context.Title</MudTd>
+        <MudTd DataLabel="Author">@context.Author</MudTd>
+        <MudTd DataLabel="Genre">@context.Genre</MudTd>
+        <MudTd DataLabel="Price" Style="text-align: right">@context.Price.ToString("C", Prices)</MudTd>
+        <MudTd DataLabel="In stock" Style="text-align: right">@context.Stock</MudTd>
+    </RowTemplate>
+</MudTable>
+
+@code {
+    private record Book(string Title, string Author, string Genre, decimal Price, int Stock);
+
+    // A fixed culture keeps prices stable whatever the browser language is.
+    private static readonly CultureInfo Prices = CultureInfo.GetCultureInfo("en-GB");
+
+    private readonly Book[] _books =
+    [
+        new("The Lighthouse Keeper's Almanac", "Maren Holt", "Nature", 18.50m, 12),
+        new("Salt and Ledger", "Idris Okafor", "History", 24.00m, 4),
+        new("A Field Guide to Quiet Rivers", "Ana Ribeiro", "Nature", 15.99m, 9),
+        new("The Clockmaker's Daughter", "Lena Vogt", "Fiction", 11.99m, 21),
+        new("Night Trains of Europe", "Tomasz Wierzbicki", "Travel", 19.75m, 0)
+    ];
+}

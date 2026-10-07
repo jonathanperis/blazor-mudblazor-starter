@@ -1,0 +1,30 @@
+<MudTable Items="_trips" Height="360px" FixedHeader="true" FixedFooter="true" Virtualize="true" ItemSize="37"
+          Dense="true" Hover="true" Elevation="0" Breakpoint="Breakpoint.None">
+    <HeaderContent>
+        <MudTh>Trip</MudTh>
+        <MudTh>Line</MudTh>
+        <MudTh>Departure</MudTh>
+        <MudTh Style="text-align: right">Passengers</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd>@context.Id</MudTd>
+        <MudTd>@context.Line</MudTd>
+        <MudTd>@context.Departure.ToString("hh\\:mm")</MudTd>
+        <MudTd Style="text-align: right">@context.Passengers</MudTd>
+    </RowTemplate>
+    <FooterContent>
+        <MudTd colspan="3"><strong>@_trips.Length.ToString("N0") trips today</strong></MudTd>
+        <MudTd Style="text-align: right"><strong>@_trips.Sum(trip => trip.Passengers).ToString("N0")</strong></MudTd>
+    </FooterContent>
+</MudTable>
+
+@code {
+    private record Trip(int Id, string Line, TimeSpan Departure, int Passengers);
+
+    private static readonly string[] Lines = ["12", "7A", "31", "N4", "18"];
+
+    // Deterministic synthetic data: a departure every 25 seconds from 05:00.
+    private readonly Trip[] _trips = Enumerable.Range(1, 2000)
+        .Select(id => new Trip(id, Lines[id % Lines.Length], TimeSpan.FromHours(5) + TimeSpan.FromSeconds(id * 25), 8 + id * 37 % 63))
+        .ToArray();
+}

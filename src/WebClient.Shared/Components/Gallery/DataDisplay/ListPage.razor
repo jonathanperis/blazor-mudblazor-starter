@@ -1,0 +1,12 @@
+@page "/components/list"
+@attribute [ComponentPage("List", GalleryGroup.DataDisplay, "A vertical list of items with icons, avatars, secondary text and nested sub-lists. Use it for menus, settings and anything people pick from; choose a table when items have several comparable fields.", MudDocs = "list", Types = ["MudList", "MudListItem", "MudListSubheader"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ListBasics)" Title="Icons, secondary text and subheaders" Description="Text and SecondaryText give each item a title and a detail line. A subheader names a section and a divider separates sections." />
+    <Example Of="typeof(ListSelectionModes)" Title="Selection modes" Description="SingleSelection always keeps one item, ToggleSelection lets a second click clear it, and MultiSelection adds checkboxes. Bind SelectedValue for the first two and SelectedValues for the last." />
+    <Example Of="typeof(ListNested)" Title="Nested lists" Description="NestedList turns an item into an expandable group. Bind Expanded to open or close it from code; nested items indent automatically." />
+    <Example Of="typeof(ListAvatars)" Title="Avatars" Description="AvatarContent puts an avatar before the text. Initials and icons both work; the person's name stays in the text, so the avatar is decoration." />
+    <Example Of="typeof(ListDensity)" Title="Dense, gutters, padding and dividers" Description="The same list four ways. Dense tightens each row, Gutters controls the side padding of items, Padding the space above and below the list, and dividers can be full width or inset." />
+    <Example Of="typeof(ListSettings)" Title="A settings list" Description="A read-only list as layout: each row holds a labelled switch or a value, grouped under subheaders. The switch carries the accessible name, so the list item does not need to be clickable." />
+    <Example Of="typeof(ListPlayground)" Title="Playground" Description="Change the list's parameters; the markup lists only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

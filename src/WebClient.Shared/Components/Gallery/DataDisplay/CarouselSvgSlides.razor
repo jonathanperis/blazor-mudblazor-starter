@@ -1,0 +1,48 @@
+@* Drawings use theme variables, so they follow light and dark mode. role="img" with aria-label is the text alternative. *@
+<MudCarousel TData="object" AutoCycle="false" ArrowsColor="Color.Primary" Style="height: 300px">
+    <MudCarouselItem Transition="Transition.Fade">
+        <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center" Spacing="8" Class="px-16" Style="height: 100%">
+            <svg viewBox="0 0 120 120" width="160" height="160" role="img" aria-label="The Moon, lit on the right and about three quarters full">
+                <circle cx="60" cy="60" r="44" style="fill: var(--mud-palette-lines-default)" />
+                <path d="M60 16 A44 44 0 0 1 60 104 A22 44 0 0 1 60 16 Z" style="fill: var(--mud-palette-tertiary)" />
+            </svg>
+            @Caption("Look east after sunset", "Waxing gibbous Moon", "Craters along the shadow line stand out best through binoculars.")
+        </MudStack>
+    </MudCarouselItem>
+    <MudCarouselItem Transition="Transition.Fade">
+        <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center" Spacing="8" Class="px-16" Style="height: 100%">
+            <svg viewBox="0 0 120 120" width="160" height="160" role="img" aria-label="Orion: four corner stars around a belt of three">
+                <polyline points="34,22 82,26 70,62 86,98 30,94 50,58 34,22" style="fill: none; stroke: var(--mud-palette-lines-inputs); stroke-width: 1" />
+                <polyline points="50,58 60,60 70,62" style="fill: none; stroke: var(--mud-palette-lines-inputs); stroke-width: 1" />
+                <g style="fill: var(--mud-palette-primary)">
+                    <circle cx="34" cy="22" r="4.5" /><circle cx="82" cy="26" r="3.5" />
+                    <circle cx="50" cy="58" r="2.5" /><circle cx="60" cy="60" r="2.5" /><circle cx="70" cy="62" r="2.5" />
+                    <circle cx="30" cy="94" r="3" /><circle cx="86" cy="98" r="4.5" />
+                </g>
+            </svg>
+            @Caption("High in the south at 21:00", "Orion", "Follow the belt down and to the left to find Sirius, the brightest star of the night.")
+        </MudStack>
+    </MudCarouselItem>
+    <MudCarouselItem Transition="Transition.Fade">
+        <MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center" Spacing="8" Class="px-16" Style="height: 100%">
+            <svg viewBox="0 0 120 120" width="160" height="160" role="img" aria-label="Saturn with its rings tilted towards us">
+                <g transform="rotate(-18 60 60)" style="fill: none; stroke: var(--mud-palette-secondary); stroke-width: 5">
+                    <ellipse cx="60" cy="60" rx="54" ry="14" />
+                    <circle cx="60" cy="60" r="28" style="fill: var(--mud-palette-tertiary); stroke: none" />
+                    @* The near half of the ring is drawn again, over the planet. *@
+                    <path d="M6 60 A54 14 0 0 0 114 60" />
+                </g>
+            </svg>
+            @Caption("Low in the south-west", "Saturn", "The rings show in any telescope; ask at the dome for a look through the great refractor.")
+        </MudStack>
+    </MudCarouselItem>
+</MudCarousel>
+
+@code {
+    private static RenderFragment Caption(string kicker, string title, string text) =>
+        @<div style="max-width: 30ch">
+            <MudText Typo="Typo.overline">@kicker</MudText>
+            <MudText Typo="Typo.h5" HtmlTag="h3" GutterBottom="true">@title</MudText>
+            <MudText Typo="Typo.body2">@text</MudText>
+        </div>;
+}

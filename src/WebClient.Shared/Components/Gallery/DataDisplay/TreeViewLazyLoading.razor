@@ -1,0 +1,60 @@
+@implements IDisposable
+
+<MudStack Spacing="3" Style="max-width: 26rem">
+    <MudPaper Outlined="true" Class="pa-2">
+        <MudTreeView T="string" Items="_depots" ServerData="LoadChildrenAsync" Hover="true">
+            <ItemTemplate>
+                <MudTreeViewItem Value="@context.Value" Text="@context.Text" Icon="@context.Icon" CanExpand="@context.Expandable"
+                                 @bind-Expanded="@context.Expanded" @bind-Items="@context.Children" LoadingIconColor="Color.Primary" />
+            </ItemTemplate>
+        </MudTreeView>
+    </MudPaper>
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+@code {
+    private readonly CancellationTokenSource _disposed = new();
+    private string _status = "Open a depot to load its lines.";
+
+    private readonly List<TreeItemData<string>> _depots =
+    [
+        new() { Value = "Northgate", Text = "Northgate depot", Icon = Icons.Material.Outlined.Garage },
+        new() { Value = "Harbour", Text = "Harbour depot", Icon = Icons.Material.Outlined.Garage }
+    ];
+
+    // Called with the Value of the branch being opened. A real app would query its API here.
+    private async Task<IReadOnlyCollection<TreeItemData<string>>> LoadChildrenAsync(string parent)
+    {
+        // ServerData is a plain delegate, not an event callback, so re-render the status by hand.
+        _status = $"Loading {parent}…";
+        StateHasChanged();
+        try
+        {
+            await Task.Delay(800, _disposed.Token);
+        }
+        catch (OperationCanceledException)
+        {
+            return [];
+        }
+
+        _status = $"Loaded {parent}.";
+        StateHasChanged();
+        // Depots hold lines ("Harbour"); lines hold stops ("Harbour/12").
+        return parent.Contains('/')
+            ? [Stop(parent, "Market Square"), Stop(parent, "University Park"), Stop(parent, "Harbour Quay")]
+            : [Line(parent, "12"), Line(parent, "31"), Line(parent, "N4")];
+    }
+
+    private static TreeItemData<string> Line(string depot, string number) =>
+        new() { Value = $"{depot}/{number}", Text = $"Line {number}", Icon = Icons.Material.Outlined.DirectionsBus };
+
+    // Leaves set Expandable to false so no expand button is offered.
+    private static TreeItemData<string> Stop(string line, string name) =>
+        new() { Value = $"{line}/{name}", Text = name, Icon = Icons.Material.Outlined.Place, Expandable = false };
+
+    public void Dispose()
+    {
+        _disposed.Cancel();
+        _disposed.Dispose();
+    }
+}

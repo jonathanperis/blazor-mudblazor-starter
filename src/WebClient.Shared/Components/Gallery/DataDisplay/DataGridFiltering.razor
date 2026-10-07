@@ -1,0 +1,59 @@
+<MudDataGrid @ref="_grid" Items="_specimens" Filterable="true" FilterMode="_mode" FilterCaseSensitivity="DataGridFilterCaseSensitivity.CaseInsensitive"
+             QuickFilter="QuickFilter" RowsPerPage="5" Elevation="0" Dense="true">
+    <ToolBarContent>
+        <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="4" Class="py-2" Style="width: 100%">
+            <MudTextField @bind-Value="_search" Immediate="true" Label="Quick filter" Placeholder="Any word in any column" Clearable="true"
+                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" Variant="Variant.Outlined"
+                          Margin="Margin.Dense" Style="max-width: 16rem" />
+            <MudRadioGroup T="DataGridFilterMode" Value="_mode" ValueChanged="ChangeModeAsync" aria-label="Filter mode">
+                <MudRadio Value="DataGridFilterMode.Simple" Color="Color.Primary">Simple</MudRadio>
+                <MudRadio Value="DataGridFilterMode.ColumnFilterMenu" Color="Color.Primary">Column menu</MudRadio>
+                <MudRadio Value="DataGridFilterMode.ColumnFilterRow" Color="Color.Primary">Column row</MudRadio>
+            </MudRadioGroup>
+        </MudStack>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="specimen => specimen.Code" Filterable="false" />
+        <PropertyColumn Property="specimen => specimen.Species" />
+        <PropertyColumn Property="specimen => specimen.Site" />
+        <PropertyColumn Property="specimen => specimen.LengthMm" Title="Length (mm)" />
+        <PropertyColumn Property="specimen => specimen.Catalogued" />
+    </Columns>
+    <NoRecordsContent>
+        <MudText Typo="Typo.body2">No specimens match these filters.</MudText>
+    </NoRecordsContent>
+    <PagerContent>
+        <MudDataGridPager T="Specimen" PageSizeOptions="[5, 10]" />
+    </PagerContent>
+</MudDataGrid>
+
+@code {
+    private record Specimen(string Code, string Species, string Site, int LengthMm, bool Catalogued);
+
+    private MudDataGrid<Specimen> _grid = null!;
+    private DataGridFilterMode _mode = DataGridFilterMode.Simple;
+    private string _search = "";
+
+    private readonly Specimen[] _specimens =
+    [
+        new("SM-001", "Common limpet", "Saltmarsh point", 38, true),
+        new("SM-002", "Shore crab", "Harbour wall", 61, true),
+        new("SM-003", "Dog whelk", "Saltmarsh point", 27, false),
+        new("SM-004", "Blue mussel", "Harbour wall", 54, true),
+        new("SM-005", "Edible periwinkle", "Rock pools", 22, false),
+        new("SM-006", "Shore crab", "Rock pools", 48, false),
+        new("SM-007", "Beadlet anemone", "Rock pools", 31, true),
+        new("SM-008", "Common limpet", "Harbour wall", 42, true)
+    ];
+
+    private bool QuickFilter(Specimen specimen) =>
+        string.IsNullOrWhiteSpace(_search)
+        || $"{specimen.Code} {specimen.Species} {specimen.Site}".Contains(_search, StringComparison.OrdinalIgnoreCase);
+
+    // Each mode shows filters differently; clearing them first means the new mode starts from the full list.
+    private async Task ChangeModeAsync(DataGridFilterMode mode)
+    {
+        await _grid.ClearFiltersAsync();
+        _mode = mode;
+    }
+}

@@ -1,0 +1,87 @@
+<MudTable @ref="_table" T="Observation" ServerData="LoadAsync" RowsPerPage="5" Dense="true" Hover="true" Elevation="0">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6" HtmlTag="h3">Observation log</MudText>
+        <MudSpacer />
+        <MudTextField T="string" Value="_search" ValueChanged="SearchAsync" DebounceInterval="300" Label="Search targets" Clearable="true"
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" Margin="Margin.Dense"
+                      Variant="Variant.Outlined" Class="flex-grow-0" Style="width: 18rem" />
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh><MudTableSortLabel T="Observation" SortLabel="night" InitialDirection="SortDirection.Descending">Night</MudTableSortLabel></MudTh>
+        <MudTh><MudTableSortLabel T="Observation" SortLabel="target">Target</MudTableSortLabel></MudTh>
+        <MudTh>Instrument</MudTh>
+        <MudTh Style="text-align: right"><MudTableSortLabel T="Observation" SortLabel="seeing">Seeing</MudTableSortLabel></MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Night">@context.Night.ToString("yyyy-MM-dd")</MudTd>
+        <MudTd DataLabel="Target">@context.Target</MudTd>
+        <MudTd DataLabel="Instrument">@context.Instrument</MudTd>
+        <MudTd DataLabel="Seeing" Style="text-align: right">@context.Seeing.ToString("0.0", CultureInfo.InvariantCulture)″</MudTd>
+    </RowTemplate>
+    <LoadingContent>
+        <MudText Typo="Typo.body2" Class="pa-2">Asking the server…</MudText>
+    </LoadingContent>
+    <NoRecordsContent>
+        <MudText Typo="Typo.body2" Class="pa-4">The server found no targets matching “@_search”.</MudText>
+    </NoRecordsContent>
+    <PagerContent>
+        <MudTablePager PageSizeOptions="[5, 10]" />
+    </PagerContent>
+</MudTable>
+
+<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap" Class="px-4 pb-4">
+    <MudSwitch @bind-Value="_slow" Label="Slow server (1.5 s per request)" Color="Color.Primary" />
+    <MudText Typo="Typo.body2" role="status">Requests: @_requests. Cancelled before finishing: @_cancelled.</MudText>
+</MudStack>
+
+@code {
+    private record Observation(DateOnly Night, string Target, string Instrument, double Seeing);
+
+    private static readonly string[] Targets = ["Andromeda Galaxy", "Orion Nebula", "Pleiades", "Ring Nebula", "Crab Nebula", "Whirlpool Galaxy", "Hercules Cluster", "Lagoon Nebula"];
+    private static readonly string[] Instruments = ["40 cm reflector", "Solar refractor", "Wide-field camera"];
+
+    // Stands in for a database on the server.
+    private static readonly Observation[] Database = Enumerable.Range(0, 64)
+        .Select(i => new Observation(new DateOnly(2026, 3, 1).AddDays(i / 2), Targets[i * 5 % Targets.Length], Instruments[i % Instruments.Length], 0.8 + i * 7 % 23 / 10.0))
+        .ToArray();
+
+    private MudTable<Observation> _table = null!;
+    private string _search = "";
+    private bool _slow;
+    private int _requests;
+    private int _cancelled;
+
+    private async Task<TableData<Observation>> LoadAsync(TableState state, CancellationToken token)
+    {
+        // ServerData is a plain delegate, not an event callback, so refresh the counters by hand.
+        _requests++;
+        StateHasChanged();
+        try
+        {
+            // Paging or sorting again before this finishes cancels the token, and the table ignores the stale result.
+            await Task.Delay(_slow ? 1500 : 400, token);
+        }
+        catch (OperationCanceledException)
+        {
+            _cancelled++;
+            StateHasChanged();
+            throw;
+        }
+
+        var matches = Database.Where(row => row.Target.Contains(_search, StringComparison.OrdinalIgnoreCase));
+        matches = state.SortLabel switch
+        {
+            "target" => matches.OrderByDirection(state.SortDirection, row => row.Target),
+            "seeing" => matches.OrderByDirection(state.SortDirection, row => row.Seeing),
+            _ => matches.OrderByDirection(state.SortDirection, row => row.Night)
+        };
+        var filtered = matches.ToList();
+        return new TableData<Observation> { TotalItems = filtered.Count, Items = filtered.Skip(state.Page * state.PageSize).Take(state.PageSize) };
+    }
+
+    private Task SearchAsync(string text)
+    {
+        _search = text ?? "";
+        return _table.ReloadServerData();
+    }
+}

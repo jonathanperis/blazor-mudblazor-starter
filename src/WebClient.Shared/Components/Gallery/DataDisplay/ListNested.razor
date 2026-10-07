@@ -1,0 +1,31 @@
+<MudStack Spacing="3" Style="max-width: 26rem">
+    <MudSwitch @bind-Value="_archiveOpen" Label="Open the archive group" Color="Color.Primary" />
+    <MudPaper Outlined="true">
+        <MudList T="string">
+            <MudListSubheader>Library collections</MudListSubheader>
+            <MudListItem Icon="@Icons.Material.Outlined.MenuBook" Text="Lending library" Expanded="true">
+                <NestedList>
+                    <MudListItem Icon="@Icons.Material.Outlined.AutoStories" Text="Fiction" />
+                    <MudListItem Icon="@Icons.Material.Outlined.Science" Text="Science and nature" />
+                    <MudListItem Icon="@Icons.Material.Outlined.ChildCare" Text="Children's room" />
+                </NestedList>
+            </MudListItem>
+            <MudListItem Icon="@Icons.Material.Outlined.Inventory2" Text="Archive" @bind-Expanded="_archiveOpen">
+                <NestedList>
+                    <MudListItem Text="Harbour records, 1850–1950" />
+                    <MudListItem Text="Maps and charts">
+                        <NestedList>
+                            <MudListItem Text="Coastal surveys" />
+                            <MudListItem Text="Town plans" />
+                        </NestedList>
+                    </MudListItem>
+                </NestedList>
+            </MudListItem>
+            <MudListItem Icon="@Icons.Material.Outlined.Headphones" Text="Audio books" />
+        </MudList>
+    </MudPaper>
+</MudStack>
+
+@code {
+    private bool _archiveOpen;
+}

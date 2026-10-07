@@ -1,0 +1,28 @@
+<MudPaper Outlined="true" Style="max-width: 30rem">
+    <MudList T="string" ReadOnly="true">
+        <MudListSubheader>Field notebook app</MudListSubheader>
+        <MudListItem Icon="@Icons.Material.Outlined.CloudSync">
+            <MudSwitch @bind-Value="_syncOnMobile" Label="Sync readings over mobile data" Color="Color.Primary" />
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">@(_syncOnMobile ? "Readings upload as soon as you save them." : "Readings wait for Wi-Fi.")</MudText>
+        </MudListItem>
+        <MudListItem Icon="@Icons.Material.Outlined.NotificationsActive">
+            <MudSwitch @bind-Value="_frostAlerts" Label="Frost alerts" Color="Color.Primary" />
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">A notification when any station drops below 0 °C.</MudText>
+        </MudListItem>
+        <MudDivider />
+        <MudListSubheader>Display</MudListSubheader>
+        <MudListItem Icon="@Icons.Material.Outlined.Straighten">
+            <MudSelect @bind-Value="_units" Label="Units" Variant="Variant.Outlined" Margin="Margin.Dense">
+                <MudSelectItem Value="@("Metric")">Metric (°C, mm)</MudSelectItem>
+                <MudSelectItem Value="@("Imperial")">Imperial (°F, in)</MudSelectItem>
+            </MudSelect>
+        </MudListItem>
+        <MudListItem Icon="@Icons.Material.Outlined.Info" Text="App version" SecondaryText="2.4.1, built 2 March 2026" />
+    </MudList>
+</MudPaper>
+
+@code {
+    private bool _syncOnMobile = true;
+    private bool _frostAlerts;
+    private string _units = "Metric";
+}

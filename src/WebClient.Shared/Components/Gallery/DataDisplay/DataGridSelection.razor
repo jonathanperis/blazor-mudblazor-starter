@@ -1,0 +1,41 @@
+<MudDataGrid T="Sample" Items="_samples" MultiSelection="true" SelectOnRowClick="true" @bind-SelectedItems="_selected"
+             Hover="true" Dense="true" Elevation="0">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6" HtmlTag="h3">Samples awaiting analysis</MudText>
+    </ToolBarContent>
+    <Columns>
+        <SelectColumn T="Sample" DisabledFunc="sample => sample.Shipped" AriaLabelFunc="@(sample => $"Select sample {sample.Code}")" />
+        <PropertyColumn Property="sample => sample.Code" />
+        <PropertyColumn Property="sample => sample.Material" />
+        <PropertyColumn Property="sample => sample.Site" />
+        <TemplateColumn Title="Status">
+            <CellTemplate>@(context.Item.Shipped ? "Already shipped" : "In the cold store")</CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+<MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="2" Class="pa-4">
+    <MudText Typo="Typo.body2" role="status">@(_selected.Count == 0 ? "No samples in the shipment." : $"Shipment of {_selected.Count}:")</MudText>
+    @foreach (var sample in _selected.OrderBy(sample => sample.Code))
+    {
+        <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" OnClose="() => Remove(sample)">@sample.Code</MudChip>
+    }
+</MudStack>
+
+@code {
+    private record Sample(string Code, string Material, string Site, bool Shipped);
+
+    private HashSet<Sample> _selected = [];
+
+    private readonly Sample[] _samples =
+    [
+        new("LS-2201", "Sediment core", "Saltmarsh point", false),
+        new("LS-2202", "Seawater, 1 L", "Harbour wall", true),
+        new("LS-2203", "Peat", "Corrour moor", false),
+        new("LS-2204", "Lichen", "Ben Alder ridge", false),
+        new("LS-2205", "Freshwater, 1 L", "Loch Ossian shore", true)
+    ];
+
+    // Replace the set rather than mutating it, so the grid notices the change.
+    private void Remove(Sample sample) => _selected = [.. _selected.Where(item => item != sample)];
+}

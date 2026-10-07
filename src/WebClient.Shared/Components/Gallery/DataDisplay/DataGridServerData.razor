@@ -1,0 +1,84 @@
+<MudDataGrid @ref="_grid" T="Loan" ServerData="LoadAsync" RowsPerPage="5" Dense="true" Hover="true" Elevation="0">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6" HtmlTag="h3">Library loans</MudText>
+        <MudSpacer />
+        <MudTextField T="string" Value="_search" ValueChanged="SearchAsync" DebounceInterval="300" Label="Search borrower or title" Clearable="true"
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" Margin="Margin.Dense"
+                      Variant="Variant.Outlined" Class="flex-grow-0" Style="width: 18rem" />
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="loan => loan.Borrower" />
+        <PropertyColumn Property="loan => loan.Title" />
+        <PropertyColumn Property="loan => loan.Due" Format="yyyy-MM-dd" />
+        <PropertyColumn Property="loan => loan.Renewals" />
+    </Columns>
+    <NoRecordsContent>
+        <MudText Typo="Typo.body2">The server found no loans matching “@_search”.</MudText>
+    </NoRecordsContent>
+    <PagerContent>
+        <MudDataGridPager T="Loan" PageSizeOptions="[5, 10]" />
+    </PagerContent>
+</MudDataGrid>
+
+<MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Wrap="Wrap.Wrap" Class="px-4 py-2">
+    <MudSwitch @bind-Value="_slow" Label="Slow server (1.5 s per request)" Color="Color.Primary" />
+    <MudText Typo="Typo.body2" role="status">Requests: @_requests. Cancelled before finishing: @_cancelled.</MudText>
+</MudStack>
+
+@code {
+    private record Loan(string Borrower, string Title, DateOnly Due, int Renewals);
+
+    private static readonly string[] Borrowers = ["Ines Duarte", "Kofi Mensah", "Morag Fraser", "Callum Reid", "Aisha Bello", "Hugo Lindqvist", "Priya Raman"];
+    private static readonly string[] Titles = ["Salt and Ledger", "The Patient Garden", "Ferries and Fog", "A Short History of Ink", "Moths of the Northern Coast"];
+
+    // Stands in for a table on the server.
+    private static readonly Loan[] Database = Enumerable.Range(0, 48)
+        .Select(i => new Loan(Borrowers[i % Borrowers.Length], Titles[i * 3 % Titles.Length], new DateOnly(2026, 6, 1).AddDays(i * 2), i % 4))
+        .ToArray();
+
+    private MudDataGrid<Loan> _grid = null!;
+    private string _search = "";
+    private bool _slow;
+    private int _requests;
+    private int _cancelled;
+
+    private async Task<GridData<Loan>> LoadAsync(GridState<Loan> state, CancellationToken token)
+    {
+        // ServerData is a plain delegate, not an event callback, so refresh the counters by hand.
+        _requests++;
+        StateHasChanged();
+        try
+        {
+            await Task.Delay(_slow ? 1500 : 400, token);
+        }
+        catch (OperationCanceledException)
+        {
+            _cancelled++;
+            StateHasChanged();
+            throw;
+        }
+
+        IEnumerable<Loan> rows = Database.Where(loan => $"{loan.Borrower} {loan.Title}".Contains(_search, StringComparison.OrdinalIgnoreCase));
+        // SortBy holds the property name of the sorted column.
+        var sort = state.SortDefinitions.FirstOrDefault();
+        if (sort is not null)
+        {
+            var direction = sort.Descending ? SortDirection.Descending : SortDirection.Ascending;
+            rows = sort.SortBy switch
+            {
+                nameof(Loan.Borrower) => rows.OrderByDirection(direction, loan => loan.Borrower),
+                nameof(Loan.Title) => rows.OrderByDirection(direction, loan => loan.Title),
+                nameof(Loan.Renewals) => rows.OrderByDirection(direction, loan => loan.Renewals),
+                _ => rows.OrderByDirection(direction, loan => loan.Due)
+            };
+        }
+        var matches = rows.ToList();
+        return new GridData<Loan> { TotalItems = matches.Count, Items = matches.Skip(state.Page * state.PageSize).Take(state.PageSize) };
+    }
+
+    private Task SearchAsync(string text)
+    {
+        _search = text ?? "";
+        return _grid.ReloadServerData();
+    }
+}

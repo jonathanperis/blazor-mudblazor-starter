@@ -1,0 +1,42 @@
+<MudDataGrid Items="_readings" Elevation="0" Hover="true" Culture="Invariant">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6" HtmlTag="h3">Field station readings, 14 May</MudText>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="reading => reading.Station" />
+        <PropertyColumn Property="reading => reading.Time" Title="Time" Format="HH:mm" />
+        <PropertyColumn Property="reading => reading.TemperatureC" Title="Temperature (°C)" Format="0.0" />
+        <PropertyColumn Property="reading => reading.RainMm" Title="Rain (mm)" Format="0.0" />
+        <TemplateColumn Title="Sky" SortBy="reading => reading.Sky">
+            <CellTemplate>
+                <MudStack Row Spacing="2" AlignItems="AlignItems.Center">
+                    <MudIcon Icon="@SkyIcon(context.Item.Sky)" Size="Size.Small" aria-hidden="true" />
+                    <span>@context.Item.Sky</span>
+                </MudStack>
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private record Reading(string Station, TimeOnly Time, double TemperatureC, double RainMm, string Sky);
+
+    private static readonly CultureInfo Invariant = CultureInfo.InvariantCulture;
+
+    private readonly Reading[] _readings =
+    [
+        new("Ben Alder ridge", new(6, 0), 3.4, 0.0, "Clear"),
+        new("Loch Ossian shore", new(6, 0), 6.1, 1.2, "Showers"),
+        new("Corrour moor", new(6, 0), 4.8, 0.4, "Cloudy"),
+        new("Ben Alder ridge", new(12, 0), 9.7, 0.0, "Clear"),
+        new("Loch Ossian shore", new(12, 0), 11.2, 3.8, "Showers"),
+        new("Corrour moor", new(12, 0), 10.5, 0.0, "Cloudy")
+    ];
+
+    private static string SkyIcon(string sky) => sky switch
+    {
+        "Clear" => Icons.Material.Outlined.WbSunny,
+        "Showers" => Icons.Material.Outlined.Umbrella,
+        _ => Icons.Material.Outlined.Cloud
+    };
+}

@@ -1,0 +1,42 @@
+<MudGrid Spacing="4">
+    @foreach (var preset in _presets)
+    {
+        <MudItem xs="12" md="6">
+            <MudText Typo="Typo.overline" HtmlTag="h3" Class="mb-1">@preset.Name</MudText>
+            <MudTable Items="_departures" Dense="preset.Dense" Hover="preset.Hover" Striped="preset.Striped" Bordered="preset.Bordered"
+                      Outlined="true" Elevation="0" Breakpoint="Breakpoint.None">
+                <HeaderContent>
+                    <MudTh>Line</MudTh>
+                    <MudTh>Destination</MudTh>
+                    <MudTh Style="text-align: right">Due</MudTh>
+                </HeaderContent>
+                <RowTemplate>
+                    <MudTd>@context.Line</MudTd>
+                    <MudTd>@context.Destination</MudTd>
+                    <MudTd Style="text-align: right">@context.Minutes min</MudTd>
+                </RowTemplate>
+            </MudTable>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    private record Preset(string Name, bool Dense, bool Hover, bool Striped, bool Bordered);
+    private record Departure(string Line, string Destination, int Minutes);
+
+    private readonly Preset[] _presets =
+    [
+        new("Default", Dense: false, Hover: false, Striped: false, Bordered: false),
+        new("Hover + striped", Dense: false, Hover: true, Striped: true, Bordered: false),
+        new("Dense + bordered", Dense: true, Hover: false, Striped: false, Bordered: true),
+        new("All four", Dense: true, Hover: true, Striped: true, Bordered: true)
+    ];
+
+    private readonly Departure[] _departures =
+    [
+        new("12", "Harbour Quay", 2),
+        new("7A", "University Park", 5),
+        new("31", "Northgate Depot", 9),
+        new("12", "Harbour Quay", 14)
+    ];
+}

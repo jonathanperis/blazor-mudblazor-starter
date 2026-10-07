@@ -1,0 +1,42 @@
+<MudDataGrid Items="_stations" SortMode="_sortMode" Elevation="0" Dense="true">
+    <ToolBarContent>
+        <MudRadioGroup @bind-Value="_sortMode" aria-label="Sort mode">
+            <MudRadio Value="SortMode.Single" Color="Color.Primary">Single</MudRadio>
+            <MudRadio Value="SortMode.Multiple" Color="Color.Primary">Multiple</MudRadio>
+            <MudRadio Value="SortMode.None" Color="Color.Primary">None</MudRadio>
+        </MudRadioGroup>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="station => station.Name" />
+        <PropertyColumn Property="station => station.Region" />
+        @* Sorting the label alphabetically would put High before Low; sort by the altitude it describes instead. *@
+        <TemplateColumn Title="Altitude" SortBy="station => station.AltitudeM">
+            <CellTemplate>@Band(context.Item.AltitudeM) (@context.Item.AltitudeM m)</CellTemplate>
+        </TemplateColumn>
+        <PropertyColumn Property="station => station.Established" Title="Since" />
+        <PropertyColumn Property="station => station.Note" Sortable="false" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private record Station(string Name, string Region, int AltitudeM, int Established, string Note);
+
+    private SortMode _sortMode = SortMode.Single;
+
+    private readonly Station[] _stations =
+    [
+        new("Ben Alder ridge", "Highlands", 1080, 1998, "Wind mast"),
+        new("Loch Ossian shore", "Highlands", 400, 2004, "Rain gauge"),
+        new("Corrour moor", "Highlands", 410, 1987, "Full station"),
+        new("Saltmarsh point", "Coast", 3, 2012, "Tide sensor"),
+        new("Harbour wall", "Coast", 8, 1965, "Full station"),
+        new("Cairn summit", "Highlands", 1245, 2019, "Wind mast")
+    ];
+
+    private static string Band(int metres) => metres switch
+    {
+        < 100 => "Low",
+        < 800 => "Mid",
+        _ => "High"
+    };
+}

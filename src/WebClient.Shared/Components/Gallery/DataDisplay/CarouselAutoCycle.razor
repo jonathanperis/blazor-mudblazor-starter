@@ -1,0 +1,32 @@
+<MudCarousel TData="object" AutoCycle="_playing" AutoCycleTime="TimeSpan.FromSeconds(_seconds)" @bind-SelectedIndex="_index"
+             Style="height: 220px">
+    @foreach (var notice in Notices)
+    {
+        <MudCarouselItem>
+            <MudPaper Outlined="true" Square="true" Class="d-flex flex-column justify-center px-16" Style="height: 100%">
+                <MudText Typo="Typo.overline">Service notice</MudText>
+                <MudText Typo="Typo.h5" HtmlTag="h3">@notice</MudText>
+            </MudPaper>
+        </MudCarouselItem>
+    }
+</MudCarousel>
+
+<MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="4" Class="pa-4">
+    <MudButton Variant="Variant.Outlined" StartIcon="@(_playing ? Icons.Material.Outlined.Pause : Icons.Material.Outlined.PlayArrow)"
+               OnClick="() => _playing = !_playing">@(_playing ? "Pause" : "Play")</MudButton>
+    <MudSlider @bind-Value="_seconds" Min="2" Max="10" Step="1" Color="Color.Primary" Style="max-width: 16rem">Every @_seconds seconds</MudSlider>
+    <MudText Typo="Typo.body2">Notice @(_index + 1) of @Notices.Length</MudText>
+</MudStack>
+
+@code {
+    private static readonly string[] Notices =
+    [
+        "Line 12 runs every 8 minutes until 20:00.",
+        "Market Square stop moves 50 m north from Monday.",
+        "Night bus N4 now calls at the Ferry Terminal."
+    ];
+
+    private bool _playing = true;
+    private int _seconds = 5;
+    private int _index;
+}
