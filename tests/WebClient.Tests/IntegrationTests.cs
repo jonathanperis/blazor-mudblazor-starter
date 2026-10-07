@@ -1,11 +1,13 @@
 using System.Net;
 using System.Net.Http.Json;
 using AngleSharp.Html.Parser;
+using Microsoft.AspNetCore.DataProtection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using WebClient.Features.Forecasts;
-using WebClient.Features.Learning;
 using WebClient.Features.Notebook;
+using WebClient.Shared.Features.Forecasts;
+using WebClient.Shared.Features.Learning;
+using WebClient.Shared.Features.Notebook;
 
 namespace WebClient.Tests;
 
@@ -26,6 +28,54 @@ public sealed class IntegrationTests
         Assert.Equal("Healthy", await client.GetStringAsync("/healthz"));
         Assert.Equal("Healthy", await client.GetStringAsync("/healthz/ready"));
         Assert.Equal(HttpStatusCode.NotFound, (await client.GetAsync("/not-a-lab")).StatusCode);
+    }
+
+    [Fact]
+    public async Task Pages_send_baseline_security_headers_and_a_path_preserving_skip_link()
+    {
+        await using var factory = new SandboxFactory();
+        using var client = factory.BrowserClient();
+        var response = await client.GetAsync("/labs/api");
+        Assert.Equal("nosniff", response.Headers.GetValues("X-Content-Type-Options").Single());
+        Assert.Equal("DENY", response.Headers.GetValues("X-Frame-Options").Single());
+        Assert.Equal("frame-ancestors 'none'", response.Headers.GetValues("Content-Security-Policy").Single());
+        var document = new HtmlParser().ParseDocument(await response.Content.ReadAsStringAsync());
+        Assert.EndsWith("/labs/api#main-content", document.QuerySelector("a.skip-link")!.GetAttribute("href"));
+        Assert.DoesNotContain(document.QuerySelectorAll("a[href^='/']"), link => !link.GetAttribute("href")!.StartsWith("//"));
+    }
+
+    [Fact]
+    public async Task Workspace_cookie_is_page_only_sliding_and_reissued_when_tampered()
+    {
+        await using var factory = new SandboxFactory();
+        using var client = factory.BrowserClient();
+        foreach (var route in new[] { "/healthz", "/api/forecasts?count=1", "/favicon.png" })
+            Assert.False((await client.GetAsync(route)).Headers.Contains("Set-Cookie"), $"{route} set a cookie");
+        var protector = factory.Services.GetRequiredService<IDataProtectionProvider>().CreateProtector("learning.workspace");
+        var first = WorkspaceCookie(await client.GetAsync("/labs/persistence"));
+        var second = WorkspaceCookie(await client.GetAsync("/labs/persistence"));
+        Assert.Contains("max-age=2592000", first.Header);
+        Assert.Equal(protector.Unprotect(first.Value), protector.Unprotect(second.Value));
+        using var tampered = new HttpRequestMessage(HttpMethod.Get, "/labs/persistence");
+        tampered.Headers.Add("Cookie", "learning.workspace=tampered");
+        using var fresh = factory.BrowserClient();
+        var replacement = WorkspaceCookie(await fresh.SendAsync(tampered));
+        Assert.True(Guid.TryParseExact(protector.Unprotect(replacement.Value), "N", out _));
+    }
+
+    [Fact]
+    public async Task Api_validation_returns_problem_details_and_honors_the_culture()
+    {
+        await using var factory = new SandboxFactory();
+        using var client = factory.BrowserClient();
+        var invalid = await client.GetAsync("/api/forecasts?culture=fr-FR&pageSize=500");
+        Assert.Equal(HttpStatusCode.BadRequest, invalid.StatusCode);
+        Assert.Equal("application/problem+json", invalid.Content.Headers.ContentType!.MediaType);
+        var problem = await invalid.Content.ReadFromJsonAsync<Dictionary<string, System.Text.Json.JsonElement>>();
+        Assert.True(problem!["errors"].TryGetProperty("culture", out _));
+        Assert.True(problem["errors"].TryGetProperty("pageSize", out _));
+        var match = await client.GetFromJsonAsync<ForecastPage>("/api/forecasts?count=100&culture=pt-BR&search=02%2F01%2F2026");
+        Assert.Equal(new DateTime(2026, 1, 2), Assert.Single(match!.Items).Date);
     }
 
     [Fact]
@@ -93,14 +143,23 @@ public sealed class IntegrationTests
         var original = Assert.Single(await alice.ListAsync());
         Assert.Empty(await bob.ListAsync());
         await bob.SaveAsync(new NoteDraft { Title = "Bob's note" });
-        await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => bob.SaveAsync(new NoteDraft { Title = "Cross-workspace write" }, original));
+        await Assert.ThrowsAsync<NotebookConflictException>(() => bob.SaveAsync(new NoteDraft { Title = "Cross-workspace write" }, original));
         await alice.SaveAsync(new NoteDraft { Title = "Updated" }, original);
-        await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => alice.SaveAsync(new NoteDraft { Title = "Stale" }, original));
-        await Assert.ThrowsAsync<DbUpdateConcurrencyException>(() => alice.DeleteAsync(original));
+        await Assert.ThrowsAsync<NotebookConflictException>(() => alice.SaveAsync(new NoteDraft { Title = "Stale" }, original));
+        await Assert.ThrowsAsync<NotebookConflictException>(() => alice.DeleteAsync(original));
         Assert.Equal("Updated", Assert.Single(await alice.ListAsync()).Title);
         await alice.ResetAsync();
         Assert.Empty(await alice.ListAsync());
         Assert.Single(await bob.ListAsync());
+        for (var i = 0; i < INotebookStore.MaxNotes; i++) await alice.SaveAsync(new NoteDraft { Title = $"Note {i}" });
+        await Assert.ThrowsAsync<NotebookLimitException>(() => alice.SaveAsync(new NoteDraft { Title = "One too many" }));
+        Assert.Single(await bob.ListAsync());
+    }
+
+    private static (string Value, string Header) WorkspaceCookie(HttpResponseMessage response)
+    {
+        var header = response.Headers.GetValues("Set-Cookie").Single(value => value.StartsWith("learning.workspace=", StringComparison.Ordinal));
+        return (Uri.UnescapeDataString(header.Split(';')[0]["learning.workspace=".Length..]), header);
     }
 
     private static async Task<string> Token(HttpClient client, string route)

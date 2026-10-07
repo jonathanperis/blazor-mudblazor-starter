@@ -8,7 +8,7 @@ public sealed class NotebookHealthCheck(IDbContextFactory<NotebookDb> factory) :
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {
         await using var db = await factory.CreateDbContextAsync(cancellationToken);
-        await db.Notes.Take(1).CountAsync(cancellationToken);
+        await db.Notes.AnyAsync(cancellationToken);
         return HealthCheckResult.Healthy("Notebook database is reachable.");
     }
 }

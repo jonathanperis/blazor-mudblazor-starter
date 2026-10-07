@@ -1,0 +1,31 @@
+@inject IJSRuntime Js
+@inject NavigationManager Navigation
+
+<div class="lab-form mb-4">
+    <label for="culture">Language / Idioma</label>
+    <select id="culture" @bind="_culture">
+        <option value="en-US">English (United States)</option>
+        <option value="pt-BR">Português (Brasil)</option>
+    </select>
+    <button type="button" @onclick="Apply">Apply language / Aplicar idioma</button>
+</div>
+@if (_status is not null)
+{
+    <MudAlert Severity="Severity.Info" Class="mb-4">@_status</MudAlert>
+}
+
+@code {
+    // The WebAssembly host reads this choice before the .NET runtime starts, then a reload applies it.
+    private string _culture = LearningCultures.IsSupported(CultureInfo.CurrentUICulture.Name) ? CultureInfo.CurrentUICulture.Name : LearningCultures.Default;
+    private string? _status;
+
+    private async Task Apply()
+    {
+        if (!LearningCultures.IsSupported(_culture)) return;
+        bool saved;
+        try { saved = await Js.InvokeAsync<bool>("learningCulture.set", _culture); }
+        catch (JSException) { saved = false; }
+        if (saved) Navigation.Refresh(forceReload: true);
+        else _status = "Browser storage is unavailable, so this browser cannot remember a language choice.";
+    }
+}

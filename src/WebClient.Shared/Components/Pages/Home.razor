@@ -1,0 +1,27 @@
+@page "/"
+@inject LearningHost Host
+
+<PageTitle>Blazor learning sandbox</PageTitle>
+<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4 pb-8">
+    <MudPaper Class="pa-6 mb-4" Outlined>
+        <MudText Typo="Typo.overline" Color="Color.Primary">Learn by changing working examples</MudText>
+        <MudText Typo="Typo.h3" HtmlTag="h1">Your Blazor and MudBlazor toolbox</MudText>
+        <MudText Typo="Typo.h6" HtmlTag="p" Class="my-4">Explore focused labs, inspect the source, and experiment with the tradeoffs.</MudText>
+        <MudText Class="mb-4">Start with component state. Progress through forms, data grids, APIs, persistence, authentication, localization, files, and observability. Each lab includes an exercise and explains the lifetime of its data.</MudText>
+        <MudStack Row Class="flex-wrap">
+            <MudButton Href="counter" Variant="Variant.Filled" Color="Color.Primary">Start learning</MudButton>
+            <MudButton Href="labs" Variant="Variant.Outlined" Color="Color.Primary">Explore all labs</MudButton>
+            <MudButton Href="@LabCatalog.Repository" Target="_blank" rel="noopener noreferrer">View source</MudButton>
+        </MudStack>
+    </MudPaper>
+    <MudText Typo="Typo.h5" HtmlTag="h2" Class="mb-3">A small app with room to experiment</MudText>
+    <MudText Class="mb-4">.NET 10, MudBlazor 9, synthetic datasets, and a learner notebook. The same labs run in two hosts: Blazor Server, with SQLite and server-enforced policies, and a static WebAssembly demo that runs entirely in the browser. Cloud accounts are optional.</MudText>
+    <MudPaper Class="pa-4 mb-4" Outlined>
+        <MudText Typo="Typo.h6" HtmlTag="h2">Run locally</MudText>
+        <pre><code>git clone https://github.com/jonathanperis/blazor-mudblazor-starter.git
+cd blazor-mudblazor-starter
+dotnet run --project src/WebClient</code></pre>
+        <MudLink Href="https://jonathanperis.github.io/blazor-mudblazor-starter/docs/getting-started/">Setup and learning guide</MudLink>
+    </MudPaper>
+    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">You are using the @Host.Name host. Counter and grid experiments reset with their component or @Host.ScopeLifetime. Notebook entries are kept in @Host.NotebookStorage.</MudAlert>
+</MudContainer>

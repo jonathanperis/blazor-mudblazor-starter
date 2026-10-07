@@ -1,7 +1,18 @@
+# The container publishes only the server host and the shared labs.
+WebClient.Wasm/
 **/bin/
 **/obj/
 **/App_Data/
+**/TestResults/
+**/node_modules/
+**/.vs/
+**/.vscode/
+**/.idea/
+**/*.binlog
+**/*.user
+**/secrets.json
 **/.env
 **/.env.*
-**/*.user
 **/.DS_Store
+**/Dockerfile*
+**/.dockerignore

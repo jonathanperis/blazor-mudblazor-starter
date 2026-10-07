@@ -5,22 +5,21 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <base href="/" />
-    <link rel="stylesheet" href="@Assets["app.css"]" />
-    @* <link rel="stylesheet" href="@Assets["WebClient.styles.css"]" /> *@
-    <ImportMap />
     <link rel="icon" href="favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    @* Local-first: no web-font request. MudBlazor falls back from Roboto to Helvetica and Arial. *@
+    <link rel="stylesheet" href="@Assets["_content/MudBlazor/MudBlazor.min.css"]" />
+    <link rel="stylesheet" href="@Assets["_content/WebClient.Shared/app.css"]" />
+    <ImportMap />
     <HeadOutlet @rendermode="PageRenderMode" />
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" rel="stylesheet" />
-    <link href="_content/MudBlazor/MudBlazor.min.css" rel="stylesheet" />
 </head>
 
 <body>
-    <Routes WorkspaceId="@((string)HttpContext.Items[WebClient.Features.Notebook.LearnerWorkspace.ItemName]!)" @rendermode="PageRenderMode" />
-    <script src="@Assets["learning.js"]"></script>
+    <Routes WorkspaceId="@(HttpContext.Items[WebClient.Features.Notebook.LearnerWorkspace.ItemName] as string ?? "")" @rendermode="PageRenderMode" />
+    <script src="@Assets["_content/WebClient.Shared/learning.js"]"></script>
     <script src="_framework/blazor.web.js"></script>
-    <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script src="@Assets["_content/MudBlazor/MudBlazor.min.js"]"></script>
 </body>
 
 </html>
