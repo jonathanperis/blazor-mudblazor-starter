@@ -7,6 +7,7 @@ A local-first school/playground project for Blazor and MudBlazor. The labs run i
 - Supported .NET 10 SDK pinned in `global.json`; package versions in the `src/*/*.csproj` files; shared build settings in `src/Directory.Build.props` (inside the container build context).
 - MudBlazor, translated component strings, EF Core SQLite (server only), optional Application Insights.
 - `src/WebClient.Shared/`: Razor class library with the shell, every lab page (`Components/Pages/Labs/`; `/counter` and `/weather` remain foundational routes), the lab frame, browser-safe features, and the static-demo stand-ins. It must run in a browser: no `HttpContext`, EF Core, cookies or antiforgery.
+- `src/WebClient.Shared/Components/Gallery/<Group>/`: component gallery pages (`[ComponentPage]`, one file per example, embedded sources); `Components/Samples/<Name>/`: page samples (`[PageSample]`). Catalogs are discovered by reflection; follow `docs/wiki/gallery.md` and `DESIGN.md`.
 - `src/WebClient/`: Blazor Server host: endpoints, SQLite notebook, workspace cookie, demo identity, server panels.
 - `src/WebClient.Wasm/`: static WebAssembly host for the GitHub Pages demo at `/demo/`.
 - `tests/WebClient.Tests/`: xUnit/bUnit, in-process HTTP, real SQLite migration, and static-demo tests.
