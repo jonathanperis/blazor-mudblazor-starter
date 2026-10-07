@@ -132,7 +132,8 @@ h1[tabindex="-1"]:focus, main[tabindex="-1"]:focus { outline: none; }
 .playground { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); border-radius: var(--mud-default-borderradius); overflow: hidden; }
 .example-preview-flush > .playground { border: 0; }
 .playground > * { background: var(--sheet); }
-.playground-stage { display: grid; place-items: center; min-height: 14rem; padding: 2rem; background-image: linear-gradient(color-mix(in srgb, var(--rule) 55%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--rule) 55%, transparent) 1px, transparent 1px); background-size: 24px 24px; background-position: -1px -1px; background-color: var(--sheet); }
+.playground-stage > * { max-width: 100%; }
+.playground-stage { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 1rem; min-width: 0; min-height: 14rem; padding: 2rem; background-image: linear-gradient(color-mix(in srgb, var(--rule) 55%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--rule) 55%, transparent) 1px, transparent 1px); background-size: 24px 24px; background-position: -1px -1px; background-color: var(--sheet); }
 .sandbox-dark .playground-stage { background-image: linear-gradient(#25231f 1px, transparent 1px), linear-gradient(90deg, #25231f 1px, transparent 1px); }
 .playground-controls { display: grid; grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr)); gap: .25rem 1rem; padding: 1rem 1.25rem; align-items: center; }
 .playground-code .code-block { border: 0; border-radius: 0; }
