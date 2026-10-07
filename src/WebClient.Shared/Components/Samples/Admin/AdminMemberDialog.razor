@@ -1,0 +1,75 @@
+@* Edits a copy of a member. Only Save, after validation, returns the copy; Cancel discards it. *@
+<MudDialog>
+    <TitleContent>
+        <div class="d-flex align-center gap-3">
+            <MudAvatar Color="Color.Secondary" Variant="Variant.Outlined">@Member.Initials</MudAvatar>
+            <div>
+                <MudText Typo="Typo.h6" HtmlTag="h2">Edit member</MudText>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">Card @Member.CardNumber · joined @Member.Joined.ToString("d MMMM yyyy", CultureInfo.InvariantCulture)</MudText>
+            </div>
+        </div>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="_form" Spacing="3">
+            <MudTextField @bind-Value="Member.Name" Label="Full name" Variant="Variant.Outlined" Required RequiredError="Enter the member's name." MaxLength="80" Immediate />
+            <MudTextField @bind-Value="Member.Email" Label="Email" Variant="Variant.Outlined" InputType="InputType.Email" Required RequiredError="Enter an email address."
+                          Validation="@(new Func<string?, string?>(CheckEmail))" Immediate />
+            <MudGrid Spacing="2">
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="string" @bind-Value="Member.Branch" Label="Home branch" Variant="Variant.Outlined">
+                        @foreach (var branch in MemberDirectory.Branches)
+                        {
+                            <MudSelectItem Value="branch">@branch</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="MemberTier" @bind-Value="Member.Tier" Label="Membership" Variant="Variant.Outlined">
+                        @foreach (var tier in Enum.GetValues<MemberTier>())
+                        {
+                            <MudSelectItem Value="tier">@tier</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+            <div>
+                <MudText Typo="Typo.overline" HtmlTag="h3" id="member-status">Status</MudText>
+                <MudRadioGroup T="MemberStatus" @bind-Value="Member.Status" aria-labelledby="member-status">
+                    @foreach (var status in Enum.GetValues<MemberStatus>())
+                    {
+                        <MudRadio Value="status" Color="Color.Primary" Dense>@status</MudRadio>
+                    }
+                </MudRadioGroup>
+                @if (Member.Status == MemberStatus.Suspended && Member.Loans > 0)
+                {
+                    <MudAlert Severity="Severity.Info" Dense Variant="Variant.Outlined" Class="mt-2">Suspending keeps the @Member.Loans current loans; it only blocks new ones.</MudAlert>
+                }
+            </div>
+            <MudNumericField @bind-Value="Member.Fines" Label="Outstanding fines" Variant="Variant.Outlined" Min="0m" Max="200m" Step="0.5m" Format="0.00" Culture="CultureInfo.InvariantCulture" Adornment="Adornment.Start" AdornmentText="£"
+                             HelperText="Set to zero when a fine is paid or waived." />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => Dialog.Cancel()">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveAsync">Save changes</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = null!;
+    /// <summary>A copy made by the caller; the directory changes only if the dialog returns it.</summary>
+    [Parameter, EditorRequired] public LibraryMember Member { get; set; } = null!;
+
+    private MudForm _form = null!;
+
+    private static string? CheckEmail(string? email) =>
+        System.Net.Mail.MailAddress.TryCreate(email?.Trim(), out var parsed) && parsed.Address == email?.Trim() ? null : "Enter an address like name@example.org.";
+
+    private async Task SaveAsync()
+    {
+        await _form.ValidateAsync();
+        if (!_form.IsValid) return;
+        (Member.Name, Member.Email) = (Member.Name.Trim(), Member.Email.Trim());
+        Dialog.Close(DialogResult.Ok(Member));
+    }
+}

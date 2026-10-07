@@ -1,0 +1,52 @@
+@* A card on the board. Drag it anywhere; the details button keeps it usable without a pointer. *@
+<MudPaper Outlined Class="pa-3 mb-2" Style="cursor: grab; background: var(--mud-palette-surface)" @onclick="() => OnOpen.InvokeAsync(Card)">
+    <div class="d-flex align-start gap-1">
+        <div class="d-flex flex-wrap gap-1 flex-grow-1">
+            @foreach (var label in Card.Labels)
+            {
+                <MudChip T="string" Size="Size.Small" Label Variant="Variant.Text" Color="KanbanData.LabelColor(label)" Class="ma-0">@label</MudChip>
+            }
+        </div>
+        <MudIconButton Icon="@Icons.Material.Outlined.OpenInFull" Size="Size.Small" Class="mt-n1 mr-n1" OnClick="() => OnOpen.InvokeAsync(Card)" aria-label="@($"Open details for {Card.Title}")" />
+    </div>
+    <MudText Typo="Typo.body2" Class="mt-2" Style="font-weight: 600; line-height: 1.4">@Card.Title</MudText>
+    <div class="d-flex align-end gap-2 mt-3">
+        <div class="d-flex flex-wrap align-center flex-grow-1" style="column-gap: .75rem; row-gap: .25rem">
+            @if (Card.Due is { } due)
+            {
+                <MudText Typo="Typo.caption" Class="@($"d-flex align-center gap-1 {(IsOverdue ? "mud-error-text" : "mud-text-secondary")}")">
+                    <MudIcon Icon="@(IsOverdue ? Icons.Material.Outlined.ErrorOutline : Icons.Material.Outlined.Event)" Style="font-size: 1rem" />
+                    @(IsOverdue ? $"Overdue · {KanbanData.ShortDate(due)}" : KanbanData.ShortDate(due))
+                </MudText>
+            }
+            @if (Card.Checklist.Count > 0)
+            {
+                <MudText Typo="Typo.caption" Class="@($"d-flex align-center gap-1 {(ChecklistDone ? "mud-success-text" : "mud-text-secondary")}")">
+                    <MudIcon Icon="@Icons.Material.Outlined.Checklist" Style="font-size: 1rem" />
+                    @Card.Checklist.Count(item => item.Done)/@Card.Checklist.Count tasks
+                </MudText>
+            }
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">@Card.Points pt</MudText>
+        </div>
+        @if (KanbanData.Member(Card.Assignee) is { } member)
+        {
+            <MudTooltip Text="@member.Name">
+                <MudAvatar Size="Size.Small" Color="member.Color" Variant="Variant.Outlined" Style="width: 1.75rem; height: 1.75rem; font-size: .7rem" aria-label="@($"Assigned to {member.Name}")">@member.Initials</MudAvatar>
+            </MudTooltip>
+        }
+        else
+        {
+            <MudAvatar Size="Size.Small" Variant="Variant.Outlined" Style="width: 1.75rem; height: 1.75rem; border-style: dashed" aria-label="Unassigned">
+                <MudIcon Icon="@Icons.Material.Outlined.PersonOutline" Style="font-size: 1rem" />
+            </MudAvatar>
+        }
+    </div>
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired] public KanbanCard Card { get; set; } = null!;
+    [Parameter] public EventCallback<KanbanCard> OnOpen { get; set; }
+
+    private bool IsOverdue => Card.Due < KanbanData.Today && Card.Lane != KanbanData.Done;
+    private bool ChecklistDone => Card.Checklist.All(item => item.Done);
+}

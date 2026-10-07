@@ -1,0 +1,40 @@
+@* One book on the shelf: drawn cover, badge, rating, price and the actions a shopper needs. *@
+<MudCard Outlined Class="d-flex flex-column" Style="height: 100%">
+    <div class="d-flex justify-center align-center pa-4" style="position: relative; background: var(--mud-palette-background-gray); border-bottom: 1px solid var(--mud-palette-lines-default)">
+        <div style="width: 7.5rem; aspect-ratio: 2 / 3; box-shadow: 0 1px 2px rgba(0,0,0,.18), 6px 8px 18px -8px rgba(0,0,0,.45); border-radius: 2px 4px 4px 2px; overflow: hidden">
+            @((MarkupString)StorefrontData.CoverSvg(Book))
+        </div>
+        @if (Book.Badge is not null)
+        {
+            <MudChip T="string" Size="Size.Small" Color="@(Book.Badge == "New" ? Color.Secondary : Color.Primary)" Variant="Variant.Filled" Style="position: absolute; top: .5rem; left: .5rem; margin: 0">@Book.Badge</MudChip>
+        }
+        <MudToggleIconButton Toggled="Saved" ToggledChanged="SavedChanged" Icon="@Icons.Material.Outlined.BookmarkBorder" ToggledIcon="@Icons.Material.Filled.Bookmark" ToggledColor="Color.Primary" Size="Size.Small" Style="position: absolute; top: .25rem; right: .25rem" aria-label="@(Saved ? $"Remove {Book.Title} from your wish list" : $"Save {Book.Title} to your wish list")" aria-pressed="@(Saved ? "true" : "false")" />
+    </div>
+    <MudCardContent Class="flex-grow-1 pb-2">
+        <MudText Typo="Typo.overline" Color="Color.Secondary">@Book.Category</MudText>
+        <MudText Typo="Typo.subtitle1" HtmlTag="h3" Style="font-family: var(--font-serif); font-size: 1.05rem; line-height: 1.3">@Book.Title</MudText>
+        <MudText Typo="Typo.body2" Class="mud-text-secondary">@Book.Author</MudText>
+        <div class="d-flex align-center gap-1 mt-2">
+            <MudRating ReadOnly SelectedValue="@((int)Math.Round(Book.Rating))" Size="Size.Small" Color="Color.Tertiary" aria-hidden="true" />
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">@Book.Rating.ToString("0.0", CultureInfo.InvariantCulture) / 5 <span class="d-none d-sm-inline">· @Book.Reviews reviews</span></MudText>
+        </div>
+    </MudCardContent>
+    <MudCardActions Class="d-flex flex-wrap align-center gap-2 px-4 pb-4 pt-0">
+        <MudText Typo="Typo.h6" HtmlTag="p" Class="flex-grow-1">@StorefrontData.Money(Book.Price)</MudText>
+        @if (Book.InStock)
+        {
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Size="Size.Small" StartIcon="@Icons.Material.Outlined.AddShoppingCart" OnClick="() => OnAdd.InvokeAsync(Book)" aria-label="@($"Add {Book.Title} to basket")">Add</MudButton>
+        }
+        else
+        {
+            <MudText Typo="Typo.caption" Color="Color.Warning" Class="d-flex align-center gap-1"><MudIcon Icon="@Icons.Material.Outlined.Schedule" Size="Size.Small" />Back in two weeks</MudText>
+        }
+    </MudCardActions>
+</MudCard>
+
+@code {
+    [Parameter, EditorRequired] public Book Book { get; set; } = null!;
+    [Parameter] public bool Saved { get; set; }
+    [Parameter] public EventCallback<bool> SavedChanged { get; set; }
+    [Parameter] public EventCallback<Book> OnAdd { get; set; }
+}

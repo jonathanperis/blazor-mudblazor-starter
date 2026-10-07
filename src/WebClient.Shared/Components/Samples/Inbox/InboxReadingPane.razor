@@ -1,0 +1,113 @@
+@* The open message: actions, headers, body with search highlights, attachments and a quick reply. *@
+<div class="d-flex align-center gap-1 px-2 py-1" style="border-bottom: 1px solid var(--mud-palette-lines-default); min-height: 3.5rem">
+    <MudIconButton Class="d-md-none" Icon="@Icons.Material.Outlined.ArrowBack" OnClick="OnBack" aria-label="Back to the message list" />
+    @if (Message.Folder != MailFolder.Archive && Message.Folder != MailFolder.Trash)
+    {
+        <MudTooltip Text="Archive"><MudIconButton Icon="@Icons.Material.Outlined.Archive" OnClick="() => OnAction.InvokeAsync(InboxAction.Archive)" aria-label="Archive" /></MudTooltip>
+    }
+    @if (Message.Folder != MailFolder.Inbox && Message.Folder != MailFolder.Sent && Message.Folder != MailFolder.Drafts)
+    {
+        <MudTooltip Text="Move to inbox"><MudIconButton Icon="@Icons.Material.Outlined.MoveToInbox" OnClick="() => OnAction.InvokeAsync(InboxAction.MoveToInbox)" aria-label="Move to inbox" /></MudTooltip>
+    }
+    <MudTooltip Text="@(Message.Folder == MailFolder.Trash ? "Delete forever" : "Delete")">
+        <MudIconButton Icon="@(Message.Folder == MailFolder.Trash ? Icons.Material.Outlined.DeleteForever : Icons.Material.Outlined.Delete)" OnClick="() => OnAction.InvokeAsync(InboxAction.Delete)" aria-label="@(Message.Folder == MailFolder.Trash ? "Delete forever" : "Delete")" />
+    </MudTooltip>
+    <MudTooltip Text="Mark as unread"><MudIconButton Icon="@Icons.Material.Outlined.MarkEmailUnread" OnClick="() => OnAction.InvokeAsync(InboxAction.MarkUnread)" aria-label="Mark as unread" /></MudTooltip>
+    <MudSpacer />
+    <MudToggleIconButton Toggled="Message.Starred" ToggledChanged="_ => OnAction.InvokeAsync(InboxAction.Star)" Icon="@Icons.Material.Outlined.StarBorder" ToggledIcon="@Icons.Material.Filled.Star" ToggledColor="Color.Tertiary"
+                         aria-label="Starred" aria-pressed="@(Message.Starred ? "true" : "false")" />
+</div>
+
+<article class="pa-4 pa-md-6" aria-labelledby="reading-subject">
+    <MudText Typo="Typo.h5" HtmlTag="h2" id="reading-subject" Class="mb-4">
+        <MudHighlighter Text="@Message.Subject" HighlightedText="@Search" Style="@InboxData.MarkStyle" />
+    </MudText>
+    <div class="d-flex align-start gap-3">
+        <MudAvatar Color="Color.Secondary" Variant="Variant.Outlined" aria-hidden="true">@Message.Initials</MudAvatar>
+        <div class="flex-grow-1" style="min-width: 0">
+            <MudText Typo="Typo.subtitle2" HtmlTag="p">@Message.From <span class="mud-text-secondary" style="font-weight: 400">&lt;@Message.Address&gt;</span></MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary d-block">To @Message.To · @InboxData.FullDate(Message.Received)</MudText>
+        </div>
+    </div>
+    @if (Message.Labels.Length > 0)
+    {
+        <div class="d-flex flex-wrap gap-1 mt-3">
+            @foreach (var label in Message.Labels)
+            {
+                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="InboxData.LabelColor(label)" Icon="@Icons.Material.Outlined.Label" Class="ma-0">@label</MudChip>
+            }
+        </div>
+    }
+    <MudDivider Class="my-4" />
+    <div style="max-width: 62ch">
+        @foreach (var paragraph in Message.Body)
+        {
+            <MudText Typo="Typo.body1" Class="mb-3"><MudHighlighter Text="@paragraph" HighlightedText="@Search" Style="@InboxData.MarkStyle" /></MudText>
+        }
+        <MudText Typo="Typo.body1" Class="mud-text-secondary">— @Message.From.Split(' ')[0]</MudText>
+    </div>
+    @if (Message.Attachments.Length > 0)
+    {
+        <MudText Typo="Typo.overline" HtmlTag="h3" Class="mt-6 d-block">@Message.Attachments.Length attachment@(Message.Attachments.Length == 1 ? "" : "s")</MudText>
+        <div class="d-flex flex-wrap gap-2 mt-1">
+            @foreach (var file in Message.Attachments)
+            {
+                <MudPaper Outlined Class="d-flex align-center gap-2 px-3 py-2">
+                    <MudIcon Icon="@Icons.Material.Outlined.InsertDriveFile" Size="Size.Small" Class="mud-text-secondary" />
+                    <MudText Typo="Typo.body2" Style="font-family: var(--font-mono); font-size: .8rem">@file</MudText>
+                </MudPaper>
+            }
+        </div>
+    }
+
+    @if (Message.Folder is not (MailFolder.Sent or MailFolder.Drafts or MailFolder.Trash))
+    {
+        <MudPaper Outlined Class="mt-8 pa-3">
+            @if (_replying)
+            {
+                <MudForm @ref="_form">
+                    <MudTextField @bind-Value="_reply" Label="@($"Reply to {Message.From}")" Lines="4" Variant="Variant.Outlined" Required RequiredError="Write a reply before sending." Immediate AutoFocus />
+                </MudForm>
+                <div class="d-flex justify-end gap-2 mt-3">
+                    <MudButton OnClick="() => _replying = false">Discard</MudButton>
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Outlined.Send" OnClick="SendAsync">Send</MudButton>
+                </div>
+            }
+            else
+            {
+                <div class="d-flex flex-wrap gap-2">
+                    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Reply" OnClick="() => _replying = true">Reply</MudButton>
+                    <MudButton Variant="Variant.Text" StartIcon="@Icons.Material.Outlined.Forward" OnClick="() => OnAction.InvokeAsync(InboxAction.Forward)">Forward</MudButton>
+                </div>
+            }
+        </MudPaper>
+    }
+</article>
+
+@code {
+    [Parameter, EditorRequired] public InboxMessage Message { get; set; } = null!;
+    [Parameter] public string? Search { get; set; }
+    [Parameter] public EventCallback OnBack { get; set; }
+    [Parameter] public EventCallback<InboxAction> OnAction { get; set; }
+    [Parameter] public EventCallback<string> OnReply { get; set; }
+
+    private MudForm _form = null!;
+    private bool _replying;
+    private string _reply = "";
+    private int _shownId;
+
+    // A different message resets the composer, so a half-written reply never jumps to another thread.
+    protected override void OnParametersSet()
+    {
+        if (_shownId == Message.Id) return;
+        (_shownId, _replying, _reply) = (Message.Id, false, "");
+    }
+
+    private async Task SendAsync()
+    {
+        await _form.ValidateAsync();
+        if (!_form.IsValid) return;
+        await OnReply.InvokeAsync(_reply.Trim());
+        (_replying, _reply) = (false, "");
+    }
+}

@@ -1,0 +1,251 @@
+@page "/samples/inbox"
+@attribute [PageSample("Inbox", "A three-pane mail client for an observatory: folders, a message list with unread state and bulk selection, a reading pane, highlighted search and undoable actions. On a phone it collapses to one pane at a time.", Uses = ["MudList", "MudCheckBox", "MudHighlighter", "MudToggleIconButton", "MudTooltip", "MudSnackbar", "MudMessageBox", "MudSelect", "MudForm"])]
+@inject ISnackbar Snackbar
+@inject IDialogService Dialogs
+
+<SamplePageFrame Page="GetType()">
+    <MudPaper Outlined Class="d-flex" Style="height: min(46rem, calc(100vh - 6rem)); overflow: hidden">
+        @* Folders: a column from lg up; below that, the select in the list header takes over. *@
+        <nav class="d-none d-lg-flex flex-column" aria-label="Mail folders" style="flex: 0 0 13.5rem; border-right: 1px solid var(--mud-palette-lines-default); background: var(--mud-palette-background-gray); overflow-y: auto">
+            <div class="pa-4 pb-2">
+                <p class="kicker mb-0">Hollow Hill Observatory</p>
+                <MudText Typo="Typo.subtitle2" HtmlTag="p">Night operations</MudText>
+            </div>
+            <MudList T="string" SelectedValue="_viewKey" SelectedValueChanged="SelectView" SelectionMode="SelectionMode.SingleSelection" Color="Color.Primary" Dense>
+                @foreach (var view in InboxData.Views)
+                {
+                    @if (view.Key == FirstLabelKey)
+                    {
+                        <MudListSubheader Class="pt-4 pb-1"><span class="kicker">Labels</span></MudListSubheader>
+                    }
+                    var unread = _messages.Count(message => view.Contains(message) && message.Unread);
+                    <MudListItem Value="view.Key" Icon="@view.Icon">
+                        <div class="d-flex align-center">
+                            <span class="flex-grow-1">@view.Title</span>
+                            @if (unread > 0)
+                            {
+                                <span style="font-family: var(--font-mono); font-size: .75rem; font-weight: 500" aria-label="@($"{unread} unread")">@unread</span>
+                            }
+                        </div>
+                    </MudListItem>
+                }
+            </MudList>
+        </nav>
+
+        @* Below md, the list and the reading pane take turns: opening a message hides the list. *@
+        <section class="@($"{(_openId is null ? "d-flex" : "d-none d-md-flex")} flex-column")" aria-label="Messages" style="flex: 1 1 20rem; min-width: 0; border-right: 1px solid var(--mud-palette-lines-default)">
+            <div class="pa-3 d-flex flex-column gap-2" style="border-bottom: 1px solid var(--mud-palette-lines-default)">
+                <div class="d-flex gap-2 align-center">
+                    <div class="d-lg-none" style="flex: 0 0 9rem">
+                        <MudSelect T="string" Value="_viewKey" ValueChanged="SelectView" Label="Folder" Variant="Variant.Outlined" Margin="Margin.Dense" Dense
+                                   ToStringFunc="@(key => InboxData.Views.First(view => view.Key == key).Title)">
+                            @foreach (var view in InboxData.Views)
+                            {
+                                <MudSelectItem Value="view.Key">@view.Title</MudSelectItem>
+                            }
+                        </MudSelect>
+                    </div>
+                    <MudTextField T="string" @bind-Value="_search" Immediate DebounceInterval="200" Placeholder="Search mail" Label="Search mail" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" Clearable />
+                </div>
+                <div class="d-flex align-center gap-1" style="min-height: 2.5rem">
+                    <MudCheckBox T="bool?" Value="AllChecked" ValueChanged="_ => ToggleAll()" TriState Size="Size.Small" Dense Color="Color.Primary" UncheckedColor="Color.Default" Disabled="Visible.Count == 0"
+                                 aria-label="@(AllChecked == true ? "Clear selection" : "Select all visible messages")" />
+                    @if (Checked.Count > 0)
+                    {
+                        <MudText Typo="Typo.body2" Class="mr-1" role="status">@Checked.Count selected</MudText>
+                        <MudSpacer />
+                        <MudTooltip Text="Archive"><MudIconButton Icon="@Icons.Material.Outlined.Archive" Size="Size.Small" OnClick="() => ApplyAsync(InboxAction.Archive, Checked)" aria-label="Archive selected" /></MudTooltip>
+                        <MudTooltip Text="Delete"><MudIconButton Icon="@Icons.Material.Outlined.Delete" Size="Size.Small" OnClick="() => ApplyAsync(InboxAction.Delete, Checked)" aria-label="Delete selected" /></MudTooltip>
+                        <MudTooltip Text="Mark as read"><MudIconButton Icon="@Icons.Material.Outlined.MarkEmailRead" Size="Size.Small" OnClick="() => ApplyAsync(InboxAction.MarkRead, Checked)" aria-label="Mark selected as read" /></MudTooltip>
+                        <MudTooltip Text="Mark as unread"><MudIconButton Icon="@Icons.Material.Outlined.MarkEmailUnread" Size="Size.Small" OnClick="() => ApplyAsync(InboxAction.MarkUnread, Checked)" aria-label="Mark selected as unread" /></MudTooltip>
+                    }
+                    else
+                    {
+                        <MudText Typo="Typo.subtitle2" HtmlTag="h2" Class="flex-grow-1">@View.Title</MudText>
+                        <MudText Typo="Typo.caption" Class="mud-text-secondary" role="status">@Summary</MudText>
+                    }
+                </div>
+            </div>
+            <div class="flex-grow-1" style="overflow-y: auto">
+                @if (Visible.Count == 0)
+                {
+                    <div class="d-flex flex-column align-center gap-2 pa-8" style="text-align: center">
+                        <MudIcon Icon="@(string.IsNullOrWhiteSpace(_search) ? View.Icon : Icons.Material.Outlined.SearchOff)" Size="Size.Large" Class="mud-text-secondary" />
+                        <MudText Typo="Typo.subtitle1" HtmlTag="p">@(string.IsNullOrWhiteSpace(_search) ? $"Nothing in {View.Title}" : "No messages match")</MudText>
+                        <MudText Typo="Typo.body2" Class="mud-text-secondary">
+                            @(string.IsNullOrWhiteSpace(_search) ? "Messages you move here will appear in this list." : $"Nothing in {View.Title} mentions “{_search}”.")
+                        </MudText>
+                        @if (!string.IsNullOrWhiteSpace(_search))
+                        {
+                            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="() => _search = null">Clear search</MudButton>
+                        }
+                    </div>
+                }
+                else
+                {
+                    @foreach (var message in Visible)
+                    {
+                        <InboxMessageRow @key="message.Id" Message="message" Search="@_search" Selected="@(message.Id == _openId)" Checked="_checked.Contains(message.Id)"
+                                         CheckedChanged="isChecked => Check(message, isChecked)" OnOpen="Open" OnStar="ToggleStar" />
+                    }
+                }
+            </div>
+        </section>
+
+        <section class="@($"{(_openId is null ? "d-none d-md-flex" : "d-flex")} flex-column")" aria-label="Reading pane" style="flex: 2 1 26rem; min-width: 0; overflow-y: auto">
+            @if (Opened is { } opened)
+            {
+                <InboxReadingPane Message="opened" Search="@_search" OnBack="() => _openId = null" OnAction="action => ApplyAsync(action, [opened])" OnReply="reply => Reply(opened, reply)" />
+            }
+            else
+            {
+                <div class="d-flex flex-column align-center justify-center gap-2 pa-8 flex-grow-1" style="text-align: center">
+                    <svg width="96" height="64" viewBox="0 0 96 64" aria-hidden="true" style="color: var(--mud-palette-text-secondary)">
+                        <rect x="8" y="10" width="80" height="48" rx="4" fill="none" stroke="currentColor" stroke-width="1.5" />
+                        <path d="M8 14 L48 40 L88 14" fill="none" stroke="currentColor" stroke-width="1.5" />
+                        <circle cx="78" cy="10" r="7" fill="var(--mud-palette-primary)" />
+                    </svg>
+                    <MudText Typo="Typo.h6" HtmlTag="p">Select a message to read it</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">@InboxUnread unread in your inbox.</MudText>
+                </div>
+            }
+        </section>
+    </MudPaper>
+</SamplePageFrame>
+
+@code {
+    private readonly List<InboxMessage> _messages = InboxData.Seed();
+    private readonly HashSet<int> _checked = [];
+    private string _viewKey = "inbox";
+    private string? _search;
+    private int? _openId;
+    private int _nextId = 100;
+
+    private static readonly string FirstLabelKey = InboxData.Views.First(view => view.Key.StartsWith("label-", StringComparison.Ordinal)).Key;
+    private MailView View => InboxData.Views.First(view => view.Key == _viewKey);
+    private InboxMessage? Opened => _messages.Find(message => message.Id == _openId);
+    private List<InboxMessage> Checked => Visible.Where(message => _checked.Contains(message.Id)).ToList();
+    private int InboxUnread => _messages.Count(message => message.Folder == MailFolder.Inbox && message.Unread);
+    private bool? AllChecked => Checked.Count == 0 ? false : Checked.Count == Visible.Count ? true : null;
+
+    private string Summary
+    {
+        get
+        {
+            var unread = Visible.Count(message => message.Unread);
+            return unread > 0 ? $"{Visible.Count} · {unread} unread" : $"{Visible.Count}";
+        }
+    }
+
+    private List<InboxMessage> Visible => _messages
+        .Where(View.Contains)
+        .Where(message => string.IsNullOrWhiteSpace(_search)
+            || message.Subject.Contains(_search, StringComparison.OrdinalIgnoreCase)
+            || message.From.Contains(_search, StringComparison.OrdinalIgnoreCase)
+            || message.Body.Any(paragraph => paragraph.Contains(_search, StringComparison.OrdinalIgnoreCase)))
+        .OrderByDescending(message => message.Received)
+        .ToList();
+
+    private void SelectView(string key) => (_viewKey, _openId) = (key, null);
+
+    private void Open(InboxMessage message)
+    {
+        _openId = message.Id;
+        message.Unread = false;
+    }
+
+    private void Check(InboxMessage message, bool isChecked)
+    {
+        if (isChecked) _checked.Add(message.Id); else _checked.Remove(message.Id);
+    }
+
+    private void ToggleAll()
+    {
+        if (AllChecked == true) _checked.Clear();
+        else _checked.UnionWith(Visible.Select(message => message.Id));
+    }
+
+    private static void ToggleStar(InboxMessage message) => message.Starred = !message.Starred;
+
+    private async Task ApplyAsync(InboxAction action, List<InboxMessage> targets)
+    {
+        switch (action)
+        {
+            case InboxAction.Star:
+                ToggleStar(targets[0]);
+                return;
+            case InboxAction.Forward:
+                SaveForwardDraft(targets[0]);
+                Snackbar.Add("A forward was saved to Drafts.", Severity.Info);
+                return;
+            case InboxAction.Delete when targets.All(message => message.Folder == MailFolder.Trash):
+                await DeleteForeverAsync(targets);
+                return;
+        }
+
+        // Remember what changes, so Undo can put it back exactly.
+        var before = targets.Select(message => (Message: message, message.Folder, message.Unread)).ToList();
+        foreach (var message in targets)
+        {
+            switch (action)
+            {
+                case InboxAction.Archive: message.Folder = MailFolder.Archive; break;
+                case InboxAction.Delete: message.Folder = MailFolder.Trash; break;
+                case InboxAction.MoveToInbox: message.Folder = MailFolder.Inbox; break;
+                case InboxAction.MarkRead: message.Unread = false; break;
+                case InboxAction.MarkUnread: message.Unread = true; break;
+            }
+        }
+        _checked.Clear();
+        // Leave the reading pane when its message left this view, or was marked unread on purpose.
+        if (action == InboxAction.MarkUnread || !Visible.Any(message => message.Id == _openId)) _openId = null;
+
+        var what = targets.Count == 1 ? "1 message" : $"{targets.Count} messages";
+        var text = action switch
+        {
+            InboxAction.Archive => $"Archived {what}.",
+            InboxAction.Delete => $"Moved {what} to Trash.",
+            InboxAction.MoveToInbox => $"Moved {what} to Inbox.",
+            InboxAction.MarkRead => $"Marked {what} as read.",
+            _ => $"Marked {what} as unread."
+        };
+        Snackbar.Add(text, Severity.Normal, options =>
+        {
+            options.Action = "Undo";
+            options.ActionColor = Color.Primary;
+            options.OnClick = _ => InvokeAsync(() =>
+            {
+                foreach (var (message, folder, unread) in before) (message.Folder, message.Unread) = (folder, unread);
+                StateHasChanged();
+            });
+        });
+    }
+
+    private async Task DeleteForeverAsync(List<InboxMessage> targets)
+    {
+        var what = targets.Count == 1 ? "this message" : $"these {targets.Count} messages";
+        var confirmed = await Dialogs.ShowMessageBoxAsync("Delete forever?", $"You cannot undo this. Delete {what} permanently?", yesText: "Delete forever", cancelText: "Cancel");
+        if (confirmed != true) return;
+        _messages.RemoveAll(targets.Contains);
+        _checked.Clear();
+        _openId = null;
+        Snackbar.Add(targets.Count == 1 ? "Deleted 1 message forever." : $"Deleted {targets.Count} messages forever.", Severity.Normal);
+    }
+
+    private void Reply(InboxMessage original, string text)
+    {
+        _messages.Add(new InboxMessage
+        {
+            Id = _nextId++, From = "Maren Holt", Address = "maren.holt@hollowhill.example", To = original.From, Subject = $"Re: {original.Subject}",
+            Body = [text], Received = InboxData.Now, Folder = MailFolder.Sent, Labels = original.Labels
+        });
+        Snackbar.Add($"Reply sent to {original.From}.", Severity.Success);
+    }
+
+    private void SaveForwardDraft(InboxMessage original) => _messages.Add(new InboxMessage
+    {
+        Id = _nextId++, From = "Maren Holt", Address = "maren.holt@hollowhill.example", To = "(no recipient yet)", Subject = $"Fwd: {original.Subject}",
+        Body = original.Body, Received = InboxData.Now, Folder = MailFolder.Drafts, Attachments = original.Attachments
+    });
+}

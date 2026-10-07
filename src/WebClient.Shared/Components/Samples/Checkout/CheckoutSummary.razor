@@ -1,0 +1,81 @@
+@* The order summary beside every step: lines, promotion, delivery and the total, recalculated on each change. *@
+<MudPaper Outlined Class="pa-5" Style="position: sticky; top: 72px">
+    <MudText Typo="Typo.h6" HtmlTag="h2" Class="mb-3">Order summary</MudText>
+    @foreach (var line in Lines)
+    {
+        <div class="d-flex align-center gap-3 py-2" @key="line.Tea.Id">
+            <MudBadge Content="line.Quantity" Color="Color.Dark" Overlap BadgeAriaLabel="@($"Quantity {line.Quantity}")">
+                <div style="width: 2.5rem; height: 3.25rem">@((MarkupString)CheckoutData.TinSvg(line.Tea))</div>
+            </MudBadge>
+            <div class="flex-grow-1" style="min-width: 0">
+                <MudText Typo="Typo.body2" Style="font-weight: 600">@line.Tea.Name</MudText>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@line.Tea.Grams g tin</MudText>
+            </div>
+            <MudText Typo="Typo.body2" Style="font-variant-numeric: tabular-nums">@CheckoutData.Money(line.Total)</MudText>
+        </div>
+    }
+    @if (Lines.Count == 0)
+    {
+        <MudText Typo="Typo.body2" Class="mud-text-secondary py-2">No teas yet.</MudText>
+    }
+
+    <MudDivider Class="my-3" />
+    @if (PromoApplied)
+    {
+        <div class="d-flex align-center gap-2">
+            <MudChip T="string" Color="Color.Success" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.Sell" Size="Size.Small" OnClose="_ => PromoAppliedChanged.InvokeAsync(false)"
+                     Class="ma-0" aria-label="@($"Promotion {CheckoutData.PromoCode} applied")">@CheckoutData.PromoCode</MudChip>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">10% off your teas</MudText>
+        </div>
+    }
+    else if (!ReadOnly)
+    {
+        <div class="d-flex align-start gap-2">
+            <MudTextField @bind-Value="_code" Label="Promotion code" Variant="Variant.Outlined" Margin="Margin.Dense" Error="_codeError is not null" ErrorText="@_codeError"
+                          HelperText="@($"Try {CheckoutData.PromoCode}.")" OnKeyUp="ApplyOnEnterAsync" Immediate />
+            <MudButton Variant="Variant.Outlined" OnClick="ApplyAsync" Class="mt-2" Disabled="string.IsNullOrWhiteSpace(_code)">Apply</MudButton>
+        </div>
+    }
+
+    <dl class="ma-0 mt-3" style="display: grid; grid-template-columns: 1fr auto; row-gap: .35rem; font-variant-numeric: tabular-nums">
+        <dt>Subtotal</dt><dd class="ma-0" style="text-align: right">@CheckoutData.Money(Totals.Subtotal)</dd>
+        @if (Totals.Discount > 0)
+        {
+            <dt>Promotion</dt><dd class="ma-0 mud-success-text" style="text-align: right">−@CheckoutData.Money(Totals.Discount)</dd>
+        }
+        <dt>Delivery</dt><dd class="ma-0" style="text-align: right">@(Delivery is null ? "Chosen next" : Delivery.Price == 0 ? "Free" : CheckoutData.Money(Delivery.Price))</dd>
+    </dl>
+    <MudDivider Class="my-3" />
+    <div class="d-flex align-baseline">
+        <MudText Typo="Typo.subtitle1" Class="flex-grow-1" Style="font-weight: 600">Total</MudText>
+        <MudText Typo="Typo.h5" HtmlTag="p" Style="font-variant-numeric: tabular-nums">@CheckoutData.Money(Totals.Total)</MudText>
+    </div>
+    <MudText Typo="Typo.caption" Class="mud-text-secondary">Includes VAT of @CheckoutData.Money(Totals.Vat).</MudText>
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired] public List<CartLine> Lines { get; set; } = [];
+    [Parameter] public DeliveryOption? Delivery { get; set; }
+    [Parameter] public bool PromoApplied { get; set; }
+    [Parameter] public EventCallback<bool> PromoAppliedChanged { get; set; }
+    /// <summary>After the order is placed, the summary is a receipt: no more codes.</summary>
+    [Parameter] public bool ReadOnly { get; set; }
+
+    private string _code = "";
+    private string? _codeError;
+
+    private OrderTotals Totals => OrderTotals.For(Lines, PromoApplied, Delivery);
+
+    private async Task ApplyAsync()
+    {
+        if (!string.Equals(_code.Trim(), CheckoutData.PromoCode, StringComparison.OrdinalIgnoreCase))
+        {
+            _codeError = "That code is not valid.";
+            return;
+        }
+        (_code, _codeError) = ("", null);
+        await PromoAppliedChanged.InvokeAsync(true);
+    }
+
+    private Task ApplyOnEnterAsync(KeyboardEventArgs args) => args.Key == "Enter" ? ApplyAsync() : Task.CompletedTask;
+}

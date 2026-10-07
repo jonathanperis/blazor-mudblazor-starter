@@ -1,0 +1,62 @@
+@* The success state: what happens next, in the order a customer wants to know it. *@
+<MudPaper Outlined Class="pa-6 pa-sm-10" role="status">
+    <div class="d-flex flex-column align-center" style="text-align: center">
+        <svg width="72" height="72" viewBox="0 0 72 72" aria-hidden="true">
+            <circle cx="36" cy="36" r="34" fill="none" stroke="var(--mud-palette-success)" stroke-width="2" />
+            <circle cx="36" cy="36" r="28" fill="none" stroke="var(--mud-palette-success)" stroke-width="1" stroke-dasharray="2 4" />
+            <path d="M24 37 l8 8 l16 -18" fill="none" stroke="var(--mud-palette-success)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+        </svg>
+        <MudText Typo="Typo.h4" HtmlTag="h3" Class="mt-4">Thank you, @Address.Name.Split(' ')[0]</MudText>
+        <MudText Typo="Typo.body1" Class="mud-text-secondary mt-2" Style="max-width: 44ch">
+            Order <strong style="font-family: var(--font-mono)">@OrderNumber</strong> is confirmed. A receipt is on its way to @Address.Email.
+        </MudText>
+    </div>
+
+    <MudGrid Spacing="3" Class="mt-6">
+        <MudItem xs="12" sm="4">
+            <MudText Typo="Typo.overline" HtmlTag="h4" Class="mud-text-secondary">@(Delivery.WorkingDays == 0 ? "Ready to collect" : "Arrives by")</MudText>
+            <MudText Typo="Typo.body2">@ArrivalText</MudText>
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudText Typo="Typo.overline" HtmlTag="h4" Class="mud-text-secondary">@(Delivery.WorkingDays == 0 ? "Collect from" : "Delivering to")</MudText>
+            <MudText Typo="Typo.body2">@(Delivery.WorkingDays == 0 ? "8 Cutler Street" : $"{Address.Line1}, {Address.Town} {Address.Postcode.ToUpperInvariant()}")</MudText>
+        </MudItem>
+        <MudItem xs="12" sm="4">
+            <MudText Typo="Typo.overline" HtmlTag="h4" Class="mud-text-secondary">Paid</MudText>
+            <MudText Typo="Typo.body2">@CheckoutData.Money(Totals.Total) · @CheckoutData.CardBrand(Card.Number) •••• @Card.LastFour</MudText>
+        </MudItem>
+    </MudGrid>
+
+    <MudTimeline TimelinePosition="TimelinePosition.Start" Class="mt-6" Modifiers="false">
+        <MudTimelineItem Color="Color.Success" Size="Size.Small">
+            <MudText Typo="Typo.body2" Style="font-weight: 600">Order received</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">Just now</MudText>
+        </MudTimelineItem>
+        <MudTimelineItem Color="Color.Default" Size="Size.Small" Variant="Variant.Outlined">
+            <MudText Typo="Typo.body2" Style="font-weight: 600">Weighed and packed by hand</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">Usually within two hours</MudText>
+        </MudTimelineItem>
+        <MudTimelineItem Color="Color.Default" Size="Size.Small" Variant="Variant.Outlined">
+            <MudText Typo="Typo.body2" Style="font-weight: 600">@(Delivery.WorkingDays == 0 ? "Waiting at the counter" : "On its way")</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">We email you at each step</MudText>
+        </MudTimelineItem>
+    </MudTimeline>
+
+    <div class="d-flex flex-wrap justify-center gap-2 mt-4">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Replay" OnClick="OnNewOrder">Start a new order</MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Primary" Href="samples/storefront">Visit the bookshop sample</MudButton>
+    </div>
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired] public string OrderNumber { get; set; } = "";
+    [Parameter, EditorRequired] public ShippingAddress Address { get; set; } = null!;
+    [Parameter, EditorRequired] public DeliveryOption Delivery { get; set; } = null!;
+    [Parameter, EditorRequired] public PaymentCard Card { get; set; } = null!;
+    [Parameter, EditorRequired] public OrderTotals Totals { get; set; } = null!;
+    [Parameter] public EventCallback OnNewOrder { get; set; }
+
+    private string ArrivalText => Delivery.WorkingDays == 0
+        ? "Today from 14:00"
+        : CheckoutData.AddWorkingDays(CheckoutData.Today, Delivery.WorkingDays).ToString("dddd d MMMM", CultureInfo.InvariantCulture);
+}

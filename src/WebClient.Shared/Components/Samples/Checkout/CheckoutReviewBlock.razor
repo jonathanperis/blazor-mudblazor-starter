@@ -1,0 +1,14 @@
+@* One fact on the review step, with a way back to the step that set it. *@
+<MudPaper Outlined Class="pa-3" Style="height: 100%">
+    <div class="d-flex align-center mb-1">
+        <MudText Typo="Typo.overline" HtmlTag="h4" Class="flex-grow-1 mud-text-secondary">@Title</MudText>
+        <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Primary" OnClick="OnEdit" aria-label="@($"Change {Title.ToLowerInvariant()}")">Change</MudButton>
+    </div>
+    <MudText Typo="Typo.body2">@ChildContent</MudText>
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    [Parameter] public EventCallback OnEdit { get; set; }
+}

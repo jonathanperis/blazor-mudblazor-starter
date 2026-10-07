@@ -1,0 +1,124 @@
+@* Adds or edits a card. It always works on a copy: Cancel leaves the board untouched. *@
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6" HtmlTag="h2">@(IsNew ? "New card" : "Card details")</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="_form" Spacing="3">
+            <MudTextField @bind-Value="Card.Title" Label="Title" Required RequiredError="Give the card a title." MaxLength="80" Counter="80"
+                          Validation="@(new Func<string?, string?>(CheckTitle))" Variant="Variant.Outlined" AutoFocus="IsNew" Immediate />
+            <MudTextField @bind-Value="Card.Description" Label="Description" Lines="3" Variant="Variant.Outlined" MaxLength="400" />
+            <MudGrid Spacing="2">
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="string" @bind-Value="Card.Lane" Label="Column" Variant="Variant.Outlined" HelperText="Or drag the card on the board.">
+                        @foreach (var lane in KanbanData.Lanes)
+                        {
+                            <MudSelectItem Value="lane.Id">@lane.Title</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="string" @bind-Value="Card.Assignee" Label="Assignee" Variant="Variant.Outlined" Clearable ToStringFunc="@(id => KanbanData.Member(id)?.Name ?? "Unassigned")">
+                        @foreach (var member in KanbanData.Team)
+                        {
+                            <MudSelectItem Value="member.Id">
+                                <div class="d-flex align-center gap-2">
+                                    <MudAvatar Size="Size.Small" Color="member.Color" Variant="Variant.Outlined" Style="width: 1.5rem; height: 1.5rem; font-size: .65rem">@member.Initials</MudAvatar>
+                                    @member.Name <span class="mud-text-secondary">· @member.Role</span>
+                                </div>
+                            </MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudDatePicker @bind-Date="Card.Due" Label="Due" Variant="Variant.Outlined" DateFormat="d MMM yyyy" Culture="CultureInfo.InvariantCulture" Clearable />
+                </MudItem>
+                <MudItem xs="12" sm="6">
+                    <MudSelect T="int" @bind-Value="Card.Points" Label="Estimate" Variant="Variant.Outlined" ToStringFunc="@(points => $"{points} points")">
+                        @foreach (var points in KanbanData.PointScale)
+                        {
+                            <MudSelectItem Value="points">@points points</MudSelectItem>
+                        }
+                    </MudSelect>
+                </MudItem>
+            </MudGrid>
+            <div>
+                <MudText Typo="Typo.overline" HtmlTag="h3" id="card-labels">Labels</MudText>
+                <MudChipSet T="string" @bind-SelectedValues="Card.Labels" SelectionMode="SelectionMode.MultiSelection" CheckMark Variant="Variant.Outlined" Size="Size.Small" aria-labelledby="card-labels">
+                    @foreach (var label in KanbanData.Labels)
+                    {
+                        <MudChip Value="label.Name" SelectedColor="label.Color">@label.Name</MudChip>
+                    }
+                </MudChipSet>
+            </div>
+            <div>
+                <div class="d-flex align-center">
+                    <MudText Typo="Typo.overline" HtmlTag="h3" Class="flex-grow-1">Checklist</MudText>
+                    @if (Card.Checklist.Count > 0)
+                    {
+                        <MudText Typo="Typo.caption" Class="mud-text-secondary">@Card.Checklist.Count(item => item.Done) of @Card.Checklist.Count done</MudText>
+                    }
+                </div>
+                @if (Card.Checklist.Count > 0)
+                {
+                    <MudProgressLinear Value="@(100.0 * Card.Checklist.Count(item => item.Done) / Card.Checklist.Count)" Color="Color.Success" Rounded Class="mb-1" aria-label="Checklist progress" />
+                }
+                @foreach (var item in Card.Checklist)
+                {
+                    <div class="d-flex align-center">
+                        <MudCheckBox @bind-Value="item.Done" Label="@item.Text" Dense Color="Color.Success" Class="flex-grow-1" />
+                        <MudIconButton Icon="@Icons.Material.Outlined.Close" Size="Size.Small" OnClick="() => Card.Checklist.Remove(item)" aria-label="@($"Remove checklist item {item.Text}")" />
+                    </div>
+                }
+                <div class="d-flex align-center gap-2 mt-1">
+                    <MudTextField @bind-Value="_newItem" Label="Add a checklist item" Variant="Variant.Outlined" Margin="Margin.Dense" Immediate OnKeyUp="AddItemOnEnter" />
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="AddItem" Disabled="string.IsNullOrWhiteSpace(_newItem)">Add</MudButton>
+                </div>
+            </div>
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        @if (!IsNew)
+        {
+            <MudButton Color="Color.Error" StartIcon="@Icons.Material.Outlined.Delete" OnClick="Delete">Delete</MudButton>
+        }
+        <MudSpacer />
+        <MudButton OnClick="Cancel">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="SaveAsync">@(IsNew ? "Add card" : "Save")</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = null!;
+    /// <summary>A copy of the card; the board applies it only when the dialog returns.</summary>
+    [Parameter, EditorRequired] public KanbanCard Card { get; set; } = null!;
+    [Parameter] public bool IsNew { get; set; }
+
+    private MudForm _form = null!;
+    private string _newItem = "";
+
+    private static string? CheckTitle(string? title) => title?.Trim().Length is > 0 and < 4 ? "Use at least four characters." : null;
+
+    private void AddItem()
+    {
+        if (string.IsNullOrWhiteSpace(_newItem)) return;
+        Card.Checklist.Add(new ChecklistItem(_newItem.Trim()));
+        _newItem = "";
+    }
+
+    private void AddItemOnEnter(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter") AddItem();
+    }
+
+    private async Task SaveAsync()
+    {
+        await _form.ValidateAsync();
+        if (!_form.IsValid) return;
+        Card.Title = Card.Title.Trim();
+        Dialog.Close(DialogResult.Ok(new KanbanDialogResult(Card)));
+    }
+
+    private void Delete() => Dialog.Close(DialogResult.Ok(new KanbanDialogResult(Card, Delete: true)));
+    private void Cancel() => Dialog.Cancel();
+}
