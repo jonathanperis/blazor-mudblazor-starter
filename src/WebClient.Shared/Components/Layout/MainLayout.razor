@@ -27,7 +27,7 @@
         </MudMenu>
     </MudAppBar>
     @* OpenChanged also fires when a responsive drawer closes itself on a small screen; only the menu button persists a choice. *@
-    <MudDrawer Open="Preferences.DrawerOpen" OpenChanged="Preferences.ObserveDrawer" ClipMode="DrawerClipMode.Always">
+    <MudDrawer Open="Preferences.DrawerOpen" OpenChanged="Preferences.ObserveDrawer" ClipMode="DrawerClipMode.Always" Class="app-drawer">
         <MudNavMenu>
             <MudNavLink Href="./" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home">Overview</MudNavLink>
             <p class="nav-section" aria-hidden="true">Labs</p>

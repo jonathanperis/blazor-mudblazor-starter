@@ -26,8 +26,13 @@ builder.Services.AddLearningLabs(new LearningHost
     CulturePanel = typeof(ServerCulturePanel),
     DiagnosticsPanel = typeof(ServerDiagnosticsPanel)
 });
-builder.Services.Configure<RequestLocalizationOptions>(options => options
-    .SetDefaultCulture(LearningCultures.Default).AddSupportedCultures(LearningCultures.Supported).AddSupportedUICultures(LearningCultures.Supported));
+// The culture changes only when the learner chooses one (the culture cookie), as in the WebAssembly host. Following
+// Accept-Language would mix translated MudBlazor labels into an English interface.
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    options.SetDefaultCulture(LearningCultures.Default).AddSupportedCultures(LearningCultures.Supported).AddSupportedUICultures(LearningCultures.Supported);
+    options.RequestCultureProviders = [new Microsoft.AspNetCore.Localization.CookieRequestCultureProvider()];
+});
 // The security-header middleware below sends X-Frame-Options: DENY for every response.
 builder.Services.AddAntiforgery(options => options.SuppressXFrameOptionsHeader = true);
 builder.Services.Configure<FormOptions>(options => { options.ValueLengthLimit = 4096; options.ValueCountLimit = 16; });

@@ -57,10 +57,10 @@ h1[tabindex="-1"]:focus, main[tabindex="-1"]:focus { outline: none; }
 @media (max-width: 960px) { .desktop-theme { display: none; } .mobile-theme { display: block; } .wordmark-tag { display: none; } }
 
 /* Drawer: a table of contents rather than a menu */
-.mud-drawer .mud-navmenu { padding-block: .5rem 2rem; }
+.app-drawer .mud-navmenu { padding-block: .5rem 2rem; }
 .nav-section { margin: 1.25rem 1rem .35rem; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
-.mud-nav-link { font-size: .875rem; }
-.mud-nav-link.active:not(.mud-nav-link-disabled) { background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--ink); box-shadow: inset 2px 0 0 var(--accent); }
+.app-drawer .mud-nav-link { font-size: .875rem; }
+.app-drawer .mud-nav-link.active:not(.mud-nav-link-disabled) { background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--ink); box-shadow: inset 2px 0 0 var(--accent); }
 
 .demo-banner { border-style: dashed !important; }
 
