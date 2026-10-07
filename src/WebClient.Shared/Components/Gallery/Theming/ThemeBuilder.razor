@@ -1,0 +1,95 @@
+@using MudBlazor.Utilities
+
+<Playground Code="@Code">
+    <Preview>
+        @* Overriding the palette variables on a container themes everything inside it, and nothing outside. *@
+        <div style="@PreviewStyle" class="pa-6" aria-label="Theme preview">
+            <MudStack Spacing="3" Style="max-width: 24rem">
+                <MudText Typo="Typo.h5" HtmlTag="h3" Style="color: var(--mud-palette-text-primary)">Night tours</MudText>
+                <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">Book a guided evening at the observatory.</MudText>
+                <MudTextField T="string" Label="Your email" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                <MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+                    <MudChip T="string" Color="Color.Primary" Variant="Variant.Outlined">Clear skies</MudChip>
+                    <MudChip T="string" Color="Color.Secondary">Moonless</MudChip>
+                </MudStack>
+                <MudStack Row Spacing="2">
+                    <MudButton Variant="Variant.Filled" Color="Color.Primary">Book a place</MudButton>
+                    <MudButton Variant="Variant.Outlined" Color="Color.Secondary">Details</MudButton>
+                </MudStack>
+                <MudSwitch T="bool" @bind-Value="_reminder" Color="Color.Primary" Label="Remind me" />
+            </MudStack>
+        </div>
+    </Preview>
+    <Controls>
+        <MudColorPicker @bind-Value="_primary" Label="Primary" Variant="Variant.Outlined" Margin="Margin.Dense" ShowAlpha="false" />
+        <MudColorPicker @bind-Value="_secondary" Label="Secondary" Variant="Variant.Outlined" Margin="Margin.Dense" ShowAlpha="false" />
+        <MudStack Spacing="0">
+            <MudText Typo="Typo.caption" id="radius-label">Corner radius: @_radius px</MudText>
+            <MudSlider T="int" @bind-Value="_radius" Min="0" Max="20" Step="1" Color="Color.Primary" aria-labelledby="radius-label" />
+        </MudStack>
+        <MudSwitch T="bool" @bind-Value="_darkSurface" Color="Color.Primary" Label="Dark surface" />
+        <MudText Typo="Typo.caption" role="status">
+            Text on primary: @Ratio(_primary, ContrastText(_primary)).ToString("0.0"):1 ·
+            primary on surface: @Ratio(_primary, Surface).ToString("0.0"):1
+            @(Ratio(_primary, Surface) < 3 ? " (too low for outlined text)" : "")
+        </MudText>
+    </Controls>
+</Playground>
+
+@code {
+    private MudColor _primary = new("#B4441F");
+    private MudColor _secondary = new("#1F5F5B");
+    private int _radius = 6;
+    private bool _darkSurface;
+    private bool _reminder = true;
+
+    private MudColor Surface => new(_darkSurface ? "#1C1B18" : "#FBFAF6");
+
+    private string PreviewStyle => string.Join("; ",
+    [
+        ..Variables("primary", _primary), ..Variables("secondary", _secondary),
+        $"--mud-palette-surface: {Surface}", $"--mud-palette-background: {Surface}",
+        $"--mud-palette-text-primary: {(_darkSurface ? "#ECE7DD" : "#1C1B19")}", $"--mud-palette-text-secondary: {(_darkSurface ? "#A9A397" : "#5E5A52")}",
+        $"--mud-palette-lines-inputs: {(_darkSurface ? "#6E685D" : "#8E877A")}",
+        $"--mud-default-borderradius: {_radius}px", $"background: {Surface}", "color-scheme: " + (_darkSurface ? "dark" : "light")
+    ]);
+
+    // MudThemeProvider derives these companions from each palette color; the preview does the same.
+    private static IEnumerable<string> Variables(string name, MudColor color) =>
+    [
+        $"--mud-palette-{name}: {color.ToString(MudColorOutputFormats.Hex)}",
+        $"--mud-palette-{name}-rgb: {color.R},{color.G},{color.B}",
+        $"--mud-palette-{name}-text: {ContrastText(color).ToString(MudColorOutputFormats.Hex)}",
+        $"--mud-palette-{name}-darken: {color.ColorRgbDarken().ToString(MudColorOutputFormats.RGB)}",
+        $"--mud-palette-{name}-lighten: {color.ColorRgbLighten().ToString(MudColorOutputFormats.RGB)}"
+    ];
+
+    private static MudColor ContrastText(MudColor background) => Ratio(background, new MudColor("#FFFFFF")) >= 4.5 ? new MudColor("#FFFFFF") : new MudColor("#1C1B19");
+
+    // WCAG 2 contrast ratio between two colors.
+    private static double Ratio(MudColor a, MudColor b)
+    {
+        static double Luminance(MudColor c)
+        {
+            static double Channel(byte value) { var s = value / 255.0; return s <= 0.03928 ? s / 12.92 : Math.Pow((s + 0.055) / 1.055, 2.4); }
+            return 0.2126 * Channel(c.R) + 0.7152 * Channel(c.G) + 0.0722 * Channel(c.B);
+        }
+        var (light, dark) = (Math.Max(Luminance(a), Luminance(b)), Math.Min(Luminance(a), Luminance(b)));
+        return (light + 0.05) / (dark + 0.05);
+    }
+
+    private string Code =>
+        $$"""
+        private readonly MudTheme _theme = new()
+        {
+            Palette{{(_darkSurface ? "Dark" : "Light")}} = new Palette{{(_darkSurface ? "Dark" : "Light")}}
+            {
+                Primary = "{{_primary.ToString(MudColorOutputFormats.Hex)}}",
+                Secondary = "{{_secondary.ToString(MudColorOutputFormats.Hex)}}"
+            },
+            LayoutProperties = new LayoutProperties { DefaultBorderRadius = "{{_radius}}px" }
+        };
+
+        <MudThemeProvider Theme="_theme" />
+        """;
+}
