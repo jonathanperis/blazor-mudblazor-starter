@@ -199,3 +199,6 @@ h1[tabindex="-1"]:focus, main[tabindex="-1"]:focus { outline: none; }
 .lab-mistake { padding: 1rem 1.25rem; border-left: 2px solid var(--accent); background: color-mix(in srgb, var(--accent) 6%, transparent); }
 .lab-mistake .kicker { margin: 0; color: var(--accent); }
 .lab-mistake p { font-family: var(--font-serif); font-style: italic; font-size: 1.05rem; line-height: 1.5; }
+
+/* Highlights (MudHighlighter, search) read as a marker pen in both themes. */
+mark { background: color-mix(in srgb, var(--mud-palette-warning) 30%, transparent); color: inherit; padding: 0 .08em; border-radius: 2px; }
