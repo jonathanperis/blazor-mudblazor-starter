@@ -22,6 +22,7 @@ Tests use xUnit, bUnit, ASP.NET Core's in-process server, and real SQLite migrat
 | Identity | Antiforgery rejection, anonymous/student/instructor policy results, disabled demo sign-in |
 | Persistence | Migrations, workspace isolation, stale-update/delete conflicts, scoped reset, note limit, page-only sliding workspace cookie, tampered-cookie replacement |
 | Static demo | In-browser API rules, encoded typed-client requests, localStorage notebook outcomes, browser personas, existing lab sources |
+| Gallery | Every component page and page sample renders with bUnit without hitting an example's error boundary, every example embeds its source, routes are unique, the highlighter round-trips source, snippets omit defaults |
 | Localization | Culture cookie, Portuguese resource text, culture-specific formatting |
 
 These checks do not measure browser layout, assistive-technology behavior, or a live hosting environment. The WebAssembly demo has a browser check (below); the server app's browser behavior and post-deployment verification remain separate layers. Hostinger setup is pending.
@@ -56,7 +57,7 @@ npx playwright install chromium   # once; or set PLAYWRIGHT_CHANNEL=chrome
 npm run check:demo
 ```
 
-The check serves `docs/out` like GitHub Pages (repository path, `404.html` fallback) and verifies deep links, the in-browser API, the skip link, scoped state, notebook conflicts, browser personas, culture reload, atomic CSV import, the largest grid, the not-found page, and a clean console.
+The check serves `docs/out` like GitHub Pages (repository path, `404.html` fallback) and verifies deep links, the in-browser API, the skip link, scoped state, notebook conflicts, browser personas, culture reload, atomic CSV import, the largest grid, the not-found page, and a clean console. It then visits every routable page of the shared library inside the running demo — every lab, component page and page sample — and fails if a page lacks a single heading or an example hits its error boundary.
 
 ## Compare performance honestly
 
