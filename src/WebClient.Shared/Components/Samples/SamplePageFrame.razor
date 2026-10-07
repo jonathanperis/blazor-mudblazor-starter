@@ -1,0 +1,24 @@
+@* Common header for page samples: what the page demonstrates and where its source lives. *@
+<PageTitle>@Entry.Title · Page samples · Blazor learning sandbox</PageTitle>
+<article class="sample-page">
+    <header class="sample-hero">
+        <p class="kicker"><a href="samples">Page samples</a></p>
+        <MudText Typo="Typo.h4" HtmlTag="h1">@Entry.Title</MudText>
+        <p class="lede">@Entry.Summary</p>
+        <ul class="gallery-meta" aria-label="About this sample">
+            @foreach (var component in Entry.Uses)
+            {
+                <li><code>@component</code></li>
+            }
+            <li><a href="@Entry.SourceUrl" target="_blank" rel="noopener noreferrer">Sample source ↗</a></li>
+        </ul>
+    </header>
+    <div class="sample-canvas">@ChildContent</div>
+</article>
+
+@code {
+    /// <summary>The sample page type; pass <c>GetType()</c> from the page.</summary>
+    [Parameter, EditorRequired] public Type Page { get; set; } = null!;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+    private SampleEntry Entry => GalleryCatalog.Samples.FirstOrDefault(sample => sample.Page == Page) ?? throw new InvalidOperationException($"{Page.Name} needs [PageSample] and @page.");
+}

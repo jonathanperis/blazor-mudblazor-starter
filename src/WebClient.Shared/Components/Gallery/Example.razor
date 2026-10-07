@@ -1,0 +1,67 @@
+@implements IDisposable
+@inject IJSRuntime Js
+@inject ISnackbar Snackbar
+
+<section class="example" id="@Anchor" aria-labelledby="@($"{Anchor}-title")">
+    <div class="example-head">
+        <div class="example-heading">
+            <h2 class="example-title" id="@($"{Anchor}-title")">@Title</h2>
+            @if (Description is not null)
+            {
+                <p class="example-description">@Description</p>
+            }
+        </div>
+        <div class="example-tools">
+            <MudButton Size="Size.Small" Variant="Variant.Text" OnClick="ToggleCode" StartIcon="@Icons.Material.Outlined.Code" aria-expanded="@(_showCode ? "true" : "false")" aria-controls="@($"{Anchor}-code")">@(_showCode ? "Hide code" : "Code")</MudButton>
+            <MudTooltip Text="Copy code">
+                <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.ContentCopy" OnClick="Copy" aria-label="@($"Copy the code of {Title}")" />
+            </MudTooltip>
+            <MudTooltip Text="Open on GitHub">
+                <MudIconButton Size="Size.Small" Icon="@Icons.Material.Outlined.OpenInNew" Href="@GalleryCatalog.SourceUrl(Of)" Target="_blank" Rel="noopener noreferrer" aria-label="@($"Open the source of {Title} on GitHub")" />
+            </MudTooltip>
+        </div>
+    </div>
+    <div class="example-preview @PreviewClass">
+        <ErrorBoundary>
+            <ChildContent><DynamicComponent Type="Of" /></ChildContent>
+            <ErrorContent><MudAlert Severity="Severity.Error" Dense>This example failed to render. Reload the page to try again.</MudAlert></ErrorContent>
+        </ErrorBoundary>
+    </div>
+    @if (_showCode)
+    {
+        <div id="@($"{Anchor}-code")"><CodeBlock Source="@Source" /></div>
+    }
+</section>
+
+@code {
+    [CascadingParameter] private ComponentPageFrame? Frame { get; set; }
+    /// <summary>The example component. Its .razor file is shown as the code.</summary>
+    [Parameter, EditorRequired] public Type Of { get; set; } = null!;
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter] public string? Description { get; set; }
+    /// <summary>Extra classes for the preview area, such as "example-preview-flush" for full-bleed layouts.</summary>
+    [Parameter] public string? PreviewClass { get; set; }
+    [Parameter] public bool ShowCode { get; set; }
+
+    private bool _showCode;
+    internal string Anchor => Of.Name.ToLowerInvariant();
+    private string Source => ExampleSources.Get(Of) ?? $"// Source for {Of.Name} is not embedded.";
+
+    protected override void OnInitialized()
+    {
+        _showCode = ShowCode;
+        Frame?.Register(this);
+    }
+
+    private void ToggleCode() => _showCode = !_showCode;
+
+    private async Task Copy()
+    {
+        bool copied;
+        try { copied = await Js.InvokeAsync<bool>("learningFiles.copy", Source); }
+        catch (JSException) { copied = false; }
+        Snackbar.Add(copied ? $"Copied “{Title}”." : "Clipboard unavailable. Open the code and copy it manually.", copied ? Severity.Success : Severity.Info);
+    }
+
+    public void Dispose() => Frame?.Unregister(this);
+}

@@ -1,0 +1,10 @@
+@page "/components/button"
+@attribute [ComponentPage("Button", GalleryGroup.Actions, "Buttons start an action. Choose the variant by emphasis: one filled button per view, outlined for secondary actions, text for the rest.", MudDocs = "button", Types = ["MudButton"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ButtonVariants)" Title="Variants" Description="Emphasis comes from the variant, not the color. A filled button marks the primary action of a view." />
+    <Example Of="typeof(ButtonCombinations)" Title="Every variant and color" Description="All 36 combinations of Variant and Color, rendered from the enums. Inherit and Transparent take their color from the surroundings." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(ButtonSizesAndIcons)" Title="Sizes and icons" Description="Icons lead (start) or trail (end) the label. Keep the label: an icon alone needs an IconButton with an accessible name." />
+    <Example Of="typeof(ButtonStates)" Title="States, links and busy work" Description="Disabled, full width, without shadow or ripple, rendered as a link, and a button that stays busy while asynchronous work runs." />
+    <Example Of="typeof(ButtonPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

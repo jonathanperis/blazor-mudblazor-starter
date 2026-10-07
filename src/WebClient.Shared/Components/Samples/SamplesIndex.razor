@@ -1,0 +1,28 @@
+@page "/samples"
+
+<PageTitle>Page samples · Blazor learning sandbox</PageTitle>
+<article class="index-page">
+    <header class="index-hero">
+        <p class="kicker">Page samples</p>
+        <MudText Typo="Typo.h3" HtmlTag="h1">Whole pages, composed</MudText>
+        <p class="lede">
+            Real screens built only from MudBlazor components and a little CSS: how the pieces fit together once you
+            leave the single-component example behind. Every sample uses synthetic data and runs in both hosts.
+        </p>
+    </header>
+    <ol class="sample-list">
+        @foreach (var (sample, index) in GalleryCatalog.Samples.Select((sample, index) => (sample, index)))
+        {
+            <li>
+                <a href="@sample.Href" class="sample-entry">
+                    <span class="sample-number">@((index + 1).ToString("00"))</span>
+                    <span class="sample-text">
+                        <span class="sample-title">@sample.Title</span>
+                        <span class="sample-summary">@sample.Summary</span>
+                        <span class="sample-uses">@string.Join(" · ", sample.Uses)</span>
+                    </span>
+                </a>
+            </li>
+        }
+    </ol>
+</article>

@@ -1,0 +1,11 @@
+<MudStack Spacing="4">
+    @foreach (var size in Enum.GetValues<Size>())
+    {
+        <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+            <MudText Typo="Typo.overline" Style="min-width: 5rem">@size</MudText>
+            <MudButton Size="@size" Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.CloudUpload">Upload</MudButton>
+            <MudButton Size="@size" Variant="Variant.Outlined" Color="Color.Secondary" EndIcon="@Icons.Material.Outlined.ArrowForward">Continue</MudButton>
+            <MudButton Size="@size" Variant="Variant.Text" Color="Color.Error" StartIcon="@Icons.Material.Outlined.Delete">Delete</MudButton>
+        </MudStack>
+    }
+</MudStack>

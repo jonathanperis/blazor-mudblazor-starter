@@ -2,26 +2,56 @@
 @inject LearningHost Host
 
 <PageTitle>Blazor learning sandbox</PageTitle>
-<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4 pb-8">
-    <MudPaper Class="pa-6 mb-4" Outlined>
-        <MudText Typo="Typo.overline" Color="Color.Primary">Learn by changing working examples</MudText>
-        <MudText Typo="Typo.h3" HtmlTag="h1">Your Blazor and MudBlazor toolbox</MudText>
-        <MudText Typo="Typo.h6" HtmlTag="p" Class="my-4">Explore focused labs, inspect the source, and experiment with the tradeoffs.</MudText>
-        <MudText Class="mb-4">Start with component state. Progress through forms, data grids, APIs, persistence, authentication, localization, files, and observability. Each lab includes an exercise and explains the lifetime of its data.</MudText>
-        <MudStack Row Class="flex-wrap">
-            <MudButton Href="counter" Variant="Variant.Filled" Color="Color.Primary">Start learning</MudButton>
-            <MudButton Href="labs" Variant="Variant.Outlined" Color="Color.Primary">Explore all labs</MudButton>
-            <MudButton Href="@LabCatalog.Repository" Target="_blank" rel="noopener noreferrer">View source</MudButton>
+<article class="index-page">
+    <header class="home-hero">
+        <p class="kicker">A lab manual for Blazor and MudBlazor · .NET 10</p>
+        <MudText Typo="Typo.h1">Learn by changing <em>working</em> examples.</MudText>
+        <p class="lede">
+            Nine labs explain how Blazor behaves, and why. A gallery shows every MudBlazor component in working
+            examples, every parameter combination, and playgrounds that write the markup for you. Complete page samples
+            show how the pieces fit together. Read the source beside each one, change one thing, and watch what happens.
+        </p>
+        <MudStack Row Wrap="Wrap.Wrap" Spacing="2" Class="mt-6">
+            <MudButton Href="counter" Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Outlined.ArrowForward">Start with the first lab</MudButton>
+            <MudButton Href="components" Variant="Variant.Outlined" Color="Color.Primary">Browse components</MudButton>
+            <MudButton Href="samples" Variant="Variant.Text" Color="Color.Primary">See page samples</MudButton>
         </MudStack>
-    </MudPaper>
-    <MudText Typo="Typo.h5" HtmlTag="h2" Class="mb-3">A small app with room to experiment</MudText>
-    <MudText Class="mb-4">.NET 10, MudBlazor 9, synthetic datasets, and a learner notebook. The same labs run in two hosts: Blazor Server, with SQLite and server-enforced policies, and a static WebAssembly demo that runs entirely in the browser. Cloud accounts are optional.</MudText>
-    <MudPaper Class="pa-4 mb-4" Outlined>
-        <MudText Typo="Typo.h6" HtmlTag="h2">Run locally</MudText>
-        <pre><code>git clone https://github.com/jonathanperis/blazor-mudblazor-starter.git
+    </header>
+
+    <div class="home-columns">
+        <section class="home-column" aria-labelledby="home-labs">
+            <p class="home-figure">@LabCatalog.All.Count</p>
+            <h2 id="home-labs">Labs</h2>
+            <p>State, forms, grids, HTTP, persistence, authentication, localization, files and observability. Each lab states its objective, a common mistake and an exercise.</p>
+            <MudLink Href="labs" Typo="Typo.body2">Choose a learning path →</MudLink>
+        </section>
+        <section class="home-column" aria-labelledby="home-components">
+            <p class="home-figure">@GalleryCatalog.Components.Count</p>
+            <h2 id="home-components">Components</h2>
+            <p>Buttons to data grids to charts. Every example shows the exact Razor that rendered it, and matrices put every variant and color side by side.</p>
+            <MudLink Href="components" Typo="Typo.body2">Open the gallery →</MudLink>
+        </section>
+        <section class="home-column" aria-labelledby="home-samples">
+            <p class="home-figure">@GalleryCatalog.Samples.Count</p>
+            <h2 id="home-samples">Page samples</h2>
+            <p>Dashboards, sign-in, settings, a storefront, a kanban board and more: whole screens composed only from MudBlazor components.</p>
+            <MudLink Href="samples" Typo="Typo.body2">See the samples →</MudLink>
+        </section>
+    </div>
+
+    <MudDivider Class="my-10" />
+    <MudGrid Spacing="6">
+        <MudItem xs="12" md="7">
+            <MudText Typo="Typo.h5" HtmlTag="h2" Class="mb-3">Run it yourself</MudText>
+            <pre><code>git clone https://github.com/jonathanperis/blazor-mudblazor-starter.git
 cd blazor-mudblazor-starter
 dotnet run --project src/WebClient</code></pre>
-        <MudLink Href="https://jonathanperis.github.io/blazor-mudblazor-starter/docs/getting-started/">Setup and learning guide</MudLink>
-    </MudPaper>
-    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">You are using the @Host.Name host. Counter and grid experiments reset with their component or @Host.ScopeLifetime. Notebook entries are kept in @Host.NotebookStorage.</MudAlert>
-</MudContainer>
+            <MudLink Href="https://jonathanperis.github.io/blazor-mudblazor-starter/docs/getting-started/" Typo="Typo.body2">Setup and learning guide →</MudLink>
+        </MudItem>
+        <MudItem xs="12" md="5">
+            <MudText Typo="Typo.h5" HtmlTag="h2" Class="mb-3">This host</MudText>
+            <MudText Class="mb-2">You are using the <strong>@Host.Name</strong> host.</MudText>
+            <MudText Typo="Typo.body2" Style="color: var(--ink-soft)">Counter and grid experiments reset with their component or @Host.ScopeLifetime. Notebook entries are kept in @Host.NotebookStorage.</MudText>
+        </MudItem>
+    </MudGrid>
+</article>

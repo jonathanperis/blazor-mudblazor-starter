@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#1C1B19" />
     <title>Blazor learning sandbox · WebAssembly demo</title>
     <meta name="description" content="Live Blazor WebAssembly demo of the Blazor learning sandbox labs. Runs entirely in the browser." />
     <!-- Publishing for GitHub Pages rewrites this to the demo path (scripts/prepare-pages-demo.py). -->
@@ -22,6 +23,8 @@
     <link rel="icon" href="favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" href="favicon.png" />
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <link rel="preload" href="_content/WebClient.Shared/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="_content/WebClient.Shared/fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="_content/MudBlazor/MudBlazor.min.css" />
     <link rel="stylesheet" href="_content/WebClient.Shared/app.css" />
     <script type="importmap"></script>
@@ -31,7 +34,7 @@
     <div id="app">
         <main id="main-content" class="demo-loading">
             <h1>Blazor learning sandbox</h1>
-            <p role="status">Loading the WebAssembly runtime…</p>
+            <p role="status">Starting .NET in your browser…</p>
             <noscript>This live demo runs .NET in your browser and needs JavaScript.</noscript>
         </main>
     </div>

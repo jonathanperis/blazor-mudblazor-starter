@@ -18,10 +18,12 @@ public sealed class IntegrationTests
     {
         await using var factory = new SandboxFactory();
         using var client = factory.BrowserClient();
-        foreach (var route in LabCatalog.All.Select(lab => lab.Route).Concat(["/", "/labs"]))
+        var gallery = WebClient.Shared.Features.Gallery.GalleryCatalog.Components.Select(entry => entry.Route)
+            .Concat(WebClient.Shared.Features.Gallery.GalleryCatalog.Samples.Select(sample => sample.Route));
+        foreach (var route in LabCatalog.All.Select(lab => lab.Route).Concat(["/", "/labs", "/components", "/samples"]).Concat(gallery))
         {
             var response = await client.GetAsync(route);
-            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.True(response.StatusCode == HttpStatusCode.OK, $"{route} returned {response.StatusCode}");
             var document = new HtmlParser().ParseDocument(await response.Content.ReadAsStringAsync());
             Assert.NotNull(document.QuerySelector("main h1"));
         }

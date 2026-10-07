@@ -1,0 +1,34 @@
+<MudStack Spacing="3" Style="max-width: 28rem">
+    <MudStack Row Wrap="Wrap.Wrap" Spacing="3">
+        <MudButton Variant="Variant.Filled" Disabled="true">Disabled</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" DropShadow="false">No shadow</MudButton>
+        <MudButton Variant="Variant.Outlined" Ripple="false">No ripple</MudButton>
+        <MudButton Variant="Variant.Text" Color="Color.Info" Href="https://mudblazor.com" Target="_blank" Rel="noopener noreferrer" EndIcon="@Icons.Material.Outlined.OpenInNew">A link</MudButton>
+    </MudStack>
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" FullWidth="true" Disabled="_saving" OnClick="SaveAsync">
+        @if (_saving)
+        {
+            <MudProgressCircular Class="mr-2" Size="Size.Small" Indeterminate="true" />
+            <span>Saving…</span>
+        }
+        else
+        {
+            <span>Full width: save for 1.5 seconds</span>
+        }
+    </MudButton>
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+@code {
+    private bool _saving;
+    private string _status = "";
+
+    private async Task SaveAsync()
+    {
+        _saving = true;
+        _status = "Saving…";
+        await Task.Delay(1500);
+        _saving = false;
+        _status = $"Saved at {DateTime.Now:T}.";
+    }
+}
