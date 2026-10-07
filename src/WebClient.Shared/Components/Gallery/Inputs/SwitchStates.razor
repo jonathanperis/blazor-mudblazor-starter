@@ -1,0 +1,21 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudStack Spacing="0">
+            <MudSwitch T="bool" Value="true" Label="Disabled, on" Disabled="true" Color="Color.Primary" />
+            <MudSwitch T="bool" Value="false" Label="Disabled, off" Disabled="true" />
+            <MudSwitch T="bool" Value="true" Label="Read-only" ReadOnly="true" Color="Color.Primary" />
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudForm @ref="_form">
+            <MudSwitch @bind-Value="_safetyCheck" Label="Dome area is clear of people" Color="Color.Primary"
+                       Required="true" RequiredError="Confirm the area is clear before rotating the dome" />
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" Class="mt-2" Style="align-self: flex-start" OnClick="() => _form.ValidateAsync()">Rotate dome</MudButton>
+        </MudForm>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private MudForm _form = null!;
+    private bool _safetyCheck;
+}

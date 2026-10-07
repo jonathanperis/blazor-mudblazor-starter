@@ -1,0 +1,19 @@
+<MudStack Spacing="4">
+    <div>
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Spiciness: @_spice of 4</MudText>
+        <MudRating @bind-SelectedValue="_spice" MaxValue="4"
+                   FullIcon="@Icons.Material.Filled.LocalFireDepartment" EmptyIcon="@Icons.Material.Outlined.LocalFireDepartment"
+                   FullIconColor="Color.Error" EmptyIconColor="Color.Default" />
+    </div>
+    <div>
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Would recommend: @_hearts of 5</MudText>
+        <MudRating @bind-SelectedValue="_hearts"
+                   FullIcon="@Icons.Material.Filled.Favorite" EmptyIcon="@Icons.Material.Outlined.FavoriteBorder"
+                   FullIconColor="Color.Primary" />
+    </div>
+</MudStack>
+
+@code {
+    private int _spice = 2;
+    private int _hearts = 4;
+}

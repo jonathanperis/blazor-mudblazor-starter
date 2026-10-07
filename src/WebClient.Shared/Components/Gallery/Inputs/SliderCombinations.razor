@@ -1,0 +1,13 @@
+<EnumMatrix TRow="Color" TColumn="Size" Caption="MudSlider: Color × Size (Variant.Filled)" RowValues="_colors">
+    <Cell>
+        <div style="width: 12rem">
+            <MudSlider T="int" Value="60" Color="@context.Row" Size="@context.Column" Variant="Variant.Filled"
+                       aria-label="@($"{context.Row} {context.Column}")" />
+        </div>
+    </Cell>
+</EnumMatrix>
+
+@code {
+    // The slider styles these palette colors; Default, Inherit, Transparent and Surface have no slider style.
+    private readonly Color[] _colors = [Color.Primary, Color.Secondary, Color.Tertiary, Color.Info, Color.Success, Color.Warning, Color.Error, Color.Dark];
+}

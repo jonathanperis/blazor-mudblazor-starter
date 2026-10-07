@@ -1,0 +1,25 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="4">
+        <MudTextField @bind-Value="_phone" Label="Phone" Mask="_phoneMask" Variant="Variant.Outlined"
+                      HelperText="Digits only; the rest is filled in" InputType="InputType.Telephone" />
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudTextField @bind-Value="_postcode" Label="Postcode" Mask="_postcodeMask" Variant="Variant.Outlined"
+                      HelperText="Letters are upper-cased as you type" />
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudTextField @bind-Value="_specimen" Label="Specimen code" Mask="_specimenMask" Variant="Variant.Outlined"
+                      HelperText="Placeholder shows what is left" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _phone = "(555) 010-7788";
+    private string _postcode = "E17 4QP";
+    private string _specimen = "PL-20";
+
+    // Each field needs its own mask instance: a mask keeps the caret and text of the field it serves.
+    private readonly PatternMask _phoneMask = new("(000) 000-0000");
+    private readonly PatternMask _postcodeMask = new("a00 0aa") { Transformation = char.ToUpperInvariant };
+    private readonly PatternMask _specimenMask = new("aa-0000-**") { Placeholder = '_', Transformation = char.ToUpperInvariant };
+}

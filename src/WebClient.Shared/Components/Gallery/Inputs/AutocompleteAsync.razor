@@ -1,0 +1,48 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="6">
+        <MudAutocomplete T="string" @bind-Value="_star" SearchFunc="SearchCatalogAsync" Label="Star catalog" Variant="Variant.Outlined"
+                         DebounceInterval="300" ShowProgressIndicator="true" ProgressIndicatorColor="Color.Primary"
+                         HelperText="Each search takes 0.8 s; keep typing to cancel it" />
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudSimpleTable Dense="true" Outlined="true" Elevation="0">
+            <tbody>
+                <tr><th scope="row">Searches started</th><td>@_started</td></tr>
+                <tr><th scope="row">Canceled by newer typing</th><td>@_canceled</td></tr>
+                <tr><th scope="row">Completed</th><td>@_completed</td></tr>
+            </tbody>
+        </MudSimpleTable>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string? _star;
+    private int _started, _canceled, _completed;
+
+    private readonly string[] _stars =
+    [
+        "Acrux", "Aldebaran", "Altair", "Antares", "Arcturus", "Betelgeuse", "Canopus", "Capella", "Deneb", "Fomalhaut",
+        "Mimosa", "Pollux", "Procyon", "Regulus", "Rigel", "Sirius", "Spica", "Vega"
+    ];
+
+    private async Task<IEnumerable<string>> SearchCatalogAsync(string? text, CancellationToken token)
+    {
+        _started++;
+        try
+        {
+            // Stands in for a network call: pass the token to HttpClient or EF Core in real code.
+            await Task.Delay(800, token);
+            _completed++;
+            return string.IsNullOrWhiteSpace(text) ? _stars : _stars.Where(star => star.Contains(text, StringComparison.OrdinalIgnoreCase));
+        }
+        catch (OperationCanceledException)
+        {
+            _canceled++;
+            throw;
+        }
+        finally
+        {
+            StateHasChanged();
+        }
+    }
+}

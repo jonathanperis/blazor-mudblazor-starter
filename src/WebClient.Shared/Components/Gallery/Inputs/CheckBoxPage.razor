@@ -1,0 +1,13 @@
+@page "/components/check-box"
+@attribute [ComponentPage("Check box", GalleryGroup.Inputs, "A box that turns an option on or off, alone or as one of several independent choices. Use check boxes for choices confirmed with a button, and a switch for settings that apply at once.", MudDocs = "checkbox", Types = ["MudCheckBox"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(CheckBoxBasics)" Title="Labels and binding" Description="Bind Value to a bool. The Label parameter or child content becomes the clickable label." />
+    <Example Of="typeof(CheckBoxCombinations)" Title="Every size and color" Description="Size against Color for a checked box. The color appears only when checked; UncheckedColor colors the empty box." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(CheckBoxTriState)" Title="Three states" Description="Bind a bool? to allow an indeterminate value. With TriState, clicking cycles unchecked → checked → indeterminate." />
+    <Example Of="typeof(CheckBoxSelectAll)" Title="Select all" Description="A parent box summarizes its children: checked when all are, indeterminate when some are. Clicking it selects or clears the whole list." />
+    <Example Of="typeof(CheckBoxLabelPlacement)" Title="Label placement" Description="LabelPlacement puts the label on any side. Start and End follow the reading direction; Left and Right do not." />
+    <Example Of="typeof(CheckBoxIcons)" Title="Custom icons" Description="Replace the box with any icon pair. Keep a text label so the meaning does not depend on the icon alone." />
+    <Example Of="typeof(CheckBoxStates)" Title="Disabled, read-only, dense and required" Description="Read-only keeps the box focusable but ignores clicks. A required box shows its error once the form validates." />
+    <Example Of="typeof(CheckBoxPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

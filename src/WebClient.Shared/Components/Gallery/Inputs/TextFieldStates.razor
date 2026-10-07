@@ -1,0 +1,16 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudTextField T="string" Value="@("Harbour Books")" Label="Disabled" Variant="Variant.Outlined" Disabled="true" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudTextField T="string" Value="@("ORD-20481")" Label="Read-only" Variant="Variant.Outlined" ReadOnly="true"
+                      HelperText="Copyable, not editable" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudTextField T="string" Value="@("978-0-00-000000-1")" Label="ISBN" Variant="Variant.Outlined"
+                      Error="true" ErrorText="The check digit does not match" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudTextField T="string" Label="Shrunk label" Placeholder="Placeholder stays visible" Variant="Variant.Outlined" ShrinkLabel="true" />
+    </MudItem>
+</MudGrid>

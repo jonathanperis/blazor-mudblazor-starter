@@ -1,0 +1,32 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudSelect @bind-Value="_platform" Label="Platform" Variant="Variant.Outlined" Clearable="true"
+                   HelperText="Clear to show every platform">
+            @foreach (var platform in _platforms)
+            {
+                <MudSelectItem T="string" Value="platform">@platform</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSelect @bind-Value="_departure" Label="Departure" Variant="Variant.Outlined" Dense="true" Margin="Margin.Dense">
+            @foreach (var departure in _departures)
+            {
+                <MudSelectItem Value="departure.Time" Disabled="departure.Canceled">
+                    @departure.Time@(departure.Canceled ? " (canceled)" : "")
+                </MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private readonly string[] _platforms = ["Platform 1", "Platform 2", "Platform 3a", "Platform 3b"];
+    private string? _platform = "Platform 2";
+    private string _departure = "08:15";
+
+    private readonly (string Time, bool Canceled)[] _departures =
+    [
+        ("07:45", false), ("08:00", true), ("08:15", false), ("08:30", false), ("08:45", true), ("09:00", false)
+    ];
+}

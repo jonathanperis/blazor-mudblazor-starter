@@ -1,0 +1,21 @@
+<MudStack Row Spacing="6" Justify="Justify.Center" Style="height: 14rem">
+    @foreach (var band in _bands)
+    {
+        <MudStack AlignItems="AlignItems.Center" Spacing="1">
+            <MudSlider @bind-Value="band.Gain" Min="-12" Max="12" Vertical="true" Variant="Variant.Filled" Color="Color.Secondary"
+                       Immediate="true" aria-label="@($"{band.Label} gain")" />
+            <MudText Typo="Typo.caption">@band.Label</MudText>
+            <MudText Typo="Typo.caption">@band.Gain.ToString("+0;−0;0") dB</MudText>
+        </MudStack>
+    }
+</MudStack>
+
+@code {
+    private readonly Band[] _bands = [new("60 Hz", 4), new("250 Hz", 1), new("1 kHz", 0), new("4 kHz", -3), new("12 kHz", 2)];
+
+    private sealed class Band(string label, int gain)
+    {
+        public string Label { get; } = label;
+        public int Gain { get; set; } = gain;
+    }
+}

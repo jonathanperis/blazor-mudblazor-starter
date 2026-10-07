@@ -1,0 +1,26 @@
+<MudGrid Spacing="6">
+    <MudItem xs="12" md="6">
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="4">
+            <MudSlider @bind-Value="_exposure" Min="1" Max="300" Immediate="true" Style="flex: 1" aria-label="Exposure in seconds" />
+            <div style="width: 7rem">
+                <MudNumericField @bind-Value="_exposure" Label="Exposure" Min="1" Max="300" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                 Adornment="Adornment.End" AdornmentText="s" />
+            </div>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Price: @_low.ToString("C0", _culture) to @_high.ToString("C0", _culture)</MudText>
+        @* Each bound stops at the other, so the range can never invert. *@
+        <MudSlider Value="_low" ValueChanged="(int value) => _low = Math.Min(value, _high)" Min="0" Max="200" Step="5" Immediate="true"
+                   Variant="Variant.Filled" aria-label="Minimum price" />
+        <MudSlider Value="_high" ValueChanged="(int value) => _high = Math.Max(value, _low)" Min="0" Max="200" Step="5" Immediate="true"
+                   Variant="Variant.Filled" aria-label="Maximum price" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private readonly CultureInfo _culture = CultureInfo.GetCultureInfo("en-GB");
+    private int _exposure = 30;
+    private int _low = 40;
+    private int _high = 120;
+}

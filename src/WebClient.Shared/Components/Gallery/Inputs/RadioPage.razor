@@ -1,0 +1,12 @@
+@page "/components/radio"
+@attribute [ComponentPage("Radio", GalleryGroup.Inputs, "A group of mutually exclusive options, all visible at once. Use radios when there are two to five options and comparing them matters; use a select for longer lists.", MudDocs = "radio", Types = ["MudRadioGroup", "MudRadio"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(RadioBasics)" Title="A group with one choice" Description="Bind Value on MudRadioGroup; each MudRadio carries the value it stands for. Arrow keys move the choice within the group." />
+    <Example Of="typeof(RadioCombinations)" Title="Every size and color" Description="Size against Color for a selected radio. UncheckedColor tints the empty circle." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(RadioLayout)" Title="Horizontal and vertical" Description="Radios flow in a row by default. Stack them for long labels or when the options read as a list." />
+    <Example Of="typeof(RadioLabelPlacement)" Title="Label placement" Description="LabelPlacement puts the label on any side of the circle. Start and End follow the reading direction." />
+    <Example Of="typeof(RadioCustomContent)" Title="Rich options" Description="Child content can hold more than a label: here each delivery option shows its price and arrival time, bound to an enum." />
+    <Example Of="typeof(RadioStates)" Title="Disabled options, read-only and required" Description="Disable a single option or the whole group. A required group reports its error under the options." />
+    <Example Of="typeof(RadioPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

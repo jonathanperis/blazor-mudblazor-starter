@@ -1,0 +1,28 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="4">
+        <MudStack Spacing="0">
+            <MudSwitch @bind-Value="_disabled" Label="Disabled form" Color="Color.Primary" />
+            <MudSwitch @bind-Value="_readOnly" Label="Read-only form" Color="Color.Primary" />
+            <MudText Typo="Typo.body2" Class="mt-3" role="status">
+                @(_touched ? "You have unsaved changes." : "No changes yet.")
+            </MudText>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" md="8">
+        <MudForm Disabled="_disabled" ReadOnly="_readOnly" @bind-IsTouched="_touched" Spacing="2">
+            <MudTextField T="string" Label="Shop name" Value="@("Harbour Books")" Variant="Variant.Outlined" />
+            <MudNumericField T="int" Label="Opening hour" Value="9" Min="0" Max="23" Variant="Variant.Outlined" />
+            <MudSelect T="string" Label="Closed on" Value="@("Monday")" Variant="Variant.Outlined">
+                <MudSelectItem Value="@("Sunday")" />
+                <MudSelectItem Value="@("Monday")" />
+            </MudSelect>
+            <MudCheckBox T="bool" Label="Offer gift wrapping" Value="true" Color="Color.Primary" />
+        </MudForm>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private bool _disabled;
+    private bool _readOnly;
+    private bool _touched;
+}

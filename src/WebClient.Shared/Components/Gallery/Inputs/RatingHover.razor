@@ -1,0 +1,29 @@
+<MudPaper Outlined="true" Class="pa-4" Style="max-width: 30rem">
+    <MudText Typo="Typo.h6" HtmlTag="h3">Review: The Patient Telescope</MudText>
+    <MudStack Row AlignItems="AlignItems.Center" Spacing="3" Class="mt-2">
+        <MudRating @bind-SelectedValue="_score" HoveredValueChanged="value => _hovered = value" Color="Color.Warning" Size="Size.Large" />
+        <MudText Typo="Typo.body1" Style="min-width: 8rem">@Describe(_hovered ?? _score)</MudText>
+    </MudStack>
+    <MudTextField @bind-Value="_comment" Label="What stayed with you?" Variant="Variant.Outlined" Lines="3" Class="mt-3" />
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" Class="mt-3" Disabled="_score == 0" OnClick="Submit">Post review</MudButton>
+    <MudText Typo="Typo.body2" Class="mt-2" role="status">@_status</MudText>
+</MudPaper>
+
+@code {
+    private int _score;
+    private int? _hovered;
+    private string _comment = "";
+    private string _status = "";
+
+    private static string Describe(int score) => score switch
+    {
+        1 => "Did not finish",
+        2 => "Uneven",
+        3 => "Worth reading",
+        4 => "Really good",
+        5 => "Unforgettable",
+        _ => "Choose a score"
+    };
+
+    private void Submit() => _status = $"Thanks. Your {_score}-star review is waiting for moderation.";
+}

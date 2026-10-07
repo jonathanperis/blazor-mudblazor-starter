@@ -1,0 +1,51 @@
+<Playground Code="@Code">
+    <Preview>
+        <div style="width: min(18rem, 100%)">
+            <MudNumericField @bind-Value="_value" Label="Exposure" Variant="_variant" Min="_min" Max="_max" Step="_step"
+                             Format="@_format" HideSpinButtons="_hideSpinButtons" Disabled="_disabled" Immediate="true"
+                             Adornment="Adornment.End" AdornmentText="s" />
+        </div>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_variant" Label="Variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudNumericField @bind-Value="_min" Label="Min" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudNumericField @bind-Value="_max" Label="Max" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudNumericField @bind-Value="_step" Label="Step" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0.1m" Step="0.1m" />
+        <MudSelect @bind-Value="_format" Label="Format" Variant="Variant.Outlined" Margin="Margin.Dense">
+            <MudSelectItem Value="@("")">None</MudSelectItem>
+            <MudSelectItem Value="@("F1")">F1</MudSelectItem>
+            <MudSelectItem Value="@("N2")">N2</MudSelectItem>
+        </MudSelect>
+        <MudSwitch @bind-Value="_hideSpinButtons" Label="Hide spin buttons" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private decimal _value = 2.5m;
+    private Variant _variant = Variant.Outlined;
+    private decimal _min = 0.5m;
+    private decimal _max = 30m;
+    private decimal _step = 0.5m;
+    private string _format = "F1";
+    private bool _hideSpinButtons;
+    private bool _disabled;
+
+    // MudNumericField defaults: Variant.Text, Step 1, Min and Max at the limits of T, no Format.
+    private string Code => Snippet.Element("MudNumericField",
+    [
+        ("@bind-Value", "_exposure"),
+        ("Label", "Exposure"),
+        ("Variant", Snippet.Enum(_variant, Variant.Text)),
+        ("Min", $"{_min.ToString(CultureInfo.InvariantCulture)}m"),
+        ("Max", $"{_max.ToString(CultureInfo.InvariantCulture)}m"),
+        ("Step", _step == 1m ? null : $"{_step.ToString(CultureInfo.InvariantCulture)}m"),
+        ("Format", _format == "" ? null : _format),
+        ("HideSpinButtons", Snippet.Flag(_hideSpinButtons)),
+        ("Disabled", Snippet.Flag(_disabled)),
+        ("Adornment", "Adornment.End"),
+        ("AdornmentText", "s")
+    ]);
+}

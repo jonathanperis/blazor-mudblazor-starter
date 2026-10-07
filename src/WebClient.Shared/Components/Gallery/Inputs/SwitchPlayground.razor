@@ -1,0 +1,51 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudSwitch @bind-Value="_value" Label="@_label" Color="_color" UncheckedColor="_uncheckedColor" Size="_size"
+                   LabelPlacement="_placement" ThumbIcon="@(_thumbIcon ? Icons.Material.Filled.Bedtime : null)"
+                   Disabled="_disabled" ReadOnly="_readOnly" />
+    </Preview>
+    <Controls>
+        <MudTextField @bind-Value="_label" Label="Label" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_uncheckedColor" Label="Unchecked color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_size" Label="Size" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Size>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_placement" Label="Label placement" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Placement>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_thumbIcon" Label="Thumb icon" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_readOnly" Label="Read-only" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private bool _value = true;
+    private string _label = "Quiet hours";
+    private Color _color = Color.Primary;
+    private Color _uncheckedColor = Color.Default;
+    private Size _size = Size.Medium;
+    private Placement _placement = Placement.End;
+    private bool _thumbIcon;
+    private bool _disabled;
+    private bool _readOnly;
+
+    // MudSwitch defaults: Color.Default, UncheckedColor Color.Default, Size.Medium, LabelPlacement Placement.End.
+    private string Code => Snippet.Element("MudSwitch",
+    [
+        ("@bind-Value", "_quietHours"),
+        ("Label", _label),
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("UncheckedColor", Snippet.Enum(_uncheckedColor, Color.Default)),
+        ("Size", Snippet.Enum(_size, Size.Medium)),
+        ("LabelPlacement", Snippet.Enum(_placement, Placement.End)),
+        ("ThumbIcon", _thumbIcon ? "@Icons.Material.Filled.Bedtime" : null),
+        ("Disabled", Snippet.Flag(_disabled)),
+        ("ReadOnly", Snippet.Flag(_readOnly))
+    ]);
+}

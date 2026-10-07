@@ -1,0 +1,16 @@
+<MudStack Spacing="4">
+    <div>
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Would you order again? (3)</MudText>
+        <MudRating @bind-SelectedValue="_again" MaxValue="3" Color="Color.Primary" />
+    </div>
+    <div>
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Crumb structure, judged out of 10</MudText>
+        <MudRating @bind-SelectedValue="_crumb" MaxValue="10" Color="Color.Secondary" Size="Size.Small" />
+        <MudText Typo="Typo.body2">@_crumb / 10</MudText>
+    </div>
+</MudStack>
+
+@code {
+    private int _again = 2;
+    private int _crumb = 7;
+}

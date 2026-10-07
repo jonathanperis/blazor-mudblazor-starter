@@ -1,0 +1,21 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudTextField @bind-Value="_title" Label="Book title" Placeholder="For example: The Glass Orchard"
+                      HelperText="As printed on the cover" Variant="Variant.Outlined" Immediate="true" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudTextField @bind-Value="_author" Label="Author" HelperText="Shown only while the field has focus"
+                      HelperTextOnFocus="true" Variant="Variant.Outlined" Immediate="true" />
+    </MudItem>
+    <MudItem xs="12">
+        <MudText Typo="Typo.body2" role="status">
+            Catalog entry: <strong>@(string.IsNullOrWhiteSpace(_title) ? "Untitled" : _title)</strong>
+            by @(string.IsNullOrWhiteSpace(_author) ? "an unknown author" : _author)
+        </MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _title = "";
+    private string _author = "Mira Okonkwo";
+}

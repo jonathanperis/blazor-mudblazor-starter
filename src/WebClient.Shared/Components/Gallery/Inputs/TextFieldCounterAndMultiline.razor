@@ -1,0 +1,22 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="6">
+        <MudTextField @bind-Value="_headline" Label="Review headline" Variant="Variant.Outlined" Immediate="true"
+                      Counter="60" MaxLength="60" HelperText="Short enough for the shop window card" />
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudTextField @bind-Value="_summary" Label="Back-cover summary" Variant="Variant.Outlined" Immediate="true"
+                      Lines="4" Counter="300" MaxLength="300" />
+    </MudItem>
+    <MudItem xs="12">
+        @* Sizing.Auto grows the text area with its content; MaxLines caps the growth, then it scrolls. *@
+        <MudTextField @bind-Value="_notes" Label="Staff notes" Variant="Variant.Outlined"
+                      Lines="2" Sizing="InputSizing.Auto" MaxLines="8"
+                      HelperText="Grows as you write, up to eight lines" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _headline = "A quiet, luminous debut";
+    private string _summary = "When the lighthouse keeper's daughter finds a ledger of ships that never arrived, she starts to chart a coastline nobody else remembers.";
+    private string _notes = "Order three more copies for the reading group.\nSigned editions arrive on Thursday.";
+}

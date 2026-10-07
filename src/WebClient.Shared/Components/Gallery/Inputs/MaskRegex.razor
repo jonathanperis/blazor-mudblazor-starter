@@ -1,0 +1,35 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="_address" Label="Telescope controller IP" Mask="_ipMask" Variant="Variant.Outlined" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="_start" Label="Session starts" Mask="_timeMask" Variant="Variant.Outlined"
+                      HelperText="24-hour clock" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="4">
+        <MudTextField @bind-Value="_color" Label="Chart color" Mask="_colorMask" Variant="Variant.Outlined"
+                      HelperText="The # is added for you" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudTextField @bind-Value="_email" Label="Observer email" Mask="_emailMask" Variant="Variant.Outlined" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        @* Open-ended quantifiers ({0,24}) let partial input match while typing. *@
+        <MudTextField @bind-Value="_callSign" Label="Call sign" Mask="_callSignMask" Variant="Variant.Outlined"
+                      HelperText="Letters, spaces and hyphens only" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _address = "192.168.4.20";
+    private string _start = "";
+    private string _color = "#1F5F5B";
+    private string _email = "";
+    private string _callSign = "";
+
+    private readonly RegexMask _ipMask = RegexMask.IPv4();
+    private readonly RegexMask _timeMask = RegexMask.Time24();
+    private readonly RegexMask _colorMask = RegexMask.HexColor();
+    private readonly RegexMask _emailMask = RegexMask.Email();
+    private readonly RegexMask _callSignMask = new(@"^[A-Za-z\- ]{0,24}$");
+}

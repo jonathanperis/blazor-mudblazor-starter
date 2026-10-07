@@ -1,0 +1,24 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="4">
+        <MudTextField @bind-Value="_observed" Label="Observed on" Mask="_isoMask" Variant="Variant.Outlined"
+                      Placeholder="yyyy-mm-dd" HelperText="ISO 8601" />
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudTextField @bind-Value="_birthday" Label="Date of birth" Mask="_europeanMask" Variant="Variant.Outlined"
+                      Placeholder="dd.mm.yyyy" HelperText="Try 29.02.2023" />
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudTextField @bind-Value="_expiry" Label="Card expiry" Mask="_expiryMask" Variant="Variant.Outlined"
+                      Placeholder="mm/yy" HelperText="Month and two-digit year" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _observed = "2026-03-21";
+    private string _birthday = "";
+    private string _expiry = "";
+
+    private readonly DateMask _isoMask = new("yyyy-MM-dd");
+    private readonly DateMask _europeanMask = new("dd.MM.yyyy");
+    private readonly DateMask _expiryMask = new("MM/yy");
+}

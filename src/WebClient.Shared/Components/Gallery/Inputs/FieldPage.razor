@@ -1,0 +1,10 @@
+@page "/components/field"
+@attribute [ComponentPage("Field", GalleryGroup.Inputs, "The frame of an input (label, outline, adornments, helper and error text) around any content. Use it to display read-only values in a form's style, or to give a custom control the same look as the inputs beside it.", MudDocs = "field", Types = ["MudField"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(FieldCombinations)" Title="Every variant and margin" Description="MudField takes the same Variant and Margin as a text field, so displayed values line up with editable ones." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(FieldCustomContent)" Title="Wrapping custom content" Description="Any markup can sit inside: chips, radios or a color swatch. Turn InnerPadding off for controls that bring their own padding." />
+    <Example Of="typeof(FieldAdornmentsAndStates)" Title="Adornments, helper text and errors" Description="Fields support start and end adornments, clickable ones included, plus helper text, an error state and a disabled look." />
+    <Example Of="typeof(FieldSummary)" Title="A read-only summary" Description="Membership details shown in the style of the form that edits them, with a button to switch to editing." />
+    <Example Of="typeof(FieldPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

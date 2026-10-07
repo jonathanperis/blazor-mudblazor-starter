@@ -1,0 +1,30 @@
+<MudPaper Outlined="true" Class="pa-3" Style="max-width: 26rem">
+    <MudCheckBox T="bool?" Value="AllSelected" ValueChanged="SelectAll" Color="Color.Primary" Label="All loaves" />
+    <MudDivider Class="my-1" />
+    <MudStack Spacing="0" Class="pl-6">
+        @foreach (var loaf in _loaves)
+        {
+            <MudCheckBox @bind-Value="loaf.Selected" Color="Color.Primary" Dense="true" Label="@loaf.Name" />
+        }
+    </MudStack>
+    <MudText Typo="Typo.caption" Class="mt-2" role="status">@_loaves.Count(loaf => loaf.Selected) of @_loaves.Count selected for tomorrow's bake</MudText>
+</MudPaper>
+
+@code {
+    private readonly List<Loaf> _loaves = [new("Country sourdough", true), new("Seeded rye", false), new("Spelt tin", true), new("Olive fougasse", false)];
+
+    // true when all are selected, false when none are, null (indeterminate) otherwise.
+    private bool? AllSelected => _loaves.All(loaf => loaf.Selected) ? true : _loaves.Any(loaf => loaf.Selected) ? null : false;
+
+    private void SelectAll(bool? value)
+    {
+        var select = AllSelected != true;
+        foreach (var loaf in _loaves) loaf.Selected = select;
+    }
+
+    private sealed class Loaf(string name, bool selected)
+    {
+        public string Name { get; } = name;
+        public bool Selected { get; set; } = selected;
+    }
+}

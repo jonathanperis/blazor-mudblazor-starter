@@ -1,0 +1,18 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudTextField @bind-Value="_flight" Label="Flight number" Mask="_flightMask" Variant="Variant.Outlined"
+                      HelperText="2 letters, then 1 to 4 digits: BA117, LH4234" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudTextField @bind-Value="_platform" Label="Rail platform" Mask="_platformMask" Variant="Variant.Outlined"
+                      HelperText="1 or 2 digits and an optional letter: 9, 12b" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _flight = "";
+    private string _platform = "";
+
+    private readonly BlockMask _flightMask = new(new Block('a', 2, 2), new Block('0', 1, 4));
+    private readonly BlockMask _platformMask = new(new Block('0', 1, 2), new Block('a', 0, 1));
+}

@@ -1,0 +1,55 @@
+<Playground Code="@Code">
+    <Preview>
+        <div style="width: min(22rem, 100%)">
+            <MudTextField @bind-Value="_value" Label="@_label" HelperText="@_helperText" Variant="_variant" Margin="_margin"
+                          Adornment="_adornment" AdornmentIcon="@Icons.Material.Outlined.Bookmark" Counter="@(_counter ? 40 : null)"
+                          Clearable="_clearable" Disabled="_disabled" ReadOnly="_readOnly" Immediate="true" />
+        </div>
+    </Preview>
+    <Controls>
+        <MudTextField @bind-Value="_label" Label="Label" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudTextField @bind-Value="_helperText" Label="Helper text" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSelect @bind-Value="_variant" Label="Variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_margin" Label="Margin" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Margin>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_adornment" Label="Adornment" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Adornment>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_counter" Label="Counter" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_clearable" Label="Clearable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_readOnly" Label="Read-only" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private string _value = "Night sky field guide";
+    private string _label = "Book title";
+    private string _helperText = "As printed on the cover";
+    private Variant _variant = Variant.Outlined;
+    private Margin _margin = Margin.None;
+    private Adornment _adornment = Adornment.Start;
+    private bool _counter;
+    private bool _clearable = true;
+    private bool _disabled;
+    private bool _readOnly;
+
+    // MudTextField defaults: Variant.Text, Margin.None, Adornment.None.
+    private string Code => Snippet.Element("MudTextField",
+    [
+        ("@bind-Value", "_title"),
+        ("Label", _label),
+        ("HelperText", string.IsNullOrEmpty(_helperText) ? null : _helperText),
+        ("Variant", Snippet.Enum(_variant, Variant.Text)),
+        ("Margin", Snippet.Enum(_margin, Margin.None)),
+        ("Adornment", Snippet.Enum(_adornment, Adornment.None)),
+        ("AdornmentIcon", _adornment == Adornment.None ? null : "@Icons.Material.Outlined.Bookmark"),
+        ("Counter", _counter ? "40" : null),
+        ("Clearable", Snippet.Flag(_clearable)),
+        ("Disabled", Snippet.Flag(_disabled)),
+        ("ReadOnly", Snippet.Flag(_readOnly))
+    ]);
+}

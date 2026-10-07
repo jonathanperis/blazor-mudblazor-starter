@@ -1,0 +1,29 @@
+<MudGrid Spacing="4">
+    @foreach (var culture in _cultures)
+    {
+        <MudItem xs="12" sm="6" md="3">
+            <MudNumericField @bind-Value="_grant" Label="@culture.EnglishName" Variant="Variant.Outlined"
+                             Format="N2" Culture="culture" HideSpinButtons="true" HelperText="@($"Format N2, culture {culture.Name}")" />
+        </MudItem>
+    }
+    <MudItem xs="12" sm="6">
+        <MudNumericField @bind-Value="_temperature" Label="Mirror temperature" Variant="Variant.Outlined" Format="F1" Step="0.1"
+                         Adornment="Adornment.End" AdornmentText="°C" HelperText="Format F1: always one decimal" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudNumericField @bind-Value="_frames" Label="Frames captured" Variant="Variant.Outlined" Format="N0" Step="100"
+                         HelperText="Format N0: group separators, no decimals" />
+    </MudItem>
+    <MudItem xs="12">
+        <MudText Typo="Typo.body2">Bound values: @_grant.ToString(CultureInfo.InvariantCulture), @_temperature.ToString(CultureInfo.InvariantCulture), @_frames</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private decimal _grant = 1234567.89m;
+    private double _temperature = -4.5;
+    private int _frames = 12800;
+
+    private static readonly string[] CultureNames = ["en-GB", "de-DE", "fr-FR", "hi-IN"];
+    private readonly CultureInfo[] _cultures = CultureNames.Select(CultureInfo.GetCultureInfo).ToArray();
+}

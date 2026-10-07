@@ -1,0 +1,31 @@
+<MudStack Spacing="3" Style="max-width: 32rem">
+    <MudTextField @bind-Value="_account" Label="Account number (IBAN)" Mask="_ibanMask" Variant="Variant.Outlined" Immediate="true"
+                  Validation="@(new Func<string, string?>(Validate))" HelperText="Country, 2 check digits, 18 characters" />
+    <MudText Typo="Typo.body2">Try the public examples DE89 3704 0044 0532 0130 00 or GB82 WEST 1234 5698 7654 32.</MudText>
+</MudStack>
+
+@code {
+    private string _account = "";
+
+    // Letters are upper-cased; spaces are delimiters, so the user never types them.
+    private readonly PatternMask _ibanMask = new("aa00 **** **** **** **** **") { Transformation = char.ToUpperInvariant };
+
+    private static string? Validate(string value)
+    {
+        var compact = (value ?? "").Replace(" ", "");
+        if (compact.Length < 22) return null;
+        return HasValidCheckDigits(compact) ? null : "The check digits do not match this account number";
+    }
+
+    // ISO 7064 mod 97-10: move the first four characters to the end, letters count as 10–35.
+    private static bool HasValidCheckDigits(string iban)
+    {
+        var remainder = 0;
+        foreach (var c in iban[4..] + iban[..4])
+        {
+            var number = char.IsAsciiDigit(c) ? c - '0' : c - 'A' + 10;
+            remainder = (remainder * (number < 10 ? 10 : 100) + number) % 97;
+        }
+        return remainder == 1;
+    }
+}

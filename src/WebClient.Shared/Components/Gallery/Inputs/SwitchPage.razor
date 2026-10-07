@@ -1,0 +1,12 @@
+@page "/components/switch"
+@attribute [ComponentPage("Switch", GalleryGroup.Inputs, "A toggle for a setting that takes effect immediately, like a light switch. Use it in settings lists; use a check box when the choice is confirmed later with a button.", MudDocs = "switch", Types = ["MudSwitch"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(SwitchBasics)" Title="Labels and binding" Description="Bind Value to a bool. Write the label as the setting's name, not as a question, so it reads correctly in both states." />
+    <Example Of="typeof(SwitchCombinations)" Title="Every size and color" Description="Size against Color for a switched-on toggle. The color shows only when on; UncheckedColor tints the off state." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(SwitchThumbIcons)" Title="Thumb icons and off colors" Description="ThumbIcon draws an icon on the knob. Changing it with the value reinforces the state for people who cannot rely on color." />
+    <Example Of="typeof(SwitchLabelPlacement)" Title="Label placement" Description="LabelPlacement puts the label on any side. Settings lists often place the label at the start so switches align at the end." />
+    <Example Of="typeof(SwitchSettingsList)" Title="A settings list" Description="Switches with descriptions, where turning one setting off disables the settings that depend on it." />
+    <Example Of="typeof(SwitchStates)" Title="Disabled, read-only and required" Description="Disabled switches cannot be focused; read-only switches can be focused but ignore changes. Required switches validate like check boxes." />
+    <Example Of="typeof(SwitchPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

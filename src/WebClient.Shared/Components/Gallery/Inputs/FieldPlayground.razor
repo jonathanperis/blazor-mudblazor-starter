@@ -1,0 +1,49 @@
+<Playground Code="@Code">
+    <Preview>
+        <div style="width: min(20rem, 100%)">
+            <MudField Label="@_label" Variant="_variant" Margin="_margin" Adornment="_adornment" AdornmentIcon="@Icons.Material.Outlined.Schedule"
+                      HelperText="@_helperText" InnerPadding="_innerPadding" Underline="_underline" Disabled="_disabled">Opens at 09:00</MudField>
+        </div>
+    </Preview>
+    <Controls>
+        <MudTextField @bind-Value="_label" Label="Label" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudTextField @bind-Value="_helperText" Label="Helper text" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSelect @bind-Value="_variant" Label="Variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_margin" Label="Margin" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Margin>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_adornment" Label="Adornment" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Adornment>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_innerPadding" Label="Inner padding" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_underline" Label="Underline" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private string _label = "Saturday hours";
+    private string _helperText = "";
+    private Variant _variant = Variant.Outlined;
+    private Margin _margin = Margin.None;
+    private Adornment _adornment = Adornment.End;
+    private bool _innerPadding = true;
+    private bool _underline = true;
+    private bool _disabled;
+
+    // MudField defaults: Variant.Text, Margin.None, Adornment.None, InnerPadding and Underline true.
+    private string Code => Snippet.Element("MudField",
+    [
+        ("Label", _label),
+        ("HelperText", string.IsNullOrEmpty(_helperText) ? null : _helperText),
+        ("Variant", Snippet.Enum(_variant, Variant.Text)),
+        ("Margin", Snippet.Enum(_margin, Margin.None)),
+        ("Adornment", Snippet.Enum(_adornment, Adornment.None)),
+        ("AdornmentIcon", _adornment == Adornment.None ? null : "@Icons.Material.Outlined.Schedule"),
+        ("InnerPadding", _innerPadding ? null : "false"),
+        ("Underline", _underline ? null : "false"),
+        ("Disabled", Snippet.Flag(_disabled))
+    ], "Opens at 09:00");
+}

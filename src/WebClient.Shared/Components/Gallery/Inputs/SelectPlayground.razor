@@ -1,0 +1,58 @@
+<Playground Code="@Code">
+    <Preview>
+        <div style="width: min(20rem, 100%)">
+            <MudSelect T="string" @bind-SelectedValues="_selected" Label="Line" Variant="_variant" Margin="_margin"
+                       MultiSelection="_multiSelection" Clearable="_clearable" Dense="_dense" Disabled="_disabled"
+                       AnchorOrigin="_anchorOrigin">
+                @foreach (var line in _lines)
+                {
+                    <MudSelectItem Value="line">@line</MudSelectItem>
+                }
+            </MudSelect>
+        </div>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_variant" Label="Variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_margin" Label="Margin" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Margin>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_anchorOrigin" Label="Anchor origin" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Origin>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_multiSelection" Label="Multi-selection" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_clearable" Label="Clearable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private readonly string[] _lines = ["Harbour line", "University line", "Riverside line", "Airport express"];
+    private IReadOnlyCollection<string> _selected = ["Harbour line"];
+    private Variant _variant = Variant.Outlined;
+    private Margin _margin = Margin.None;
+    private Origin _anchorOrigin = Origin.BottomLeft;
+    private bool _multiSelection;
+    private bool _clearable;
+    private bool _dense;
+    private bool _disabled;
+
+    // MudSelect defaults: Variant.Text, Margin.None, AnchorOrigin Origin.BottomLeft.
+    private string Code => Snippet.Element("MudSelect",
+    [
+        ("T", "string"),
+        (_multiSelection ? "@bind-SelectedValues" : "@bind-Value", _multiSelection ? "_lines" : "_line"),
+        ("Label", "Line"),
+        ("Variant", Snippet.Enum(_variant, Variant.Text)),
+        ("Margin", Snippet.Enum(_margin, Margin.None)),
+        ("AnchorOrigin", Snippet.Enum(_anchorOrigin, Origin.BottomLeft)),
+        ("MultiSelection", Snippet.Flag(_multiSelection)),
+        ("Clearable", Snippet.Flag(_clearable)),
+        ("Dense", Snippet.Flag(_dense)),
+        ("Disabled", Snippet.Flag(_disabled))
+    ], ItemsMarkup);
+
+    private const string ItemsMarkup = "\n    @foreach (var line in _lines)\n    {\n        <MudSelectItem Value=\"line\">@line</MudSelectItem>\n    }\n";
+}

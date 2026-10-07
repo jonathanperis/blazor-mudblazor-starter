@@ -1,0 +1,9 @@
+@page "/components/form"
+@attribute [ComponentPage("Form and validation", GalleryGroup.Inputs, "MudForm validates MudBlazor inputs with functions and attributes; EditForm validates a model with data annotations. Use MudForm for quick forms without a model class, and EditForm when the model already carries its rules.", MudDocs = "form", Types = ["MudForm", "EditForm", "DataAnnotationsValidator"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(FormValidationFunctions)" Title="MudForm with validation functions" Description="Each input validates itself; MudForm collects the results. Bind IsValid to enable the submit button and Errors to list every problem. Reset clears the values, ResetValidation only the messages." />
+    <Example Of="typeof(FormRegistration)" Title="A registration form with EditForm" Description="DataAnnotationsValidator applies the model's attributes, and For links each input to its property. Rules that involve several fields come from IValidatableObject and appear as form-level errors." />
+    <Example Of="typeof(FormServerErrors)" Title="Errors that arrive after submitting" Description="Some problems are only known after asking a server. Show them on the field they concern, or above the form when they concern the whole submission." />
+    <Example Of="typeof(FormStates)" Title="Disabled, read-only and touched forms" Description="Disabled and ReadOnly on MudForm reach every input inside it. IsTouched becomes true after the first change, which is useful for an unsaved-changes prompt." />
+</ComponentPageFrame>

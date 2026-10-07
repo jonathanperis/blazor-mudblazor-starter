@@ -1,0 +1,14 @@
+<MudRadioGroup @bind-Value="_placement" aria-label="Label placement">
+    <MudStack Row Wrap="Wrap.Wrap" Spacing="4" AlignItems="AlignItems.Center">
+        @foreach (var placement in Enum.GetValues<Placement>())
+        {
+            <MudPaper Outlined="true" Class="pa-2">
+                <MudRadio Value="placement" LabelPlacement="placement" Color="Color.Primary">@placement</MudRadio>
+            </MudPaper>
+        }
+    </MudStack>
+</MudRadioGroup>
+
+@code {
+    private Placement _placement = Placement.End;
+}

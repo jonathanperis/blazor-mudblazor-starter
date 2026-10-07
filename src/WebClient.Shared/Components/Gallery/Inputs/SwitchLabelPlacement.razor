@@ -1,0 +1,8 @@
+<MudStack Row Wrap="Wrap.Wrap" Spacing="4" AlignItems="AlignItems.Center">
+    @foreach (var placement in Enum.GetValues<Placement>())
+    {
+        <MudPaper Outlined="true" Class="pa-2">
+            <MudSwitch T="bool" Value="true" LabelPlacement="placement" Label="@placement.ToString()" Color="Color.Primary" />
+        </MudPaper>
+    }
+</MudStack>

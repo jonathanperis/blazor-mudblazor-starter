@@ -1,0 +1,34 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudTextField @bind-Value="_query" Label="Search the catalog" Variant="Variant.Outlined"
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" Clearable="true" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudTextField @bind-Value="_weight" Label="Parcel weight" Variant="Variant.Outlined"
+                      Adornment="Adornment.End" AdornmentText="kg" InputMode="@(InputMode.@decimal)" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudTextField @bind-Value="_website" Label="Publisher website" Variant="Variant.Outlined" InputType="InputType.Url"
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Language" AdornmentColor="Color.Secondary" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudTextField @bind-Value="_code" Label="Gift card code" Variant="Variant.Outlined"
+                      Adornment="Adornment.End" AdornmentIcon="@Icons.Material.Outlined.Redeem" AdornmentColor="Color.Primary"
+                      OnAdornmentClick="Redeem" AdornmentAriaLabel="Redeem gift card" />
+    </MudItem>
+    <MudItem xs="12">
+        <MudText Typo="Typo.body2" role="status">@_status</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _query = "star atlas";
+    private string _weight = "1.2";
+    private string _website = "";
+    private string _code = "spring-25";
+    private string _status = "Select the gift icon to redeem the code.";
+
+    private void Redeem() => _status = string.IsNullOrWhiteSpace(_code)
+        ? "Enter a code first."
+        : $"Code {_code.Trim().ToUpperInvariant()} applied: 25% off your next order.";
+}

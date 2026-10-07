@@ -1,0 +1,15 @@
+<MudGrid Spacing="6">
+    <MudItem xs="12" md="6">
+        <MudSlider @bind-Value="_brightness" Immediate="true">Display brightness: @_brightness%</MudSlider>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudSlider @bind-Value="_volume" Immediate="false" Variant="Variant.Filled" Color="Color.Secondary">
+            Audio guide volume: @_volume% (filled track, updates on release)
+        </MudSlider>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private int _brightness = 40;
+    private int _volume = 65;
+}

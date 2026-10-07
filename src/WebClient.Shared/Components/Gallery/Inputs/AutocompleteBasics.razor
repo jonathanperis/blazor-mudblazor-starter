@@ -1,0 +1,27 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudAutocomplete T="string" @bind-Value="_constellation" SearchFunc="Search" Label="Constellation" Variant="Variant.Outlined"
+                         Clearable="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search"
+                         HelperText="Type part of a name, such as “ur”" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudText Typo="Typo.body2" role="status" Class="mt-4">
+            @(_constellation is null ? "Nothing chosen yet." : $"Tonight's target: {_constellation}.")
+        </MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string? _constellation;
+
+    private readonly string[] _constellations =
+    [
+        "Andromeda", "Aquarius", "Aquila", "Auriga", "Boötes", "Cassiopeia", "Cepheus", "Cygnus", "Draco", "Gemini",
+        "Hercules", "Leo", "Lyra", "Orion", "Pegasus", "Perseus", "Sagittarius", "Scorpius", "Taurus", "Ursa Major", "Ursa Minor"
+    ];
+
+    private Task<IEnumerable<string>> Search(string? text, CancellationToken token) =>
+        Task.FromResult(string.IsNullOrWhiteSpace(text)
+            ? _constellations
+            : _constellations.Where(name => name.Contains(text, StringComparison.CurrentCultureIgnoreCase)));
+}

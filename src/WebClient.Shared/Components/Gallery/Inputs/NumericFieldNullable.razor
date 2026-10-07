@@ -1,0 +1,27 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudNumericField @bind-Value="_cloudCover" Label="Cloud cover" Variant="Variant.Outlined" Min="0" Max="100"
+                         Adornment="Adornment.End" AdornmentText="%" Clearable="true"
+                         HelperText="Leave empty if you could not see the sky" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudNumericField @bind-Value="_seeing" Label="Seeing" Variant="Variant.Outlined" Min="0.1" Max="10.0" Step="0.1"
+                         Adornment="Adornment.End" AdornmentText="arcsec" Clearable="true" />
+    </MudItem>
+    <MudItem xs="12">
+        <MudStack Row Spacing="2" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+            <MudText Typo="Typo.body2" role="status">
+                Cloud cover: @(_cloudCover is null ? "not recorded" : $"{_cloudCover}%") ·
+                seeing: @(_seeing is null ? "not recorded" : $"{_seeing:0.0} arcsec")
+            </MudText>
+            <MudButton Size="Size.Small" Variant="Variant.Outlined" OnClick="Clear">Clear both</MudButton>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private int? _cloudCover = 20;
+    private double? _seeing;
+
+    private void Clear() => (_cloudCover, _seeing) = (null, null);
+}
