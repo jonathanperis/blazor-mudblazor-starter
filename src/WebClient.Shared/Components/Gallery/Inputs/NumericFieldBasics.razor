@@ -1,0 +1,23 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="4">
+        <MudNumericField @bind-Value="_seats" Label="Seats" Variant="Variant.Outlined" Min="1" Max="12"
+                         HelperText="1 to 12 per booking" />
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudNumericField @bind-Value="_exposure" Label="Exposure" Variant="Variant.Outlined" Min="0.5m" Max="30m" Step="0.5m"
+                         Adornment="Adornment.End" AdornmentText="s" HelperText="Half-second steps" />
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudNumericField @bind-Value="_altitude" Label="Altitude" Variant="Variant.Outlined" Min="-90" Max="90" Step="5"
+                         Adornment="Adornment.End" AdornmentText="°" HelperText="Steps of 5 degrees" />
+    </MudItem>
+    <MudItem xs="12">
+        <MudText Typo="Typo.body2" role="status">@_seats seats · @_exposure.ToString(CultureInfo.InvariantCulture) s exposures · altitude @_altitude°</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private int _seats = 2;
+    private decimal _exposure = 4m;
+    private int _altitude = 45;
+}

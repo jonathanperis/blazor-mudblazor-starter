@@ -1,0 +1,46 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="6">
+        <MudSelect @bind-Value="_route" Label="Route" Variant="Variant.Outlined" ToStringFunc="@(route => route is null ? "" : $"{route.Number} · {route.Name}")">
+            @foreach (var route in _routes)
+            {
+                <MudSelectItem Value="route">
+                    <MudStack Row AlignItems="AlignItems.Center" Spacing="3">
+                        <MudIcon Icon="@route.Icon" Color="Color.Secondary" />
+                        <div>
+                            <MudText Typo="Typo.body1">@route.Number · @route.Name</MudText>
+                            <MudText Typo="Typo.caption">Every @route.FrequencyMinutes minutes</MudText>
+                        </div>
+                    </MudStack>
+                </MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudPaper Outlined="true" Class="pa-3">
+            @if (_route is null)
+            {
+                <MudText Typo="Typo.body2">Choose a route to see its timetable.</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.subtitle2" HtmlTag="h3">@_route.Name</MudText>
+                <MudText Typo="Typo.body2">@_route.Mode, line @_route.Number, every @_route.FrequencyMinutes minutes.</MudText>
+            }
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private readonly TransitRoute[] _routes =
+    [
+        new("T1", "Harbour loop", "Tram", 6, Icons.Material.Outlined.Tram),
+        new("B14", "Hill villages", "Bus", 20, Icons.Material.Outlined.DirectionsBus),
+        new("F2", "Island ferry", "Ferry", 45, Icons.Material.Outlined.DirectionsBoat),
+        new("R5", "Valley rail", "Train", 30, Icons.Material.Outlined.Train)
+    ];
+
+    // A copy, not one of the instances above: record equality still selects "Island ferry".
+    private TransitRoute? _route = new("F2", "Island ferry", "Ferry", 45, Icons.Material.Outlined.DirectionsBoat);
+
+    private sealed record TransitRoute(string Number, string Name, string Mode, int FrequencyMinutes, string Icon);
+}

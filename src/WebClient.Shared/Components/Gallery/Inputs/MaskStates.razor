@@ -1,0 +1,19 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="4">
+        <MudTextField @bind-Value="_filled" Label="Filled, clearable" Mask="_filledMask" Variant="Variant.Filled" Clearable="true" />
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudTextField T="string" Value="@("(555) 010-4477")" Label="Disabled" Mask="_disabledMask" Variant="Variant.Outlined" Disabled="true" />
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudTextField T="string" Value="@("(555) 010-9032")" Label="Read-only" Mask="_readOnlyMask" Variant="Variant.Outlined" ReadOnly="true" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _filled = "(555) 010-2210";
+
+    private readonly PatternMask _filledMask = new("(000) 000-0000");
+    private readonly PatternMask _disabledMask = new("(000) 000-0000");
+    private readonly PatternMask _readOnlyMask = new("(000) 000-0000");
+}

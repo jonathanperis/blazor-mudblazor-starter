@@ -1,0 +1,26 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="4">
+        <MudTextField @bind-Value="_onChange" Label="On change (default)" Variant="Variant.Outlined"
+                      HelperText="Updates on blur or Enter" />
+        <MudText Typo="Typo.body2" Class="mt-2">Value: “@_onChange”</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudTextField @bind-Value="_immediate" Label="Immediate" Variant="Variant.Outlined" Immediate="true"
+                      HelperText="Updates on every keystroke" />
+        <MudText Typo="Typo.body2" Class="mt-2">Value: “@_immediate”</MudText>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudTextField @bind-Value="_debounced" Label="Debounced, 500 ms" Variant="Variant.Outlined" DebounceInterval="500"
+                      OnDebounceIntervalElapsed="CountSearch" HelperText="Updates after a pause in typing" />
+        <MudText Typo="Typo.body2" Class="mt-2">Value: “@_debounced” · searches run: @_searches</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _onChange = "";
+    private string _immediate = "";
+    private string _debounced = "";
+    private int _searches;
+
+    private void CountSearch(string text) => _searches++;
+}

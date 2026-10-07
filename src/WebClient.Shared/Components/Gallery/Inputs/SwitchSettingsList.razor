@@ -1,0 +1,33 @@
+<MudPaper Outlined="true" Style="max-width: 36rem">
+    <MudText Typo="Typo.subtitle1" HtmlTag="h3" Class="px-4 pt-3">Observation alerts</MudText>
+    @foreach (var setting in _settings)
+    {
+        var disabled = setting.DependsOnAlerts && !_settings[0].On;
+        <MudDivider />
+        <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="px-4 py-2">
+            <div>
+                <MudText Typo="Typo.body1" Class="@(disabled ? "mud-text-disabled" : null)">@setting.Title</MudText>
+                <MudText Typo="Typo.caption">@setting.Description</MudText>
+            </div>
+            <MudSwitch @bind-Value="setting.On" Color="Color.Primary" Disabled="disabled" AriaLabel="@setting.Title" />
+        </MudStack>
+    }
+</MudPaper>
+
+@code {
+    private readonly Setting[] _settings =
+    [
+        new("All alerts", "Turn off to silence everything below", true, false),
+        new("Clear skies", "When cloud cover drops below 20%", true, true),
+        new("Aurora forecast", "When the Kp index reaches 5 or more", false, true),
+        new("Space station passes", "Ten minutes before a visible pass", true, true)
+    ];
+
+    private sealed class Setting(string title, string description, bool on, bool dependsOnAlerts)
+    {
+        public string Title { get; } = title;
+        public string Description { get; } = description;
+        public bool On { get; set; } = on;
+        public bool DependsOnAlerts { get; } = dependsOnAlerts;
+    }
+}

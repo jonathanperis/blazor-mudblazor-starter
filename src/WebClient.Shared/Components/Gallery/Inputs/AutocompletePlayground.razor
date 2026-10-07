@@ -1,0 +1,70 @@
+<Playground Code="@Code">
+    <Preview>
+        <div style="width: min(20rem, 100%)">
+            <MudAutocomplete T="string" @bind-Value="_value" SearchFunc="SearchAsync" Label="Destination" Variant="_variant" Margin="_margin"
+                             MinCharacters="_minCharacters" DebounceInterval="_debounce" MaxItems="_maxItems" Dense="_dense"
+                             Clearable="_clearable" CoerceValue="_coerceValue" ShowProgressIndicator="_progress" Disabled="_disabled" />
+        </div>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_variant" Label="Variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_margin" Label="Margin" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Margin>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudNumericField @bind-Value="_minCharacters" Label="Min characters" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0" Max="5" />
+        <MudNumericField @bind-Value="_debounce" Label="Debounce (ms)" Variant="Variant.Outlined" Margin="Margin.Dense" Min="0" Max="2000" Step="100" />
+        <MudNumericField @bind-Value="_maxItems" Label="Max items" Variant="Variant.Outlined" Margin="Margin.Dense" Min="1" Max="20" />
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_clearable" Label="Clearable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_coerceValue" Label="Coerce value" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_progress" Label="Progress indicator" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private string? _value;
+    private Variant _variant = Variant.Outlined;
+    private Margin _margin = Margin.None;
+    private int _minCharacters;
+    private int _debounce = 100;
+    private int? _maxItems = 10;
+    private bool _dense;
+    private bool _clearable = true;
+    private bool _coerceValue;
+    private bool _progress = true;
+    private bool _disabled;
+
+    private readonly string[] _destinations =
+    [
+        "Amsterdam", "Bergen", "Bologna", "Cork", "Dubrovnik", "Edinburgh", "Gdańsk", "Ghent", "Lisbon", "Ljubljana",
+        "Lyon", "Porto", "Riga", "Salzburg", "Seville", "Tallinn", "Trieste", "Valencia", "Vilnius", "Zagreb"
+    ];
+
+    private async Task<IEnumerable<string>> SearchAsync(string? text, CancellationToken token)
+    {
+        await Task.Delay(400, token);
+        return _destinations.Where(city => city.Contains(text ?? "", StringComparison.OrdinalIgnoreCase));
+    }
+
+    // MudAutocomplete defaults: Variant.Text, Margin.None, MinCharacters 0, DebounceInterval 100, MaxItems 10.
+    private string Code => Snippet.Element("MudAutocomplete",
+    [
+        ("T", "string"),
+        ("@bind-Value", "_destination"),
+        ("SearchFunc", "SearchAsync"),
+        ("Label", "Destination"),
+        ("Variant", Snippet.Enum(_variant, Variant.Text)),
+        ("Margin", Snippet.Enum(_margin, Margin.None)),
+        ("MinCharacters", _minCharacters == 0 ? null : $"{_minCharacters}"),
+        ("DebounceInterval", _debounce == 100 ? null : $"{_debounce}"),
+        ("MaxItems", _maxItems == 10 ? null : $"{_maxItems}"),
+        ("Dense", Snippet.Flag(_dense)),
+        ("Clearable", Snippet.Flag(_clearable)),
+        ("CoerceValue", Snippet.Flag(_coerceValue)),
+        ("ShowProgressIndicator", Snippet.Flag(_progress)),
+        ("Disabled", Snippet.Flag(_disabled))
+    ]);
+}

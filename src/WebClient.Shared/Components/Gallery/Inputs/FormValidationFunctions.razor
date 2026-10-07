@@ -1,0 +1,47 @@
+@using System.ComponentModel.DataAnnotations
+
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="7">
+        <MudForm @ref="_form" @bind-IsValid="_isValid" @bind-Errors="_errors" Spacing="2">
+            <MudTextField T="string" Label="Name" Variant="Variant.Outlined" Required="true" RequiredError="Tell us your name" />
+            <MudTextField T="string" Label="Email" Variant="Variant.Outlined" InputType="InputType.Email" Required="true" RequiredError="We need an email to confirm shifts"
+                          Validation="@(new EmailAddressAttribute { ErrorMessage = "That does not look like an email address" })" />
+            <MudNumericField T="int?" Label="Hours per month" Variant="Variant.Outlined" Required="true" RequiredError="How many hours can you give?"
+                             Validation="@(new Func<int?, string?>(CheckHours))" HelperText="Between 4 and 40" />
+            <MudSelect T="string" Label="Preferred shift" Variant="Variant.Outlined" Required="true" RequiredError="Choose a shift">
+                <MudSelectItem Value="@("Weekday mornings")" />
+                <MudSelectItem Value="@("Weekday evenings")" />
+                <MudSelectItem Value="@("Weekends")" />
+            </MudSelect>
+            <MudCheckBox T="bool" Label="I have read the volunteer handbook" Color="Color.Primary" Required="true" RequiredError="Please read the handbook first" />
+            <MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="!_isValid" OnClick="Submit">Sign up</MudButton>
+                <MudButton Variant="Variant.Outlined" OnClick="() => _form.ValidateAsync()">Validate</MudButton>
+                <MudButton Variant="Variant.Text" OnClick="() => _form.ResetAsync()">Reset</MudButton>
+                <MudButton Variant="Variant.Text" OnClick="() => _form.ResetValidationAsync()">Reset validation</MudButton>
+            </MudStack>
+        </MudForm>
+    </MudItem>
+    <MudItem xs="12" md="5">
+        <MudPaper Outlined="true" Class="pa-4">
+            <MudText Typo="Typo.subtitle2" HtmlTag="h3">IsValid: @_isValid</MudText>
+            <MudText Typo="Typo.subtitle2" HtmlTag="h3" Class="mt-2">Errors (@_errors.Length)</MudText>
+            @foreach (var error in _errors)
+            {
+                <MudText Typo="Typo.body2" Color="Color.Error">@error</MudText>
+            }
+            <MudText Typo="Typo.body2" Class="mt-2" role="status">@_status</MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private MudForm _form = null!;
+    private bool _isValid;
+    private string[] _errors = [];
+    private string _status = "";
+
+    private static string? CheckHours(int? hours) => hours is < 4 or > 40 ? "Choose between 4 and 40 hours" : null;
+
+    private void Submit() => _status = "Thanks for signing up. The shop manager will be in touch.";
+}

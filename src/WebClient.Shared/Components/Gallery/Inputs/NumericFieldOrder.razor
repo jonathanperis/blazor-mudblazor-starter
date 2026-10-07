@@ -1,0 +1,51 @@
+<MudPaper Outlined="true" Class="pa-4" Style="max-width: 40rem">
+    <MudText Typo="Typo.h6" HtmlTag="h3" Class="mb-3">Bakery order</MudText>
+    <MudStack Spacing="3">
+        @foreach (var line in _lines)
+        {
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="3">
+                <MudText Typo="Typo.body1" Style="flex: 1">@line.Name<br /><MudText Typo="Typo.caption" HtmlTag="span">@line.Price.ToString("C", _culture) each</MudText></MudText>
+                <div style="width: 8rem">
+                    <MudNumericField @bind-Value="line.Quantity" Label="Quantity" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                     Min="0" Max="48" Immediate="true" />
+                </div>
+                <MudText Typo="Typo.body1" Align="Align.End" Style="width: 6rem">@((line.Price * line.Quantity).ToString("C", _culture))</MudText>
+            </MudStack>
+        }
+        <MudDivider />
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="3">
+            <MudText Typo="Typo.body1" Style="flex: 1">Discount</MudText>
+            <div style="width: 8rem">
+                <MudNumericField @bind-Value="_discount" Label="Percent" Variant="Variant.Outlined" Margin="Margin.Dense"
+                                 Min="0" Max="50" Step="5" Immediate="true" Adornment="Adornment.End" AdornmentText="%" />
+            </div>
+            <MudText Typo="Typo.body1" Align="Align.End" Style="width: 6rem">−@((Subtotal * _discount / 100m).ToString("C", _culture))</MudText>
+        </MudStack>
+        <MudStack Row Justify="Justify.SpaceBetween">
+            <MudText Typo="Typo.h6" HtmlTag="p">Total</MudText>
+            <MudText Typo="Typo.h6" HtmlTag="p" role="status">@Total.ToString("C", _culture)</MudText>
+        </MudStack>
+    </MudStack>
+</MudPaper>
+
+@code {
+    private readonly CultureInfo _culture = CultureInfo.GetCultureInfo("en-GB");
+    private int _discount = 10;
+
+    private readonly List<OrderLine> _lines =
+    [
+        new("Sourdough loaf", 4.80m, 2),
+        new("Cardamom bun", 2.60m, 6),
+        new("Rye crispbread", 3.40m, 1)
+    ];
+
+    private decimal Subtotal => _lines.Sum(line => line.Price * line.Quantity);
+    private decimal Total => Subtotal * (100 - _discount) / 100m;
+
+    private sealed class OrderLine(string name, decimal price, int quantity)
+    {
+        public string Name { get; } = name;
+        public decimal Price { get; } = price;
+        public int Quantity { get; set; } = quantity;
+    }
+}

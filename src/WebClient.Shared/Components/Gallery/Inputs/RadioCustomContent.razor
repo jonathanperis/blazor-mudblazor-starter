@@ -1,0 +1,31 @@
+<MudRadioGroup @bind-Value="_delivery" aria-label="Delivery speed">
+    <MudStack Spacing="2" Style="max-width: 32rem">
+        @foreach (var option in _options)
+        {
+            <MudPaper Outlined="true" Class="px-2 py-1" Style="@(_delivery == option.Speed ? "border-color: var(--mud-palette-primary)" : null)">
+                <MudRadio Value="option.Speed" Color="Color.Primary">
+                    <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Style="min-width: min(24rem, 65vw)">
+                        <div>
+                            <MudText Typo="Typo.body1">@option.Title</MudText>
+                            <MudText Typo="Typo.caption">@option.Arrival</MudText>
+                        </div>
+                        <MudText Typo="Typo.subtitle1">@option.Price</MudText>
+                    </MudStack>
+                </MudRadio>
+            </MudPaper>
+        }
+    </MudStack>
+</MudRadioGroup>
+
+@code {
+    private DeliverySpeed _delivery = DeliverySpeed.NextDay;
+
+    private readonly (DeliverySpeed Speed, string Title, string Arrival, string Price)[] _options =
+    [
+        (DeliverySpeed.Standard, "Standard post", "Arrives in 3–5 working days", "Free"),
+        (DeliverySpeed.NextDay, "Next day", "Order by 4 pm for tomorrow", "£4.50"),
+        (DeliverySpeed.SameDay, "Same-day courier", "Within the city, by 7 pm", "£9.00")
+    ];
+
+    private enum DeliverySpeed { Standard, NextDay, SameDay }
+}

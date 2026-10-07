@@ -1,0 +1,35 @@
+@using System.Text.RegularExpressions
+
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="8">
+        <MudTextField @bind-Value="_number" Label="Card number" Mask="_cardMask" Variant="Variant.Outlined" Immediate="true"
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.CreditCard"
+                      HelperText="Try 4111…, 5500… or 3782…" InputMode="InputMode.numeric" />
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudTextField @bind-Value="_security" Label="Security code" Mask="_securityMask" Variant="Variant.Outlined"
+                      InputMode="InputMode.numeric" HelperText="@(Network == "American Express" ? "4 digits on the front" : "3 digits on the back")" />
+    </MudItem>
+    <MudItem xs="12">
+        <MudText Typo="Typo.body2" role="status">Network: <strong>@Network</strong></MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private string _number = "";
+    private string _security = "";
+
+    private static readonly MaskOption[] Networks =
+    [
+        new("American Express", "0000 000000 00000", @"^3[47]"),
+        new("Visa", "0000 0000 0000 0000", @"^4"),
+        new("Mastercard", "0000 0000 0000 0000", @"^(5[1-5]|2[2-7])")
+    ];
+
+    private readonly MultiMask _cardMask = new("0000 0000 0000 0000", Networks);
+    private readonly PatternMask _securityMask = new("0000");
+
+    private string Network => Networks
+        .Where(option => option.Regex is { } pattern && Regex.IsMatch(_number ?? "", pattern))
+        .Select(option => option.Id).FirstOrDefault() ?? (string.IsNullOrEmpty(_number) ? "type a number" : "other");
+}

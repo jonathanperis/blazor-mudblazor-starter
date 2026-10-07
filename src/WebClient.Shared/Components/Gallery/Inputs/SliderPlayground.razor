@@ -1,0 +1,49 @@
+<Playground Code="@Code">
+    <Preview>
+        <div style="width: min(22rem, 100%)">
+            <MudSlider @bind-Value="_value" Min="0" Max="100" Step="_step" Color="_color" Size="_size" Variant="_variant"
+                       TickMarks="_tickMarks" ValueLabel="_valueLabel" Disabled="_disabled" Immediate="true">Volume: @_value</MudSlider>
+        </div>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in _colors) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_size" Label="Size" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Size>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_variant" Label="Variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudNumericField @bind-Value="_step" Label="Step" Variant="Variant.Outlined" Margin="Margin.Dense" Min="1" Max="50" />
+        <MudSwitch @bind-Value="_tickMarks" Label="Tick marks" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_valueLabel" Label="Value label" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private readonly Color[] _colors = [Color.Primary, Color.Secondary, Color.Tertiary, Color.Info, Color.Success, Color.Warning, Color.Error, Color.Dark];
+    private int _value = 40;
+    private Color _color = Color.Primary;
+    private Size _size = Size.Small;
+    private Variant _variant = Variant.Text;
+    private int _step = 10;
+    private bool _tickMarks = true;
+    private bool _valueLabel;
+    private bool _disabled;
+
+    // MudSlider defaults: Color.Primary, Size.Small, Variant.Text, Min 0, Max 100, Step 1.
+    private string Code => Snippet.Element("MudSlider",
+    [
+        ("@bind-Value", "_volume"),
+        ("Step", _step == 1 ? null : $"{_step}"),
+        ("Color", Snippet.Enum(_color, Color.Primary)),
+        ("Size", Snippet.Enum(_size, Size.Small)),
+        ("Variant", Snippet.Enum(_variant, Variant.Text)),
+        ("TickMarks", Snippet.Flag(_tickMarks)),
+        ("ValueLabel", Snippet.Flag(_valueLabel)),
+        ("Disabled", Snippet.Flag(_disabled)),
+        ("Immediate", "true")
+    ], "Volume: @_volume");
+}

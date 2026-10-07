@@ -1,0 +1,12 @@
+@page "/components/select"
+@attribute [ComponentPage("Select", GalleryGroup.Inputs, "A field that opens a list of known options, for one choice or several. Choose it over radios when there are more than five or six options or space is tight; switch to an autocomplete when the list is long enough to need searching.", MudDocs = "select", Types = ["MudSelect", "MudSelectItem"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(SelectBasics)" Title="Single choice" Description="Bind Value to the chosen item. Each MudSelectItem carries a value; its child content is what the list shows." />
+    <Example Of="typeof(SelectCombinations)" Title="Every variant and margin" Description="The same Variant and Margin as a text field, so selects line up with the inputs around them." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(SelectMultiple)" Title="Several choices" Description="MultiSelection binds SelectedValues. SelectAll adds a toggle for the whole list, MultiSelectionTextFunc rewrites the summary, and chips let people remove a choice without reopening the list." />
+    <Example Of="typeof(SelectObjects)" Title="Objects and custom templates" Description="Bind records directly: ToStringFunc gives the text shown in the field, and item content can be any markup. Records compare by value, so a fresh copy still selects the right item." />
+    <Example Of="typeof(SelectClearableAndDense)" Title="Clearable, dense and disabled options" Description="Clearable returns the field to its empty value. Dense tightens the list; a disabled item explains itself instead of disappearing." />
+    <Example Of="typeof(SelectStates)" Title="Validation, disabled and read-only" Description="Required selects report an error after the list closes without a choice. Disabled and read-only selects never open." />
+    <Example Of="typeof(SelectPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

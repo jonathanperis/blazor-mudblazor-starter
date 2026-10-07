@@ -1,0 +1,39 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="6">
+        <MudField Label="Genres" Variant="Variant.Outlined" InnerPadding="false">
+            <MudChipSet T="string" @bind-SelectedValues="_genres" SelectionMode="SelectionMode.MultiSelection" CheckMark="true"
+                        Color="Color.Secondary" Variant="Variant.Outlined" Class="pa-2">
+                @foreach (var genre in _allGenres)
+                {
+                    <MudChip Value="genre" Text="@genre" />
+                }
+            </MudChipSet>
+        </MudField>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudField Label="Binding" Variant="Variant.Outlined" InnerPadding="false">
+            <MudRadioGroup @bind-Value="_binding" Class="px-2" aria-label="Binding">
+                <MudRadio Value="@("Paperback")" Color="Color.Primary">Paperback</MudRadio>
+                <MudRadio Value="@("Hardback")" Color="Color.Primary">Hardback</MudRadio>
+                <MudRadio Value="@("Ebook")" Color="Color.Primary">Ebook</MudRadio>
+            </MudRadioGroup>
+        </MudField>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudField Label="Shelf color" Variant="Variant.Outlined">
+            <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+                <span style="display: inline-block; width: 1.25rem; height: 1.25rem; border-radius: 4px; background: var(--mud-palette-secondary)" aria-hidden="true"></span>
+                <span>Harbour teal (secondary palette color)</span>
+            </MudStack>
+        </MudField>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.body2" Class="mt-4" role="status">@string.Join(", ", _genres) · @_binding</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private readonly string[] _allGenres = ["Mystery", "Poetry", "Travel", "Science", "History"];
+    private IReadOnlyCollection<string> _genres = ["Poetry", "Science"];
+    private string _binding = "Hardback";
+}

@@ -1,0 +1,23 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudNumericField @bind-Value="_tickets" Label="Tickets" Variant="Variant.Outlined" Min="0" Max="20" Immediate="true"
+                         Validation="@(new Func<int, string?>(MustBePairs))" HelperText="Sold in pairs" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudNumericField T="int?" @bind-Value="_guests" Label="Guests" Variant="Variant.Outlined"
+                         Required="true" RequiredError="How many people are coming?" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudNumericField T="decimal" Value="1250.5m" Label="Deposit (disabled)" Variant="Variant.Outlined" Format="N2" Disabled="true" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudNumericField T="decimal" Value="320m" Label="Balance (read-only)" Variant="Variant.Outlined" Format="N2" ReadOnly="true" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private int _tickets = 3;
+    private int? _guests;
+
+    private static string? MustBePairs(int value) => value % 2 == 0 ? null : "Choose an even number of tickets";
+}

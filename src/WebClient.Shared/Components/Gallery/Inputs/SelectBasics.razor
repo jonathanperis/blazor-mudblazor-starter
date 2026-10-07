@@ -1,0 +1,26 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudSelect @bind-Value="_line" Label="Tram line" Variant="Variant.Outlined" HelperText="Where are you travelling?">
+            @foreach (var line in _lines)
+            {
+                <MudSelectItem Value="line">@line</MudSelectItem>
+            }
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSelect T="string" @bind-Value="_fare" Label="Fare" Variant="Variant.Outlined" Placeholder="Choose a fare">
+            <MudSelectItem Value="@("Single")" />
+            <MudSelectItem Value="@("Day pass")" />
+            <MudSelectItem Value="@("Weekly pass")" />
+        </MudSelect>
+    </MudItem>
+    <MudItem xs="12">
+        <MudText Typo="Typo.body2" role="status">@_fare on the @_line.</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private readonly string[] _lines = ["Harbour line", "University line", "Riverside line", "Airport express"];
+    private string _line = "Riverside line";
+    private string? _fare = "Day pass";
+}

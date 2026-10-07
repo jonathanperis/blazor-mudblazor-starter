@@ -1,0 +1,12 @@
+@page "/components/rating"
+@attribute [ComponentPage("Rating", GalleryGroup.Inputs, "A row of icons for giving or showing a score, usually out of five. Use it for quick opinions and for displaying averages; ask for written feedback separately when the reason matters.", MudDocs = "rating", Types = ["MudRating"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(RatingBasics)" Title="Giving a rating" Description="Bind SelectedValue. Clicking the current value again clears it to zero, and the arrow keys change it." />
+    <Example Of="typeof(RatingCombinations)" Title="Every size and color" Description="Size against Color, on a three-icon scale to keep the table compact. FullIconColor and EmptyIconColor override the two halves separately." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(RatingMaxValue)" Title="Scales other than five" Description="MaxValue sets the number of icons. Short scales suit yes-or-no style questions; ten points suit careful scoring." />
+    <Example Of="typeof(RatingIcons)" Title="Custom icons" Description="FullIcon and EmptyIcon accept any icon. Pick shapes that read as a scale, and keep a text summary nearby." />
+    <Example Of="typeof(RatingHover)" Title="Hover feedback in a review form" Description="HoveredValueChanged reports the value under the pointer, so a label can describe each score before it is chosen." />
+    <Example Of="typeof(RatingStates)" Title="Read-only and disabled" Description="Read-only ratings display a score, such as an average, without inviting a click. Disabled ratings are dimmed and skipped by the keyboard." />
+    <Example Of="typeof(RatingPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

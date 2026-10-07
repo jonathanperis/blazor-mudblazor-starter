@@ -1,0 +1,14 @@
+<MudStack Spacing="1">
+    <MudCheckBox @bind-Value="_giftWrap" Label="Gift wrap this order" Color="Color.Primary" />
+    <MudCheckBox @bind-Value="_includeReceipt" Color="Color.Primary">
+        Include a receipt <MudText Typo="Typo.caption" HtmlTag="span">(prices hidden on gift orders)</MudText>
+    </MudCheckBox>
+    <MudText Typo="Typo.body2" Class="mt-2" role="status">
+        @(_giftWrap ? "Gift wrapped" : "Not wrapped"), @(_includeReceipt ? "with" : "without") a receipt.
+    </MudText>
+</MudStack>
+
+@code {
+    private bool _giftWrap = true;
+    private bool _includeReceipt;
+}

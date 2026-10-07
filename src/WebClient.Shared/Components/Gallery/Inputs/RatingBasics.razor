@@ -1,0 +1,9 @@
+<MudStack Spacing="1">
+    <MudText Typo="Typo.subtitle2" HtmlTag="h3">How was your sourdough?</MudText>
+    <MudRating @bind-SelectedValue="_stars" Color="Color.Warning" />
+    <MudText Typo="Typo.body2" role="status">@(_stars == 0 ? "Not rated yet." : $"You gave it {_stars} of 5.")</MudText>
+</MudStack>
+
+@code {
+    private int _stars = 4;
+}

@@ -1,0 +1,55 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudRadioGroup @bind-Value="_value" Disabled="_disabled" ReadOnly="_readOnly" aria-label="Bread">
+            <MudRadio Value="@("Sourdough")" Color="_color" Size="_size" LabelPlacement="_placement" Dense="_dense">Sourdough</MudRadio>
+            <MudRadio Value="@("Rye")" Color="_color" Size="_size" LabelPlacement="_placement" Dense="_dense">Rye</MudRadio>
+        </MudRadioGroup>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_size" Label="Size" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Size>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_placement" Label="Label placement" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Placement>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled group" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_readOnly" Label="Read-only group" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private string _value = "Sourdough";
+    private Color _color = Color.Primary;
+    private Size _size = Size.Medium;
+    private Placement _placement = Placement.End;
+    private bool _dense;
+    private bool _disabled;
+    private bool _readOnly;
+
+    // MudRadio defaults: Color.Default, Size.Medium, LabelPlacement Placement.End.
+    private string Code
+    {
+        get
+        {
+            var radio = Snippet.Element("MudRadio",
+            [
+                ("Value", "@(\"Sourdough\")"),
+                ("Color", Snippet.Enum(_color, Color.Default)),
+                ("Size", Snippet.Enum(_size, Size.Medium)),
+                ("LabelPlacement", Snippet.Enum(_placement, Placement.End)),
+                ("Dense", Snippet.Flag(_dense))
+            ], "Sourdough");
+            var group = Snippet.Element("MudRadioGroup",
+            [
+                ("@bind-Value", "_bread"),
+                ("Disabled", Snippet.Flag(_disabled)),
+                ("ReadOnly", Snippet.Flag(_readOnly))
+            ], $"\n    {radio.Replace("\n", "\n    ")}\n    …\n");
+            return group;
+        }
+    }
+}

@@ -1,0 +1,12 @@
+@page "/components/mask"
+@attribute [ComponentPage("Mask", GalleryGroup.Inputs, "Masks shape text while it is typed: delimiters appear on their own and characters that do not fit are refused. Use them for values with a fixed structure such as phone numbers, card numbers, dates and account codes.", MudDocs = "textfield", Types = ["MudTextField", "PatternMask", "DateMask", "RegexMask", "MultiMask", "BlockMask"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(MaskPattern)" Title="Pattern masks" Description="In a PatternMask, 0 accepts a digit, a a letter and * either; every other character is a delimiter inserted for the user. Placeholder shows the remaining slots and Transformation can upper-case input. MudBlazor recommends masks for WebAssembly: on Blazor Server every keystroke makes a network round trip, and the caret can land in the wrong place." />
+    <Example Of="typeof(MaskDates)" Title="Date masks" Description="DateMask understands day, month and year blocks in any order, and refuses impossible dates such as 31 April or 29 February in a common year." />
+    <Example Of="typeof(MaskRegex)" Title="Regular-expression masks" Description="A RegexMask accepts input while the expression can still match, so it must allow partial values. Built-in factories cover IPv4, times, hex colors and email." />
+    <Example Of="typeof(MaskCreditCard)" Title="Credit cards with MultiMask" Description="MultiMask switches pattern as the first digits reveal the card network: American Express groups 4-6-5, most others 4-4-4-4." />
+    <Example Of="typeof(MaskBlocks)" Title="Block masks" Description="BlockMask accepts runs of letters or digits with a minimum and maximum length, for codes whose parts vary in size." />
+    <Example Of="typeof(MaskIban)" Title="An account number with a checksum" Description="The mask handles the shape of an IBAN-like account number; a validation function checks the mod-97 check digits once it is complete." />
+    <Example Of="typeof(MaskStates)" Title="Variants and states" Description="Masked fields are ordinary text fields: variants, clear buttons, helper text, disabled and read-only all behave the same." />
+</ComponentPageFrame>

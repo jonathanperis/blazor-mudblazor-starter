@@ -1,0 +1,16 @@
+<MudStack Spacing="1">
+    <MudSwitch @bind-Value="_tracking" Label="Sidereal tracking" Color="Color.Primary"
+               ThumbIcon="@Icons.Material.Filled.Autorenew" ThumbIconColor="Color.Primary" />
+    <MudSwitch @bind-Value="_shutterOpen" Label="@(_shutterOpen ? "Shutter open" : "Shutter closed")" Color="Color.Success" UncheckedColor="Color.Error"
+               ThumbIcon="@(_shutterOpen ? Icons.Material.Filled.Check : Icons.Material.Filled.Close)"
+               ThumbIconColor="@(_shutterOpen ? Color.Success : Color.Error)" />
+    <MudSwitch @bind-Value="_nightTheme" Label="Night theme" Color="Color.Tertiary"
+               ThumbIcon="@(_nightTheme ? Icons.Material.Filled.DarkMode : Icons.Material.Filled.LightMode)"
+               ThumbIconColor="Color.Tertiary" />
+</MudStack>
+
+@code {
+    private bool _tracking = true;
+    private bool _shutterOpen;
+    private bool _nightTheme = true;
+}
