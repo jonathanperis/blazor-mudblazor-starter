@@ -3,11 +3,23 @@
 // Run after `npm run build` and `python3 ../scripts/prepare-pages-demo.py`.
 // Uses Playwright's Chromium; set PLAYWRIGHT_CHANNEL=chrome to use an installed Google Chrome instead.
 import { createServer } from 'node:http';
-import { readFile, stat } from 'node:fs/promises';
+import { readdir, readFile, stat } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import { chromium } from 'playwright';
 
 const root = new URL('../out/', import.meta.url).pathname;
+const shared = new URL('../../src/WebClient.Shared/Components/', import.meta.url).pathname;
+
+// Every routable page in the shared library, read from its @page directive.
+async function appRoutes(directory = shared) {
+  const routes = [];
+  for (const entry of await readdir(directory, { withFileTypes: true })) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) routes.push(...await appRoutes(path));
+    else if (entry.name.endsWith('.razor')) routes.push(...[...(await readFile(path, 'utf8')).matchAll(/^@page\s+"([^"]+)"/gm)].map((match) => match[1]));
+  }
+  return routes;
+}
 const prefix = '/blazor-mudblazor-starter';
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.wasm': 'application/wasm', '.dat': 'application/octet-stream', '.png': 'image/png', '.ico': 'image/x-icon', '.xml': 'application/xml' };
 
@@ -132,6 +144,25 @@ try {
   await step('unknown routes render the not-found page', async () => {
     await page.goto(`${base}no-such-lab`);
     await heading('Page not found').waitFor(timeout);
+  });
+  await step('every page renders without an error boundary', async () => {
+    const routes = (await appRoutes()).filter((route) => route !== '/not-found' && route !== '/Error').sort();
+    await page.goto(base);
+    await page.getByRole('heading', { level: 1 }).waitFor(timeout);
+    const broken = [];
+    for (const route of routes) {
+      // In-app navigation keeps one runtime, so the sweep covers every page in seconds.
+      await page.evaluate((target) => window.Blazor.navigateTo(target), route.replace(/^\//, ''));
+      try {
+        await page.waitForFunction((target) => location.pathname.endsWith(target === '/' ? '/demo/' : target) && document.querySelectorAll('h1').length === 1, route, { timeout: 15_000 });
+        await page.waitForTimeout(150);
+        if (await page.getByText('failed to render').count()) broken.push(`${route}: example failed to render`);
+      } catch {
+        broken.push(`${route}: no single h1`);
+      }
+    }
+    if (broken.length) throw new Error(broken.join('; '));
+    console.log(`  ${routes.length} routes`);
   });
   if (errors.length) {
     failures.push('console');
