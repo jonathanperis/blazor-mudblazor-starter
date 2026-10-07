@@ -1,0 +1,31 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="6">
+        <MudStack Spacing="2" AlignItems="AlignItems.Start">
+            <MudText Typo="Typo.subtitle2" HtmlTag="h3">Bound open state</MudText>
+            <MudMenu Label="Keyboard shortcuts" Variant="Variant.Outlined" @bind-Open="_open" Dense>
+                <MudMenuItem Label="Ctrl + S · Save" />
+                <MudMenuItem Label="Ctrl + P · Print" />
+                <MudMenuItem Label="Ctrl + F · Find" />
+            </MudMenu>
+            <MudSwitch @bind-Value="_open" Label="@(_open ? "Menu is open" : "Menu is closed")" Color="Color.Primary" />
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudStack Spacing="2" AlignItems="AlignItems.Start">
+            <MudText Typo="Typo.subtitle2" HtmlTag="h3">MaxHeight on a long list</MudText>
+            <MudMenu Label="@($"Platform {_platform}")" Variant="Variant.Outlined" Color="Color.Secondary" MaxHeight="240"
+                     EndIcon="@Icons.Material.Outlined.ArrowDropDown">
+                @foreach (var platform in Enumerable.Range(1, 24))
+                {
+                    <MudMenuItem Label="@($"Platform {platform}")" OnClick="@(() => _platform = platform)" />
+                }
+            </MudMenu>
+            <MudText Typo="Typo.body2" role="status">Departing from platform @_platform.</MudText>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private bool _open;
+    private int _platform = 7;
+}

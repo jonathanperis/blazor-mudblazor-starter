@@ -1,0 +1,39 @@
+<MudStack Spacing="5" Style="max-width: 36rem">
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Single selection: map layer</MudText>
+        <MudToggleGroup T="string" @bind-Value="_layer" aria-label="Map layer">
+            <MudToggleItem Value="@("Streets")" />
+            <MudToggleItem Value="@("Satellite")" />
+            <MudToggleItem Value="@("Terrain")" />
+        </MudToggleGroup>
+        <MudText Typo="Typo.body2">Value: @_layer</MudText>
+    </MudStack>
+
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Toggle selection: fare zone (press again to clear)</MudText>
+        <MudToggleGroup T="int?" @bind-Value="_zone" SelectionMode="SelectionMode.ToggleSelection" Color="Color.Secondary" aria-label="Fare zone">
+            @foreach (var zone in new int?[] { 1, 2, 3, 4 })
+            {
+                <MudToggleItem Value="zone" Text="@($"Zone {zone}")" />
+            }
+        </MudToggleGroup>
+        <MudText Typo="Typo.body2">Value: @(_zone?.ToString() ?? "null (all zones)")</MudText>
+    </MudStack>
+
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Multi selection: station facilities</MudText>
+        <MudToggleGroup T="string" @bind-Values="_facilities" SelectionMode="SelectionMode.MultiSelection" Color="Color.Tertiary" CheckMark aria-label="Station facilities">
+            <MudToggleItem Value="@("Step-free")" />
+            <MudToggleItem Value="@("Bike racks")" />
+            <MudToggleItem Value="@("Toilets")" />
+            <MudToggleItem Value="@("Ticket office")" />
+        </MudToggleGroup>
+        <MudText Typo="Typo.body2">Values: @(_facilities.Any() ? string.Join(", ", _facilities) : "none")</MudText>
+    </MudStack>
+</MudStack>
+
+@code {
+    private string _layer = "Streets";
+    private int? _zone = 2;
+    private IEnumerable<string> _facilities = ["Step-free", "Toilets"];
+}

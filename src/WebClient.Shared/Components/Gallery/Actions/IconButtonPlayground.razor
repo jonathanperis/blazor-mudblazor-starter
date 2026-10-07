@@ -1,0 +1,58 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudIconButton Icon="@_icon.Value" Variant="_variant" Color="_color" Size="_size" Edge="_edge"
+                       Disabled="_disabled" DropShadow="_dropShadow" aria-label="@_icon.Label" />
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_icon" Label="Icon" Variant="Variant.Outlined" Margin="Margin.Dense" ToStringFunc="@(icon => icon?.Label)">
+            @foreach (var icon in IconChoices) { <MudSelectItem Value="icon">@icon.Label</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_variant" Label="Variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_size" Label="Size" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Size>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_edge" Label="Edge" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Edge>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_dropShadow" Label="Drop shadow" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private sealed record IconChoice(string Label, string Name, string Value);
+
+    private static readonly IconChoice[] IconChoices =
+    [
+        new("Add to basket", "AddShoppingCart", Icons.Material.Outlined.AddShoppingCart),
+        new("Bookmark", "BookmarkBorder", Icons.Material.Outlined.BookmarkBorder),
+        new("Delete", "Delete", Icons.Material.Outlined.Delete),
+        new("Settings", "Settings", Icons.Material.Outlined.Settings)
+    ];
+
+    private IconChoice _icon = IconChoices[0];
+    private Variant _variant = Variant.Outlined;
+    private Color _color = Color.Primary;
+    private Size _size = Size.Medium;
+    private Edge _edge = Edge.False;
+    private bool _disabled;
+    private bool _dropShadow = true;
+
+    // MudIconButton defaults: Variant.Text, Color.Default, Size.Medium, Edge.False, DropShadow true.
+    private string Code => Snippet.Element("MudIconButton",
+    [
+        ("Icon", $"@Icons.Material.Outlined.{_icon.Name}"),
+        ("aria-label", _icon.Label),
+        ("Variant", Snippet.Enum(_variant, Variant.Text)),
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("Size", Snippet.Enum(_size, Size.Medium)),
+        ("Edge", Snippet.Enum(_edge, Edge.False)),
+        ("Disabled", Snippet.Flag(_disabled)),
+        ("DropShadow", _dropShadow ? null : "false")
+    ]);
+}

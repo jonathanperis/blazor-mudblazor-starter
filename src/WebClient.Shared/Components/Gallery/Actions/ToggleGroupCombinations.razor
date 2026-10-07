@@ -1,0 +1,9 @@
+<EnumMatrix TRow="Color" TColumn="Size" Caption="MudToggleGroup: Color × Size">
+    <Cell>
+        <MudToggleGroup T="string" Value="@("Week")" Color="@context.Row" Size="@context.Column" aria-label="@($"Range, {context.Row} {context.Column}")">
+            <MudToggleItem Value="@("Day")" />
+            <MudToggleItem Value="@("Week")" />
+            <MudToggleItem Value="@("Month")" />
+        </MudToggleGroup>
+    </Cell>
+</EnumMatrix>

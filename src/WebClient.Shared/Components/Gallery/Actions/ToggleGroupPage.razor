@@ -1,0 +1,13 @@
+@page "/components/toggle-group"
+@attribute [ComponentPage("Toggle group", GalleryGroup.Actions, "A toggle group is a row of connected buttons where one or several stay selected. Choose it for a small, always-visible set of options such as a view mode or filters; use a select when the options are many or rarely changed.", MudDocs = "togglegroup", Types = ["MudToggleGroup", "MudToggleItem"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ToggleGroupSelectionModes)" Title="Selection modes" Description="SingleSelection always keeps one value, ToggleSelection lets the user clear it by pressing the selected item again, and MultiSelection binds a set of values." />
+    <Example Of="typeof(ToggleGroupCombinations)" Title="Every color and size" Description="All 36 combinations of Color and Size. Color tints the border and the selected item; Size changes padding and type." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(ToggleGroupAppearance)" Title="Appearance options" Description="Checkmarks, reserved checkmark space, no outline, no delimiters, a vertical layout and a custom selected class, each switched on alone." />
+    <Example Of="typeof(ToggleGroupIcons)" Title="Icon items" Description="Items can show any content. Icon-only items need an aria-label, and the group itself is named so the choices make sense out of context." />
+    <Example Of="typeof(ToggleGroupCustomContent)" Title="Custom content" Description="ChildContent receives whether the item is selected, so a card-like option can show its own check mark, times and remaining seats." />
+    <Example Of="typeof(ToggleGroupScenario)" Title="Scenario: departure board filters" Description="A single choice for the time window and a multi-select for transport modes filter a timetable." />
+    <Example Of="typeof(ToggleGroupStates)" Title="Disabled groups and items" Description="Disable the whole group while it cannot change, or a single item that is unavailable, and say why next to it." />
+    <Example Of="typeof(ToggleGroupPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

@@ -1,0 +1,39 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="5">
+        <MudStack Spacing="3">
+            <MudText Typo="Typo.subtitle2" HtmlTag="h3">Direction</MudText>
+            <MudToggleGroup T="Direction" @bind-Value="_direction" aria-label="Direction" Size="Size.Small" Color="Color.Primary">
+                @foreach (var direction in new[] { Direction.Top, Direction.Right, Direction.Bottom, Direction.Left })
+                {
+                    <MudToggleItem Value="direction" Text="@direction.ToString()" />
+                }
+            </MudToggleGroup>
+            <MudText Typo="Typo.subtitle2" HtmlTag="h3">AlignItems</MudText>
+            <MudToggleGroup T="AlignItems" @bind-Value="_align" aria-label="Align items" Size="Size.Small" Color="Color.Primary">
+                @foreach (var align in new[] { AlignItems.Start, AlignItems.Center, AlignItems.End })
+                {
+                    <MudToggleItem Value="align" Text="@align.ToString()" />
+                }
+            </MudToggleGroup>
+            <MudSwitch @bind-Value="_labels" Label="Labelled items" Color="Color.Primary" />
+            <MudText Typo="Typo.body2" role="status">Last choice: @_choice</MudText>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" md="7" Class="d-flex align-center justify-center" Style="min-height: 22rem">
+        <MudFabMenu StartIcon="@Icons.Material.Outlined.Share" Color="Color.Primary" Direction="_direction" AlignItems="_align" Label="Share" MenuStyle="white-space: nowrap">
+            <MudFabMenuItem StartIcon="@Icons.Material.Outlined.Link" Label="@(_labels ? "Copy link" : null)" Color="Color.Secondary"
+                            aria-label="Copy link" OnClick="@(() => _choice = "Copy link")" />
+            <MudFabMenuItem StartIcon="@Icons.Material.Outlined.Email" Label="@(_labels ? "Email" : null)" Color="Color.Secondary"
+                            aria-label="Email" OnClick="@(() => _choice = "Email")" />
+            <MudFabMenuItem StartIcon="@Icons.Material.Outlined.QrCode2" Label="@(_labels ? "QR code" : null)" Color="Color.Secondary"
+                            aria-label="QR code" OnClick="@(() => _choice = "QR code")" />
+        </MudFabMenu>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private Direction _direction = Direction.Top;
+    private AlignItems _align = AlignItems.Center;
+    private bool _labels;
+    private string _choice = "none";
+}

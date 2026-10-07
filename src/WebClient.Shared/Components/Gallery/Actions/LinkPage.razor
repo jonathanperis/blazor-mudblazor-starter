@@ -1,0 +1,11 @@
+@page "/components/link"
+@attribute [ComponentPage("Link", GalleryGroup.Actions, "A link navigates to another page or resource and takes the theme's typography and colors. Choose a link when the result is a new location; when the result is an action on this page, use a button.", MudDocs = "link", Types = ["MudLink"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(LinkBasics)" Title="Links in running text" Description="Inside a paragraph a link inherits the surrounding type. Link text should make sense on its own, without a nearby “click here”." />
+    <Example Of="typeof(LinkUnderlineTypo)" Title="Underline and typography" Description="Every Underline value against the text-sized Typo values. The headings h1 to h3 behave like h4, only larger, so they are left out to keep the table readable." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(LinkColors)" Title="Colors" Description="Primary is the default. Pick a color for meaning only when the text also carries it; prefer Underline.Always when color is the only cue on a busy surface." />
+    <Example Of="typeof(LinkIcons)" Title="Icons and external links" Description="StartIcon and EndIcon add a glyph without changing the accessible name. Links that open a new tab say so in their text and set rel." />
+    <Example Of="typeof(LinkStates)" Title="Disabled links and actions" Description="Disabled removes the link from use. For an action on the current page, a text button keeps keyboard and screen-reader behaviour correct." />
+    <Example Of="typeof(LinkPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

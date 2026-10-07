@@ -1,0 +1,22 @@
+<MudStack Spacing="4">
+    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+        <MudButtonGroup Variant="Variant.Outlined" OverrideStyles="false" aria-label="Review decision">
+            <MudButton Variant="Variant.Outlined" Color="Color.Success" StartIcon="@Icons.Material.Outlined.Check">Approve</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Warning" StartIcon="@Icons.Material.Outlined.Edit">Request changes</MudButton>
+            <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Outlined.Close">Reject</MudButton>
+        </MudButtonGroup>
+        <MudText Typo="Typo.caption">OverrideStyles="false": each button keeps its own color.</MudText>
+    </MudStack>
+    <MudButtonGroup Variant="Variant.Filled" Color="Color.Secondary" FullWidth aria-label="Delivery speed">
+        <MudButton>Standard</MudButton>
+        <MudButton>Express</MudButton>
+        <MudButton Disabled>Same day (sold out)</MudButton>
+    </MudButtonGroup>
+    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+        <MudButtonGroup Variant="Variant.Filled" Color="Color.Primary" DropShadow="false" aria-label="Copies">
+            <MudButton>1 copy</MudButton>
+            <MudButton>2 copies</MudButton>
+        </MudButtonGroup>
+        <MudText Typo="Typo.caption">DropShadow="false" sits flat on outlined surfaces.</MudText>
+    </MudStack>
+</MudStack>

@@ -1,0 +1,30 @@
+<MudStack Spacing="3">
+    <MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+        <MudChip T="string" Text="Poetry" />
+        <MudChip T="string" Text="Translated" Color="Color.Secondary" />
+        <MudChip T="string" Icon="@Icons.Material.Outlined.LocalShipping" Color="Color.Primary" Text="Ships tomorrow" />
+        <MudChip T="string" Icon="@Icons.Material.Outlined.Star" IconColor="Color.Warning" Variant="Variant.Outlined" Text="4.6 rating" />
+    </MudStack>
+    <MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+        @foreach (var author in Authors)
+        {
+            <MudChip T="string" Variant="Variant.Outlined" Color="Color.Default">
+                <AvatarContent>
+                    <MudAvatar Color="author.Color">@author.Initials</MudAvatar>
+                </AvatarContent>
+                <ChildContent>@author.Name</ChildContent>
+            </MudChip>
+        }
+    </MudStack>
+</MudStack>
+
+@code {
+    private sealed record Author(string Name, string Initials, Color Color);
+
+    private static readonly Author[] Authors =
+    [
+        new("Ines Albuquerque", "IA", Color.Primary),
+        new("Tomasz Wren", "TW", Color.Secondary),
+        new("Ada Okonkwo", "AO", Color.Tertiary)
+    ];
+}

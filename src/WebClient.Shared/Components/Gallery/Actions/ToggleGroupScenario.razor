@@ -1,0 +1,56 @@
+<MudStack Spacing="3">
+    <MudStack Row Wrap="Wrap.Wrap" Spacing="4" AlignItems="AlignItems.End">
+        <MudStack Spacing="1">
+            <MudText Typo="Typo.caption" id="departures-window">Leaving within</MudText>
+            <MudToggleGroup T="int" @bind-Value="_minutes" Size="Size.Small" aria-labelledby="departures-window" Style="width: 16rem">
+                @foreach (var minutes in new[] { 10, 30, 60 })
+                {
+                    <MudToggleItem Value="minutes" Text="@($"{minutes} min")" />
+                }
+            </MudToggleGroup>
+        </MudStack>
+        <MudStack Spacing="1">
+            <MudText Typo="Typo.caption" id="departures-modes">Modes</MudText>
+            <MudToggleGroup T="string" @bind-Values="_modes" SelectionMode="SelectionMode.MultiSelection" CheckMark
+                            Size="Size.Small" Color="Color.Secondary" aria-labelledby="departures-modes" Style="width: 20rem">
+                <MudToggleItem Value="@("Bus")" />
+                <MudToggleItem Value="@("Tram")" />
+                <MudToggleItem Value="@("Rail")" />
+            </MudToggleGroup>
+        </MudStack>
+    </MudStack>
+
+    <MudSimpleTable Dense Outlined Elevation="0">
+        <thead>
+            <tr><th>Leaves in</th><th>Mode</th><th>Line</th><th>Destination</th></tr>
+        </thead>
+        <tbody>
+            @foreach (var departure in Visible)
+            {
+                <tr><td>@departure.Minutes min</td><td>@departure.Mode</td><td>@departure.Line</td><td>@departure.Destination</td></tr>
+            }
+        </tbody>
+    </MudSimpleTable>
+    <MudText Typo="Typo.body2" role="status">
+        @(Visible.Any() ? $"{Visible.Count()} departures shown." : "No departures match. Widen the time window or add a mode.")
+    </MudText>
+</MudStack>
+
+@code {
+    private sealed record Departure(int Minutes, string Mode, string Line, string Destination);
+
+    private static readonly Departure[] Departures =
+    [
+        new(3, "Tram", "T2", "Harbour Gate"),
+        new(7, "Bus", "41", "Old Mill"),
+        new(12, "Rail", "R5", "Airport"),
+        new(18, "Bus", "12N", "University"),
+        new(26, "Tram", "T4", "Riverside Park"),
+        new(44, "Rail", "R1", "Coastline Central")
+    ];
+
+    private int _minutes = 30;
+    private IEnumerable<string> _modes = ["Bus", "Tram", "Rail"];
+
+    private IEnumerable<Departure> Visible => Departures.Where(departure => departure.Minutes <= _minutes && _modes.Contains(departure.Mode));
+}

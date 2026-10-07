@@ -1,0 +1,47 @@
+@using MudBlazor.Utilities
+
+<Playground Code="@Code">
+    <Preview>
+        <MudStack AlignItems="AlignItems.Center" Spacing="2">
+            <MudText Typo="Typo.h4" HtmlTag="p">@_presses</MudText>
+            <MudText Typo="Typo.body2" role="status">
+                @(_disabled ? "Disabled: presses are ignored." : $"Times {Combination} was pressed")
+            </MudText>
+            <MudHotkey Key="_key" KeyModifiers="_modifiers" Disabled="_disabled" PreventEventPropagation="_preventDefault"
+                       OnHotkeyPressed="@(() => _presses++)" />
+        </MudStack>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_key" Label="Key" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var key in Keys) { <MudSelectItem Value="key">@key</MudSelectItem> }
+        </MudSelect>
+        <MudSelect T="JsKeyModifier" @bind-SelectedValues="_modifiers" MultiSelection Label="KeyModifiers" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var modifier in Enum.GetValues<JsKeyModifier>()) { <MudSelectItem Value="modifier">@modifier</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_preventDefault" Label="Prevent default" Color="Color.Primary" />
+        <MudButton Variant="Variant.Text" Size="Size.Small" OnClick="@(() => _presses = 0)">Reset count</MudButton>
+    </Controls>
+</Playground>
+
+@code {
+    private static readonly JsKey[] Keys = [JsKey.KeyK, JsKey.KeyJ, JsKey.Slash, JsKey.Space, JsKey.F2, JsKey.ArrowUp];
+
+    private JsKey _key = JsKey.KeyK;
+    private IReadOnlyCollection<JsKeyModifier> _modifiers = [JsKeyModifier.AltLeft];
+    private bool _disabled;
+    private bool _preventDefault = true;
+    private int _presses;
+
+    private string Combination => string.Join(" + ", _modifiers.Select(modifier => modifier.ToString()).Append(_key.ToString()));
+
+    // MudHotkey defaults: no modifiers, enabled, PreventEventPropagation true.
+    private string Code => Snippet.Element("MudHotkey",
+    [
+        ("Key", $"JsKey.{_key}"),
+        ("KeyModifiers", _modifiers.Any() ? $"@([{string.Join(", ", _modifiers.Select(modifier => $"JsKeyModifier.{modifier}"))}])" : null),
+        ("Disabled", Snippet.Flag(_disabled)),
+        ("PreventEventPropagation", _preventDefault ? null : "false"),
+        ("OnHotkeyPressed", "OnShortcut")
+    ]);
+}

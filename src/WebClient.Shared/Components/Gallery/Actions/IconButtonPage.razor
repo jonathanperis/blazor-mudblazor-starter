@@ -1,0 +1,13 @@
+@page "/components/icon-button"
+@attribute [ComponentPage("Icon button and toggle icon button", GalleryGroup.Actions, "An icon button is a compact action for toolbars, rows and cards; a toggle icon button switches between two states such as favourite or muted. Choose them when the icon is unambiguous, and always give them an accessible name.", MudDocs = "iconbutton", Types = ["MudIconButton", "MudToggleIconButton"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(IconButtonBasics)" Title="Accessible names" Description="An icon is not a label. Every icon-only button carries an aria-label, and a tooltip shows the same words to sighted mouse users." />
+    <Example Of="typeof(IconButtonCombinations)" Title="Every variant and color" Description="All 36 combinations of Variant and Color. Text is the default and the quietest; filled and outlined icon buttons draw a container around the glyph." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(IconButtonSizes)" Title="Sizes by variant" Description="Small, medium and large for each variant. Size changes both the icon and its touch target." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(IconButtonEdge)" Title="Edge alignment" Description="Edge applies a negative margin so the glyph, not its padding, lines up with the content edge of a bar or card." />
+    <Example Of="typeof(IconButtonToggle)" Title="Toggle icon buttons" Description="MudToggleIconButton swaps icon, color, variant or size when Toggled changes. Keep the label in step with the state and expose it with aria-pressed." />
+    <Example Of="typeof(IconButtonToggleStates)" Title="Toggled states by variant" Description="The same toggle with ToggledVariant, untoggled and toggled side by side, so the change of emphasis is easy to compare." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(IconButtonStates)" Title="States, links and custom content" Description="Disabled, rendered as a link, without ripple or shadow, with custom content instead of an icon, and busy while work runs." />
+    <Example Of="typeof(IconButtonPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>
