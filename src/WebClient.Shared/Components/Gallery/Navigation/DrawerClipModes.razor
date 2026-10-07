@@ -14,7 +14,7 @@
                 <MudText Typo="Typo.subtitle1" HtmlTag="span" Class="ml-2">Ledger Lab</MudText>
             </MudAppBar>
             <MudDrawer @bind-Open="_open" Variant="DrawerVariant.Persistent" ClipMode="_clipMode" Elevation="1">
-                <MudNavMenu Class="pt-2">
+                <MudNavMenu aria-label="Clipped drawer navigation" Class="pt-2">
                     @foreach (var experiment in Experiments)
                     {
                         <MudNavLink Icon="@Icons.Material.Outlined.Science" OnClick="() => _experiment = experiment">@experiment</MudNavLink>

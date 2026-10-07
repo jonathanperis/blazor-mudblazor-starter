@@ -24,7 +24,7 @@
     --measure: 68ch;
     /* Code palette: light */
     --code-bg: #F1EDE4; --code-fg: #2A2824; --code-gutter: #E6E1D6;
-    --tok-comment: #7D776C; --tok-string: #2F6B3A; --tok-tag: #8C2F14; --tok-attr: #7A5C14;
+    --tok-comment: #6B655B; --tok-string: #2F6B3A; --tok-tag: #8C2F14; --tok-attr: #7A5C14;
     --tok-razor: #6B2E8A; --tok-keyword: #1F4F8A; --tok-type: #1F5F5B; --tok-number: #9A5B0B;
 }
 .sandbox-dark {
@@ -39,6 +39,9 @@ html { -webkit-text-size-adjust: 100%; text-rendering: optimizeLegibility; }
 body { background: var(--paper); font-feature-settings: "kern", "liga"; }
 main { min-height: calc(100vh - 56px); background: var(--paper); color: var(--ink); }
 a { color: var(--accent); text-underline-offset: .18em; text-decoration-thickness: 1px; }
+/* Links stay distinguishable without color: MudLink's default "underline on hover" keeps a quiet underline at rest. */
+.mud-link.mud-link-underline-hover { text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); }
+.mud-link.mud-link-underline-hover:hover { text-decoration-color: currentColor; }
 code, kbd, samp { font-family: var(--font-mono); font-size: .9em; }
 pre { overflow-x: auto; padding: 1rem; background: var(--code-bg); color: var(--code-fg); border-radius: var(--mud-default-borderradius); font-family: var(--font-mono); font-size: .8125rem; line-height: 1.65; }
 ::selection { background: color-mix(in srgb, var(--accent) 22%, transparent); }
@@ -61,6 +64,7 @@ h1[tabindex="-1"]:focus, main[tabindex="-1"]:focus { outline: none; }
 .app-drawer .mud-navmenu { padding-block: .5rem 2rem; }
 .nav-section { margin: 1.25rem 1rem .35rem; font-family: var(--font-mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
 .app-drawer .mud-nav-link { font-size: .875rem; }
+.app-drawer .mud-nav-link.active .mud-nav-link-text { color: var(--ink); }
 .app-drawer .mud-nav-link.active:not(.mud-nav-link-disabled) { background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--ink); box-shadow: inset 2px 0 0 var(--accent); }
 
 .demo-banner { border-style: dashed !important; }
@@ -126,7 +130,7 @@ h1[tabindex="-1"]:focus, main[tabindex="-1"]:focus { outline: none; }
 .matrix th, .matrix td { padding: .65rem .75rem; border-bottom: 1px solid var(--rule); text-align: center; vertical-align: middle; white-space: nowrap; }
 .matrix thead th { font-family: var(--font-mono); font-weight: 500; font-size: .72rem; color: var(--ink-soft); background: color-mix(in srgb, var(--paper) 60%, transparent); position: sticky; top: 0; }
 .matrix tbody th { text-align: left; font-family: var(--font-mono); font-weight: 500; font-size: .72rem; color: var(--ink-soft); position: sticky; left: 0; background: var(--sheet); }
-.matrix-axis { font-weight: 400; opacity: .8; display: inline-block; max-width: 7.5rem; white-space: normal; line-height: 1.35; text-align: left; }
+.matrix-axis { font-weight: 400; display: inline-block; max-width: 7.5rem; white-space: normal; line-height: 1.35; text-align: left; }
 .matrix tbody tr:last-child th, .matrix tbody tr:last-child td { border-bottom: 0; }
 
 /* Playground: stage, controls, generated code */
@@ -155,7 +159,7 @@ h1[tabindex="-1"]:focus, main[tabindex="-1"]:focus { outline: none; }
 .index-entry { display: grid; gap: .2rem; height: 100%; padding: 1rem 1.25rem 1.1rem 0; border-bottom: 1px solid var(--rule); color: inherit; text-decoration: none; }
 .index-entry-title { font-weight: 600; color: var(--ink); }
 .index-entry-summary { font-size: .8125rem; color: var(--ink-soft); line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-.index-entry-types { font-family: var(--font-mono); font-size: .7rem; color: var(--ink-soft); opacity: .8; }
+.index-entry-types { font-family: var(--font-mono); font-size: .7rem; color: var(--ink-soft); }
 .index-entry:hover .index-entry-title, .index-entry:focus-visible .index-entry-title { color: var(--accent); }
 
 .sample-list { margin: 0; padding: 0; list-style: none; border-top: 2px solid var(--ink); }
@@ -164,7 +168,7 @@ h1[tabindex="-1"]:focus, main[tabindex="-1"]:focus { outline: none; }
 .sample-text { display: grid; gap: .3rem; }
 .sample-title { font-family: var(--font-serif); font-size: 1.5rem; font-weight: 500; letter-spacing: -.01em; color: var(--ink); line-height: 1.2; }
 .sample-summary { color: var(--ink-soft); max-width: var(--measure); }
-.sample-uses { font-family: var(--font-mono); font-size: .72rem; color: var(--ink-soft); opacity: .85; }
+.sample-uses { font-family: var(--font-mono); font-size: .72rem; color: var(--ink-soft); }
 .sample-entry:hover .sample-title, .sample-entry:focus-visible .sample-title { color: var(--accent); }
 
 /* Page samples render on a canvas so the composed page reads as a page. */
@@ -207,6 +211,9 @@ h1[tabindex="-1"]:focus, main[tabindex="-1"]:focus { outline: none; }
 
 /* Highlights (MudHighlighter, search) read as a marker pen in both themes. */
 mark { background: color-mix(in srgb, var(--mud-palette-warning) 30%, transparent); color: inherit; padding: 0 .08em; border-radius: 2px; }
+
+/* Selected primary list items sit on a tinted background; the darker primary keeps their text at AA in light mode. */
+.sandbox-light .mud-list-item.mud-selected-item.mud-primary-text { color: var(--mud-palette-primary-darken) !important; }
 
 /* Sentence case everywhere: MudBlazor uppercases tab labels by default. */
 .mud-tab { text-transform: none; letter-spacing: .01em; }

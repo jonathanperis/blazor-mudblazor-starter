@@ -3,7 +3,7 @@
     {
         <MudItem xs="12" sm="6" md="4" lg="3" Class="pa-3 border-b border-r border-solid mud-border-lines-default">
             <MudText Typo="Typo.overline" HtmlTag="p" Class="px-2">Color.@color</MudText>
-            <MudNavMenu Color="color" Bordered="true" Dense="true">
+            <MudNavMenu aria-label="@($"Example: {color} navigation")" Color="color" Bordered="true" Dense="true">
                 <MudNavLink Href="components/nav-menu" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Menu">This page</MudNavLink>
                 <MudNavLink Href="components/tabs" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Tab">Tabs</MudNavLink>
             </MudNavMenu>

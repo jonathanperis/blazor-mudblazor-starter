@@ -15,7 +15,7 @@
         <MudText Typo="Typo.subtitle1" HtmlTag="h3" Style="font-family: var(--font-serif); font-size: 1.05rem; line-height: 1.3">@Book.Title</MudText>
         <MudText Typo="Typo.body2" Class="mud-text-secondary">@Book.Author</MudText>
         <div class="d-flex align-center gap-1 mt-2">
-            <MudRating ReadOnly SelectedValue="@((int)Math.Round(Book.Rating))" Size="Size.Small" Color="Color.Tertiary" aria-hidden="true" />
+            <MudRating ReadOnly SelectedValue="@((int)Math.Round(Book.Rating))" Size="Size.Small" Color="Color.Tertiary" />
             <MudText Typo="Typo.caption" Class="mud-text-secondary">@Book.Rating.ToString("0.0", CultureInfo.InvariantCulture) / 5 <span class="d-none d-sm-inline">· @Book.Reviews reviews</span></MudText>
         </div>
     </MudCardContent>

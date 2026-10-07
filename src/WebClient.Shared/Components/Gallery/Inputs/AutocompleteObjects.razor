@@ -1,5 +1,5 @@
 <MudStack Spacing="3" Style="max-width: 32rem">
-    <MudAutocomplete T="Instrument" @bind-Value="_instrument" SearchFunc="Search" Label="Book an instrument" Variant="Variant.Outlined"
+    <MudAutocomplete AdornmentAriaLabel="Show suggestions" T="Instrument" @bind-Value="_instrument" SearchFunc="Search" Label="Book an instrument" Variant="Variant.Outlined"
                      ToStringFunc="@(instrument => instrument?.Name ?? "")" ItemDisabledFunc="@(instrument => instrument.UnderMaintenance)">
         <ItemTemplate Context="instrument">
             <MudStack Row AlignItems="AlignItems.Center" Spacing="3">

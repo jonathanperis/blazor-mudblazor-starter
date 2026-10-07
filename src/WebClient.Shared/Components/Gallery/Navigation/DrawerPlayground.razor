@@ -5,7 +5,7 @@
                 @* @key recreates the drawer when its variant, anchor or width changes, so it registers afresh with the container. *@
                 <MudDrawer @key="(_variant, _anchor, _width)" @bind-Open="_open" Variant="_variant" Anchor="_anchor" Color="_color" Elevation="_elevation" Width="@(_width == "" ? null : _width)"
                            Overlay="_overlay" Breakpoint="Breakpoint.None" Fixed="false">
-                    <MudNavMenu>
+                    <MudNavMenu aria-label="Playground drawer navigation">
                         <MudNavLink Icon="@Icons.Material.Outlined.Inbox" OnClick="@(() => _folder = "Inbox")">Inbox</MudNavLink>
                         <MudNavLink Icon="@Icons.Material.Outlined.Send" OnClick="@(() => _folder = "Sent")">Sent</MudNavLink>
                         <MudNavLink Icon="@Icons.Material.Outlined.Archive" OnClick="@(() => _folder = "Archive")">Archive</MudNavLink>

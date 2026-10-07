@@ -32,7 +32,8 @@ Samples under [`Components/Samples/`](https://github.com/jonathanperis/blazor-mu
 2. Add one file per example, prefixed with the component name, in the same folder. Write examples to be read: short, idiomatic, meaningful synthetic data, accessible names on icon-only controls, no `h1`.
 3. Show the progression: basic usage, appearance, every combination of appearance enums, a realistic scenario, states (disabled, read-only, loading, errors), and a playground for main components.
 4. Use base-relative links and browser-only data so the page works in the WebAssembly demo.
-5. Run `dotnet test --filter GalleryTests`. It renders every page with bUnit, fails if any example hits its error boundary, and checks that every example's source is embedded. The integration tests prerender every gallery route over HTTP.
+5. Give every control an accessible name: labels on inputs, `aria-label` on icon-only buttons, `MudList` and `MudNavMenu`, and `AdornmentAriaLabel` on adornment buttons. `npm run check:demo` audits every page with axe and fails on violations our markup controls.
+6. Run `dotnet test --filter GalleryTests`. It renders every page with bUnit, fails if any example hits its error boundary, and checks that every example's source is embedded. The integration tests prerender every gallery route over HTTP.
 
 ## The visual identity
 

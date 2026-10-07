@@ -1,7 +1,7 @@
 <MudGrid Spacing="6">
     <MudItem xs="12" sm="6">
         <MudPaper Outlined="true" Class="py-2">
-            <MudNavMenu>
+            <MudNavMenu aria-label="Example: grouped navigation">
                 <MudNavLink Icon="@Icons.Material.Outlined.Storefront" OnClick="@(() => _selected = "Shop front")">Shop front</MudNavLink>
                 <MudNavGroup Title="Catalogue" Icon="@Icons.Material.Outlined.MenuBook" @bind-Expanded="_catalogueOpen">
                     <MudNavGroup Title="Fiction" Expanded="true">

@@ -4,7 +4,7 @@
             <MudDrawerHeader Dense="true">
                 <MudText Typo="Typo.subtitle1" HtmlTag="span">Reading room</MudText>
             </MudDrawerHeader>
-            <MudNavMenu>
+            <MudNavMenu aria-label="Persistent drawer navigation">
                 @foreach (var (section, icon) in Sections)
                 {
                     <MudNavLink Icon="@icon" OnClick="() => _section = section">@section</MudNavLink>

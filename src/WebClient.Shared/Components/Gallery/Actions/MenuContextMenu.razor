@@ -29,18 +29,21 @@
 </MudStack>
 
 @* One shared menu for right-clicks. The empty activator keeps it from rendering a blank button. *@
-<MudMenu @ref="_contextMenu" PositionAtCursor AriaLabel="Plate actions">
-    <ActivatorContent></ActivatorContent>
-    <ChildContent>
-        @if (_target is { } target)
-        {
-            @foreach (var action in Actions)
+@* The visible ⋮ buttons are the accessible route; this menu only opens at the cursor, so its empty anchor is inert. *@
+<div inert>
+    <MudMenu @ref="_contextMenu" PositionAtCursor AriaLabel="Plate actions">
+        <ActivatorContent></ActivatorContent>
+        <ChildContent>
+            @if (_target is { } target)
             {
-                <MudMenuItem Icon="@action.Icon" IconColor="action.IconColor" Label="@action.Label" OnClick="@(() => Run(action, target))" />
+                @foreach (var action in Actions)
+                {
+                    <MudMenuItem Icon="@action.Icon" IconColor="action.IconColor" Label="@action.Label" OnClick="@(() => Run(action, target))" />
+                }
             }
-        }
-    </ChildContent>
-</MudMenu>
+        </ChildContent>
+    </MudMenu>
+</div>
 
 @code {
     private sealed record Plate(string Name, string Detail);

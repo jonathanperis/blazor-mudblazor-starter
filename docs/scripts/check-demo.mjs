@@ -42,6 +42,28 @@ const server = createServer(async (request, response) => {
 await new Promise(resolve => server.listen(0, '127.0.0.1', resolve));
 const base = `http://127.0.0.1:${server.address().port}${prefix}/demo/`;
 
+const axeSource = await readFile(new URL('../node_modules/axe-core/axe.min.js', import.meta.url), 'utf8');
+// Accessibility rules our markup controls. MudBlazor's own internals that cannot be labelled from outside are
+// excluded by selector: slider range inputs, tree-view and color-picker internals, pager selects, data-grid header
+// buttons and loading bar, nav-group inner navs, nested lists, the popover provider, and avatar text colors (docs/wiki/testing.md).
+const axeRules = ['link-in-text-block', 'color-contrast', 'landmark-unique', 'label', 'aria-input-field-name', 'button-name',
+  'aria-hidden-focus', 'label-content-name-mismatch', 'aria-command-name', 'select-name', 'image-alt', 'duplicate-id-aria',
+  'link-name', 'aria-toggle-field-name', 'aria-progressbar-name', 'svg-img-alt', 'document-title', 'page-has-heading-one'];
+const axeExclude = [['.mud-slider-input'], ['.mud-treeview .mud-checkbox-input'], ['.mud-picker-color-content'], ['.mud-table-pagination'],
+  ['.mud-table-root th .mud-icon-button'], ['.mud-table .mud-menu-icon-button-activator'], ['.mud-table .mud-progress-linear'],
+  ['.mud-nav-group nav:not([aria-label])'], ['.mud-nested-list'], ['.mud-popover-provider'], ['.mud-radio-input'], ['.mud-avatar-text']];
+
+// MudBreadcrumbs always sets aria-label="Breadcrumb", so several trails on one page cannot be told apart.
+const axeIgnore = [{ rule: 'landmark-unique', html: 'aria-label="Breadcrumb"' }];
+
+async function audit(page, label) {
+  if (!(await page.evaluate(() => 'axe' in window))) await page.evaluate(axeSource);
+  const result = await page.evaluate(([rules, exclude]) => window.axe.run({ exclude }, { runOnly: { type: 'rule', values: rules } }), [axeRules, axeExclude]);
+  return result.violations.flatMap((violation) => violation.nodes
+    .filter((node) => !axeIgnore.some((ignore) => ignore.rule === violation.id && node.html.includes(ignore.html)))
+    .map((node) => `${label}: ${violation.id} at ${node.target.join(' ')}`));
+}
+
 const browser = await chromium.launch({ channel: process.env.PLAYWRIGHT_CHANNEL || undefined });
 const failures = [];
 const step = async (name, action) => {
@@ -55,7 +77,8 @@ const step = async (name, action) => {
 };
 
 try {
-  const page = await browser.newPage();
+  // Reduced motion zeroes the app's animations, so contrast is measured on settled content, not mid-transition.
+  const page = await browser.newPage({ reducedMotion: 'reduce' });
   const errors = [];
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => {
@@ -145,6 +168,7 @@ try {
     await page.goto(`${base}no-such-lab`);
     await heading('Page not found').waitFor(timeout);
   });
+  const accessibility = [];
   await step('every page renders without an error boundary', async () => {
     const routes = (await appRoutes()).filter((route) => route !== '/not-found' && route !== '/Error').sort();
     await page.goto(base);
@@ -157,12 +181,23 @@ try {
         await page.waitForFunction((target) => location.pathname.endsWith(target === '/' ? '/demo/' : target) && document.querySelectorAll('h1').length === 1, route, { timeout: 15_000 });
         await page.waitForTimeout(150);
         if (await page.getByText('failed to render').count()) broken.push(`${route}: example failed to render`);
+        accessibility.push(...await audit(page, route));
       } catch {
         broken.push(`${route}: no single h1`);
       }
     }
     if (broken.length) throw new Error(broken.join('; '));
     console.log(`  ${routes.length} routes`);
+  });
+  await step('every page passes the accessibility rules our markup controls', async () => {
+    for (const path of ['', 'docs/', 'docs/gallery/', 'docs/getting-started/']) {
+      await page.goto(`http://127.0.0.1:${server.address().port}${prefix}/${path}`, { waitUntil: 'load' });
+      accessibility.push(...await audit(page, `site /${path}`));
+    }
+    if (accessibility.length) {
+      console.error(`  ${accessibility.join('\n  ')}`);
+      throw new Error(`${accessibility.length} violations`);
+    }
   });
   if (errors.length) {
     failures.push('console');

@@ -1,7 +1,7 @@
 <MudPaper Outlined="true" Height="18rem" Class="overflow-hidden" Style="background-color: var(--mud-palette-lines-default)">
     <MudSplitPanel Class="mud-height-full" FirstPanelInitialSize="150" MinPanelSize="100">
         <FirstPanel>
-            <MudList T="string" Dense="true">
+            <MudList T="string" aria-label="Mailboxes" Dense="true">
                 <MudListItem T="string" Icon="@Icons.Material.Outlined.Inbox" Text="Inbox" />
                 <MudListItem T="string" Icon="@Icons.Material.Outlined.Star" Text="Starred" />
                 <MudListItem T="string" Icon="@Icons.Material.Outlined.Send" Text="Sent" />
@@ -10,7 +10,7 @@
         <SecondPanel>
             <MudSplitPanel Class="mud-height-full" FirstPanelInitialSize="220" MinPanelSize="140" Style="background-color: var(--mud-palette-lines-default)">
                 <FirstPanel>
-                    <MudList T="string" Dense="true">
+                    <MudList T="string" aria-label="Mailboxes 2" Dense="true">
                         <MudListItem T="string" Text="Shelf audit" SecondaryText="Clara Duval" />
                         <MudListItem T="string" Text="Autumn reading list" SecondaryText="Hugo Salles" />
                         <MudListItem T="string" Text="Signed copies" SecondaryText="Noor Haddad" />

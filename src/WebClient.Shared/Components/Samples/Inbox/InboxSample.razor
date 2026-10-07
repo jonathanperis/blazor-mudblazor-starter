@@ -11,7 +11,7 @@
                 <p class="kicker mb-0">Hollow Hill Observatory</p>
                 <MudText Typo="Typo.subtitle2" HtmlTag="p">Night operations</MudText>
             </div>
-            <MudList T="string" SelectedValue="_viewKey" SelectedValueChanged="SelectView" SelectionMode="SelectionMode.SingleSelection" Color="Color.Primary" Dense>
+            <MudList T="string" aria-label="Folders and labels" SelectedValue="_viewKey" SelectedValueChanged="SelectView" SelectionMode="SelectionMode.SingleSelection" Color="Color.Primary" Dense>
                 @foreach (var view in InboxData.Views)
                 {
                     @if (view.Key == FirstLabelKey)

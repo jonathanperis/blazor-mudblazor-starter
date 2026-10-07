@@ -1,6 +1,6 @@
 <MudGrid Spacing="4">
     <MudItem xs="12" md="6">
-        <MudAutocomplete T="string" @bind-Value="_title" SearchFunc="Search" Label="Search the library" Variant="Variant.Outlined"
+        <MudAutocomplete AdornmentAriaLabel="Show suggestions" T="string" @bind-Value="_title" SearchFunc="Search" Label="Search the library" Variant="Variant.Outlined"
                          MinCharacters="2" MaxItems="5" HelperText="At least two characters; at most five results">
             <NoItemsTemplate>
                 <MudText Typo="Typo.body2" Class="px-4 py-2">No titles match. Check the spelling or try the author's name.</MudText>

@@ -2,7 +2,7 @@
 <MudPaper Outlined="true" Height="16rem" Class="overflow-hidden" Style="background-color: var(--mud-palette-lines-default)">
     <MudSplitPanel Class="mud-height-full" FirstPanelInitialSize="220">
         <FirstPanel>
-            <MudList T="string" @bind-SelectedValue="_selected" Dense="true" Color="Color.Primary">
+            <MudList T="string" aria-label="Specimens" @bind-SelectedValue="_selected" Dense="true" Color="Color.Primary">
                 @foreach (var specimen in Specimens.Keys)
                 {
                     <MudListItem T="string" Value="specimen" Text="@specimen" />

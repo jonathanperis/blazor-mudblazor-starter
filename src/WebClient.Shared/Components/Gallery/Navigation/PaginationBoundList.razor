@@ -8,7 +8,7 @@
     else
     {
         <MudPaper Outlined="true">
-            <MudList T="string" Dense="true">
+            <MudList T="string" aria-label="Books on this page" Dense="true">
                 @foreach (var book in Matches.Skip((Page - 1) * PageSize).Take(PageSize))
                 {
                     <MudListItem T="string" Icon="@Icons.Material.Outlined.Book" Text="@book.Title" SecondaryText="@book.Author" />
