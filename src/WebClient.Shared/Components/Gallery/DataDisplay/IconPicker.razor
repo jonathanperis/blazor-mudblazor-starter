@@ -44,14 +44,13 @@
 @code {
     private const int MaxShown = 200;
 
-    // typeof(...).GetFields directly on each class lets the trimmer keep the fields in the WebAssembly build.
+    // typeof(...).GetFields directly on each class lets the trimmer keep the fields in the WebAssembly build. Each style
+    // searched by reflection keeps all of its ~2,000 SVG strings in the download, so the picker covers two styles; the
+    // five-style table above shows Rounded, Sharp and TwoTone by name.
     private static readonly Dictionary<string, IReadOnlyList<(string Name, string Svg)>> Styles = new()
     {
-        ["Filled"] = Read(typeof(Icons.Material.Filled).GetFields(BindingFlags.Public | BindingFlags.Static)),
         ["Outlined"] = Read(typeof(Icons.Material.Outlined).GetFields(BindingFlags.Public | BindingFlags.Static)),
-        ["Rounded"] = Read(typeof(Icons.Material.Rounded).GetFields(BindingFlags.Public | BindingFlags.Static)),
-        ["Sharp"] = Read(typeof(Icons.Material.Sharp).GetFields(BindingFlags.Public | BindingFlags.Static)),
-        ["TwoTone"] = Read(typeof(Icons.Material.TwoTone).GetFields(BindingFlags.Public | BindingFlags.Static))
+        ["Filled"] = Read(typeof(Icons.Material.Filled).GetFields(BindingFlags.Public | BindingFlags.Static))
     };
 
     private string _query = "";
