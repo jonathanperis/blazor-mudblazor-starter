@@ -1,0 +1,23 @@
+@using WebClient.Shared.Features.StaticDemo
+@inject AuthenticationStateProvider Authentication
+
+<MudAlert Severity="Severity.Warning" Variant="Variant.Outlined" Class="mb-3">
+    This static demo has no server. A browser-only persona changes what the page renders, and anyone can change code running in their browser,
+    so nothing here is authorization. Run the app locally to see the server enforce the instructor policy with 401, 403 and 200 responses.
+</MudAlert>
+<div class="lab-form">
+    <label for="persona">Browser-only demo persona</label>
+    <select id="persona" @bind="_persona">
+        <option value="student">Student</option>
+        <option value="instructor">Instructor</option>
+    </select>
+    <button type="button" @onclick="SignIn">Sign in as demo persona</button>
+    <button type="button" @onclick="SignOut">Sign out</button>
+</div>
+
+@code {
+    private string _persona = "student";
+    private DemoAuthenticationStateProvider Demo => (DemoAuthenticationStateProvider)Authentication;
+    private void SignIn() => Demo.SignIn(_persona);
+    private void SignOut() => Demo.SignOut();
+}

@@ -1,0 +1,9 @@
+<form action="culture" method="post" class="lab-form mb-4">
+    <AntiforgeryToken />
+    <label for="culture">Language / Idioma</label>
+    <select id="culture" name="culture">
+        <option value="en-US" selected="@(CultureInfo.CurrentUICulture.Name == "en-US")">English (United States)</option>
+        <option value="pt-BR" selected="@(CultureInfo.CurrentUICulture.Name == "pt-BR")">Português (Brasil)</option>
+    </select>
+    <button type="submit">Apply language / Aplicar idioma</button>
+</form>

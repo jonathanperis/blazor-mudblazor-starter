@@ -1,4 +1,6 @@
-﻿@page "/Error"
+@page "/Error"
+@* Static rendering keeps the failed request's HttpContext and trace identifier. *@
+@attribute [ExcludeFromInteractiveRouting]
 
 <PageTitle>Error</PageTitle>
 

@@ -1,0 +1,75 @@
+@page "/labs/api"
+@using System.Text.Json
+@inject ForecastApiClient ApiClient
+@implements IDisposable
+
+<LabFrame Slug="api" OnReset="Reset">
+    <MudGrid Class="mb-3">
+        <MudItem xs="12" md="6"><MudTextField T="string" @bind-Value="_query.Search" Label="Summary, date, ID or temperature" MaxLength="120" /></MudItem>
+        <MudItem xs="12" md="3"><MudNumericField T="int" Label="Latency (ms)" @bind-Value="_query.DelayMs" Min="0" Max="2000" /></MudItem>
+        <MudItem xs="12" md="3"><MudSelect T="int" Label="Dataset size" @bind-Value="_query.Count">@foreach (var size in ForecastData.Sizes) { <MudSelectItem Value="size">@size</MudSelectItem> }</MudSelect></MudItem>
+    </MudGrid>
+    <MudStack Row Class="flex-wrap" AlignItems="AlignItems.Center">
+        <MudSwitch T="bool" @bind-Value="_query.Fail" Label="Simulate failure" Color="Color.Warning" />
+        <MudSwitch T="bool" @bind-Value="_query.Descending" Label="Newest first" />
+        <MudButton OnClick="Search" Color="Color.Primary" Variant="Variant.Filled">Load page</MudButton>
+        <MudButton OnClick="Cancel" Disabled="@(!_loading)">Cancel request</MudButton>
+    </MudStack>
+    @if (_loading) { <MudProgressLinear Indeterminate="true" Class="my-3" aria-label="Loading API page" /> }
+    <MudText Class="my-3" role="status">@_status</MudText>
+    @if (_error is not null) { <MudAlert Severity="Severity.Error">@_error</MudAlert> }
+    @if (_result is not null && _loaded is not null)
+    {
+        <MudTable T="WeatherForecast" Items="_result.Items" Dense Hover>
+            <HeaderContent><MudTh>Date</MudTh><MudTh>°C</MudTh><MudTh>Summary</MudTh></HeaderContent>
+            <RowTemplate><MudTd DataLabel="Date">@context.Date?.ToString("d")</MudTd><MudTd DataLabel="°C">@context.TemperatureC</MudTd><MudTd DataLabel="Summary">@context.Summary</MudTd></RowTemplate>
+            <NoRecordsContent><MudText>No matching records. Try another search.</MudText></NoRecordsContent>
+        </MudTable>
+        <MudStack Row Class="mt-3" AlignItems="AlignItems.Center">
+            <MudButton OnClick="Previous" Disabled="@(_loading || _loaded.Page == 0)">Previous</MudButton>
+            <MudText>Page @(_loaded.Page + 1) · @_result.Total matches · @_result.Items.Count records transferred</MudText>
+            <MudButton OnClick="Next" Disabled="@(_loading || (_loaded.Page + 1) * _loaded.PageSize >= _result.Total)">Next</MudButton>
+        </MudStack>
+    }
+</LabFrame>
+
+@code {
+    // _query is the form being edited; _loaded is the query that produced the visible page, so paging
+    // never mixes an edited search with the previous result's page count.
+    private ForecastQuery _query = new();
+    private ForecastQuery? _loaded;
+    private ForecastPage? _result;
+    private CancellationTokenSource? _request;
+    private bool _loading;
+    private string? _error;
+    private string _status = InitialStatus;
+    private const string InitialStatus = "Load a page to send a request through the typed HttpClient.";
+    private Task Search() { var query = _query.Clone(); query.Page = 0; return Load(query); }
+    private Task Previous() => _loaded is null ? Task.CompletedTask : Load(WithPage(_loaded, _loaded.Page - 1));
+    private Task Next() => _loaded is null ? Task.CompletedTask : Load(WithPage(_loaded, _loaded.Page + 1));
+    private static ForecastQuery WithPage(ForecastQuery query, int page) { var next = query.Clone(); next.Page = page; return next; }
+    private void Cancel() => _request?.Cancel();
+    private void Reset() { Cancel(); _request = null; _loading = false; _query = new(); _loaded = null; _result = null; _error = null; _status = "Experiment reset. Load a new page."; }
+    private async Task Load(ForecastQuery query)
+    {
+        Cancel();
+        using var request = new CancellationTokenSource();
+        _request = request;
+        _loading = true; _error = null; _result = null;
+        var timer = Stopwatch.StartNew();
+        try
+        {
+            var result = await ApiClient.ReadAsync(query, request.Token);
+            if (request.IsCancellationRequested) return;
+            _result = result;
+            _loaded = query;
+            _status = $"Received page in {timer.ElapsedMilliseconds} ms (includes configured latency).";
+        }
+        catch (OperationCanceledException) when (request.IsCancellationRequested) { if (_request == request) _status = "Request canceled."; }
+        catch (OperationCanceledException) { if (_request == request) _error = "API request timed out. Retry or check the API base URL."; }
+        catch (HttpRequestException error) { if (_request == request) _error = $"API request failed ({error.StatusCode?.ToString() ?? "connection unavailable"}). Check the API base URL or turn off simulated failure and retry."; }
+        catch (Exception error) when (error is JsonException or NotSupportedException) { if (_request == request) _error = "The API answered with content this client cannot read. Check that the base URL points at this app."; }
+        finally { if (_request == request) { _loading = false; _request = null; } }
+    }
+    public void Dispose() => Cancel();
+}

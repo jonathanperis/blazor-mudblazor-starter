@@ -1,0 +1,91 @@
+@inherits LayoutComponentBase
+@inject UiPreferences Preferences
+@inject NavigationManager Navigation
+@inject LearningHost Host
+
+<MudThemeProvider IsDarkMode="Preferences.IsDarkMode" />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
+@* The href keeps the current path: a bare "#main-content" resolves against <base href> and would leave the page. *@
+<a class="skip-link" href="@SkipHref" @onclick="SkipToContent" @onclick:preventDefault>Skip to content</a>
+<MudLayout Class="@(Preferences.IsDarkMode ? "sandbox-dark" : "sandbox-light")">
+    <MudAppBar Dense Elevation="1">
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer" aria-label="Toggle navigation drawer" />
+        <MudText Typo="Typo.h6" HtmlTag="span">Blazor learning sandbox</MudText>
+        <MudSpacer />
+        <div class="desktop-theme"><MudSwitch T="bool" Value="Preferences.IsDarkMode" ValueChanged="Preferences.SetThemeAsync" Label="Dark mode" Color="Color.Secondary" /></div>
+        <div class="mobile-theme"><MudIconButton Icon="@(Preferences.IsDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" Color="Color.Inherit" OnClick="ToggleTheme" aria-label="@(Preferences.IsDarkMode ? "Use light theme" : "Use dark theme")" /></div>
+        <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Project links" Color="Color.Inherit">
+            <MudMenuItem Href="@LabCatalog.Repository" Target="_blank" rel="noopener noreferrer">GitHub</MudMenuItem>
+            <MudMenuItem Href="https://jonathanperis.github.io/blazor-mudblazor-starter/docs/" Target="_blank" rel="noopener noreferrer">Learning guide</MudMenuItem>
+            @if (!Host.IsStaticDemo)
+            {
+                <MudMenuItem Href="healthz" Target="_blank">Liveness</MudMenuItem>
+            }
+        </MudMenu>
+    </MudAppBar>
+    @* OpenChanged also fires when a responsive drawer closes itself on a small screen; only the menu button persists a choice. *@
+    <MudDrawer Open="Preferences.DrawerOpen" OpenChanged="Preferences.ObserveDrawer" ClipMode="DrawerClipMode.Always">
+        <MudNavMenu>
+            <MudNavLink Href="./" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Overview</MudNavLink>
+            <MudNavLink Href="labs" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.School">Learning paths</MudNavLink>
+            <MudDivider />
+            @foreach (var lab in LabCatalog.All)
+            {
+                <MudNavLink Href="@lab.Href">@lab.Title</MudNavLink>
+            }
+        </MudNavMenu>
+    </MudDrawer>
+    <MudMainContent>
+        <main id="main-content" tabindex="-1" @ref="_main">
+            @if (Host.IsStaticDemo)
+            {
+                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Dense Class="ma-4 mb-0">
+                    Static WebAssembly demo on GitHub Pages. Everything runs in your browser; server-only features use labeled stand-ins.
+                    <MudLink Href="@($"{LabCatalog.Repository}#run-locally")" Target="_blank" rel="noopener noreferrer">Run locally</MudLink> for the full Blazor Server experience.
+                </MudAlert>
+            }
+            @if (!Preferences.Available)
+            {
+                <MudAlert Severity="Severity.Info" Dense>Browser storage is unavailable. Theme and navigation still work for this visit.</MudAlert>
+            }
+            <ErrorBoundary @key="Navigation.Uri">
+                <ChildContent>@Body</ChildContent>
+                <ErrorContent>
+                    <MudAlert Severity="Severity.Error" Class="ma-4">This lab encountered an error. Reload it to start a fresh experiment.</MudAlert>
+                    <MudButton OnClick="Reload" Class="ma-4" StartIcon="@Icons.Material.Filled.Refresh">Reload lab</MudButton>
+                </ErrorContent>
+            </ErrorBoundary>
+        </main>
+    </MudMainContent>
+</MudLayout>
+<div id="blazor-error-ui" role="alert">The app stopped responding. <a href="" class="reload">Reload the page</a>.</div>
+
+@code {
+    private ElementReference _main;
+    private string SkipHref => $"{Navigation.Uri.Split('#')[0]}#main-content";
+    private Task ToggleDrawer() => Preferences.SetDrawerAsync(!Preferences.DrawerOpen);
+    private Task ToggleTheme() => Preferences.SetThemeAsync(!Preferences.IsDarkMode);
+    // A link to the current address is an in-app navigation that keeps the failed boundary; reload instead.
+    private void Reload() => Navigation.Refresh(forceReload: true);
+
+    private async Task SkipToContent()
+    {
+        try { await _main.FocusAsync(); }
+        catch (JSException) { }
+        catch (JSDisconnectedException) { }
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (!firstRender) return;
+        try
+        {
+            await Preferences.LoadAsync();
+            StateHasChanged();
+        }
+        catch (JSDisconnectedException) { }
+        catch (TaskCanceledException) { }
+    }
+}

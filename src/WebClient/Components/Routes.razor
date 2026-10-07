@@ -1,8 +1,9 @@
-﻿@inject WebClient.Features.Notebook.LearnerWorkspace Workspace
+@inject WebClient.Features.Notebook.LearnerWorkspace Workspace
 
-<Router AppAssembly="typeof(Program).Assembly">
+@* The labs live in WebClient.Shared, which the WebAssembly demo reuses; this host adds server-only pages. *@
+<Router AppAssembly="typeof(Program).Assembly" AdditionalAssemblies="[typeof(LabCatalog).Assembly]" NotFoundPage="typeof(WebClient.Shared.Components.Pages.NotFound)">
     <Found Context="routeData">
-        <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+        <RouteView RouteData="routeData" DefaultLayout="typeof(MainLayout)" />
         <FocusOnNavigate RouteData="routeData" Selector="h1" />
     </Found>
 </Router>

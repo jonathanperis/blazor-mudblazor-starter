@@ -1,0 +1,26 @@
+@page "/labs/localization"
+@using WebClient.Shared.Features.Localization
+@using Microsoft.Extensions.Localization
+@inject IStringLocalizer<LocalizationText> Text
+@inject LearningHost Host
+
+<LabFrame Slug="localization" OnReset="Reset">
+    @* Choosing a culture is host-specific: a cookie form post on the server, browser storage in the static demo. *@
+    <DynamicComponent Type="Host.CulturePanel" />
+    <MudText Typo="Typo.h6" HtmlTag="h2">@Text["Greeting"]</MudText>
+    <MudText Class="my-2">@Text["Culture"]: @CultureInfo.CurrentCulture.Name</MudText>
+    <MudText>@Text["Amount"]: @(1234.56m.ToString("N2", CultureInfo.CurrentCulture))</MudText>
+    <MudText>@Text["Date"]: @(new DateTime(2026, 9, 16).ToString("D", CultureInfo.CurrentCulture))</MudText>
+    <MudText Typo="Typo.body2" Class="my-2">Number and date formats follow the culture. A currency symbol would too, but changing the culture never converts an amount: format money with an explicit currency.</MudText>
+    <MudTextField Label="@Text["Message"]" @bind-Value="_goal" MaxLength="120" Class="my-3" />
+    <MudButton OnClick="Announce" Color="Color.Primary" Variant="Variant.Filled">@Text["Submit"]</MudButton>
+    <p role="status" aria-live="polite">@_announcement</p>
+    <MudText Typo="Typo.body2">This example and MudBlazor component strings are localized; the teaching guide remains in English. Labels, visible focus indicators, and the live region support keyboard and screen-reader practice.</MudText>
+</LabFrame>
+
+@code {
+    private string _goal = "";
+    private string _announcement = "";
+    private void Announce() => _announcement = Text["Announced", _goal];
+    private void Reset() { _goal = ""; _announcement = ""; }
+}

@@ -1,4 +1,6 @@
-FROM mcr.microsoft.com/dotnet/sdk:10.0.401 AS build
+# The SDK stage runs on the build machine's architecture and cross-publishes for TARGETARCH, so multi-arch
+# builds never run the .NET SDK under emulation.
+FROM --platform=$BUILDPLATFORM mcr.microsoft.com/dotnet/sdk:10.0.401 AS build
 ARG BUILD_CONFIGURATION=Release
 ARG READY_TO_RUN=false
 ARG TARGETARCH
@@ -11,9 +13,11 @@ RUN dotnet publish "WebClient/WebClient.csproj" --no-restore -c "$BUILD_CONFIGUR
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0.12 AS final
 WORKDIR /app
-RUN mkdir -p /app/App_Data && chown app:app /app/App_Data
-USER app
-ENV ASPNETCORE_URLS=http://+:5000
+RUN mkdir -p /app/App_Data && chown "$APP_UID" /app/App_Data
+# A numeric user lets orchestrators verify runAsNonRoot. The image has no curl or wget for a HEALTHCHECK;
+# probe /healthz (liveness) and /healthz/ready (SQLite readiness) from the orchestrator instead.
+USER $APP_UID
+ENV ASPNETCORE_HTTP_PORTS=5000
 EXPOSE 5000
 COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "WebClient.dll"]

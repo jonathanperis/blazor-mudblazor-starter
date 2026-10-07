@@ -1,0 +1,12 @@
+@page "/labs/observability"
+@inject LearningHost Host
+
+<LabFrame Slug="observability" OnReset="Reset">
+    @* The panel owns its request; a new key disposes it, which cancels any work in flight. *@
+    <DynamicComponent Type="Host.DiagnosticsPanel" @key="_generation" />
+</LabFrame>
+
+@code {
+    private int _generation;
+    private void Reset() => _generation++;
+}

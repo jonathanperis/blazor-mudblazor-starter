@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using WebClient.Features.Forecasts;
-using WebClient.Features.Learning;
+using WebClient.Shared.Features.Forecasts;
+using WebClient.Shared.Features.Learning;
 
 namespace WebClient.Tests;
 
@@ -47,6 +47,48 @@ public sealed class ForecastTests
         Assert.Equal(rows.Select(r => (r.Id, r.Date, r.TemperatureC, r.Summary)), imported.Select(r => (r.Id, r.Date, r.TemperatureC, r.Summary)));
         rows[0].Summary = "=1+1";
         Assert.Contains("\"'=1+1\"", ForecastCsv.Export(rows));
+    }
+
+    [Theory]
+    [InlineData("=1+1")]
+    [InlineData("-5 and windy")]
+    [InlineData("'quoted'")]
+    [InlineData("''")]
+    [InlineData("Mild")]
+    public void Csv_escaping_survives_a_round_trip_at_the_length_limit(string summary)
+    {
+        var rows = ForecastData.Generate(2);
+        rows[0].Summary = summary;
+        rows[1].Summary = summary[0] + new string('x', 119);
+        var imported = ForecastCsv.Parse(ForecastCsv.Export(rows));
+        Assert.Equal(rows.Select(r => r.Summary), imported.Select(r => r.Summary));
+    }
+
+    [Fact]
+    public void Csv_ignores_blank_lines()
+    {
+        var rows = ForecastData.Generate(2);
+        var text = ForecastCsv.Export(rows).Replace("\n", "\r\n\r\n", StringComparison.Ordinal) + "\n";
+        Assert.Equal(rows.Select(r => r.Id), ForecastCsv.Parse(text).Select(r => r.Id));
+    }
+
+    [Theory]
+    [InlineData("en-US", "1/2/2026")]
+    [InlineData("pt-BR", "02/01/2026")]
+    [InlineData("pt-BR", "2026-01-02")]
+    public void Api_search_uses_the_callers_culture(string culture, string search)
+    {
+        var page = new ForecastCatalog().Read(new ForecastQuery { Count = 100, Search = search, Culture = culture });
+        Assert.Equal(new DateTime(2026, 1, 2), Assert.Single(page.Items).Date);
+    }
+
+    [Fact]
+    public void Api_rejects_unsupported_cultures_and_orders_by_direction()
+    {
+        Assert.Contains("culture", new ForecastQuery { Culture = "fr-FR" }.Validate().Keys);
+        var catalog = new ForecastCatalog();
+        var newest = catalog.Read(new ForecastQuery { Count = 10, Descending = true, PageSize = 10 });
+        Assert.Equal(ForecastData.Generate(10).Select(r => r.Id).Reverse(), newest.Items.Select(r => r.Id));
     }
 
     [Theory]

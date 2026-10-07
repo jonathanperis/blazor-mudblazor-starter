@@ -1,0 +1,26 @@
+<Project Sdk="Microsoft.NET.Sdk.Razor">
+
+  <!-- Labs, layout and browser-safe services shared by the Blazor Server and WebAssembly hosts. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <!-- The container restores the server for one runtime (-a), which flows to this project; lock those runtimes too. -->
+    <RuntimeIdentifiers>linux-x64;linux-arm64</RuntimeIdentifiers>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <SupportedPlatform Include="browser" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.12" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.12" />
+    <PackageReference Include="MudBlazor" Version="9.11.0" />
+    <PackageReference Include="MudBlazor.Translations" Version="3.6.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="WebClient.Tests" />
+  </ItemGroup>
+
+</Project>
