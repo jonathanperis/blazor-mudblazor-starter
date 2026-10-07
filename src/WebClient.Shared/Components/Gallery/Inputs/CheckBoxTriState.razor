@@ -1,7 +1,7 @@
 <MudStack Spacing="2">
     <MudCheckBox @bind-Value="_dietary" TriState="true" Color="Color.Secondary" Label="Contains nuts" />
     <MudText Typo="Typo.body2" role="status">
-        @(_dietary switch { true => "Labelled: contains nuts.", false => "Labelled: nut-free.", null => "Not yet checked by the kitchen." })
+        @(_dietary is null ? "Not yet checked by the kitchen." : _dietary.Value ? "Labelled: contains nuts." : "Labelled: nut-free.")
     </MudText>
     <MudButton Size="Size.Small" Variant="Variant.Outlined" OnClick="() => _dietary = null" Style="align-self: start">Mark as unknown</MudButton>
 </MudStack>
