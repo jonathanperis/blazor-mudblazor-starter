@@ -6,6 +6,7 @@
 dotnet restore --locked-mode
 dotnet test -c Release --no-restore
 dotnet publish src/WebClient -c Release --no-restore -o artifacts/publish
+dotnet publish src/WebClient.Wasm -c Release --no-restore -o artifacts/wasm
 dotnet list package --vulnerable --include-transitive
 ```
 
@@ -15,14 +16,15 @@ Tests use xUnit, bUnit, ASP.NET Core's in-process server, and real SQLite migrat
 
 | Layer | Behavior |
 |---|---|
-| Components | Draft cancellation/confirmation, required-field rejection, callback/reset behavior, preference write paths |
-| Forecast services | Deterministic IDs and paging, validated commits, CSV quoting and bounds, cancellation |
-| HTTP integration | Prerendered headings on every lab, liveness/readiness, bounded API requests, cancellation and simulated failure |
+| Components | Draft cancellation/confirmation, required-field rejection, callback/reset behavior, preference write paths, storage failure fallback, unsaved self-closing drawer |
+| Forecast services | Deterministic IDs and paging, validated commits, CSV quoting, bounds, lossless escaping and blank lines, culture-aware search, cancellation |
+| HTTP integration | Prerendered headings on every lab, liveness/readiness, bounded API requests with validation problems, cancellation and simulated failure, security headers, path-preserving skip link, base-relative links |
 | Identity | Antiforgery rejection, anonymous/student/instructor policy results, disabled demo sign-in |
-| Persistence | Migrations, workspace isolation, stale-update/delete conflicts, scoped reset |
+| Persistence | Migrations, workspace isolation, stale-update/delete conflicts, scoped reset, note limit, page-only sliding workspace cookie, tampered-cookie replacement |
+| Static demo | In-browser API rules, encoded typed-client requests, localStorage notebook outcomes, browser personas, existing lab sources |
 | Localization | Culture cookie, Portuguese resource text, culture-specific formatting |
 
-These checks do not measure browser layout, assistive-technology behavior, or a live hosting environment. Browser and post-deployment verification are separate test layers; Hostinger setup is pending.
+These checks do not measure browser layout, assistive-technology behavior, or a live hosting environment. The WebAssembly demo has a browser check (below); the server app's browser behavior and post-deployment verification remain separate layers. Hostinger setup is pending.
 
 ## Check a published app through HTTP
 
@@ -39,7 +41,22 @@ Then:
 python3 scripts/smoke-http.py --base-url http://127.0.0.1:5000
 ```
 
-The script retries readiness, checks every lab's prerendered heading, and retrieves required static assets. It does not click the UI.
+The script retries readiness, checks that every route prerenders its own heading, retrieves required static assets, and reads one API page. It does not click the UI.
+
+## Check the WebAssembly demo in a browser
+
+Build the Pages site with the demo, then drive it in Chromium:
+
+```sh
+dotnet publish src/WebClient.Wasm -c Release -o artifacts/wasm
+cd docs
+npm run build
+python3 ../scripts/prepare-pages-demo.py
+npx playwright install chromium   # once; or set PLAYWRIGHT_CHANNEL=chrome
+npm run check:demo
+```
+
+The check serves `docs/out` like GitHub Pages (repository path, `404.html` fallback) and verifies deep links, the in-browser API, the skip link, scoped state, notebook conflicts, browser personas, culture reload, atomic CSV import, the largest grid, the not-found page, and a clean console.
 
 ## Compare performance honestly
 

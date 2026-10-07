@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Check rendered identity, Markdown, local references and complete sitemap coverage."""
+"""Check rendered identity, navigation, Markdown, local references, the 404/demo entry points and sitemap coverage."""
 import json
 import xml.etree.ElementTree as ET
 from collections import Counter
@@ -25,10 +25,21 @@ class Page(HTMLParser):
         self.canonical = None
         self.structured_data = ""
         self._in_structured_data = False
+        self.title = ""
+        self._in_title = False
+        self.lang = None
+        self.current = []
+        self.sitemap = None
 
     def handle_starttag(self, tag, attrs):
         self.tags[tag] += 1
         attributes = dict(attrs)
+        if tag == "html":
+            self.lang = attributes.get("lang")
+        if tag == "title":
+            self._in_title = True
+        if tag == "a" and attributes.get("aria-current") == "page":
+            self.current.append(attributes.get("href"))
         if attributes.get("id"):
             self.ids[attributes["id"]] += 1
         if tag == "a" and attributes.get("href"):
@@ -38,6 +49,8 @@ class Page(HTMLParser):
         if tag == "link":
             if attributes.get("rel") == "canonical":
                 self.canonical = attributes.get("href")
+            elif attributes.get("rel") == "sitemap":
+                self.sitemap = attributes.get("href")
             elif attributes.get("href"):
                 self.assets.append(attributes["href"])
         if tag in {"script", "img", "source"} and attributes.get("src"):
@@ -46,10 +59,14 @@ class Page(HTMLParser):
             self._in_structured_data = True
 
     def handle_data(self, data):
+        if self._in_title:
+            self.title += data
         if self._in_structured_data:
             self.structured_data += data
 
     def handle_endtag(self, tag):
+        if tag == "title":
+            self._in_title = False
         if tag == "script":
             self._in_structured_data = False
 
@@ -62,10 +79,16 @@ def require(condition, message):
 def local_reference(href, route=""):
     target = urlsplit(urljoin(BASE + (route + "/" if route else ""), href))
     base = urlsplit(BASE)
-    if target.netloc != base.netloc or not target.path.startswith(base.path):
+    if target.netloc != base.netloc:
         return None
+    # GitHub Pages serves this project under its repository path; a same-host link outside it is broken.
+    require(target.path.startswith(base.path), f"{route or '/'} links outside the site base path: {href}")
     relative = unquote(target.path.removeprefix(base.path)).removesuffix("index.html").strip("/")
     return relative, unquote(target.fragment)
+
+
+def exists(relative):
+    return (OUT / relative).is_file() or (OUT / relative / "index.html").is_file()
 
 
 def main():
@@ -86,10 +109,24 @@ def main():
         description = page.metadata.get("description")
         require(description and description == page.metadata.get("og:description") == page.metadata.get("twitter:description"), f"description metadata differs in {route or '/'}")
         require(page.canonical == BASE + (route + "/" if route else ""), f"canonical URL differs in {route or '/'}")
+        require(page.lang == "en", f"{route or '/'} must declare its language")
+        require(page.sitemap == "/blazor-mudblazor-starter/sitemap-index.xml", f"{route or '/'} must link the sitemap")
+        if route.startswith("docs"):
+            expected = "/blazor-mudblazor-starter/" + route + "/"
+            require(page.current == [expected], f"{route} must mark exactly its own navigation link as current, found {page.current}")
         pages[route] = page
 
     descriptions = [page.metadata["description"] for route, page in pages.items() if route.startswith("docs")]
     require(len(set(descriptions)) == len(descriptions), "guide pages must have distinct topic descriptions")
+    titles = [page.title.strip() for page in pages.values()]
+    require(all(titles) and len(set(titles)) == len(titles), "every page needs a distinct title")
+
+    not_found = (OUT / "404.html").read_text(encoding="utf-8") if (OUT / "404.html").is_file() else ""
+    require('name="robots" content="noindex"' in not_found and 'rel="canonical"' not in not_found, "404.html must exist and not be indexed")
+    require("/demo/" in not_found and "?p=" in not_found, "404.html must redirect demo deep links into the WebAssembly app")
+    demo = OUT / "demo/index.html"
+    require(demo.is_file(), "missing demo/index.html: publish src/WebClient.Wasm and run scripts/prepare-pages-demo.py after the build")
+    require('<base href="/blazor-mudblazor-starter/demo/" />' in demo.read_text(encoding="utf-8"), "demo base href must match the Pages path")
     for route, page in pages.items():
         for href in page.links:
             if href.startswith(SOURCE):
@@ -100,18 +137,17 @@ def main():
                 continue
             relative, fragment = target
             if relative not in pages:
-                require((OUT / relative).is_file(), f"{route or '/'} links to missing {href}")
+                require(exists(relative), f"{route or '/'} links to missing {href}")
             elif fragment:
                 require(fragment in pages[relative].ids, f"{route or '/'} links to missing anchor {href}")
         for href in page.assets:
             target = local_reference(href, route)
             if target is not None:
-                require((OUT / target[0]).is_file(), f"{route or '/'} references missing asset {href}")
+                require(exists(target[0]), f"{route or '/'} references missing asset {href}")
 
     for route in ["docs/getting-started", "docs/configuration", "docs/deployment"]:
         require(pages[route].tags["pre"] and pages[route].tags["code"] and pages[route].tags["table"], f"Markdown features missing in {route}")
-    robots = (OUT / "robots.txt").read_text()
-    require(f"Sitemap: {BASE}sitemap-index.xml" in robots and (OUT / "sitemap-index.xml").is_file(), "robots sitemap differs from generated artifact")
+    require((OUT / "sitemap-index.xml").is_file(), "missing generated sitemap index")
     index = ET.parse(OUT / "sitemap-index.xml")
     sitemap_routes = []
     for location in index.findall(".//{*}sitemap/{*}loc"):
@@ -124,7 +160,7 @@ def main():
                 raise SystemExit(f"rendered docs: sitemap references missing route {entry.text}")
             sitemap_routes.append(page[0])
     require(sorted(sitemap_routes) == sorted(pages), "sitemap must list every generated route exactly once")
-    print(f"Rendered docs checks passed ({len(pages)} routes, identity, descriptions, links/assets, source paths, Markdown, sitemap)")
+    print(f"Rendered docs checks passed ({len(pages)} routes, identity, titles, descriptions, navigation, links/assets, source paths, Markdown, 404, demo, sitemap)")
 
 
 if __name__ == "__main__":

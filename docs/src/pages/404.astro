@@ -1,0 +1,38 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro';
+import Navbar from '@/components/home/Navbar.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<BaseLayout noindex title="Page not found · Blazor learning sandbox" description="This page does not exist. Open the learning guide, the live WebAssembly demo, or the project overview.">
+  {/*
+    GitHub Pages answers every unknown path with this page. The WebAssembly demo is a single-page app, so a deep
+    link such as /demo/labs/api must load demo/index.html; the demo restores the original path from ?p=.
+  */}
+  <script is:inline slot="head" define:vars={{ base }}>
+    (function () {
+      var demo = base + '/demo/';
+      var path = window.location.pathname;
+      if (path.indexOf(demo) === 0 && path.length > demo.length) {
+        var route = '/' + path.slice(demo.length) + window.location.search + window.location.hash;
+        window.location.replace(demo + '?p=' + encodeURIComponent(route));
+      }
+    })();
+  </script>
+  <Navbar />
+  <main class="site-main" id="main-content" tabindex="-1">
+    <section class="hero" aria-labelledby="not-found-title">
+      <div class="hero-copy">
+        <p class="eyebrow">404</p>
+        <h1 id="not-found-title">Page not found</h1>
+        <p class="tagline">This address does not exist. Choose where to continue.</p>
+        <div class="ctas">
+          <a class="btn btn-primary" href={`${base}/docs/`}>Open the learning guide</a>
+          <a class="btn btn-secondary" href={`${base}/demo/`}>Open the live demo</a>
+          <a class="btn btn-secondary" href={`${base}/`}>Project overview</a>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>

@@ -185,8 +185,6 @@ body {
   box-shadow: var(--shadow);
 }
 
-.doc-section.hidden-section { display: none; }
-
 .content h1,
 .content h2,
 .content h3,
@@ -254,6 +252,19 @@ body {
   border-radius: 14px;
   background: var(--accent-dim);
   color: var(--text-body);
+}
+
+.table-scroll {
+  overflow-x: auto;
+  margin: 1.5rem 0;
+  border-radius: 16px;
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.table-scroll > table {
+  display: table;
+  margin: 0;
+  box-shadow: none;
 }
 
 .content table {
