@@ -1,0 +1,13 @@
+<EnumMatrix TRow="Typo" TColumn="Underline" Caption="MudLink: Typo × Underline" RowValues="TextTypos">
+    <Cell>
+        <MudLink Href="components/link" Typo="@context.Row" Underline="@context.Column">Opening hours</MudLink>
+    </Cell>
+</EnumMatrix>
+
+@code {
+    private static readonly Typo[] TextTypos =
+    [
+        Typo.h4, Typo.h5, Typo.h6, Typo.subtitle1, Typo.subtitle2, Typo.body1, Typo.body2,
+        Typo.button, Typo.caption, Typo.overline, Typo.inherit
+    ];
+}

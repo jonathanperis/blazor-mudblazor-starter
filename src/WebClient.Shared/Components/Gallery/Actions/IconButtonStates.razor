@@ -1,0 +1,39 @@
+<MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="4">
+    <MudStack AlignItems="AlignItems.Center" Spacing="1">
+        <MudIconButton Icon="@Icons.Material.Outlined.Print" Variant="Variant.Outlined" Disabled aria-label="Print receipt" />
+        <MudText Typo="Typo.caption">Disabled</MudText>
+    </MudStack>
+    <MudStack AlignItems="AlignItems.Center" Spacing="1">
+        <MudIconButton Icon="@Icons.Material.Outlined.Map" Color="Color.Secondary" Href="components/link" aria-label="Open the link page" />
+        <MudText Typo="Typo.caption">Href (a link)</MudText>
+    </MudStack>
+    <MudStack AlignItems="AlignItems.Center" Spacing="1">
+        <MudIconButton Icon="@Icons.Material.Outlined.Refresh" Variant="Variant.Filled" Color="Color.Primary" DropShadow="false" Ripple="false" aria-label="Refresh stock" />
+        <MudText Typo="Typo.caption">No shadow or ripple</MudText>
+    </MudStack>
+    <MudStack AlignItems="AlignItems.Center" Spacing="1">
+        @* Without Icon, ChildContent is rendered inside the round button. *@
+        <MudIconButton Variant="Variant.Outlined" Color="Color.Tertiary" aria-label="Text size">
+            <span style="font: 600 1rem/1 var(--font-serif)">Aa</span>
+        </MudIconButton>
+        <MudText Typo="Typo.caption">Custom content</MudText>
+    </MudStack>
+    <MudStack AlignItems="AlignItems.Center" Spacing="1">
+        <MudIconButton Icon="@(_syncing ? null : Icons.Material.Outlined.Sync)" Variant="Variant.Filled" Color="Color.Primary"
+                       Disabled="_syncing" OnClick="SyncAsync" aria-label="@(_syncing ? "Syncing" : "Sync catalogue")">
+            <MudProgressCircular Size="Size.Small" Indeterminate />
+        </MudIconButton>
+        <MudText Typo="Typo.caption" role="status">@(_syncing ? "Syncing…" : "Busy: press to sync")</MudText>
+    </MudStack>
+</MudStack>
+
+@code {
+    private bool _syncing;
+
+    private async Task SyncAsync()
+    {
+        _syncing = true;
+        await Task.Delay(1500);
+        _syncing = false;
+    }
+}

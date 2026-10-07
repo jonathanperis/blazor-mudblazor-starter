@@ -1,0 +1,40 @@
+<MudStack Spacing="5">
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Single selection: loaf size</MudText>
+        <MudChipSet T="string" @bind-SelectedValue="_size" SelectedColor="Color.Primary" CheckMark Variant="Variant.Outlined">
+            <MudChip Value="@("Half loaf")" />
+            <MudChip Value="@("Whole loaf")" />
+            <MudChip Value="@("Family loaf")" />
+        </MudChipSet>
+        <MudText Typo="Typo.body2">SelectedValue: @_size</MudText>
+    </MudStack>
+
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Toggle selection: slicing (press again to clear)</MudText>
+        <MudChipSet T="string" @bind-SelectedValue="_slicing" SelectionMode="SelectionMode.ToggleSelection" SelectedColor="Color.Secondary" CheckMark>
+            <MudChip Value="@("Thin")" />
+            <MudChip Value="@("Thick")" />
+        </MudChipSet>
+        <MudText Typo="Typo.body2">SelectedValue: @(_slicing ?? "null (unsliced)")</MudText>
+    </MudStack>
+
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Multi selection: toppings</MudText>
+        <MudChipSet T="string" @bind-SelectedValues="_toppings" SelectionMode="SelectionMode.MultiSelection" SelectedColor="Color.Tertiary"
+                    CheckMark Variant="Variant.Text">
+            @foreach (var topping in Toppings)
+            {
+                <MudChip Value="topping" />
+            }
+        </MudChipSet>
+        <MudText Typo="Typo.body2">SelectedValues: @(_toppings?.Count > 0 ? string.Join(", ", _toppings) : "none")</MudText>
+    </MudStack>
+</MudStack>
+
+@code {
+    private static readonly string[] Toppings = ["Sesame", "Poppy seed", "Oats", "Sunflower", "Pumpkin seed"];
+
+    private string? _size = "Whole loaf";
+    private string? _slicing;
+    private IReadOnlyCollection<string>? _toppings = ["Sesame", "Oats"];
+}

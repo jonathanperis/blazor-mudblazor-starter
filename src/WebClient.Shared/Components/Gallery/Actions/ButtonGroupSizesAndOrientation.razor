@@ -1,0 +1,31 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" lg="8">
+        <MudStack Spacing="3">
+            @foreach (var size in Enum.GetValues<Size>())
+            {
+                <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+                    <MudText Typo="Typo.overline" Style="min-width: 5rem">@size</MudText>
+                    <MudButtonGroup Size="@size" Variant="Variant.Outlined" Color="Color.Secondary" aria-label="@($"Catalog pages, {size}")">
+                        <MudButton StartIcon="@Icons.Material.Outlined.ChevronLeft">Previous</MudButton>
+                        <MudButton>Page 4 of 12</MudButton>
+                        <MudButton EndIcon="@Icons.Material.Outlined.ChevronRight">Next</MudButton>
+                    </MudButtonGroup>
+                </MudStack>
+            }
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" lg="4">
+        <MudStack Row Spacing="4" Wrap="Wrap.Wrap" AlignItems="AlignItems.Start">
+            <MudButtonGroup Vertical Variant="Variant.Outlined" Color="Color.Primary" aria-label="Instrument">
+                <MudButton>Refractor</MudButton>
+                <MudButton>Reflector</MudButton>
+                <MudButton>Radio dish</MudButton>
+            </MudButtonGroup>
+            <MudButtonGroup Vertical Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" aria-label="Sky map zoom">
+                <MudIconButton Icon="@Icons.Material.Outlined.ZoomIn" aria-label="Zoom in" />
+                <MudIconButton Icon="@Icons.Material.Outlined.ZoomOut" aria-label="Zoom out" />
+                <MudIconButton Icon="@Icons.Material.Outlined.CenterFocusStrong" aria-label="Recenter" />
+            </MudButtonGroup>
+        </MudStack>
+    </MudItem>
+</MudGrid>

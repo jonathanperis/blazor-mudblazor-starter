@@ -1,0 +1,25 @@
+<MudStack Spacing="3">
+    <MudMenu Label="Share report" Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Outlined.ArrowDropDown">
+        <MudMenuItem Icon="@Icons.Material.Outlined.Link" Label="Copy link" OnClick="@(() => Pick("Copy link"))" />
+        <MudMenu Label="Download as" StartIcon="@Icons.Material.Outlined.Download">
+            <MudMenuItem Label="PDF" OnClick="@(() => Pick("Download as PDF"))" />
+            <MudMenu Label="Spreadsheet" StartIcon="@Icons.Material.Outlined.TableChart">
+                <MudMenuItem Label="CSV" OnClick="@(() => Pick("Download as CSV"))" />
+                <MudMenuItem Label="OpenDocument" OnClick="@(() => Pick("Download as OpenDocument"))" />
+            </MudMenu>
+        </MudMenu>
+        <MudMenu Label="Send to" StartIcon="@Icons.Material.Outlined.Send">
+            <MudMenuItem Label="Research team" OnClick="@(() => Pick("Send to research team"))" />
+            <MudMenuItem Label="Grant office" OnClick="@(() => Pick("Send to grant office"))" />
+        </MudMenu>
+        <MudDivider />
+        <MudMenuItem Icon="@Icons.Material.Outlined.Print" Label="Print" OnClick="@(() => Pick("Print"))" />
+    </MudMenu>
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+@code {
+    private string _status = "Hover or use the arrow keys to open a submenu.";
+
+    private void Pick(string action) => _status = $"Chose “{action}”.";
+}

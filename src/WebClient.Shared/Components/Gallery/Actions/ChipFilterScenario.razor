@@ -1,0 +1,72 @@
+<MudStack Spacing="3">
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.caption" id="filter-genres">Genre</MudText>
+        <MudChipSet T="string" @bind-SelectedValues="_genres" SelectionMode="SelectionMode.MultiSelection" CheckMark
+                    Variant="Variant.Outlined" SelectedColor="Color.Primary" aria-labelledby="filter-genres">
+            @foreach (var genre in Books.Select(book => book.Genre).Distinct().Order())
+            {
+                <MudChip Value="genre" />
+            }
+        </MudChipSet>
+    </MudStack>
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.caption" id="filter-format">Format</MudText>
+        <MudChipSet T="string" @bind-SelectedValue="_format" SelectionMode="SelectionMode.ToggleSelection" CheckMark
+                    Variant="Variant.Outlined" SelectedColor="Color.Secondary" aria-labelledby="filter-format">
+            <MudChip Value="@("Hardback")" />
+            <MudChip Value="@("Paperback")" />
+            <MudChip Value="@("Audiobook")" />
+        </MudChipSet>
+    </MudStack>
+
+    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+        <MudText Typo="Typo.body2" role="status">@Results.Count of @Books.Length titles</MudText>
+        <MudButton Size="Size.Small" StartIcon="@Icons.Material.Outlined.FilterAltOff" OnClick="Clear" Disabled="@(!Filtering)">Clear filters</MudButton>
+    </MudStack>
+    @if (Results.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info" Dense>No titles match these filters. Remove a genre or format to see more.</MudAlert>
+    }
+    else
+    {
+        <MudPaper Outlined>
+            <MudList T="string" Dense ReadOnly>
+                @foreach (var book in Results)
+                {
+                    <MudListItem Icon="@Icons.Material.Outlined.Book" Text="@book.Title" SecondaryText="@($"{book.Genre} · {book.Format}")" />
+                }
+            </MudList>
+        </MudPaper>
+    }
+</MudStack>
+
+@code {
+    private sealed record Book(string Title, string Genre, string Format);
+
+    private static readonly Book[] Books =
+    [
+        new("Salt and Lanterns", "Fiction", "Paperback"),
+        new("A Field Guide to Night Moths", "Nature", "Hardback"),
+        new("The Quiet Algorithm", "Science", "Audiobook"),
+        new("Harbour Songs", "Poetry", "Paperback"),
+        new("Under the Copper Dome", "Fiction", "Hardback"),
+        new("Rivers Without Maps", "Nature", "Audiobook"),
+        new("Small Numbers", "Science", "Paperback")
+    ];
+
+    private IReadOnlyCollection<string>? _genres = [];
+    private string? _format;
+
+    private bool Filtering => _genres?.Count > 0 || _format is not null;
+
+    private List<Book> Results => Books
+        .Where(book => _genres is not { Count: > 0 } || _genres.Contains(book.Genre))
+        .Where(book => _format is null || book.Format == _format)
+        .ToList();
+
+    private void Clear()
+    {
+        _genres = [];
+        _format = null;
+    }
+}

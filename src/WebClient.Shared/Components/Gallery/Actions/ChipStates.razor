@@ -1,0 +1,31 @@
+<MudStack Spacing="4">
+    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="2">
+        <MudText Typo="Typo.overline" Style="min-width: 7rem">Disabled chip</MudText>
+        <MudChip T="string" Color="Color.Primary" Text="Signed copy" Disabled />
+        <MudChip T="string" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.CardGiftcard" Text="Gift wrap" Disabled />
+    </MudStack>
+    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="2">
+        <MudText Typo="Typo.overline" Style="min-width: 7rem">Disabled set</MudText>
+        <MudChipSet T="string" SelectedValue="@("Collect in store")" Disabled CheckMark>
+            <MudChip Value="@("Collect in store")" />
+            <MudChip Value="@("Home delivery")" />
+        </MudChipSet>
+    </MudStack>
+    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="2">
+        <MudText Typo="Typo.overline" Style="min-width: 7rem">Read-only set</MudText>
+        <MudChipSet T="string" SelectedValue="@("In stock")" ReadOnly SelectedColor="Color.Success" CheckMark>
+            <MudChip Value="@("In stock")" />
+            <MudChip Value="@("Back order")" />
+        </MudChipSet>
+    </MudStack>
+    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="2">
+        <MudText Typo="Typo.overline" Style="min-width: 7rem">Link and click</MudText>
+        <MudChip T="string" Href="components/link" Color="Color.Info" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.Link" Text="Link page" />
+        <MudChip T="string" Color="Color.Secondary" Icon="@Icons.Material.Outlined.AddShoppingCart" OnClick="@(() => _inBasket++)" Text="Add to basket" />
+        <MudText Typo="Typo.body2" role="status">@_inBasket in basket</MudText>
+    </MudStack>
+</MudStack>
+
+@code {
+    private int _inBasket;
+}

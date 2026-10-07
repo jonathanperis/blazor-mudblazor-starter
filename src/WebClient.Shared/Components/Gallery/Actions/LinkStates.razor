@@ -1,0 +1,23 @@
+<MudStack Spacing="4" Style="max-width: 40rem">
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Disabled</MudText>
+        <MudText Typo="Typo.body1">
+            The <MudLink Href="components/link" Disabled>winter timetable</MudLink> is published on 1 November.
+        </MudText>
+    </MudStack>
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Navigate with a link, act with a button</MudText>
+        <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+            <MudLink Href="components/toggle-group">Read about toggle groups</MudLink>
+            <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" OnClick="@(() => _saved = !_saved)"
+                       StartIcon="@(_saved ? Icons.Material.Filled.Bookmark : Icons.Material.Outlined.BookmarkBorder)">
+                @(_saved ? "Saved for later" : "Save for later")
+            </MudButton>
+        </MudStack>
+        <MudText Typo="Typo.caption">The button changes state on this page, so it is a button even though it looks quiet.</MudText>
+    </MudStack>
+</MudStack>
+
+@code {
+    private bool _saved;
+}

@@ -1,0 +1,30 @@
+<MudStack Spacing="3">
+    <MudPaper Outlined Class="d-flex flex-wrap align-center gap-2 pa-3">
+        <MudStack Spacing="0" Class="flex-grow-1">
+            <MudText Typo="Typo.subtitle2">Episode 14: Reading the night sky</MudText>
+            <MudText Typo="Typo.caption">Observatory podcast · 38 min</MudText>
+        </MudStack>
+        <MudToggleIconButton @bind-Toggled="_favourite"
+                             Icon="@Icons.Material.Outlined.FavoriteBorder" ToggledIcon="@Icons.Material.Filled.Favorite" ToggledColor="Color.Error"
+                             aria-label="Favourite" aria-pressed="@Pressed(_favourite)" />
+        <MudToggleIconButton @bind-Toggled="_muted"
+                             Icon="@Icons.Material.Outlined.VolumeUp" ToggledIcon="@Icons.Material.Outlined.VolumeOff"
+                             aria-label="Mute" aria-pressed="@Pressed(_muted)" />
+        <MudToggleIconButton @bind-Toggled="_downloaded"
+                             Icon="@Icons.Material.Outlined.Download" ToggledIcon="@Icons.Material.Outlined.DownloadDone"
+                             Variant="Variant.Outlined" ToggledVariant="Variant.Filled" Color="Color.Secondary"
+                             aria-label="Available offline" aria-pressed="@Pressed(_downloaded)" />
+    </MudPaper>
+    <MudText Typo="Typo.body2" role="status">
+        @(_favourite ? "In favourites" : "Not a favourite") · @(_muted ? "Muted" : "Sound on") · @(_downloaded ? "Available offline" : "Streaming only")
+    </MudText>
+</MudStack>
+
+@code {
+    private bool _favourite = true;
+    private bool _muted;
+    private bool _downloaded;
+
+    // A stable name plus aria-pressed: assistive technology announces "Mute, toggle button, pressed".
+    private static string Pressed(bool toggled) => toggled ? "true" : "false";
+}

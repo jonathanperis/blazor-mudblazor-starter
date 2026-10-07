@@ -1,0 +1,27 @@
+<MudPaper Outlined Class="pa-4" Style="position: relative; max-width: 30rem; min-height: 24rem; margin-inline: auto">
+    <MudText Typo="Typo.h6" HtmlTag="h3">Rye &amp; Crumb · Today's orders</MudText>
+    <MudList T="string" Dense ReadOnly Class="mt-2" Style="padding-bottom: 5rem">
+        @foreach (var order in _orders)
+        {
+            <MudListItem Icon="@Icons.Material.Outlined.ReceiptLong" Text="@order" />
+        }
+    </MudList>
+    @* Not Fixed: the menu sits in the panel's corner instead of the viewport's. *@
+    <div style="position: absolute; right: 1rem; bottom: 1rem">
+        <MudFabMenu StartIcon="@Icons.Material.Outlined.Add" Color="Color.Primary" AlignItems="AlignItems.End" Label="New order" MenuStyle="white-space: nowrap">
+            <MudFabMenuItem StartIcon="@Icons.Material.Outlined.Storefront" Label="Counter sale" Color="Color.Primary" OnClick="@(() => Add("Counter sale: 2 sourdough"))" />
+            <MudFabMenuItem StartIcon="@Icons.Material.Outlined.Phone" Label="Phone order" Color="Color.Primary" OnClick="@(() => Add("Phone order: 12 rye rolls"))" />
+            <MudFabMenuItem StartIcon="@Icons.Material.Outlined.LocalShipping" Label="Wholesale" Color="Color.Primary" OnClick="@(() => Add("Wholesale: Café Lumen, 40 croissants"))" />
+        </MudFabMenu>
+    </div>
+</MudPaper>
+
+@code {
+    private readonly List<string> _orders =
+    [
+        "Counter sale: 1 seeded loaf",
+        "Phone order: birthday cake, collect 16:00"
+    ];
+
+    private void Add(string order) => _orders.Add(order);
+}

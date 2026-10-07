@@ -1,0 +1,48 @@
+<MudStack Spacing="3">
+    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="4">
+        <MudMenu AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+            <ActivatorContent>
+                <MudIconButton OnClick="@context.ToggleAsync" aria-label="Account menu for Noor Haddad">
+                    <MudAvatar Color="Color.Secondary" Size="Size.Small">NH</MudAvatar>
+                </MudIconButton>
+            </ActivatorContent>
+            <ChildContent>
+                <MudMenuItem Icon="@Icons.Material.Outlined.Person" Label="Profile" OnClick="@(() => Pick("Profile"))" />
+                <MudMenuItem Icon="@Icons.Material.Outlined.Logout" Label="Sign out" OnClick="@(() => Pick("Sign out"))" />
+            </ChildContent>
+        </MudMenu>
+
+        <MudMenu>
+            <ActivatorContent>
+                <MudChip T="string" Icon="@Icons.Material.Outlined.Language" Color="Color.Primary" OnClick="@context.ToggleAsync">Language: @_language</MudChip>
+            </ActivatorContent>
+            <ChildContent>
+                @foreach (var language in Languages)
+                {
+                    <MudMenuItem Label="@language" OnClick="@(() => _language = language)" />
+                }
+            </ChildContent>
+        </MudMenu>
+
+        <MudMenu Label="Hover to open" ActivationEvent="MouseEvent.MouseOver" Variant="Variant.Outlined"
+                 AnchorOrigin="Origin.BottomCenter" TransformOrigin="Origin.TopCenter">
+            <MudMenuItem Label="Opening hours" OnClick="@(() => Pick("Opening hours"))" />
+            <MudMenuItem Label="Getting here" OnClick="@(() => Pick("Getting here"))" />
+        </MudMenu>
+
+        <MudMenu Label="Right-click me" ActivationEvent="MouseEvent.RightClick" Variant="Variant.Outlined" Color="Color.Secondary">
+            <MudMenuItem Label="Rename" OnClick="@(() => Pick("Rename"))" />
+            <MudMenuItem Label="Move to folder" OnClick="@(() => Pick("Move to folder"))" />
+        </MudMenu>
+    </MudStack>
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+@code {
+    private static readonly string[] Languages = ["English", "Português", "Español"];
+
+    private string _language = "English";
+    private string _status = "The avatar and the chip are buttons, so Tab and Enter open them too.";
+
+    private void Pick(string item) => _status = $"Chose “{item}”.";
+}

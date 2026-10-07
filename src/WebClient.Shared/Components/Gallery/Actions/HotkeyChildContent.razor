@@ -1,0 +1,19 @@
+@using MudBlazor.Utilities
+
+<MudStack Spacing="3" Style="max-width: 32rem">
+    <MudText Typo="Typo.body1">
+        Press <kbd>Alt</kbd> + <kbd>Shift</kbd> + <kbd>H</kbd> to show the observatory shortcuts, and again to hide them.
+    </MudText>
+    <MudHotkey Key="JsKey.KeyH" KeyModifiers="Modifiers" HideChildContentOnRepress>
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Icon="@Icons.Material.Outlined.Keyboard">
+            <MudText Typo="Typo.subtitle2" HtmlTag="h3">Observatory shortcuts</MudText>
+            <MudText Typo="Typo.body2">Alt + Shift + O · Open dome</MudText>
+            <MudText Typo="Typo.body2">Alt + Shift + C · Close dome</MudText>
+            <MudText Typo="Typo.body2">Alt + Shift + P · Park telescope</MudText>
+        </MudAlert>
+    </MudHotkey>
+</MudStack>
+
+@code {
+    private static readonly JsKeyModifier[] Modifiers = [JsKeyModifier.AltLeft, JsKeyModifier.ShiftLeft];
+}

@@ -1,0 +1,46 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudButtonGroup Variant="_variant" Color="_color" Size="_size" Vertical="_vertical" FullWidth="_fullWidth"
+                        DropShadow="_dropShadow" aria-label="Seat class">
+            <MudButton>Economy</MudButton>
+            <MudButton>Business</MudButton>
+            <MudButton>First</MudButton>
+        </MudButtonGroup>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_variant" Label="Variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_size" Label="Size" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Size>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_vertical" Label="Vertical" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_fullWidth" Label="Full width" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_dropShadow" Label="Drop shadow" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private Variant _variant = Variant.Outlined;
+    private Color _color = Color.Primary;
+    private Size _size = Size.Medium;
+    private bool _vertical;
+    private bool _fullWidth;
+    private bool _dropShadow = true;
+
+    private const string Buttons = "\n    <MudButton>Economy</MudButton>\n    <MudButton>Business</MudButton>\n    <MudButton>First</MudButton>\n";
+
+    // MudButtonGroup defaults: Variant.Text, Color.Default, Size.Medium, DropShadow true.
+    private string Code => Snippet.Element("MudButtonGroup",
+    [
+        ("Variant", Snippet.Enum(_variant, Variant.Text)),
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("Size", Snippet.Enum(_size, Size.Medium)),
+        ("Vertical", Snippet.Flag(_vertical)),
+        ("FullWidth", Snippet.Flag(_fullWidth)),
+        ("DropShadow", _dropShadow ? null : "false")
+    ], Buttons);
+}

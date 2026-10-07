@@ -1,0 +1,76 @@
+<Playground Code="@Code">
+    <Preview>
+        @if (_iconOnly)
+        {
+            <MudMenu Icon="@Icons.Material.Outlined.MoreVert" AriaLabel="@_label" Color="_color" Size="_size" Dense="_dense" Disabled="_disabled"
+                     ActivationEvent="_activation" AnchorOrigin="_anchor" TransformOrigin="_transform">
+                @foreach (var shelf in Shelves) { <MudMenuItem Label="@shelf" OnClick="@(() => _shelf = shelf)" /> }
+            </MudMenu>
+        }
+        else
+        {
+            <MudMenu Label="@_label" Variant="_variant" Color="_color" Size="_size" Dense="_dense" Disabled="_disabled"
+                     ActivationEvent="_activation" AnchorOrigin="_anchor" TransformOrigin="_transform"
+                     EndIcon="@Icons.Material.Outlined.ArrowDropDown">
+                @foreach (var shelf in Shelves) { <MudMenuItem Label="@shelf" OnClick="@(() => _shelf = shelf)" /> }
+            </MudMenu>
+        }
+    </Preview>
+    <Controls>
+        <MudTextField @bind-Value="_label" Label="Label" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSelect @bind-Value="_anchor" Label="AnchorOrigin" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Origin>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_transform" Label="TransformOrigin" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Origin>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_activation" Label="ActivationEvent" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<MouseEvent>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_variant" Label="Variant" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="_iconOnly">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_size" Label="Size" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Size>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_iconOnly" Label="Icon button activator" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+        <MudText Typo="Typo.body2" role="status">Last shelf chosen: @_shelf</MudText>
+    </Controls>
+</Playground>
+
+@code {
+    private static readonly string[] Shelves = ["Want to read", "Reading now", "Finished"];
+
+    private string _label = "Reading list";
+    private Origin _anchor = Origin.BottomLeft;
+    private Origin _transform = Origin.TopLeft;
+    private MouseEvent _activation = MouseEvent.LeftClick;
+    private Variant _variant = Variant.Outlined;
+    private Color _color = Color.Primary;
+    private Size _size = Size.Medium;
+    private bool _iconOnly;
+    private bool _dense;
+    private bool _disabled;
+    private string _shelf = "none";
+
+    // MudMenu defaults: TransformOrigin.TopLeft, LeftClick, Variant.Text, Color.Default, Size.Medium. AnchorOrigin is unset by default.
+    private string Code => Snippet.Element("MudMenu",
+    [
+        (_iconOnly ? "Icon" : "Label", _iconOnly ? "@Icons.Material.Outlined.MoreVert" : _label),
+        ("AriaLabel", _iconOnly ? _label : null),
+        ("AnchorOrigin", $"Origin.{_anchor}"),
+        ("TransformOrigin", Snippet.Enum(_transform, Origin.TopLeft)),
+        ("ActivationEvent", Snippet.Enum(_activation, MouseEvent.LeftClick)),
+        ("Variant", _iconOnly ? null : Snippet.Enum(_variant, Variant.Text)),
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("Size", Snippet.Enum(_size, Size.Medium)),
+        ("EndIcon", _iconOnly ? null : "@Icons.Material.Outlined.ArrowDropDown"),
+        ("Dense", Snippet.Flag(_dense)),
+        ("Disabled", Snippet.Flag(_disabled))
+    ], "\n    <MudMenuItem Label=\"Want to read\" />\n    <MudMenuItem Label=\"Reading now\" />\n    <MudMenuItem Label=\"Finished\" />\n");
+}

@@ -1,0 +1,31 @@
+<MudStack Spacing="3">
+    <MudToggleGroup T="string" @bind-Value="_session" Color="Color.Primary" Class="mud-width-full" aria-label="Viewing session">
+        @foreach (var session in Sessions)
+        {
+            <MudToggleItem Value="session.Name" Class="py-3">
+                <MudStack Spacing="1" AlignItems="AlignItems.Start" Class="mud-width-full" Style="text-transform: none; text-align: start">
+                    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Class="mud-width-full">
+                        <MudText Typo="Typo.subtitle1">@session.Name</MudText>
+                        <MudIcon Icon="@(context ? Icons.Material.Filled.CheckCircle : Icons.Material.Outlined.Circle)" Size="Size.Small" />
+                    </MudStack>
+                    <MudText Typo="Typo.body2">@session.Time</MudText>
+                    <MudText Typo="Typo.caption">@session.Detail</MudText>
+                </MudStack>
+            </MudToggleItem>
+        }
+    </MudToggleGroup>
+    <MudText Typo="Typo.body2" role="status">Booked: @_session</MudText>
+</MudStack>
+
+@code {
+    private sealed record Session(string Name, string Time, string Detail);
+
+    private static readonly Session[] Sessions =
+    [
+        new("Moon and planets", "19:30 – 20:30", "Family friendly · 12 seats left"),
+        new("Deep sky", "21:00 – 22:30", "Galaxies and nebulae · 4 seats left"),
+        new("Astrophotography", "23:00 – 01:00", "Bring a camera · 2 seats left")
+    ];
+
+    private string _session = "Deep sky";
+}

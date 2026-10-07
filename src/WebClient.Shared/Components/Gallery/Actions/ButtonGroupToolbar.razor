@@ -1,0 +1,26 @@
+<MudStack Spacing="3">
+    <MudPaper Outlined Class="d-flex flex-wrap align-center gap-3 pa-2" role="toolbar" aria-label="Recipe formatting">
+        <MudButtonGroup Variant="Variant.Outlined" Size="Size.Small" DropShadow="false">
+            <MudIconButton Icon="@Icons.Material.Outlined.Undo" aria-label="Undo" OnClick="@(() => Log("Undo"))" />
+            <MudIconButton Icon="@Icons.Material.Outlined.Redo" aria-label="Redo" OnClick="@(() => Log("Redo"))" />
+        </MudButtonGroup>
+        <MudButtonGroup Variant="Variant.Outlined" Size="Size.Small" DropShadow="false">
+            <MudIconButton Icon="@Icons.Material.Outlined.FormatBold" aria-label="Bold" OnClick="@(() => Log("Bold"))" />
+            <MudIconButton Icon="@Icons.Material.Outlined.FormatItalic" aria-label="Italic" OnClick="@(() => Log("Italic"))" />
+            <MudIconButton Icon="@Icons.Material.Outlined.FormatUnderlined" aria-label="Underline" OnClick="@(() => Log("Underline"))" />
+        </MudButtonGroup>
+        <MudButtonGroup Variant="Variant.Outlined" Size="Size.Small" DropShadow="false">
+            <MudButton StartIcon="@Icons.Material.Outlined.FormatListBulleted" OnClick="@(() => Log("Ingredients list"))">Ingredients</MudButton>
+            <MudButton StartIcon="@Icons.Material.Outlined.FormatListNumbered" OnClick="@(() => Log("Method steps"))">Steps</MudButton>
+        </MudButtonGroup>
+        <MudSpacer />
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Small" OnClick="@(() => Log("Save recipe"))">Save</MudButton>
+    </MudPaper>
+    <MudText Typo="Typo.body2" role="status">Last action: @_lastAction</MudText>
+</MudStack>
+
+@code {
+    private string _lastAction = "none";
+
+    private void Log(string action) => _lastAction = action;
+}

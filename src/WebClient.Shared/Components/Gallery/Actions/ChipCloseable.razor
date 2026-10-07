@@ -1,0 +1,47 @@
+<MudStack Spacing="3" Style="max-width: 34rem">
+    <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+        <MudTextField @bind-Value="_draft" Label="Add an ingredient tag" Variant="Variant.Outlined" Margin="Margin.Dense"
+                      MaxLength="24" OnKeyDown="AddOnEnter" Immediate />
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="Add" Disabled="@string.IsNullOrWhiteSpace(_draft)">Add</MudButton>
+    </MudStack>
+    @if (_tags.Count == 0)
+    {
+        <MudText Typo="Typo.body2" Class="mud-text-secondary">No tags yet. Add one above.</MudText>
+    }
+    else
+    {
+        <MudChipSet T="string" AllClosable OnClose="Remove" Color="Color.Secondary" Variant="Variant.Outlined">
+            @foreach (var tag in _tags)
+            {
+                <MudChip Value="tag" Text="@tag" />
+            }
+        </MudChipSet>
+    }
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+@code {
+    private readonly List<string> _tags = ["Rye flour", "Caraway", "Sea salt"];
+    private string _draft = "";
+    private string _status = "";
+
+    private void Add()
+    {
+        var tag = _draft.Trim();
+        if (tag.Length == 0 || _tags.Contains(tag, StringComparer.OrdinalIgnoreCase)) return;
+        _tags.Add(tag);
+        _draft = "";
+        _status = $"Added {tag}.";
+    }
+
+    private void AddOnEnter(KeyboardEventArgs args)
+    {
+        if (args.Key == "Enter") Add();
+    }
+
+    private void Remove(MudChip<string> chip)
+    {
+        _tags.Remove(chip.Value!);
+        _status = $"Removed {chip.Value}.";
+    }
+}

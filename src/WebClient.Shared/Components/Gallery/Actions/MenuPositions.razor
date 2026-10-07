@@ -1,0 +1,32 @@
+<MudGrid Spacing="3">
+    @foreach (var recipe in Recipes)
+    {
+        <MudItem xs="12" sm="6" md="4">
+            <MudPaper Outlined Class="d-flex flex-column align-center justify-center gap-2 pa-4" Style="min-height: 9rem">
+                <MudMenu Label="@recipe.Name" Variant="Variant.Outlined" Size="Size.Small" Dense
+                         AnchorOrigin="recipe.Anchor" TransformOrigin="recipe.Transform">
+                    <MudMenuItem Label="Telescope A" />
+                    <MudMenuItem Label="Telescope B" />
+                    <MudMenuItem Label="Telescope C" />
+                </MudMenu>
+                <MudText Typo="Typo.caption" Align="Align.Center">
+                    Anchor <code>@recipe.Anchor</code> · Transform <code>@recipe.Transform</code>
+                </MudText>
+            </MudPaper>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    private sealed record Recipe(string Name, Origin Anchor, Origin Transform);
+
+    private static readonly Recipe[] Recipes =
+    [
+        new("Below, left edges", Origin.BottomLeft, Origin.TopLeft),
+        new("Below, centered", Origin.BottomCenter, Origin.TopCenter),
+        new("Below, right edges", Origin.BottomRight, Origin.TopRight),
+        new("Above", Origin.TopLeft, Origin.BottomLeft),
+        new("To the right", Origin.TopRight, Origin.TopLeft),
+        new("Over the button", Origin.TopLeft, Origin.TopLeft)
+    ];
+}

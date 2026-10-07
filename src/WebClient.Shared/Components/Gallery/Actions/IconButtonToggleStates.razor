@@ -1,0 +1,47 @@
+<div class="matrix-scroll" role="region" aria-label="Toggled states by variant" tabindex="0">
+    <table class="matrix">
+        <caption>MudToggleIconButton: Variant × state (click any button to flip it)</caption>
+        <thead>
+            <tr>
+                <th scope="col"><span class="matrix-axis">Variant ↓ · State →</span></th>
+                @foreach (var column in Columns)
+                {
+                    <th scope="col">@column.Title</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var variant in Enum.GetValues<Variant>())
+            {
+                <tr>
+                    <th scope="row">@variant</th>
+                    @foreach (var column in Columns)
+                    {
+                        var key = (variant, column.Title);
+                        var toggled = _toggled.GetValueOrDefault(key, column.StartsToggled);
+                        <td>
+                            <MudToggleIconButton Toggled="toggled" ToggledChanged="@(value => _toggled[key] = value)"
+                                                 Variant="variant" ToggledVariant="variant" ToggledSize="column.ToggledSize"
+                                                 Icon="@Icons.Material.Outlined.BookmarkBorder" ToggledIcon="@Icons.Material.Filled.Bookmark"
+                                                 ToggledColor="Color.Primary"
+                                                 aria-label="Bookmark" aria-pressed="@(toggled ? "true" : "false")" />
+                        </td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private sealed record StateColumn(string Title, bool StartsToggled, Size? ToggledSize = null);
+
+    private static readonly StateColumn[] Columns =
+    [
+        new("Untoggled", false),
+        new("Toggled", true),
+        new("Toggled, ToggledSize Large", true, Size.Large)
+    ];
+
+    private readonly Dictionary<(Variant, string), bool> _toggled = [];
+}

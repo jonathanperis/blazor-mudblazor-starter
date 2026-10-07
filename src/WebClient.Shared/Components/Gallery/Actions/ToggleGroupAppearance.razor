@@ -1,0 +1,35 @@
+<MudGrid Spacing="5">
+    @foreach (var option in Options)
+    {
+        <MudItem xs="12" sm="6" md="4">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle2" HtmlTag="h3">@option.Title</MudText>
+                <MudToggleGroup T="string" @bind-Value="_roast" Size="Size.Small" aria-label="@($"Roast, {option.Title}")"
+                                CheckMark="option.CheckMark" FixedContent="option.FixedContent" Outlined="option.Outlined"
+                                Delimiters="option.Delimiters" Vertical="option.Vertical" SelectedClass="@option.SelectedClass">
+                    <MudToggleItem Value="@("Light")" />
+                    <MudToggleItem Value="@("Medium")" />
+                    <MudToggleItem Value="@("Dark")" />
+                </MudToggleGroup>
+            </MudStack>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    private sealed record Look(string Title, bool CheckMark = false, bool FixedContent = false, bool Outlined = true,
+                               bool Delimiters = true, bool Vertical = false, string? SelectedClass = null);
+
+    private static readonly Look[] Options =
+    [
+        new("CheckMark", CheckMark: true),
+        new("FixedContent (no jump)", CheckMark: true, FixedContent: true),
+        new("Outlined=\"false\"", Outlined: false),
+        new("Delimiters=\"false\"", Delimiters: false),
+        new("Vertical", Vertical: true),
+        new("SelectedClass", SelectedClass: "mud-theme-secondary")
+    ];
+
+    // One shared value: every group reflects the same choice.
+    private string _roast = "Medium";
+}

@@ -1,0 +1,22 @@
+<MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="4">
+    <MudFab Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Save" Label="Disabled" Disabled />
+    <MudFab Color="Color.Secondary" StartIcon="@Icons.Material.Outlined.Layers" Label="No shadow" DropShadow="false" />
+    <MudFab Color="Color.Tertiary" Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.SmartButton" Label="Open the button page" Href="components/button" />
+    <MudFab Color="Color.Primary" StartIcon="@(_saving ? null : Icons.Material.Outlined.CloudUpload)" Label="@(_saving ? "Uploading…" : "Upload photos")"
+            Disabled="_saving" OnClick="UploadAsync" />
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+@code {
+    private bool _saving;
+    private string _status = "";
+
+    private async Task UploadAsync()
+    {
+        _saving = true;
+        _status = "Uploading 12 photos…";
+        await Task.Delay(1500);
+        _saving = false;
+        _status = "12 photos uploaded.";
+    }
+}

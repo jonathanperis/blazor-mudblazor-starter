@@ -1,0 +1,13 @@
+@page "/components/menu"
+@attribute [ComponentPage("Menu", GalleryGroup.Actions, "A menu shows a temporary list of actions or destinations from a button, an icon or any custom activator. Choose a menu when several related actions would crowd the screen; keep the most frequent action visible as a button.", MudDocs = "menu", Types = ["MudMenu", "MudMenuItem"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(MenuBasics)" Title="Button and icon menus" Description="Label renders a button that takes Variant, Color, StartIcon and EndIcon. Icon renders an icon button instead, which needs AriaLabel." />
+    <Example Of="typeof(MenuItems)" Title="Items: icons, dividers, links and disabled entries" Description="Items take an Icon and IconColor, can navigate with Href, and can be disabled. Dense tightens the list for long or frequent menus." />
+    <Example Of="typeof(MenuActivators)" Title="Custom activators and activation events" Description="ActivatorContent replaces the default button and receives a context with ToggleAsync. Keep the activator a real button so it works from the keyboard." />
+    <Example Of="typeof(MenuNested)" Title="Nested menus" Description="A MudMenu inside a menu becomes a submenu that opens on hover or with the arrow keys. Keep nesting shallow: two levels is usually the limit." />
+    <Example Of="typeof(MenuPositions)" Title="Positioning recipes" Description="AnchorOrigin picks the point on the activator; TransformOrigin picks the point of the menu that is pinned to it. These pairs cover most layouts." />
+    <Example Of="typeof(MenuContextMenu)" Title="Scenario: row actions and a context menu" Description="Every row has a visible actions button. Right-clicking a row opens the same actions at the cursor as a shortcut, with an empty activator so no blank control is added." />
+    <Example Of="typeof(MenuBinding)" Title="Controlled open state and long lists" Description="Bind Open to show or hide a menu from code, and set MaxHeight so a long list scrolls instead of running off screen." />
+    <Example Of="typeof(MenuPlayground)" Title="Playground" Description="Change any parameter, including both origins; the markup below shows only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

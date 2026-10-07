@@ -1,0 +1,12 @@
+@page "/components/button-group"
+@attribute [ComponentPage("Button group", GalleryGroup.Actions, "A button group joins related actions into one connected control and styles them together. Choose it for a small set of peer actions, such as pagination or alignment, and for split buttons that pair a default action with alternatives.", MudDocs = "buttongroup", Types = ["MudButtonGroup", "MudButton", "MudIconButton", "MudMenu"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ButtonGroupVariants)" Title="Variants" Description="The group sets Variant, Color and Size for every child, so the joined edges and dividers stay consistent." />
+    <Example Of="typeof(ButtonGroupCombinations)" Title="Every variant and color" Description="All 36 combinations of the group's Variant and Color, rendered from the enums." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(ButtonGroupSizesAndOrientation)" Title="Sizes and vertical groups" Description="Size applies to the whole group. Vertical stacks the buttons, which suits a short list of options in a side panel." />
+    <Example Of="typeof(ButtonGroupSplitButton)" Title="Split button" Description="A default action next to a menu of alternatives. The menu trigger is icon-only, so it carries its own accessible name." />
+    <Example Of="typeof(ButtonGroupToolbar)" Title="Toolbar" Description="Several groups side by side form a toolbar. Each icon button still needs its own accessible name; the toolbar role and label describe the whole strip." />
+    <Example Of="typeof(ButtonGroupStates)" Title="Overrides, width and disabled buttons" Description="OverrideStyles=&quot;false&quot; lets each button keep its own color. FullWidth stretches the group, and a single button can be disabled on its own." />
+    <Example Of="typeof(ButtonGroupPlayground)" Title="Playground" Description="Change the group's parameters; the markup below shows only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

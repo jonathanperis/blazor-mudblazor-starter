@@ -1,0 +1,13 @@
+@page "/components/fab"
+@attribute [ComponentPage("Floating action button and FAB menu", GalleryGroup.Actions, "A floating action button (FAB) carries the single most important action of a screen; a FAB menu fans out a few related actions from it. Use at most one per view, and prefer an ordinary button when the action is not the obvious next step.", MudDocs = "buttonfab", Types = ["MudFab", "MudFabMenu", "MudFabMenuItem"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(FabBasics)" Title="Round and extended" Description="A round FAB shows only an icon and needs an aria-label. Label turns it into an extended FAB, which is clearer when there is room." />
+    <Example Of="typeof(FabCombinations)" Title="Every variant and color" Description="All 36 combinations of Variant and Color. Filled is the default and the most prominent." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(FabSizes)" Title="Sizes" Description="Large is the default. Small FABs suit dense lists and secondary surfaces." />
+    <Example Of="typeof(FabMenuDirections)" Title="FAB menu directions" Description="Direction decides where the items fan out; AlignItems lines labelled items up against the main button. Extra attributes on MudFabMenu land on its container, not its button, so name the button with Label and each icon-only item with an aria-label." />
+    <Example Of="typeof(FabMenuScenario)" Title="Scenario: order screen" Description="A FAB menu anchored to the corner of a panel. Each item has a visible label, and the panel reserves room so the open menu never covers the last row." />
+    <Example Of="typeof(FabMenuOptions)" Title="FAB menu behaviour" Description="Click-only opening, staying open after a choice, keeping the main icon and full-strength item colors, all against the defaults." />
+    <Example Of="typeof(FabStates)" Title="States and links" Description="Disabled, without shadow, rendered as a link, and busy while asynchronous work runs." />
+    <Example Of="typeof(FabPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

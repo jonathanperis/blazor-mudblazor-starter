@@ -1,0 +1,32 @@
+<MudStack Spacing="4" Style="max-width: 32rem">
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Whole group disabled</MudText>
+        <MudToggleGroup T="string" Value="@("Paperback")" Disabled aria-label="Format">
+            <MudToggleItem Value="@("Hardback")" />
+            <MudToggleItem Value="@("Paperback")" />
+            <MudToggleItem Value="@("E-book")" />
+        </MudToggleGroup>
+        <MudText Typo="Typo.caption">The order has shipped, so the format can no longer change.</MudText>
+    </MudStack>
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">One item disabled</MudText>
+        <MudToggleGroup T="string" @bind-Value="_wrap" Color="Color.Secondary" aria-label="Gift wrap">
+            <MudToggleItem Value="@("None")" />
+            <MudToggleItem Value="@("Brown paper")" />
+            <MudToggleItem Value="@("Linen")" Disabled />
+        </MudToggleGroup>
+        <MudText Typo="Typo.caption">Linen wrap is out of stock until Monday.</MudText>
+    </MudStack>
+    <MudStack Spacing="1">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Without ripple</MudText>
+        <MudToggleGroup T="string" @bind-Value="_wrap" Color="Color.Tertiary" Ripple="false" aria-label="Gift wrap, without ripple">
+            <MudToggleItem Value="@("None")" />
+            <MudToggleItem Value="@("Brown paper")" />
+            <MudToggleItem Value="@("Linen")" Disabled />
+        </MudToggleGroup>
+    </MudStack>
+</MudStack>
+
+@code {
+    private string _wrap = "Brown paper";
+}

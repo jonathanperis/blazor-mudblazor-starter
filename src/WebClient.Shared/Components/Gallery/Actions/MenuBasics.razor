@@ -1,0 +1,29 @@
+<MudStack Spacing="3">
+    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+        <MudMenu Label="Sort by" EndIcon="@Icons.Material.Outlined.ArrowDropDown">
+            @foreach (var order in SortOrders)
+            {
+                <MudMenuItem Label="@order" OnClick="@(() => _status = $"Sorted by {order.ToLowerInvariant()}.")" />
+            }
+        </MudMenu>
+        <MudMenu Label="Export" Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Outlined.Download" EndIcon="@Icons.Material.Outlined.ArrowDropDown">
+            <MudMenuItem Label="Star chart as PDF" OnClick="@(() => _status = "Exporting the star chart as PDF.")" />
+            <MudMenuItem Label="Observations as CSV" OnClick="@(() => _status = "Exporting observations as CSV.")" />
+        </MudMenu>
+        <MudMenu Label="New observation" Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Outlined.ArrowDropDown">
+            <MudMenuItem Label="Visual" OnClick="@(() => _status = "New visual observation.")" />
+            <MudMenuItem Label="Photographic" OnClick="@(() => _status = "New photographic observation.")" />
+        </MudMenu>
+        <MudMenu Icon="@Icons.Material.Outlined.MoreVert" AriaLabel="More actions for this night">
+            <MudMenuItem Label="Duplicate night" OnClick="@(() => _status = "Night duplicated.")" />
+            <MudMenuItem Label="Archive night" OnClick="@(() => _status = "Night archived.")" />
+        </MudMenu>
+    </MudStack>
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+@code {
+    private static readonly string[] SortOrders = ["Date observed", "Magnitude", "Constellation"];
+
+    private string _status = "Open a menu and choose an item.";
+}

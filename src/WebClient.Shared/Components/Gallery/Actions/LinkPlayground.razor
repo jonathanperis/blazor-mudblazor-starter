@@ -1,0 +1,40 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudLink Href="components/link" Typo="_typo" Underline="_underline" Color="_color" Disabled="_disabled"
+                 StartIcon="@(_startIcon ? Icons.Material.Outlined.Place : null)">@_text</MudLink>
+    </Preview>
+    <Controls>
+        <MudTextField @bind-Value="_text" Label="Text" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSelect @bind-Value="_typo" Label="Typo" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Typo>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_underline" Label="Underline" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Underline>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_startIcon" Label="Start icon" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private string _text = "Find the harbour office";
+    private Typo _typo = Typo.body1;
+    private Underline _underline = Underline.Hover;
+    private Color _color = Color.Primary;
+    private bool _startIcon;
+    private bool _disabled;
+
+    // MudLink defaults: Typo.inherit, Underline.Hover, Color.Primary.
+    private string Code => Snippet.Element("MudLink",
+    [
+        ("Href", "components/link"),
+        ("Typo", Snippet.Enum(_typo, Typo.inherit)),
+        ("Underline", Snippet.Enum(_underline, Underline.Hover)),
+        ("Color", Snippet.Enum(_color, Color.Primary)),
+        ("StartIcon", _startIcon ? "@Icons.Material.Outlined.Place" : null),
+        ("Disabled", Snippet.Flag(_disabled))
+    ], _text);
+}

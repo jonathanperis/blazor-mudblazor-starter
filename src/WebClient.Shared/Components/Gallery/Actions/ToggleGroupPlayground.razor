@@ -1,0 +1,60 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudToggleGroup T="string" @bind-Value="_value" @bind-Values="_values" SelectionMode="_mode" Color="_color" Size="_size"
+                        Vertical="_vertical" CheckMark="_checkMark" Outlined="_outlined" Delimiters="_delimiters" Disabled="_disabled"
+                        aria-label="Crust">
+            <MudToggleItem Value="@("Thin")" />
+            <MudToggleItem Value="@("Classic")" />
+            <MudToggleItem Value="@("Deep pan")" />
+        </MudToggleGroup>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_mode" Label="SelectionMode" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<SelectionMode>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_size" Label="Size" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Size>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_vertical" Label="Vertical" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_checkMark" Label="Check mark" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_outlined" Label="Outlined" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_delimiters" Label="Delimiters" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+        <MudText Typo="Typo.body2" role="status">
+            Selected: @(_mode == SelectionMode.MultiSelection ? string.Join(", ", _values) : _value ?? "nothing")
+        </MudText>
+    </Controls>
+</Playground>
+
+@code {
+    private string? _value = "Classic";
+    private IEnumerable<string> _values = ["Classic"];
+    private SelectionMode _mode = SelectionMode.SingleSelection;
+    private Color _color = Color.Primary;
+    private Size _size = Size.Medium;
+    private bool _vertical;
+    private bool _checkMark;
+    private bool _outlined = true;
+    private bool _delimiters = true;
+    private bool _disabled;
+
+    private const string Items = "\n    <MudToggleItem Value=\"@(\"Thin\")\" />\n    <MudToggleItem Value=\"@(\"Classic\")\" />\n    <MudToggleItem Value=\"@(\"Deep pan\")\" />\n";
+
+    // MudToggleGroup defaults: SingleSelection, Color.Primary, Size.Medium, Outlined and Delimiters true.
+    private string Code => Snippet.Element("MudToggleGroup",
+    [
+        ("T", "string"),
+        (_mode == SelectionMode.MultiSelection ? "@bind-Values" : "@bind-Value", _mode == SelectionMode.MultiSelection ? "_crusts" : "_crust"),
+        ("SelectionMode", Snippet.Enum(_mode, SelectionMode.SingleSelection)),
+        ("Color", Snippet.Enum(_color, Color.Primary)),
+        ("Size", Snippet.Enum(_size, Size.Medium)),
+        ("Vertical", Snippet.Flag(_vertical)),
+        ("CheckMark", Snippet.Flag(_checkMark)),
+        ("Outlined", _outlined ? null : "false"),
+        ("Delimiters", _delimiters ? null : "false"),
+        ("Disabled", Snippet.Flag(_disabled))
+    ], Items);
+}

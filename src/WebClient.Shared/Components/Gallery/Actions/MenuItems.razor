@@ -1,0 +1,23 @@
+<MudStack Spacing="3">
+    <MudStack Row Wrap="Wrap.Wrap" Spacing="3">
+        @foreach (var dense in new[] { false, true })
+        {
+            <MudMenu Label="@(dense ? "Dense menu" : "Regular menu")" Dense="dense" Variant="Variant.Outlined" EndIcon="@Icons.Material.Outlined.ArrowDropDown">
+                <MudMenuItem Icon="@Icons.Material.Outlined.ContentCut" Label="Cut" OnClick="@(() => Run("Cut"))" />
+                <MudMenuItem Icon="@Icons.Material.Outlined.ContentCopy" Label="Copy" OnClick="@(() => Run("Copy"))" />
+                <MudMenuItem Icon="@Icons.Material.Outlined.ContentPaste" Label="Paste" Disabled />
+                <MudDivider />
+                <MudMenuItem Icon="@Icons.Material.Outlined.HelpOutline" IconColor="Color.Info" Label="Open the link guide" Href="components/link" />
+                <MudMenuItem Icon="@Icons.Material.Outlined.Delete" IconColor="Color.Error" Label="Delete recipe" OnClick="@(() => Run("Delete recipe"))" />
+            </MudMenu>
+        }
+    </MudStack>
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+    <MudText Typo="Typo.caption">“Paste” is disabled because the clipboard is empty.</MudText>
+</MudStack>
+
+@code {
+    private string _status = "Nothing chosen yet.";
+
+    private void Run(string action) => _status = $"Chose “{action}”.";
+}
