@@ -1,0 +1,39 @@
+@* Quick search over labs, components, examples and page samples. Choosing a result closes the dialog with its link. *@
+
+<MudDialog Class="quick-search">
+    <DialogContent>
+        <MudAutocomplete T="SearchEntry" Value="_choice" ValueChanged="Go" SearchFunc="Search" ToStringFunc="@(entry => entry?.Title)"
+                         Label="Search labs, components and examples" Placeholder="Try “data grid”, “dialog” or “theme”"
+                         Variant="Variant.Outlined" AutoFocus MaxItems="null" DebounceInterval="80" Clearable
+                         AdornmentIcon="@Icons.Material.Outlined.Search" AdornmentAriaLabel="Show results" Strict="false"
+                         SelectValueOnTab="false" CoerceText="false">
+            <ItemTemplate Context="entry">
+                <span class="quick-search-item">
+                    <span class="quick-search-title">@entry.Title</span>
+                    <span class="quick-search-context">@entry.KindLabel · @entry.Context</span>
+                </span>
+            </ItemTemplate>
+            <NoItemsTemplate>
+                <MudText Typo="Typo.body2" Class="px-4 py-2">No lab, component or example matches. Try one word, such as a component name.</MudText>
+            </NoItemsTemplate>
+        </MudAutocomplete>
+        <p class="quick-search-hint">
+            @SiteSearch.All.Count destinations. <kbd>↑</kbd> <kbd>↓</kbd> to move, <kbd>Enter</kbd> to open, <kbd>Esc</kbd> to close.
+        </p>
+    </DialogContent>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = null!;
+    private SearchEntry? _choice;
+
+    private static Task<IEnumerable<SearchEntry>> Search(string? query, CancellationToken token) =>
+        Task.FromResult<IEnumerable<SearchEntry>>(SiteSearch.Find(query, 20));
+
+    private void Go(SearchEntry? entry)
+    {
+        _choice = entry;
+        if (entry is null) return;
+        Dialog.Close(DialogResult.Ok(entry.Href));
+    }
+}

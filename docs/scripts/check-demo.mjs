@@ -164,11 +164,34 @@ try {
     await page.getByRole('button', { name: 'Generate dataset' }).click();
     await page.getByText('69,420 records in component memory').waitFor(timeout);
   });
+  const accessibility = [];
+  await step('quick search opens with Ctrl+K and lands on an example', async () => {
+    await page.goto(`${base}components/button`);
+    await heading('Button').waitFor(timeout);
+    await page.keyboard.press('Control+k');
+    const search = page.getByRole('dialog').getByRole('combobox');
+    await search.fill('alert playground');
+    await page.locator('.quick-search-item', { hasText: 'Alert' }).first().waitFor();
+    accessibility.push(...await audit(page, 'quick search'));
+    await page.keyboard.press('Enter');
+    await heading('Alert').waitFor();
+    if (!page.url().endsWith('/demo/components/alert#alertplayground')) throw new Error(`search opened ${page.url()}`);
+    if (await page.getByRole('dialog').count()) throw new Error('the search dialog stayed open');
+  });
+  await step('a playground link restores its settings', async () => {
+    await page.goto(`${base}components/button?playground=buttonplayground&label=From%20a%20link&disabled=true#buttonplayground`);
+    await heading('Button').waitFor(timeout);
+    const playground = page.locator('#buttonplayground');
+    await playground.getByText('Settings restored from a shared link.').waitFor();
+    await playground.getByRole('button', { name: 'From a link' }).waitFor();
+    if (!(await playground.locator('.playground-code').innerText()).includes('Disabled="true"')) throw new Error('generated markup was not restored');
+    await playground.getByRole('button', { name: 'Reset' }).click();
+    await playground.getByRole('button', { name: 'Buy tickets' }).waitFor();
+  });
   await step('unknown routes render the not-found page', async () => {
     await page.goto(`${base}no-such-lab`);
     await heading('Page not found').waitFor(timeout);
   });
-  const accessibility = [];
   await step('every page renders without an error boundary', async () => {
     const routes = (await appRoutes()).filter((route) => route !== '/not-found' && route !== '/Error').sort();
     await page.goto(base);

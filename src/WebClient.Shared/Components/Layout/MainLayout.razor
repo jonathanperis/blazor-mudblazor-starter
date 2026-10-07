@@ -3,6 +3,8 @@
 @inject NavigationManager Navigation
 @inject LearningHost Host
 @inject ILogger<MainLayout> Logger
+@inject IDialogService Dialogs
+@using MudBlazor.Utilities
 
 <MudThemeProvider Theme="LearningTheme.Theme" IsDarkMode="Preferences.IsDarkMode" />
 <MudPopoverProvider />
@@ -10,11 +12,17 @@
 <MudSnackbarProvider />
 @* The href keeps the current path: a bare "#main-content" resolves against <base href> and would leave the page. *@
 <a class="skip-link" href="@SkipHref" @onclick="SkipToContent" @onclick:preventDefault>Skip to content</a>
+@* Ctrl+K on Windows and Linux, Command+K on macOS. MudHotkey matches the exact modifier set. *@
+<MudHotkey Key="JsKey.KeyK" KeyModifiers="ControlK" OnHotkeyPressed="OpenSearch" />
+<MudHotkey Key="JsKey.KeyK" KeyModifiers="CommandK" OnHotkeyPressed="OpenSearch" />
 <MudLayout Class="@(Preferences.IsDarkMode ? "sandbox-dark" : "sandbox-light")">
     <MudAppBar Elevation="0">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer" aria-label="Toggle navigation drawer" />
         <a href="./" class="wordmark"><span class="wordmark-mark">Blazor learning sandbox</span><span class="wordmark-tag">MudBlazor · .NET 10</span></a>
         <MudSpacer />
+        <MudButton Class="search-trigger desktop-search" Variant="Variant.Outlined" Color="Color.Inherit" StartIcon="@Icons.Material.Outlined.Search"
+                   OnClick="OpenSearch" aria-keyshortcuts="Control+K Meta+K">Search <kbd>Ctrl K</kbd></MudButton>
+        <div class="mobile-search"><MudIconButton Icon="@Icons.Material.Outlined.Search" Color="Color.Inherit" OnClick="OpenSearch" aria-label="Search" aria-keyshortcuts="Control+K Meta+K" /></div>
         <div class="desktop-theme"><MudSwitch T="bool" Value="Preferences.IsDarkMode" ValueChanged="Preferences.SetThemeAsync" Label="Dark mode" Color="Color.Secondary" /></div>
         <div class="mobile-theme"><MudIconButton Icon="@(Preferences.IsDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" Color="Color.Inherit" OnClick="ToggleTheme" aria-label="@(Preferences.IsDarkMode ? "Use light theme" : "Use dark theme")" /></div>
         <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Project links" Color="Color.Inherit">
@@ -83,7 +91,10 @@
 <div id="blazor-error-ui" role="alert">The app stopped responding. <a href="" class="reload">Reload the page</a>.</div>
 
 @code {
+    private static readonly IReadOnlyCollection<JsKeyModifier> ControlK = [JsKeyModifier.ControlLeft];
+    private static readonly IReadOnlyCollection<JsKeyModifier> CommandK = [JsKeyModifier.MetaLeft];
     private ElementReference _main;
+    private bool _searching;
     // Expand the drawer group that contains the current page.
     private bool IsCurrent(IEnumerable<string> hrefs)
     {
@@ -93,6 +104,20 @@
 
     private string SkipHref => $"{Navigation.Uri.Split('#')[0]}#main-content";
     private Task ToggleDrawer() => Preferences.SetDrawerAsync(!Preferences.DrawerOpen);
+    private async Task OpenSearch()
+    {
+        if (_searching) return;
+        _searching = true;
+        try
+        {
+            var options = new DialogOptions { MaxWidth = MaxWidth.Small, FullWidth = true, Position = DialogPosition.TopCenter, CloseOnEscapeKey = true };
+            var dialog = await Dialogs.ShowAsync<QuickSearchDialog>("Search the sandbox", options);
+            // Navigate after the dialog has closed: closing restores focus and scrolling, which would undo a jump to an example.
+            if (await dialog.Result is { Canceled: false, Data: string href }) Navigation.NavigateTo(href);
+        }
+        finally { _searching = false; }
+    }
+
     private Task ToggleTheme() => Preferences.SetThemeAsync(!Preferences.IsDarkMode);
     // A link to the current address is an in-app navigation that keeps the failed boundary; reload instead.
     private void Reload() => Navigation.Refresh(forceReload: true);

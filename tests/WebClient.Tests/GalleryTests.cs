@@ -1,7 +1,10 @@
 using System.Reflection;
 using Bunit;
 using Microsoft.AspNetCore.Components;
+using Microsoft.Extensions.DependencyInjection;
 using MudBlazor;
+using MudBlazor.Utilities;
+using WebClient.Shared.Components.Gallery.Actions;
 using WebClient.Shared.Features.Gallery;
 using WebClient.Shared.Features.Learning;
 
@@ -73,5 +76,65 @@ public sealed class GalleryTests
         var wrapped = Snippet.Element("MudTextField", [("Label", "A rather long label for wrapping"), ("Variant", "Variant.Outlined"), ("Margin", "Margin.Dense"), ("Clearable", "true")]);
         Assert.Contains("\n    Variant=\"Variant.Outlined\"", wrapped);
         Assert.EndsWith(" />", wrapped);
+    }
+
+    [Fact]
+    public void Quick_search_indexes_every_destination_and_ranks_titles_first()
+    {
+        var all = SiteSearch.All;
+        Assert.Equal(LabCatalog.All.Count, all.Count(entry => entry.Kind == SearchKind.Lab));
+        Assert.Equal(GalleryCatalog.Components.Count, all.Count(entry => entry.Kind == SearchKind.Component));
+        Assert.Equal(GalleryCatalog.Samples.Count, all.Count(entry => entry.Kind == SearchKind.Sample));
+        Assert.True(all.Count(entry => entry.Kind == SearchKind.Example) > 400);
+        // Every example anchor names a real example component, so the link lands on it.
+        var exampleTypes = typeof(GalleryCatalog).Assembly.GetExportedTypes().Select(type => type.Name.ToLowerInvariant()).ToHashSet();
+        Assert.All(all.Where(entry => entry.Kind == SearchKind.Example), entry => Assert.Contains(entry.Href.Split('#')[1], exampleTypes));
+        Assert.All(all, entry => Assert.False(entry.Href.StartsWith('/'), $"{entry.Href} must be base-relative"));
+
+        Assert.Equal("components/data-grid", SiteSearch.Find("data grid")[0].Href);
+        Assert.Contains(SiteSearch.Find("playground alert"), entry => entry.Href == "components/alert#alertplayground");
+        Assert.All(SiteSearch.Find(""), entry => Assert.Equal(SearchKind.Lab, entry.Kind));
+        Assert.Empty(SiteSearch.Find("no such component anywhere"));
+    }
+
+    [Fact]
+    public void Playground_state_parses_only_bounded_known_values()
+    {
+        Assert.Equal(new Dictionary<string, string> { ["playground"] = "x", ["label"] = "Two words", ["empty"] = "" },
+            PlaygroundState.Query("http://host/page?playground=x&label=Two%20words&empty=#x"));
+        Assert.True(PlaygroundState.TryParse(typeof(Variant), "Outlined", out var variant));
+        Assert.Equal(Variant.Outlined, variant);
+        Assert.False(PlaygroundState.TryParse(typeof(Variant), "1", out _));
+        Assert.False(PlaygroundState.TryParse(typeof(Variant), "Text,Filled", out _));
+        Assert.False(PlaygroundState.TryParse(typeof(int), "1000000", out _));
+        Assert.False(PlaygroundState.TryParse(typeof(int), "-1", out _));
+        Assert.True(PlaygroundState.TryParse(typeof(int?), "", out var none));
+        Assert.Null(none);
+        Assert.True(PlaygroundState.TryParse(typeof(decimal), "2.5", out var number));
+        Assert.Equal(2.5m, number);
+        Assert.False(PlaygroundState.TryParse(typeof(string), new string('x', PlaygroundState.MaxTextLength + 1), out _));
+        Assert.True(PlaygroundState.TryParse(typeof(MudColor), "#1F5F5BFF", out var color));
+        Assert.Equal("#1f5f5bff", PlaygroundState.Format(color).ToLowerInvariant());
+        Assert.False(PlaygroundState.TryParse(typeof(MudColor), "rgb(0,0,0)", out _));
+    }
+
+    [Fact]
+    public async Task Playground_restores_settings_from_a_link_and_resets_them()
+    {
+        await using var context = new BunitContext();
+        context.Services.AddLearningLabs(ComponentTests.ServerHost);
+        context.JSInterop.Mode = JSRuntimeMode.Loose;
+        context.Render<MudPopoverProvider>();
+        context.Services.GetRequiredService<NavigationManager>().NavigateTo("components/button?playground=buttonplayground&label=Shared%20link&disabled=true&variant=Nope");
+        var playground = context.Render<ButtonPlayground>();
+
+        playground.WaitForAssertion(() => Assert.Contains("Disabled=\"true\"", playground.Find(".playground-code").TextContent));
+        Assert.Contains("Shared link", playground.Find(".playground-stage").TextContent);
+        Assert.Contains("Variant.Filled", playground.Find(".playground-code").TextContent);
+        Assert.NotNull(playground.Find(".playground-restored"));
+
+        await playground.InvokeAsync(() => playground.FindAll("button").Single(button => button.TextContent.Contains("Reset")).Click());
+        Assert.DoesNotContain("Disabled", playground.Find(".playground-code").TextContent);
+        Assert.Contains("Buy tickets", playground.Find(".playground-stage").TextContent);
     }
 }
