@@ -1,0 +1,55 @@
+@page "/samples/sign-in"
+@attribute [PageSample("Sign in", "An observatory portal's sign-in and create-account card: MudForm validation, a password reveal, a reset dialog, simulated requests with progress, errors and a lockout. Nothing is ever sent.", Uses = ["MudTabs", "MudForm", "MudTextField", "MudCheckBox", "MudSelect", "MudDialog", "MudProgressLinear", "MudAlert", "MudChip", "MudHidden"])]
+@inject ISnackbar Snackbar
+
+<SamplePageFrame Page="GetType()">
+    <MudPaper Outlined Class="mx-auto" Style="max-width: 64rem; overflow: hidden; position: relative">
+        @if (_busy)
+        {
+            <MudProgressLinear Indeterminate Color="Color.Primary" Size="Size.Small" Style="position: absolute; inset: 0 0 auto 0; z-index: 1" />
+        }
+        <MudGrid Spacing="0">
+            <MudItem xs="12" md="5">
+                <SignInBrandPanel />
+            </MudItem>
+            <MudItem xs="12" md="7">
+                <div class="pa-4 pa-sm-8">
+                    <MudText Typo="Typo.h5" HtmlTag="h2">@(_tab == 0 ? "Sign in to book telescope time" : "Join the observing list")</MudText>
+                    <MudText Typo="Typo.body2" Class="mb-2" Style="color: var(--mud-palette-text-secondary)">
+                        @(_tab == 0 ? "Use the account you registered at the ridge or online." : "Accounts are free; telescope nights are allocated by queue.")
+                    </MudText>
+                    <MudTabs @bind-ActivePanelIndex="_tab" KeepPanelsAlive Color="Color.Transparent" SliderColor="Color.Primary" Elevation="0"
+                             ApplyEffectsToContainer TabPanelsClass="pt-5" MinimumTabWidth="8rem">
+                        @* MudBlazor capitalises tab labels; TabContent lets the labels stay in sentence case. *@
+                        <MudTabPanel Icon="@Icons.Material.Outlined.Login">
+                            <TabContent><span style="text-transform: none">Sign in</span></TabContent>
+                            <ChildContent><SignInForm @ref="_signIn" BusyChanged="SetBusy" /></ChildContent>
+                        </MudTabPanel>
+                        <MudTabPanel Icon="@Icons.Material.Outlined.PersonAdd">
+                            <TabContent><span style="text-transform: none">Create account</span></TabContent>
+                            <ChildContent><SignInRegisterForm Registered="ShowSignIn" BusyChanged="SetBusy" /></ChildContent>
+                        </MudTabPanel>
+                    </MudTabs>
+                </div>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+    <MudText Typo="Typo.caption" Align="Align.Center" Class="mt-4 d-block" Style="color: var(--mud-palette-text-secondary)">
+        Kestrel Ridge Observatory is fictional. Credentials typed here stay in this page's memory and vanish when you leave it.
+    </MudText>
+</SamplePageFrame>
+
+@code {
+    private int _tab;
+    private bool _busy;
+    private SignInForm _signIn = null!;
+
+    private void SetBusy(bool busy) => _busy = busy;
+
+    private void ShowSignIn(NewAccount account)
+    {
+        _tab = 0;
+        _signIn.Prefill(account);
+        Snackbar.Add("Account ready. Sign in with your new password.", Severity.Success);
+    }
+}

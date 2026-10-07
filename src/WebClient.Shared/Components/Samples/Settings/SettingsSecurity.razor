@@ -1,0 +1,117 @@
+@* Two-factor is part of the draft; signing a device out is immediate, so it offers undo instead of waiting for Save. *@
+@inject ISnackbar Snackbar
+@inject IDialogService DialogService
+
+<MudStack Spacing="5">
+    <section>
+        <MudText Typo="Typo.overline" HtmlTag="h3" Style="color: var(--mud-palette-text-secondary)">Sign-in</MudText>
+        <MudPaper Outlined>
+            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="3" Class="px-4 py-3">
+                <div>
+                    <MudText Typo="Typo.body1">Two-step verification</MudText>
+                    <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">
+                        @(Draft.TwoFactor ? "A code from your authenticator app is required on new devices." : "Only your password protects this account.")
+                    </MudText>
+                </div>
+                <MudSwitch T="bool" @bind-Value="Draft.TwoFactor" @bind-Value:after="Notify" Color="Color.Success" AriaLabel="Two-step verification" />
+            </MudStack>
+            @if (!Draft.TwoFactor)
+            {
+                <MudAlert Severity="Severity.Warning" Dense Square Class="mx-4 mb-3">Shop tablets are shared. Keep two-step verification on for head baker accounts.</MudAlert>
+            }
+            <MudDivider />
+            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="3" Class="px-4 py-3">
+                <div>
+                    <MudText Typo="Typo.body1">Password</MudText>
+                    <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">Last changed on 2 June 2026</MudText>
+                </div>
+                <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="ChangePassword">Change</MudButton>
+            </MudStack>
+        </MudPaper>
+    </section>
+
+    <section>
+        <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+            <MudText Typo="Typo.overline" HtmlTag="h3" Style="color: var(--mud-palette-text-secondary)">Where you're signed in</MudText>
+            <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Primary" Disabled="@(Sessions.Count(session => !session.IsCurrent) == 0)" OnClick="SignOutOthersAsync">
+                Sign out everywhere else
+            </MudButton>
+        </MudStack>
+        <MudPaper Outlined>
+            @foreach (var session in Sessions)
+            {
+                <MudStack Row AlignItems="AlignItems.Center" Spacing="3" Class="px-4 py-3" Style="@(session == Sessions[^1] ? "" : "border-bottom: 1px solid var(--mud-palette-lines-default)")">
+                    <MudAvatar Variant="Variant.Outlined" Size="Size.Medium"><MudIcon Icon="@session.Icon" /></MudAvatar>
+                    <div style="flex: 1; min-width: 0">
+                        <MudStack Row Spacing="2" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+                            <MudText Typo="Typo.body1">@session.Device</MudText>
+                            @if (session.IsCurrent)
+                            {
+                                <MudChip T="string" Size="Size.Small" Color="Color.Success" Variant="Variant.Outlined" Class="ma-0">This device</MudChip>
+                            }
+                        </MudStack>
+                        <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">@session.Browser · @session.Place · @session.LastActive</MudText>
+                    </div>
+                    @if (!session.IsCurrent)
+                    {
+                        <MudButton Variant="Variant.Text" Size="Size.Small" OnClick="() => SignOut(session)" aria-label="@($"Sign out {session.Device}")">Sign out</MudButton>
+                    }
+                </MudStack>
+            }
+        </MudPaper>
+    </section>
+
+    <section>
+        <MudText Typo="Typo.overline" HtmlTag="h3" Style="color: var(--mud-palette-error)">Danger zone</MudText>
+        <MudPaper Outlined Class="pa-4" Style="border-color: var(--mud-palette-error)">
+            <MudStack Row Breakpoint="Breakpoint.Xs" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="3">
+                <div>
+                    <MudText Typo="Typo.body1">Delete this account</MudText>
+                    <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">
+                        Removes your profile and notes after 14 days. Bake sheets you signed keep your initials.
+                    </MudText>
+                </div>
+                <MudButton Variant="Variant.Outlined" Color="Color.Error" StartIcon="@Icons.Material.Outlined.DeleteForever" OnClick="DeleteRequested" Style="flex-shrink: 0">
+                    Delete account
+                </MudButton>
+            </MudStack>
+        </MudPaper>
+    </section>
+</MudStack>
+
+@code {
+    [Parameter, EditorRequired] public AccountSettings Draft { get; set; } = null!;
+    [Parameter, EditorRequired] public List<ActiveSession> Sessions { get; set; } = null!;
+    [Parameter] public EventCallback Changed { get; set; }
+    [Parameter] public EventCallback DeleteRequested { get; set; }
+
+    private Task Notify() => Changed.InvokeAsync();
+
+    private void ChangePassword() => Snackbar.Add("The change-password flow would open here; this sample keeps the current one.", Severity.Info);
+
+    private void SignOut(ActiveSession session)
+    {
+        var index = Sessions.IndexOf(session);
+        Sessions.Remove(session);
+        Snackbar.Add($"Signed out of {session.Device}.", Severity.Normal, options =>
+        {
+            options.Action = "Undo";
+            options.OnClick = _ =>
+            {
+                Sessions.Insert(Math.Min(index, Sessions.Count), session);
+                return Changed.InvokeAsync();
+            };
+        });
+    }
+
+    private async Task SignOutOthersAsync()
+    {
+        var others = Sessions.Count(session => !session.IsCurrent);
+        var confirmed = await DialogService.ShowMessageBoxAsync("Sign out everywhere else?",
+            $"{others} other {(others == 1 ? "device" : "devices")} will need your password and a verification code to sign in again.",
+            yesText: "Sign them out", cancelText: "Cancel");
+        if (confirmed != true) return;
+        Sessions.RemoveAll(session => !session.IsCurrent);
+        Snackbar.Add($"Signed out of {others} {(others == 1 ? "device" : "devices")}.", Severity.Success);
+    }
+}

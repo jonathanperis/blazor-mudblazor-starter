@@ -1,0 +1,180 @@
+@* Sign in: validation, a password reveal, a reset dialog, a simulated request and its error and lockout states. *@
+@implements IDisposable
+@inject IDialogService DialogService
+@inject ISnackbar Snackbar
+
+@if (_signedInAt is { } signedInAt)
+{
+    <MudStack Spacing="4" AlignItems="AlignItems.Center" Class="py-6" Style="text-align: center">
+        <MudAvatar Color="Color.Secondary" Size="Size.Large">@SignInData.Initials(_signedInAs)</MudAvatar>
+        <div role="status">
+            <MudText Typo="Typo.h5" HtmlTag="h3">Welcome, @_signedInAs.Split(' ')[0]</MudText>
+            <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">
+                Signed in at @signedInAt.ToString("HH:mm") · @(_remember ? "kept signed in for 30 days" : "signed out when you close this tab")
+            </MudText>
+        </div>
+        <MudStack Row Spacing="2" Justify="Justify.Center" Wrap="Wrap.Wrap">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Nightlight" OnClick="OpenQueue">Open tonight's queue</MudButton>
+            <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Logout" OnClick="SignOut">Sign out</MudButton>
+        </MudStack>
+    </MudStack>
+}
+else
+{
+    <MudForm @ref="_form" Spacing="3" Disabled="_submitting" OnEnterPressed="SubmitAsync">
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Dense Icon="@Icons.Material.Outlined.Science">
+            Try <code>@SignInData.DemoEmail</code> with <code>@SignInData.DemoPassword</code>. Any other password shows the error state. Nothing leaves your browser.
+        </MudAlert>
+
+        @if (SecondsLocked > 0)
+        {
+            <MudAlert Severity="Severity.Warning" Dense role="status">Too many attempts. You can try again in @SecondsLocked s.</MudAlert>
+        }
+        else if (_error is not null)
+        {
+            <MudAlert Severity="Severity.Error" Dense role="alert">@_error</MudAlert>
+        }
+
+        <MudTextField T="string" @bind-Value="_email" Label="Email" InputType="InputType.Email" Variant="Variant.Outlined" autocomplete="username"
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Email"
+                      Required RequiredError="Enter your email address." Validation="@(new Func<string?, string?>(SignInData.ValidateEmail))" />
+        <MudTextField T="string" @bind-Value="_password" Label="Password" Variant="Variant.Outlined" autocomplete="current-password"
+                      InputType="@(_showPassword ? InputType.Text : InputType.Password)" Required RequiredError="Enter your password."
+                      Adornment="Adornment.End" AdornmentIcon="@(_showPassword ? Icons.Material.Outlined.VisibilityOff : Icons.Material.Outlined.Visibility)"
+                      AdornmentAriaLabel="@(_showPassword ? "Hide password" : "Show password")" OnAdornmentClick="() => _showPassword = !_showPassword" />
+
+        <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap" Spacing="1">
+            <MudCheckBox T="bool" @bind-Value="_remember" Label="Keep me signed in" Dense Color="Color.Primary" />
+            <MudButton Variant="Variant.Text" Color="Color.Primary" Size="Size.Small" OnClick="OpenResetAsync">Forgot password?</MudButton>
+        </MudStack>
+
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Size="Size.Large" FullWidth Disabled="@(_submitting || SecondsLocked > 0)" OnClick="SubmitAsync">
+            @if (_submitting)
+            {
+                <MudProgressCircular Indeterminate Size="Size.Small" Class="mr-2" />
+                <span>Signing in…</span>
+            }
+            else
+            {
+                <span>Sign in</span>
+            }
+        </MudButton>
+
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="2" aria-hidden="true">
+            <MudDivider Style="flex: 1" /><MudText Typo="Typo.caption" Style="color: var(--mud-palette-text-secondary)">or</MudText><MudDivider Style="flex: 1" />
+        </MudStack>
+        <MudButton Variant="Variant.Outlined" FullWidth StartIcon="@Icons.Material.Outlined.Key" OnClick="UseSecurityKey">Use a security key</MudButton>
+    </MudForm>
+}
+
+@code {
+    private readonly CancellationTokenSource _lifetime = new();
+    private MudForm _form = null!;
+    private string _email = "", _password = "";
+    private bool _remember = true, _showPassword, _submitting;
+    private string? _error;
+    private int _failures;
+    private DateTime? _signedInAt;
+    private string _signedInAs = "";
+    private NewAccount? _newAccount;
+
+    /// <summary>Tells the card when a request is in flight, so it can show a progress bar.</summary>
+    [Parameter] public EventCallback<bool> BusyChanged { get; set; }
+
+    private int SecondsLocked { get; set; }
+
+    /// <summary>Accepts the account just created on the other tab and fills in its email.</summary>
+    public void Prefill(NewAccount account)
+    {
+        _newAccount = account;
+        _email = account.Email;
+        _password = "";
+        _error = null;
+        StateHasChanged();
+    }
+
+    private async Task SubmitAsync()
+    {
+        if (_submitting || SecondsLocked > 0) return;
+        await _form.ValidateAsync();
+        if (!_form.IsValid) return;
+
+        _submitting = true;
+        _error = null;
+        await BusyChanged.InvokeAsync(true);
+        try
+        {
+            await Task.Delay(1100, _lifetime.Token); // Stands in for the identity provider's round trip.
+            var name = SignInData.Matches(_email, _password) ? SignInData.DemoName
+                : _newAccount is { } account && string.Equals(_email.Trim(), account.Email, StringComparison.OrdinalIgnoreCase) && _password == account.Password ? account.Name
+                : null;
+            if (name is not null)
+            {
+                _failures = 0;
+                _signedInAs = name;
+                _signedInAt = DateTime.Now;
+                _password = "";
+            }
+            else if (++_failures >= SignInData.MaxAttempts)
+            {
+                _failures = 0;
+                _ = LockOutAsync();
+            }
+            else
+            {
+                var left = SignInData.MaxAttempts - _failures;
+                _error = $"That email and password don't match. {left} {(left == 1 ? "attempt" : "attempts")} left before a short pause.";
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+        finally
+        {
+            _submitting = false;
+        }
+        await BusyChanged.InvokeAsync(false);
+    }
+
+    private async Task LockOutAsync()
+    {
+        try
+        {
+            for (SecondsLocked = SignInData.LockoutSeconds; SecondsLocked > 0; SecondsLocked--)
+            {
+                StateHasChanged();
+                await Task.Delay(1000, _lifetime.Token);
+            }
+            StateHasChanged();
+        }
+        catch (OperationCanceledException)
+        {
+            // The page went away during the pause.
+        }
+    }
+
+    private async Task OpenResetAsync()
+    {
+        var parameters = new DialogParameters<SignInResetDialog> { { dialog => dialog.Email, _email } };
+        var dialog = await DialogService.ShowAsync<SignInResetDialog>("Reset your password", parameters, new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true });
+        if (await dialog.Result is { Canceled: false, Data: string email }) _email = email;
+    }
+
+    private void UseSecurityKey() =>
+        Snackbar.Add("Security keys need WebAuthn in a real browser session; this sample stops here.", Severity.Info);
+
+    private void OpenQueue() => Snackbar.Add("Tonight's queue would open here. You are 7th for the 0.6 m reflector.", Severity.Normal);
+
+    private void SignOut()
+    {
+        _signedInAt = null;
+        Snackbar.Add("Signed out.", Severity.Success);
+    }
+
+    public void Dispose()
+    {
+        _lifetime.Cancel();
+        _lifetime.Dispose();
+    }
+}

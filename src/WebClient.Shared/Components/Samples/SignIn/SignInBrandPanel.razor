@@ -1,0 +1,46 @@
+@* The ink half of the sign-in card: who the portal belongs to and why you would sign in tonight. *@
+<div class="d-flex flex-column gap-6 pa-6 pa-md-8" style="height: 100%; background: var(--mud-palette-appbar-background); color: var(--mud-palette-appbar-text)">
+    <div>
+        <MudText Typo="Typo.overline" Style="opacity: .7">Observing portal</MudText>
+        <MudText Typo="Typo.h5" HtmlTag="p" Style="font-style: italic">Kestrel Ridge Observatory</MudText>
+    </div>
+
+    <MudHidden Breakpoint="Breakpoint.SmAndDown">
+        @* A star chart drawn inline: no image request, and it inherits the panel's ink color. *@
+        <svg viewBox="0 0 240 200" role="img" aria-label="Star chart of the Plough rising over the ridge" style="width: 100%; max-width: 20rem; color: inherit">
+            <g fill="none" stroke="currentColor" stroke-opacity=".18">
+                <circle cx="120" cy="190" r="60" />
+                <circle cx="120" cy="190" r="110" />
+                <circle cx="120" cy="190" r="160" />
+                <line x1="0" y1="190" x2="240" y2="190" />
+            </g>
+            <polyline points="38,74 70,62 98,70 122,88 150,84 172,52 206,40" fill="none" stroke="var(--mud-palette-primary)" stroke-width="1.25" stroke-dasharray="3 3" />
+            <g fill="currentColor">
+                <circle cx="38" cy="74" r="2.6" /><circle cx="70" cy="62" r="2.2" /><circle cx="98" cy="70" r="2.4" />
+                <circle cx="122" cy="88" r="2" /><circle cx="150" cy="84" r="2.8" /><circle cx="172" cy="52" r="2.4" />
+                <circle cx="206" cy="40" r="3" />
+                <circle cx="18" cy="24" r=".9" opacity=".6" /><circle cx="60" cy="16" r="1.1" opacity=".6" /><circle cx="140" cy="20" r=".8" opacity=".6" />
+                <circle cx="224" cy="110" r="1" opacity=".6" /><circle cx="190" cy="130" r=".9" opacity=".6" /><circle cx="30" cy="130" r="1.2" opacity=".6" />
+                <circle cx="84" cy="118" r=".8" opacity=".6" />
+            </g>
+            <path d="M0 200 L40 168 L70 178 L104 150 L132 166 L170 140 L206 160 L240 146 L240 200 Z" fill="currentColor" opacity=".12" />
+        </svg>
+    </MudHidden>
+
+    <div class="mt-auto">
+        <MudText Typo="Typo.body1">Tonight's queue opens at 18:00. Seeing is forecast at 1.4″ with clear skies after 21:00.</MudText>
+        <MudStack Row Spacing="4" Class="mt-4" Wrap="Wrap.Wrap">
+            @foreach (var (value, label) in Facts)
+            {
+                <div>
+                    <MudText Typo="Typo.h6" HtmlTag="p" Style="font-family: var(--font-mono)">@value</MudText>
+                    <MudText Typo="Typo.caption" Style="opacity: .7">@label</MudText>
+                </div>
+            }
+        </MudStack>
+    </div>
+</div>
+
+@code {
+    private static readonly (string Value, string Label)[] Facts = [("3", "telescopes"), ("11 h", "dark time"), ("42", "observers queued")];
+}

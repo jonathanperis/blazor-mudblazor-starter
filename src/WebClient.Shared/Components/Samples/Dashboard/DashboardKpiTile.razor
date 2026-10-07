@@ -1,0 +1,65 @@
+@* One headline number: value, change against the previous period, and a sparkline of the range. *@
+<MudPaper Outlined Class="pa-4 d-flex flex-column gap-1" Style="height: 100%; overflow: hidden">
+    <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween">
+        <MudText Typo="Typo.overline" Color="Color.Default" Style="color: var(--mud-palette-text-secondary)">@Label</MudText>
+        <MudIcon Icon="@Icon" Size="Size.Small" Color="Accent" />
+    </MudStack>
+    <MudText Typo="Typo.h4" HtmlTag="p" Style="font-variant-numeric: tabular-nums">@Value</MudText>
+    <MudStack Row Spacing="1" AlignItems="AlignItems.Center" Wrap="Wrap.Wrap">
+        <MudChip T="string" Size="Size.Small" Variant="Variant.Text" Color="DeltaColor" Icon="@DeltaIcon" Class="ma-0" Style="font-variant-numeric: tabular-nums">
+            @DeltaText
+        </MudChip>
+        <MudText Typo="Typo.caption" Style="color: var(--mud-palette-text-secondary)">@Comparison</MudText>
+    </MudStack>
+    @* The chart reserves margins for axis labels; the wrapper crops them so the line bleeds to the tile's edges. *@
+    <div aria-hidden="true" class="mt-auto" style="height: 48px; margin: .5rem -1rem -1rem; overflow: hidden">
+        <div style="width: calc(100% + 60px); margin: -23px -30px 0">
+            <MudChart T="double" ChartType="ChartType.Line" ChartSeries="_series" ChartOptions="_options" Width="100%" Height="96px" MatchBoundsToSize />
+        </div>
+    </div>
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired] public string Label { get; set; } = "";
+    [Parameter, EditorRequired] public string Value { get; set; } = "";
+    [Parameter, EditorRequired] public string Icon { get; set; } = "";
+    /// <summary>Relative change against the previous period, for example 0.042 for +4.2 %.</summary>
+    [Parameter] public double? Delta { get; set; }
+    /// <summary>For costs such as waste, a fall is good news.</summary>
+    [Parameter] public bool LowerIsBetter { get; set; }
+    [Parameter] public string Comparison { get; set; } = "";
+    [Parameter] public Color Accent { get; set; } = Color.Primary;
+    [Parameter] public IReadOnlyList<double> Trend { get; set; } = [];
+
+    private List<ChartSeries<double>> _series = [];
+    private readonly LineChartOptions _options = new()
+    {
+        ShowLegend = false, ShowToolTips = false, YAxisLines = false, XAxisLines = false,
+        LineStrokeWidth = 2, YAxisTicks = 100, YAxisSuggestedMax = 100, YAxisToStringFunc = _ => ""
+    };
+
+    private bool Improved => Delta is { } delta && (LowerIsBetter ? delta < 0 : delta > 0);
+    private Color DeltaColor => Delta is null or 0 ? Color.Default : Improved ? Color.Success : Color.Error;
+    private string DeltaIcon => Delta switch
+    {
+        null or 0 => Icons.Material.Filled.TrendingFlat,
+        > 0 => Icons.Material.Filled.TrendingUp,
+        _ => Icons.Material.Filled.TrendingDown
+    };
+    // The sign is spelled out so the change never depends on color alone.
+    private string DeltaText => Delta is { } delta ? delta.ToString("+0.0%;−0.0%;0.0%", System.Globalization.CultureInfo.InvariantCulture) : "n/a";
+
+    protected override void OnParametersSet()
+    {
+        _options.ChartPalette = [$"var(--mud-palette-{Accent.ToString().ToLowerInvariant()})"];
+        // A sparkline shows shape, not scale: stretch the range to 0–100 so small movements stay visible.
+        var (min, max) = Trend.Count == 0 ? (0, 0) : (Trend.Min(), Trend.Max());
+        var scaled = Trend.Select(value => max == min ? 50 : 6 + 88 * (value - min) / (max - min)).ToArray();
+        var series = new ChartSeries<double> { Name = Label, Data = scaled };
+        _series = [series];
+        _options.SeriesDisplayOverrides = new Dictionary<IChartSeries, MudBlazor.Charts.SeriesDisplayOverride>
+        {
+            [series] = new() { LineDisplayType = LineDisplayType.Area, FillOpacity = 0.14 }
+        };
+    }
+}
