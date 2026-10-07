@@ -191,7 +191,9 @@ try {
   });
   await step('every page passes the accessibility rules our markup controls', async () => {
     for (const path of ['', 'docs/', 'docs/gallery/', 'docs/getting-started/']) {
-      await page.goto(`http://127.0.0.1:${server.address().port}${prefix}/${path}`, { waitUntil: 'load' });
+      const response = await page.goto(`http://127.0.0.1:${server.address().port}${prefix}/${path}`, { waitUntil: 'load' });
+      // The server answers unknown paths with 404.html; auditing that page would hide a missing one.
+      if (!response?.ok()) throw new Error(`site /${path} returned ${response?.status()}`);
       accessibility.push(...await audit(page, `site /${path}`));
     }
     if (accessibility.length) {

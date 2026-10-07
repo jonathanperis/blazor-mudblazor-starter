@@ -3,7 +3,7 @@
 <Playground Code="@Code">
     <Preview>
         @* Overriding the palette variables on a container themes everything inside it, and nothing outside. *@
-        <div style="@PreviewStyle" class="pa-6" aria-label="Theme preview">
+        <div style="@PreviewStyle" class="pa-6" role="group" aria-label="Theme preview">
             <MudStack Spacing="3" Style="max-width: 24rem">
                 <MudText Typo="Typo.h5" HtmlTag="h3" Style="color: var(--mud-palette-text-primary)">Night tours</MudText>
                 <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">Book a guided evening at the observatory.</MudText>
@@ -28,11 +28,12 @@
             <MudSlider T="int" @bind-Value="_radius" Min="0" Max="20" Step="1" Color="Color.Primary" aria-labelledby="radius-label" />
         </MudStack>
         <MudSwitch T="bool" @bind-Value="_darkSurface" Color="Color.Primary" Label="Dark surface" />
-        <MudText Typo="Typo.caption" role="status">
+        @* The ratios change on every drag, so they are not a live region; only a failing ratio is announced. *@
+        <MudText Typo="Typo.caption">
             Text on primary: @Ratio(_primary, ContrastText(_primary)).ToString("0.0"):1 ·
             primary on surface: @Ratio(_primary, Surface).ToString("0.0"):1
-            @(Ratio(_primary, Surface) < 3 ? " (too low for outlined text)" : "")
         </MudText>
+        <MudText Typo="Typo.caption" Color="Color.Error" role="status">@ContrastWarning</MudText>
     </Controls>
 </Playground>
 
@@ -64,7 +65,15 @@
         $"--mud-palette-{name}-lighten: {color.ColorRgbLighten().ToString(MudColorOutputFormats.RGB)}"
     ];
 
-    private static MudColor ContrastText(MudColor background) => Ratio(background, new MudColor("#FFFFFF")) >= 4.5 ? new MudColor("#FFFFFF") : new MudColor("#1C1B19");
+    // Whichever of white and ink reads better on the color; for some mid-tones neither reaches 4.5:1.
+    private static MudColor ContrastText(MudColor background)
+    {
+        MudColor white = new("#FFFFFF"), ink = new("#1C1B19");
+        return Ratio(background, white) >= Ratio(background, ink) ? white : ink;
+    }
+
+    private string ContrastWarning => Ratio(_primary, ContrastText(_primary)) < 4.5 ? "Button text on this primary is below 4.5:1."
+        : Ratio(_primary, Surface) < 3 ? "This primary is below 3:1 on the surface, too faint for outlines and icons." : "";
 
     // WCAG 2 contrast ratio between two colors.
     private static double Ratio(MudColor a, MudColor b)
