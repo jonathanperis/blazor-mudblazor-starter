@@ -1,0 +1,13 @@
+@page "/components/chip"
+@attribute [ComponentPage("Chip and chip set", GalleryGroup.Actions, "Chips are compact elements for tags, attributes, filters and choices. A chip set groups them and manages selection and closing. Choose chips for short, scannable values; use a toggle group for a fixed set of mutually exclusive options.", MudDocs = "chips", Types = ["MudChip", "MudChipSet"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ChipBasics)" Title="Text, icons and avatars" Description="A chip shows Text or ChildContent, optionally led by an Icon or an AvatarContent fragment." />
+    <Example Of="typeof(ChipCombinations)" Title="Every variant and color" Description="All 36 combinations of Variant and Color. Filled is the default inside a chip set." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(ChipSizesAndShapes)" Title="Sizes and shapes" Description="Three sizes, each as a pill and with Label, which swaps the pill for the theme's border radius." />
+    <Example Of="typeof(ChipCloseable)" Title="Closeable tags" Description="AllClosable adds a close button to every chip; OnClose tells you which one to remove from your own list." />
+    <Example Of="typeof(ChipSelection)" Title="Selection modes" Description="A chip set binds SelectedValue for single and toggle selection, and SelectedValues for multi selection. CheckMark and SelectedColor make the state visible without relying on color alone." />
+    <Example Of="typeof(ChipFilterScenario)" Title="Scenario: filter chips" Description="Genre and format chips narrow a bookshop list, with a visible count, an empty state and a way to clear the filters." />
+    <Example Of="typeof(ChipStates)" Title="States, links and clicks" Description="Disabled chips and sets, a read-only set, a chip rendered as a link, and a chip that runs an action on click." />
+    <Example Of="typeof(ChipPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

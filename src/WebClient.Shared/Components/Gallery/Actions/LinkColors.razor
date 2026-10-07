@@ -1,0 +1,8 @@
+<MudGrid Spacing="2">
+    @foreach (var color in Enum.GetValues<Color>())
+    {
+        <MudItem xs="6" sm="4" md="3">
+            <MudLink Href="components/link" Color="color" Underline="Underline.Always" Typo="Typo.body1">@color</MudLink>
+        </MudItem>
+    }
+</MudGrid>

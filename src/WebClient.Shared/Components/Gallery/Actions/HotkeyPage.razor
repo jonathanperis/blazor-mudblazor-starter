@@ -1,0 +1,8 @@
+@page "/components/hotkey"
+@attribute [ComponentPage("Hotkey", GalleryGroup.Actions, "MudHotkey listens for a key combination anywhere on the page while it is rendered, then raises an event or reveals its content. Use it for shortcuts to actions that also exist as visible controls; never make a hotkey the only way to do something.", MudDocs = "hotkey", Types = ["MudHotkey"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(HotkeyCallback)" Title="Shortcuts for visible actions" Description="Each button has a hotkey that does the same thing. One handler serves several hotkeys by reading the Key from HotkeyEventArgs." />
+    <Example Of="typeof(HotkeyChildContent)" Title="Revealing content" Description="ChildContent stays hidden until the combination is pressed. HideChildContentOnRepress turns the same keys into a toggle." />
+    <Example Of="typeof(HotkeyPlayground)" Title="Playground" Description="Pick a key and modifiers, then press them anywhere on the page. Modifiers must match exactly: Alt + Shift + K does not fire a hotkey registered for Alt + K." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

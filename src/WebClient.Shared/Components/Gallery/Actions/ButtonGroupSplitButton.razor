@@ -1,0 +1,30 @@
+<MudStack Spacing="3" AlignItems="AlignItems.Start">
+    <MudButtonGroup Variant="Variant.Filled" Color="Color.Primary">
+        <MudButton StartIcon="@_selected.Icon" OnClick="Run">@_selected.Label</MudButton>
+        @* align-self: auto lets the menu trigger stretch to the height of its neighbour. *@
+        <MudMenu Icon="@Icons.Material.Outlined.ArrowDropDown" AriaLabel="More publishing options"
+                 AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight" Style="align-self: auto">
+            @foreach (var option in Options)
+            {
+                <MudMenuItem Icon="@option.Icon" Label="@option.Label" OnClick="() => _selected = option" />
+            }
+        </MudMenu>
+    </MudButtonGroup>
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+@code {
+    private sealed record PublishOption(string Label, string Icon, string Result);
+
+    private static readonly PublishOption[] Options =
+    [
+        new("Publish chapter", Icons.Material.Outlined.Publish, "Chapter 7 is live for subscribers."),
+        new("Schedule for Friday", Icons.Material.Outlined.Schedule, "Chapter 7 will publish on Friday at 09:00."),
+        new("Save as draft", Icons.Material.Outlined.Drafts, "Chapter 7 was saved as a draft.")
+    ];
+
+    private PublishOption _selected = Options[0];
+    private string _status = "Choose an option from the arrow, then press the main button.";
+
+    private void Run() => _status = _selected.Result;
+}

@@ -1,0 +1,13 @@
+<MudStack Spacing="4">
+    @foreach (var variant in new[] { Variant.Text, Variant.Outlined, Variant.Filled })
+    {
+        <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+            <MudText Typo="Typo.overline" Style="min-width: 5rem">@variant</MudText>
+            <MudButtonGroup Variant="@variant" Color="Color.Primary" aria-label="@($"Calendar range, {variant}")">
+                <MudButton>Day</MudButton>
+                <MudButton>Week</MudButton>
+                <MudButton>Month</MudButton>
+            </MudButtonGroup>
+        </MudStack>
+    }
+</MudStack>

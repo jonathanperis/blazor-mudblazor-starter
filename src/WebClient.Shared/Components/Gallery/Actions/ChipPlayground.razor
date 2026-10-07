@@ -1,0 +1,59 @@
+<Playground Code="@Code">
+    <Preview>
+        @if (_closed)
+        {
+            <MudButton Variant="Variant.Text" Color="Color.Primary" OnClick="@(() => _closed = false)">Bring the chip back</MudButton>
+        }
+        else
+        {
+            <MudChip T="string" Text="@_text" Variant="_variant" Color="_color" Size="_size" Label="_label" Disabled="_disabled"
+                     Icon="@(_icon ? Icons.Material.Outlined.Event : null)"
+                     OnClose="CloseHandler" />
+        }
+    </Preview>
+    <Controls>
+        <MudTextField @bind-Value="_text" Label="Text" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSelect @bind-Value="_variant" Label="Variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_size" Label="Size" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Size>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_icon" Label="Icon" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_label" Label="Label (square edges)" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_closeable" Label="Closeable" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private string _text = "Saturday market";
+    private Variant _variant = Variant.Filled;
+    private Color _color = Color.Primary;
+    private Size _size = Size.Medium;
+    private bool _icon = true;
+    private bool _label;
+    private bool _closeable;
+    private bool _disabled;
+    private bool _closed;
+
+    // A chip shows its close button only while OnClose has a delegate.
+    private EventCallback<MudChip<string>> CloseHandler => _closeable ? EventCallback.Factory.Create<MudChip<string>>(this, () => _closed = true) : default;
+
+    // Outside a chip set MudChip falls back to Variant.Filled, Color.Default and Size.Medium.
+    private string Code => Snippet.Element("MudChip",
+    [
+        ("T", "string"),
+        ("Text", _text),
+        ("Variant", Snippet.Enum(_variant, Variant.Filled)),
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("Size", Snippet.Enum(_size, Size.Medium)),
+        ("Icon", _icon ? "@Icons.Material.Outlined.Event" : null),
+        ("Label", Snippet.Flag(_label)),
+        ("OnClose", _closeable ? "Remove" : null),
+        ("Disabled", Snippet.Flag(_disabled))
+    ]);
+}

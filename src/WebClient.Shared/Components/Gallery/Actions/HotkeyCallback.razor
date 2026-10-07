@@ -1,0 +1,50 @@
+@using MudBlazor.Utilities
+
+<MudStack Spacing="3">
+    <MudStack Row Wrap="Wrap.Wrap" Spacing="3">
+        @foreach (var command in Commands)
+        {
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@command.Icon" OnClick="@(() => Run(command, "button"))">
+                @command.Label
+                <kbd class="ml-2" style="@KeyStyle">Alt + Shift + @command.Letter</kbd>
+            </MudButton>
+            <MudHotkey Key="command.Key" KeyModifiers="Modifiers" OnHotkeyPressed="OnHotkey" />
+        }
+    </MudStack>
+    <MudPaper Outlined Class="pa-3">
+        <MudText Typo="Typo.overline">Dome console</MudText>
+        @if (_log.Count == 0)
+        {
+            <MudText Typo="Typo.body2">No commands yet. Press a button or its shortcut.</MudText>
+        }
+        @foreach (var entry in _log)
+        {
+            <MudText Typo="Typo.body2">@entry</MudText>
+        }
+    </MudPaper>
+</MudStack>
+
+@code {
+    private sealed record Command(string Label, string Letter, JsKey Key, string Icon);
+
+    private static readonly Command[] Commands =
+    [
+        new("Open dome", "O", JsKey.KeyO, Icons.Material.Outlined.Roofing),
+        new("Close dome", "C", JsKey.KeyC, Icons.Material.Outlined.Lock),
+        new("Park telescope", "P", JsKey.KeyP, Icons.Material.Outlined.LocalParking)
+    ];
+
+    // Alt + Shift avoids the browser's Ctrl shortcuts. With a letter key, either Alt or Shift key counts as ...Left.
+    private static readonly JsKeyModifier[] Modifiers = [JsKeyModifier.AltLeft, JsKeyModifier.ShiftLeft];
+    private const string KeyStyle = "padding: 0 .35rem; border: 1px solid currentColor; border-radius: 4px; opacity: .8";
+
+    private readonly List<string> _log = [];
+
+    private void OnHotkey(HotkeyEventArgs args) => Run(Commands.Single(command => command.Key == args.Key), "shortcut");
+
+    private void Run(Command command, string source)
+    {
+        _log.Insert(0, $"{DateTime.Now:T} · {command.Label} (from the {source})");
+        if (_log.Count > 4) _log.RemoveAt(_log.Count - 1);
+    }
+}

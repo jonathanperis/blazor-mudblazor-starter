@@ -1,0 +1,41 @@
+<MudStack Row Wrap="Wrap.Wrap" Spacing="6" AlignItems="AlignItems.Start">
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Text alignment</MudText>
+        <MudToggleGroup T="string" @bind-Value="_align" Size="Size.Small" aria-label="Text alignment" Style="width: 14rem">
+            @foreach (var option in Alignments)
+            {
+                <MudToggleItem Value="option.Value" aria-label="@option.Label">
+                    <MudIcon Icon="@option.Icon" />
+                </MudToggleItem>
+            }
+        </MudToggleGroup>
+        <MudText Typo="Typo.body2">Aligned: @_align</MudText>
+    </MudStack>
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Catalogue view</MudText>
+        <MudToggleGroup T="string" @bind-Value="_view" Color="Color.Secondary" aria-label="Catalogue view">
+            <MudToggleItem Value="@("Grid")">
+                <MudIcon Icon="@Icons.Material.Outlined.GridView" Size="Size.Small" Class="mr-2" />Grid
+            </MudToggleItem>
+            <MudToggleItem Value="@("List")">
+                <MudIcon Icon="@Icons.Material.Outlined.ViewList" Size="Size.Small" Class="mr-2" />List
+            </MudToggleItem>
+        </MudToggleGroup>
+        <MudText Typo="Typo.body2">View: @_view</MudText>
+    </MudStack>
+</MudStack>
+
+@code {
+    private sealed record Alignment(string Value, string Label, string Icon);
+
+    private static readonly Alignment[] Alignments =
+    [
+        new("left", "Align left", Icons.Material.Outlined.FormatAlignLeft),
+        new("center", "Align center", Icons.Material.Outlined.FormatAlignCenter),
+        new("right", "Align right", Icons.Material.Outlined.FormatAlignRight),
+        new("justify", "Justify", Icons.Material.Outlined.FormatAlignJustify)
+    ];
+
+    private string _align = "left";
+    private string _view = "Grid";
+}

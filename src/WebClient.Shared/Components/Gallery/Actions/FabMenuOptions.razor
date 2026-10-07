@@ -1,0 +1,23 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6" Class="d-flex flex-column align-center gap-3" Style="min-height: 19rem; justify-content: flex-end">
+        <MudFabMenu StartIcon="@Icons.Material.Outlined.Tune" Color="Color.Secondary" Label="Adjust">
+            <MudFabMenuItem StartIcon="@Icons.Material.Outlined.Brightness5" Color="Color.Secondary" aria-label="Exposure" />
+            <MudFabMenuItem StartIcon="@Icons.Material.Outlined.Contrast" Color="Color.Secondary" aria-label="Contrast" />
+            <MudFabMenuItem StartIcon="@Icons.Material.Outlined.Crop" Color="Color.Secondary" aria-label="Crop" />
+        </MudFabMenu>
+        <MudText Typo="Typo.caption" Align="Align.Center">Defaults: opens on hover or click, close icon, dampened items</MudText>
+    </MudItem>
+    <MudItem xs="12" sm="6" Class="d-flex flex-column align-center gap-3" Style="min-height: 19rem; justify-content: flex-end">
+        <MudFabMenu StartIcon="@Icons.Material.Outlined.Tune" Color="Color.Secondary" Label="Adjust"
+                    OpenOnMouseHover="false" CloseOnMenuItemClicked="false" UseCloseIcon="false" DampenItemsBackgroundColor="false">
+            <MudFabMenuItem StartIcon="@Icons.Material.Outlined.Brightness5" Color="Color.Secondary" aria-label="Exposure" OnClick="@(() => _applied++)" />
+            <MudFabMenuItem StartIcon="@Icons.Material.Outlined.Contrast" Color="Color.Secondary" aria-label="Contrast" OnClick="@(() => _applied++)" />
+            <MudFabMenuItem StartIcon="@Icons.Material.Outlined.Crop" Color="Color.Secondary" aria-label="Crop" OnClick="@(() => _applied++)" />
+        </MudFabMenu>
+        <MudText Typo="Typo.caption" Align="Align.Center" role="status">Click to open, stays open, keeps its icon · @_applied applied</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private int _applied;
+}
