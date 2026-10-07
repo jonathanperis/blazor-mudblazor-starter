@@ -1,0 +1,46 @@
+@* The names are visible, so pictures use an empty alt and initials are hidden from screen readers. *@
+<MudStack Row="true" Wrap="Wrap.Wrap" Spacing="6">
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+        <MudAvatar>
+            <MudImage Src="@Portrait("#E9C7A6", "#7B4A2E", "#1F5F5B")" Alt="" />
+        </MudAvatar>
+        <MudStack Spacing="0">
+            <MudText Typo="Typo.subtitle2">Inês Albuquerque</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">Picture</MudText>
+        </MudStack>
+    </MudStack>
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+        <MudAvatar Color="Color.Primary" aria-hidden="true">TO</MudAvatar>
+        <MudStack Spacing="0">
+            <MudText Typo="Typo.subtitle2">Tomás Okafor</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">Initials</MudText>
+        </MudStack>
+    </MudStack>
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+        <MudAvatar Color="Color.Secondary">
+            <MudIcon Icon="@Icons.Material.Outlined.SmartToy" />
+        </MudAvatar>
+        <MudStack Spacing="0">
+            <MudText Typo="Typo.subtitle2">Scheduler</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">Icon for a system account</MudText>
+        </MudStack>
+    </MudStack>
+    <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="2">
+        <MudAvatar Variant="Variant.Outlined">
+            <MudIcon Icon="@Icons.Material.Outlined.Person" />
+        </MudAvatar>
+        <MudStack Spacing="0">
+            <MudText Typo="Typo.subtitle2">Guest</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">Placeholder</MudText>
+        </MudStack>
+    </MudStack>
+</MudStack>
+
+@code {
+    // A synthetic portrait as an inline SVG data URI: no network request, no real person.
+    private static string Portrait(string skin, string hair, string shirt) =>
+        "data:image/svg+xml;utf8," + Uri.EscapeDataString(
+            $"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='#F1E6D2'/>" +
+            $"<path d='M8 64c2-13 11-19 24-19s22 6 24 19z' fill='{shirt}'/><circle cx='32' cy='27' r='12' fill='{skin}'/>" +
+            $"<path d='M19 26c0-9 6-14 13-14s13 5 13 14c-3-4-8-6-13-6s-10 2-13 6z' fill='{hair}'/></svg>");
+}

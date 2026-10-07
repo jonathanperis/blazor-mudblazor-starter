@@ -1,0 +1,30 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudCard Outlined="true">
+            <MudCardMedia Image="@Lighthouse" Height="180" Title="A striped lighthouse on a headland at sunset" />
+            <MudCardContent>
+                <MudText Typo="Typo.h6" HtmlTag="h3">Cape Rosa lighthouse</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">Guided climbs on weekends, 11:00 and 15:00. 112 steps to the lantern room.</MudText>
+            </MudCardContent>
+        </MudCard>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudCard Outlined="true">
+            <MudCardContent>
+                <MudText Typo="Typo.h6" HtmlTag="h3">Media below the text</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">Order is up to you; the same image at Height 120 crops to its middle band.</MudText>
+            </MudCardContent>
+            <MudCardMedia Image="@Lighthouse" Height="120" Title="A striped lighthouse on a headland at sunset" />
+        </MudCard>
+    </MudItem>
+</MudGrid>
+
+@code {
+    // MudCardMedia uses a CSS background image; a URL-encoded SVG data URI works without any request.
+    private static readonly string Lighthouse = "data:image/svg+xml;utf8," + Uri.EscapeDataString(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='480' height='270' viewBox='0 0 480 270' preserveAspectRatio='xMidYMid slice'>" +
+        "<rect width='480' height='270' fill='#F2C08A'/><circle cx='360' cy='150' r='46' fill='#F7DDB0'/>" +
+        "<path d='M0 190q120-30 240-20t240 10v90H0z' fill='#2B5C8A'/><path d='M0 215h480v55H0z' fill='#1F3B4D'/>" +
+        "<path d='M110 60h24l10 130h-44z' fill='#FBFAF6'/><path d='M106 100h32l2 22h-36zM101 150h42l2 22h-46z' fill='#B4441F'/>" +
+        "<path d='M108 44h28v16h-28z' fill='#2A2824'/><path d='M104 44l18-14 18 14z' fill='#B4441F'/></svg>");
+}

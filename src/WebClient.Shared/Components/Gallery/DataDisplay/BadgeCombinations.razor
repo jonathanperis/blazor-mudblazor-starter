@@ -1,0 +1,23 @@
+<EnumMatrix TRow="Color" TColumn="Kind" Caption="MudBadge: Color × kind">
+    <Cell>
+        <div class="pt-2 px-2">
+            <MudBadge Color="@context.Row" Content="@ContentFor(context.Column)" Dot="@(context.Column == Kind.Dot)"
+                      Icon="@(context.Column == Kind.Icon ? Icons.Material.Filled.Star : null)">
+                <MudIcon Icon="@Icons.Material.Outlined.Inbox" />
+            </MudBadge>
+        </div>
+    </Cell>
+</EnumMatrix>
+
+@code {
+    // A local enum lets EnumMatrix show the kinds of badge as columns.
+    private enum Kind { Number, Overflow, Text, Dot, Icon }
+
+    private static object? ContentFor(Kind kind) => kind switch
+    {
+        Kind.Number => 7,
+        Kind.Overflow => 240,
+        Kind.Text => "Beta",
+        _ => null
+    };
+}

@@ -1,0 +1,27 @@
+<MudStack Row="true" Wrap="Wrap.Wrap" Spacing="8">
+    <MudStack Spacing="2">
+        <MudImage Src="@Cover" FallbackSrc="@Placeholder" Alt="Cover of The Harbour Atlas" Width="120" Height="168" Elevation="2" Class="rounded" />
+        <MudText Typo="Typo.caption">Src loads</MudText>
+    </MudStack>
+    <MudStack Spacing="2">
+        <MudImage Src="@Broken" FallbackSrc="@Placeholder" Alt="Cover not available" Width="120" Height="168" Elevation="2" Class="rounded" />
+        <MudText Typo="Typo.caption">Src fails, fallback shows</MudText>
+    </MudStack>
+</MudStack>
+
+@code {
+    // A data URI whose SVG cannot be parsed: it fails the same way a missing file would, without a network request.
+    private const string Broken = "data:image/svg+xml;utf8,not-an-image";
+
+    private static readonly string Cover = "data:image/svg+xml;utf8," + Uri.EscapeDataString(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='168' viewBox='0 0 120 168'>" +
+        "<rect width='120' height='168' fill='#1F5F5B'/><circle cx='60' cy='70' r='30' fill='none' stroke='#F2FBF9' stroke-width='2'/>" +
+        "<path d='M30 70h60M60 40v60' stroke='#F2FBF9' stroke-width='1.5'/>" +
+        "<text x='60' y='132' fill='#F2FBF9' font-family='Georgia, serif' font-size='12' text-anchor='middle'>The Harbour</text>" +
+        "<text x='60' y='148' fill='#F2FBF9' font-family='Georgia, serif' font-size='12' text-anchor='middle'>Atlas</text></svg>");
+
+    private static readonly string Placeholder = "data:image/svg+xml;utf8," + Uri.EscapeDataString(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='168' viewBox='0 0 120 168'>" +
+        "<rect width='120' height='168' fill='#E6E1D7'/><path d='M42 66h36v44H42z' fill='none' stroke='#8E877A' stroke-width='3'/>" +
+        "<path d='M50 78h20M50 88h20M50 98h12' stroke='#8E877A' stroke-width='3'/></svg>");
+}

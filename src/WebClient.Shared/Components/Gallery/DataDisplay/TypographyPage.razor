@@ -1,0 +1,12 @@
+@page "/components/typography"
+@attribute [ComponentPage("Typography", GalleryGroup.DataDisplay, "MudText applies the theme's type scale to any text. Choose the Typo for how text should look and HtmlTag for what it means, so the outline stays correct.", MudDocs = "typography", Types = ["MudText"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(TypographyScale)" Title="The type scale" Description="Every Typo value with the font and size this theme assigns to it. Headings use a serif; body, captions and overlines use IBM Plex." />
+    <Example Of="typeof(TypographyAlignment)" Title="Alignment" Description="Align sets text-align. Start and End follow the reading direction, so prefer them over Left and Right in content that may be translated." />
+    <Example Of="typeof(TypographyColors)" Title="Every color and style" Description="Color × Typo for a representative set of styles. Transparent and Surface disappear on this sheet: they are meant for text on colored backgrounds." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(TypographySpacingAndInline)" Title="Gutters and inline text" Description="GutterBottom adds a bottom margin between blocks. Inline lets a styled run sit inside a sentence; give it a span tag so the HTML stays valid." />
+    <Example Of="typeof(TypographySemantics)" Title="Semantics versus appearance" Description="Typo decides how text looks; HtmlTag decides what it is. Screen readers navigate by the real tags, so pick the heading level from the outline, not from the font size." />
+    <Example Of="typeof(TypographyArticle)" Title="A typeset article" Description="An overline, a heading, a standfirst, a byline, body copy, a subheading, a pull quote and a caption working together." />
+    <Example Of="typeof(TypographyPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

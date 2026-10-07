@@ -1,0 +1,22 @@
+<MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="6" Class="pt-3">
+    <MudBadge Content="_unread" Max="9" Visible="@(_unread > 0)" Color="Color.Primary" Overlap="true" Bordered="true"
+              BadgeAriaLabel="@($"{_unread} unread")">
+        <MudIconButton Icon="@Icons.Material.Outlined.Notifications" aria-label="Notifications" Size="Size.Large" />
+    </MudBadge>
+    <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="2">
+        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Add" OnClick="() => _unread++">Receive a notice</MudButton>
+        <MudButton Variant="Variant.Text" Disabled="@(_unread == 0)" OnClick="() => _unread = 0">Mark all as read</MudButton>
+    </MudStack>
+    <MudText Typo="Typo.body2" role="status">@Status</MudText>
+</MudStack>
+
+@code {
+    private int _unread = 3;
+
+    private string Status => _unread switch
+    {
+        0 => "You are up to date.",
+        1 => "1 unread notice.",
+        _ => $"{_unread} unread notices."
+    };
+}

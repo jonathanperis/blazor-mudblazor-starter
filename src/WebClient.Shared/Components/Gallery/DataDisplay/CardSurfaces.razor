@@ -1,0 +1,23 @@
+<MudGrid Spacing="4">
+    @foreach (var (label, outlined, elevation, square) in Surfaces)
+    {
+        <MudItem xs="12" sm="6" md="3">
+            <MudCard Outlined="outlined" Elevation="elevation" Square="square" Style="height: 100%">
+                <MudCardContent>
+                    <MudText Typo="Typo.subtitle2" HtmlTag="h3">@label</MudText>
+                    <MudText Typo="Typo.body2" Class="mud-text-secondary">Room 3 is booked for the bread-scoring workshop at 14:00.</MudText>
+                </MudCardContent>
+            </MudCard>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    private static readonly (string Label, bool Outlined, int Elevation, bool Square)[] Surfaces =
+    [
+        ("Outlined", true, 0, false),
+        ("Elevation 1 (default)", false, 1, false),
+        ("Elevation 6", false, 6, false),
+        ("Outlined and square", true, 0, true)
+    ];
+}

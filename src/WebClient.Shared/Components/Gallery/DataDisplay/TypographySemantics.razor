@@ -1,0 +1,27 @@
+<MudStack Spacing="3">
+    @foreach (var sample in Samples)
+    {
+        <MudPaper Outlined="true" Class="pa-4">
+            <MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Spacing="3">
+                <MudText Typo="sample.Typo" HtmlTag="@sample.Tag">@sample.Text</MudText>
+                <MudStack Spacing="0" AlignItems="AlignItems.End">
+                    <MudText Typo="Typo.caption" HtmlTag="span">looks like <code>Typo.@sample.Typo</code></MudText>
+                    <MudText Typo="Typo.caption" HtmlTag="span">is a <code>&lt;@sample.Tag&gt;</code></MudText>
+                </MudStack>
+            </MudStack>
+            <MudText Typo="Typo.body2" Class="mud-text-secondary mt-2">@sample.Why</MudText>
+        </MudPaper>
+    }
+</MudStack>
+
+@code {
+    private sealed record Sample(Typo Typo, string Tag, string Text, string Why);
+
+    private static readonly Sample[] Samples =
+    [
+        new(Typo.h4, "p", "€ 1,280 raised", "A big number is not a heading. It keeps the large style but stays a paragraph."),
+        new(Typo.subtitle1, "h3", "Delivery address", "A small card title is still a heading: assistive technology lists it in the outline."),
+        new(Typo.overline, "span", "Out of stock", "A label inside a line of other content needs a phrasing element, not a block."),
+        new(Typo.body1, "blockquote", "Measure twice, observe once.", "A quotation gets its own semantic element while keeping body styling.")
+    ];
+}

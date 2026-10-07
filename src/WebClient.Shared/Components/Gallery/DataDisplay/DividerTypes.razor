@@ -1,0 +1,33 @@
+@* Inset starts 72px in: 16px padding + a 40px avatar + 16px gap, where the text begins. *@
+<MudPaper Outlined="true" MaxWidth="32rem" Class="mx-auto">
+    @foreach (var (station, detail, type) in Stops)
+    {
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="4" Class="px-4 py-3">
+            <MudAvatar Color="Color.Secondary" Variant="Variant.Outlined" aria-hidden="true">
+                <MudIcon Icon="@Icons.Material.Outlined.Train" />
+            </MudAvatar>
+            <MudStack Spacing="0" Class="flex-grow-1">
+                <MudText Typo="Typo.subtitle2">@station</MudText>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@detail</MudText>
+            </MudStack>
+            @if (type is not null)
+            {
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">rule below: <code>@type</code></MudText>
+            }
+        </MudStack>
+        @if (type is { } dividerType)
+        {
+            <MudDivider DividerType="dividerType" />
+        }
+    }
+</MudPaper>
+
+@code {
+    private static readonly (string Station, string Detail, DividerType? Type)[] Stops =
+    [
+        ("Central Station", "Platform 4 · 18:42", DividerType.FullWidth),
+        ("Riverside", "18:49 · step-free", DividerType.Inset),
+        ("Old Market", "18:55", DividerType.Middle),
+        ("Harbour Point", "19:03 · terminus", null)
+    ];
+}

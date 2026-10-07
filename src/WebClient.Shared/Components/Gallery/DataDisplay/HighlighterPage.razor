@@ -1,0 +1,10 @@
+@page "/components/highlighter"
+@attribute [ComponentPage("Highlighter", GalleryGroup.DataDisplay, "MudHighlighter wraps the parts of a text that match a search in mark elements. Use it to show why a result matched, in search results, filters and long passages.", MudDocs = "highlighter", Types = ["MudHighlighter"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(HighlighterSearch)" Title="Search as you type" Description="Bind HighlightedText to an immediate text field and every match in the passage is marked while you type." />
+    <Example Of="typeof(HighlighterFragments)" Title="Several fragments at once" Description="HighlightedTexts accepts a list. Toggle the terms to mark several words in one pass." />
+    <Example Of="typeof(HighlighterOptions)" Title="Case sensitivity and word boundaries" Description="CaseSensitive restricts matches to the exact case. UntilNextBoundary extends each match to the end of the word, so 'star' marks the whole of 'starlight'." />
+    <Example Of="typeof(HighlighterResults)" Title="Highlighted search results" Description="A filtered list where each result shows its match. Class and Style restyle the mark elements to suit the surface." />
+    <Example Of="typeof(HighlighterMarkup)" Title="Text that contains markup" Description="Markup renders the text as HTML and highlights inside it. Use it only with trusted text that you wrote, never with user input." />
+</ComponentPageFrame>

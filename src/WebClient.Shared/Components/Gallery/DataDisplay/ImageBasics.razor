@@ -1,0 +1,20 @@
+<MudGrid Spacing="6">
+    <MudItem xs="12" md="5">
+        <MudText Typo="Typo.overline" HtmlTag="p" Class="mb-2">Width="240" Height="135"</MudText>
+        <MudImage Src="@Hills" Alt="Green hills under a pale sky, with a red cottage" Width="240" Height="135" />
+    </MudItem>
+    <MudItem xs="12" md="7">
+        <MudText Typo="Typo.overline" HtmlTag="p" Class="mb-2">Fluid="true" fills the column</MudText>
+        <MudImage Src="@Hills" Alt="Green hills under a pale sky, with a red cottage" Fluid="true" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    // An inline SVG with an intrinsic size of 320 × 180: no network request.
+    private static readonly string Hills = "data:image/svg+xml;utf8," + Uri.EscapeDataString(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='320' height='180' viewBox='0 0 320 180'>" +
+        "<rect width='320' height='180' fill='#F3E3C3'/><circle cx='250' cy='52' r='22' fill='#E0893A'/>" +
+        "<path d='M0 130 70 80l60 40 70-60 120 75v45H0z' fill='#8FA27A'/>" +
+        "<path d='M0 150q80-20 160 0t160-5v35H0z' fill='#4E6B4A'/>" +
+        "<path d='M40 120h34v26H40z' fill='#B4441F'/><path d='m36 122 21-18 21 18z' fill='#5E2A16'/></svg>");
+}

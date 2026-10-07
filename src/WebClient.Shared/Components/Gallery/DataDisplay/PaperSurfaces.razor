@@ -1,0 +1,49 @@
+<MudPaper Square="true" Elevation="0" Class="pa-4" Style="background: var(--mud-palette-background)">
+    <MudPaper Outlined="true" Class="d-flex align-center gap-3 px-4 py-3 mb-4">
+        <MudIcon Icon="@Icons.Material.Outlined.Science" Color="Color.Primary" />
+        <MudText Typo="Typo.subtitle1" HtmlTag="h3" Class="flex-grow-1">Crystallography lab</MudText>
+        <MudText Typo="Typo.caption" Class="mud-text-secondary">Week 19</MudText>
+    </MudPaper>
+    <MudGrid Spacing="4">
+        <MudItem xs="12" md="3">
+            <MudPaper Outlined="true" Class="pa-4" Height="100%">
+                <MudText Typo="Typo.overline" HtmlTag="p" Class="mb-2">Benches</MudText>
+                @foreach (var bench in Benches)
+                {
+                    <MudText Typo="Typo.body2" Class="py-1">@bench</MudText>
+                }
+            </MudPaper>
+        </MudItem>
+        <MudItem xs="12" md="9">
+            <MudGrid Spacing="4">
+                @foreach (var (label, value, note) in Tiles)
+                {
+                    <MudItem xs="12" sm="4">
+                        <MudPaper Outlined="true" Class="pa-4">
+                            <MudText Typo="Typo.caption" Class="mud-text-secondary">@label</MudText>
+                            <MudText Typo="Typo.h4" HtmlTag="p">@value</MudText>
+                            <MudText Typo="Typo.caption">@note</MudText>
+                        </MudPaper>
+                    </MudItem>
+                }
+                <MudItem xs="12">
+                    <MudPaper Elevation="0" Class="pa-4" Style="background: var(--mud-palette-background-gray)">
+                        <MudText Typo="Typo.subtitle2" HtmlTag="h4">Next step</MudText>
+                        <MudText Typo="Typo.body2">Mount the three largest crystals from sample 14 for diffraction on Thursday morning.</MudText>
+                    </MudPaper>
+                </MudItem>
+            </MudGrid>
+        </MudItem>
+    </MudGrid>
+</MudPaper>
+
+@code {
+    private static readonly string[] Benches = ["Bench A · growth", "Bench B · microscopy", "Bench C · diffraction", "Cold room"];
+
+    private static readonly (string Label, string Value, string Note)[] Tiles =
+    [
+        ("Samples growing", "18", "4 started today"),
+        ("Crystals mounted", "6", "2 waiting for review"),
+        ("Cold room", "4 °C", "Stable for 72 hours")
+    ];
+}

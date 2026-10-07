@@ -1,0 +1,10 @@
+@page "/components/paper"
+@attribute [ComponentPage("Paper", GalleryGroup.DataDisplay, "MudPaper is the plain surface that cards, menus and dialogs are made of. Use it directly when you need a panel with a background, a border or a shadow and no further structure.", MudDocs = "paper", Types = ["MudPaper"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(PaperElevation)" Title="Elevation 0 to 24" Description="Elevation sets the shadow depth. Low values separate a panel quietly; high values belong to things that float, such as dialogs." />
+    <Example Of="typeof(PaperOutlinedAndSquare)" Title="Outlined and square" Description="Outlined replaces the shadow with a border. Square removes the rounded corners, for surfaces that touch the edge of a page or another surface." />
+    <Example Of="typeof(PaperSizes)" Title="Sizes" Description="Width, Height and their Min and Max variants accept any CSS length, so a paper can be fixed, fluid or bounded." />
+    <Example Of="typeof(PaperSurfaces)" Title="Papers as layout surfaces" Description="A small dashboard built from papers: a header strip, a side panel and content tiles. Outlined papers keep the hierarchy visible without heavy shadows." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(PaperPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

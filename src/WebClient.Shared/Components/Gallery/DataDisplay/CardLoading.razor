@@ -1,0 +1,73 @@
+@implements IDisposable
+
+<MudStack Spacing="3" AlignItems="AlignItems.Start">
+    <MudCard Outlined="true" Style="width: 100%; max-width: 22rem" aria-busy="@(_session is null ? "true" : "false")">
+        @if (_session is null)
+        {
+            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="140px" Animation="Animation.Wave" />
+            <MudCardContent>
+                <MudSkeleton Width="40%" />
+                <MudSkeleton Width="80%" Height="2rem" />
+                <MudSkeleton Width="60%" />
+            </MudCardContent>
+            <MudCardActions>
+                <MudSkeleton Width="7rem" Height="2.25rem" Class="ml-2" />
+            </MudCardActions>
+        }
+        else
+        {
+            <MudCardMedia Image="@Sky" Height="140" Title="A crescent moon above a dark horizon" />
+            <MudCardContent>
+                <MudText Typo="Typo.overline" HtmlTag="p" Color="Color.Primary">@_session.When</MudText>
+                <MudText Typo="Typo.h6" HtmlTag="h3">@_session.Title</MudText>
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">@_session.Seats seats left</MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Text" Color="Color.Primary">Reserve a seat</MudButton>
+            </MudCardActions>
+        }
+    </MudCard>
+    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Refresh" OnClick="LoadAsync">Reload</MudButton>
+    <MudText Typo="Typo.body2" role="status">@(_session is null ? "Loading the next session…" : "Loaded.")</MudText>
+</MudStack>
+
+@code {
+    private sealed record Session(string Title, string When, int Seats);
+
+    private Session? _session;
+    private CancellationTokenSource? _loading;
+
+    // Loading starts after the first interactive render, so prerendering is never delayed.
+    protected override Task OnAfterRenderAsync(bool firstRender) => firstRender ? LoadAsync() : Task.CompletedTask;
+
+    private async Task LoadAsync()
+    {
+        _loading?.Cancel();
+        _loading?.Dispose();
+        var loading = _loading = new CancellationTokenSource();
+        _session = null;
+        StateHasChanged();
+        try
+        {
+            await Task.Delay(1500, loading.Token);
+            _session = new("Moon and Jupiter, side by side", "Friday · 21:30", 7);
+            StateHasChanged();
+        }
+        catch (OperationCanceledException)
+        {
+            // A newer load or disposal replaced this one; its result must not be shown.
+        }
+    }
+
+    public void Dispose()
+    {
+        _loading?.Cancel();
+        _loading?.Dispose();
+    }
+
+    private static readonly string Sky = "data:image/svg+xml;utf8," + Uri.EscapeDataString(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='480' height='200' viewBox='0 0 480 200'>" +
+        "<rect width='480' height='200' fill='#1C2A44'/><circle cx='330' cy='70' r='26' fill='#F3E3C3'/><circle cx='342' cy='62' r='24' fill='#1C2A44'/>" +
+        "<circle cx='392' cy='88' r='5' fill='#E0B85C'/><circle cx='90' cy='40' r='1.5' fill='#FFF'/><circle cx='160' cy='80' r='1.2' fill='#FFF'/><circle cx='230' cy='30' r='1.4' fill='#FFF'/>" +
+        "<path d='M0 170q120-25 240-10t240-5v45H0z' fill='#0E0D0C'/></svg>");
+}

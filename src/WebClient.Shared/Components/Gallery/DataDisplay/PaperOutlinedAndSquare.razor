@@ -1,0 +1,23 @@
+<MudGrid Spacing="4">
+    @foreach (var (label, outlined, square, elevation) in Combinations)
+    {
+        <MudItem xs="6" md="3">
+            <MudPaper Outlined="outlined" Square="square" Elevation="elevation" Height="7rem" Class="d-flex flex-column justify-center pa-4">
+                <MudText Typo="Typo.subtitle2" HtmlTag="span">@label</MudText>
+                <MudText Typo="Typo.caption" HtmlTag="span" Class="mud-text-secondary">
+                    Outlined=@outlined.ToString().ToLowerInvariant() · Square=@square.ToString().ToLowerInvariant()
+                </MudText>
+            </MudPaper>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    private static readonly (string Label, bool Outlined, bool Square, int Elevation)[] Combinations =
+    [
+        ("Shadow, rounded", false, false, 2),
+        ("Shadow, square", false, true, 2),
+        ("Outlined, rounded", true, false, 0),
+        ("Outlined, square", true, true, 0)
+    ];
+}

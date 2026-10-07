@@ -1,0 +1,30 @@
+<MudPaper Outlined="true" MaxWidth="34rem">
+    <MudText Typo="Typo.subtitle1" HtmlTag="h3" Class="px-4 pt-4 pb-2">Northern dome · Friday night</MudText>
+    @foreach (var member in Crew)
+    {
+        <MudDivider />
+        <MudStack Row="true" AlignItems="AlignItems.Center" Spacing="3" Class="px-4 py-3">
+            <MudAvatar Color="member.Color" Variant="@(member.OnShift ? Variant.Filled : Variant.Outlined)" aria-hidden="true">@member.Initials</MudAvatar>
+            <MudStack Spacing="0" Class="flex-grow-1">
+                <MudText Typo="Typo.subtitle2">@member.Name</MudText>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@member.Role</MudText>
+            </MudStack>
+            <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="@(member.OnShift ? Color.Success : Color.Default)"
+                     Icon="@(member.OnShift ? Icons.Material.Outlined.Bedtime : Icons.Material.Outlined.EventBusy)">
+                @(member.OnShift ? "On shift" : "Off tonight")
+            </MudChip>
+        </MudStack>
+    }
+</MudPaper>
+
+@code {
+    private sealed record Member(string Name, string Initials, string Role, Color Color, bool OnShift);
+
+    private static readonly Member[] Crew =
+    [
+        new("Inês Albuquerque", "IA", "Duty astronomer", Color.Primary, true),
+        new("Tomás Okafor", "TO", "Telescope operator", Color.Secondary, true),
+        new("Mei Lin", "ML", "Public outreach", Color.Tertiary, false),
+        new("Rafael Duarte", "RD", "Instrument technician", Color.Info, true)
+    ];
+}

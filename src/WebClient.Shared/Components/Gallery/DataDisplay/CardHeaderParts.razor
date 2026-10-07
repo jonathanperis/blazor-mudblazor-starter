@@ -1,0 +1,29 @@
+<MudCard Outlined="true" Style="max-width: 26rem">
+    <MudCardHeader>
+        <CardHeaderAvatar>
+            <MudAvatar Color="Color.Secondary" aria-hidden="true">PR</MudAvatar>
+        </CardHeaderAvatar>
+        <CardHeaderContent>
+            <MudText Typo="Typo.subtitle1" HtmlTag="h3">Priya Raman</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">Lab notebook · 12 minutes ago</MudText>
+        </CardHeaderContent>
+        <CardHeaderActions>
+            <MudIconButton Icon="@(_pinned ? Icons.Material.Filled.PushPin : Icons.Material.Outlined.PushPin)" aria-label="Pin entry"
+                           aria-pressed="@(_pinned ? "true" : "false")" Color="@(_pinned ? Color.Primary : Color.Default)" OnClick="() => _pinned = !_pinned" />
+            <MudMenu Icon="@Icons.Material.Outlined.MoreVert" AriaLabel="More actions for this entry" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+                <MudMenuItem Icon="@Icons.Material.Outlined.Edit">Edit</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Outlined.ContentCopy">Duplicate</MudMenuItem>
+                <MudMenuItem Icon="@Icons.Material.Outlined.Archive">Archive</MudMenuItem>
+            </MudMenu>
+        </CardHeaderActions>
+    </MudCardHeader>
+    <MudCardContent Class="pt-0">
+        <MudText Typo="Typo.body2">
+            Sample 14 crystallized overnight at 4 °C. Repeating with half the salt concentration to see whether the needles grow longer.
+        </MudText>
+    </MudCardContent>
+</MudCard>
+
+@code {
+    private bool _pinned;
+}

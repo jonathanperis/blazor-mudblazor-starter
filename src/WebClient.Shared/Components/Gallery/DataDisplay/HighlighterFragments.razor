@@ -1,0 +1,25 @@
+<MudStack Spacing="3" Style="max-width: 44rem">
+    <MudChipSet T="string" @bind-SelectedValues="_terms" SelectionMode="SelectionMode.MultiSelection" CheckMark="true"
+                Variant="Variant.Outlined" Color="Color.Primary" aria-label="Terms to highlight">
+        @foreach (var term in Terms)
+        {
+            <MudChip Value="term" Text="@term" />
+        }
+    </MudChipSet>
+    <MudPaper Outlined="true" Class="pa-5">
+        <MudText Typo="Typo.body1">
+            <MudHighlighter Text="@Recipe" HighlightedTexts="_terms" />
+        </MudText>
+    </MudPaper>
+</MudStack>
+
+@code {
+    private static readonly string[] Terms = ["flour", "water", "salt", "starter", "oven"];
+
+    private const string Recipe =
+        "Mix the flour with most of the water and leave it for an hour. Add the starter and the salt with the rest of the water, " +
+        "then fold the dough every half hour. Shape it, let it rise overnight in the fridge, and bake it in a hot oven " +
+        "with a lid for the first twenty minutes. A dusting of flour on top makes the score stand out.";
+
+    private IReadOnlyCollection<string> _terms = ["flour", "starter"];
+}

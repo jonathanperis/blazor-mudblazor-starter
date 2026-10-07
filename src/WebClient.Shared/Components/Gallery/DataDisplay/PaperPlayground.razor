@@ -1,0 +1,32 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudPaper Elevation="_elevation" Outlined="_outlined" Square="_square" Width="@_width" Height="@_height" Class="d-flex align-center justify-center pa-4">
+            <MudText Typo="Typo.body2" Align="Align.Center">Specimen tray 3</MudText>
+        </MudPaper>
+    </Preview>
+    <Controls>
+        <MudSlider @bind-Value="_elevation" Min="0" Max="24" Color="Color.Primary">Elevation: @_elevation</MudSlider>
+        <MudTextField @bind-Value="_width" Label="Width" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudTextField @bind-Value="_height" Label="Height" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSwitch @bind-Value="_outlined" Label="Outlined" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_square" Label="Square" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private int _elevation = 4;
+    private bool _outlined;
+    private bool _square;
+    private string _width = "16rem";
+    private string _height = "8rem";
+
+    // MudPaper defaults: Elevation 1, not outlined, rounded, no size.
+    private string Code => Snippet.Element("MudPaper",
+    [
+        ("Elevation", _elevation == 1 ? null : _elevation.ToString(CultureInfo.InvariantCulture)),
+        ("Outlined", Snippet.Flag(_outlined)),
+        ("Square", Snippet.Flag(_square)),
+        ("Width", string.IsNullOrWhiteSpace(_width) ? null : _width),
+        ("Height", string.IsNullOrWhiteSpace(_height) ? null : _height)
+    ], "Specimen tray 3");
+}

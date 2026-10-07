@@ -1,0 +1,39 @@
+<div class="matrix-scroll" role="region" aria-label="Material icon styles" tabindex="0">
+    <table class="matrix">
+        <caption>Icons.Material: style → icon ↓</caption>
+        <thead>
+            <tr>
+                <th scope="col"><span class="matrix-axis">Icon ↓ · Style →</span></th>
+                @foreach (var style in Styles)
+                {
+                    <th scope="col">@style</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var (name, icons) in Rows)
+            {
+                <tr>
+                    <th scope="row">@name</th>
+                    @foreach (var icon in icons)
+                    {
+                        <td><MudIcon Icon="@icon" Size="Size.Large" /></td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private static readonly string[] Styles = ["Filled", "Outlined", "Rounded", "Sharp", "TwoTone"];
+
+    private static readonly (string Name, string[] Icons)[] Rows =
+    [
+        ("Bookmark", [Icons.Material.Filled.Bookmark, Icons.Material.Outlined.Bookmark, Icons.Material.Rounded.Bookmark, Icons.Material.Sharp.Bookmark, Icons.Material.TwoTone.Bookmark]),
+        ("LocalShipping", [Icons.Material.Filled.LocalShipping, Icons.Material.Outlined.LocalShipping, Icons.Material.Rounded.LocalShipping, Icons.Material.Sharp.LocalShipping, Icons.Material.TwoTone.LocalShipping]),
+        ("Notifications", [Icons.Material.Filled.Notifications, Icons.Material.Outlined.Notifications, Icons.Material.Rounded.Notifications, Icons.Material.Sharp.Notifications, Icons.Material.TwoTone.Notifications]),
+        ("Settings", [Icons.Material.Filled.Settings, Icons.Material.Outlined.Settings, Icons.Material.Rounded.Settings, Icons.Material.Sharp.Settings, Icons.Material.TwoTone.Settings]),
+        ("ShoppingBasket", [Icons.Material.Filled.ShoppingBasket, Icons.Material.Outlined.ShoppingBasket, Icons.Material.Rounded.ShoppingBasket, Icons.Material.Sharp.ShoppingBasket, Icons.Material.TwoTone.ShoppingBasket])
+    ];
+}

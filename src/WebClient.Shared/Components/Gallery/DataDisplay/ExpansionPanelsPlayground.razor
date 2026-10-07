@@ -1,0 +1,39 @@
+<Playground Code="@Code">
+    <Preview>
+        <div style="width: 100%; max-width: 26rem">
+            <MudExpansionPanels Outlined="_outlined" Dense="_dense" Gutters="_gutters" Square="_square" Elevation="_elevation" MultiExpansion="_multiExpansion">
+                <MudExpansionPanel Text="Platform changes" Expanded="true">Trains to Harbour Point leave from platform 4 this week.</MudExpansionPanel>
+                <MudExpansionPanel Text="Lost property">Items are kept for 30 days at the Central Station office.</MudExpansionPanel>
+                <MudExpansionPanel Text="Season tickets">Renew online up to 14 days before your ticket expires.</MudExpansionPanel>
+            </MudExpansionPanels>
+        </div>
+    </Preview>
+    <Controls>
+        <MudNumericField @bind-Value="_elevation" Label="Elevation" Min="0" Max="25" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSwitch @bind-Value="_outlined" Label="Outlined" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_gutters" Label="Gutters" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_square" Label="Square" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_multiExpansion" Label="Multi-expansion" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private int _elevation = 1;
+    private bool _outlined = true;
+    private bool _dense;
+    private bool _gutters = true;
+    private bool _square;
+    private bool _multiExpansion;
+
+    // MudExpansionPanels defaults: Elevation 1, Outlined true, Gutters true.
+    private string Code => Snippet.Element("MudExpansionPanels",
+    [
+        ("Elevation", _elevation == 1 ? null : _elevation.ToString(CultureInfo.InvariantCulture)),
+        ("Outlined", _outlined ? null : "false"),
+        ("Dense", Snippet.Flag(_dense)),
+        ("Gutters", _gutters ? null : "false"),
+        ("Square", Snippet.Flag(_square)),
+        ("MultiExpansion", Snippet.Flag(_multiExpansion))
+    ], "\n    <MudExpansionPanel Text=\"Platform changes\">…</MudExpansionPanel>\n    <MudExpansionPanel Text=\"Lost property\">…</MudExpansionPanel>\n");
+}

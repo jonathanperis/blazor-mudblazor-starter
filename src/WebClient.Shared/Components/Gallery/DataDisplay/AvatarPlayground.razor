@@ -1,0 +1,55 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudAvatar Variant="_variant" Color="_color" Size="_size" Rounded="_rounded" Square="_square" Elevation="_elevation">
+            @if (_content == "Icon")
+            {
+                <MudIcon Icon="@Icons.Material.Outlined.BakeryDining" />
+            }
+            else
+            {
+                @_initials
+            }
+        </MudAvatar>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_content" Label="Content" Variant="Variant.Outlined" Margin="Margin.Dense">
+            <MudSelectItem Value="@("Initials")">Initials</MudSelectItem>
+            <MudSelectItem Value="@("Icon")">Icon</MudSelectItem>
+        </MudSelect>
+        <MudTextField @bind-Value="_initials" Label="Initials" Variant="Variant.Outlined" Margin="Margin.Dense" MaxLength="3" Immediate="true" Disabled="@(_content != "Initials")" />
+        <MudSelect @bind-Value="_variant" Label="Variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_size" Label="Size" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Size>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudNumericField @bind-Value="_elevation" Label="Elevation" Min="0" Max="25" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSwitch @bind-Value="_rounded" Label="Rounded" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_square" Label="Square" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private string _content = "Initials";
+    private string _initials = "SB";
+    private Variant _variant = Variant.Filled;
+    private Color _color = Color.Secondary;
+    private Size _size = Size.Large;
+    private int _elevation;
+    private bool _rounded;
+    private bool _square;
+
+    // MudAvatar defaults: Variant.Filled, Color.Default, Size.Medium, Elevation 0.
+    private string Code => Snippet.Element("MudAvatar",
+    [
+        ("Variant", Snippet.Enum(_variant, Variant.Filled)),
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("Size", Snippet.Enum(_size, Size.Medium)),
+        ("Elevation", _elevation == 0 ? null : _elevation.ToString(CultureInfo.InvariantCulture)),
+        ("Rounded", Snippet.Flag(_rounded)),
+        ("Square", Snippet.Flag(_square))
+    ], _content == "Icon" ? "<MudIcon Icon=\"@Icons.Material.Outlined.BakeryDining\" />" : _initials);
+}

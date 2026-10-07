@@ -1,0 +1,28 @@
+<MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.End" Spacing="8" Class="pa-2">
+    @foreach (var (label, elevation, shape) in Samples)
+    {
+        <MudStack AlignItems="AlignItems.Center" Spacing="3">
+            <MudImage Src="@Pears" Alt="Still life of two pears on a table" Width="120" Height="120" ObjectFit="ObjectFit.Cover"
+                      Elevation="elevation" Class="@shape" />
+            <MudText Typo="Typo.caption">@label</MudText>
+        </MudStack>
+    }
+</MudStack>
+
+@code {
+    private static readonly (string Label, int Elevation, string? Shape)[] Samples =
+    [
+        ("Elevation 0", 0, null),
+        ("Elevation 4", 4, null),
+        ("Elevation 12, rounded", 12, "rounded"),
+        ("rounded-lg", 0, "rounded-lg"),
+        ("rounded-circle", 4, "rounded-circle")
+    ];
+
+    private static readonly string Pears = "data:image/svg+xml;utf8," + Uri.EscapeDataString(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240' viewBox='0 0 240 240'>" +
+        "<rect width='240' height='240' fill='#2A2824'/><rect y='170' width='240' height='70' fill='#7A5C14'/>" +
+        "<path d='M95 80c-20 0-30 30-30 55 0 30 15 45 35 45s35-15 35-45c0-25-15-55-40-55z' fill='#C9B44A'/>" +
+        "<path d='M150 100c-15 0-25 22-25 42 0 25 12 38 28 38s28-13 28-38c0-20-12-42-31-42z' fill='#9DAA3C'/>" +
+        "<path d='M97 80c0-10 4-18 10-22' stroke='#5E2A16' stroke-width='4' fill='none'/></svg>");
+}

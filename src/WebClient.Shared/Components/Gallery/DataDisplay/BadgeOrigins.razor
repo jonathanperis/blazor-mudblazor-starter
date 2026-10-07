@@ -1,0 +1,27 @@
+<MudStack Spacing="4">
+    <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="4">
+        <MudSwitch @bind-Value="_overlap" Label="Overlap" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_dot" Label="Dot" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_bordered" Label="Bordered" Color="Color.Primary" />
+    </MudStack>
+    <div class="pa-4" style="display: grid; gap: 2.5rem 2rem; grid-template-columns: repeat(3, minmax(0, 9rem)); justify-content: center">
+        @foreach (var origin in Enum.GetValues<Origin>())
+        {
+            <MudStack AlignItems="AlignItems.Center" Spacing="4">
+                <MudBadge Origin="origin" Content="@ShortName(origin)" Dot="_dot" Overlap="_overlap" Bordered="_bordered" Color="Color.Primary">
+                    <MudPaper Outlined="true" Width="6.5rem" Height="3.5rem" Style="background: var(--mud-palette-background-gray)" />
+                </MudBadge>
+                <MudText Typo="Typo.caption">Origin.@origin</MudText>
+            </MudStack>
+        }
+    </div>
+</MudStack>
+
+@code {
+    private bool _overlap;
+    private bool _dot;
+    private bool _bordered = true;
+
+    // "TopLeft" becomes "TL": two letters fit the badge.
+    private static string ShortName(Origin origin) => string.Concat(origin.ToString().Where(char.IsUpper));
+}

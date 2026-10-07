@@ -1,0 +1,12 @@
+@page "/components/avatar"
+@attribute [ComponentPage("Avatar and avatar group", GalleryGroup.DataDisplay, "MudAvatar represents a person or an entity with a picture, initials or an icon. MudAvatarGroup stacks several and summarizes the overflow, for crews, reviewers and participants.", MudDocs = "avatar", Types = ["MudAvatar", "MudAvatarGroup"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(AvatarContent)" Title="Pictures, initials and icons" Description="An avatar holds an image, a short text or an icon. Pair it with a visible name; when the name is right there, the picture is decoration." />
+    <Example Of="typeof(AvatarCombinations)" Title="Every variant and color" Description="Variant × Color, rendered from the enums. Filled is the default and Outlined draws a ring in the color. In MudBlazor 9.11 the Text variant has no color styles, so it falls back to the neutral avatar: prefer Filled or Outlined." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(AvatarSizesAndShapes)" Title="Sizes and shapes" Description="Three sizes, each as a circle, with the theme's rounded corners and square. Elevation lifts an avatar off busy backgrounds." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(AvatarGroupOverflow)" Title="Groups and overflow" Description="Max limits how many avatars show; the rest collapse into a +N avatar styled by the Max* parameters. Spacing sets the overlap, Outlined separates neighbors." />
+    <Example Of="typeof(AvatarGroupTemplate)" Title="A custom overflow avatar" Description="MaxAvatarsTemplate replaces the +N avatar. Here it names the hidden people in a tooltip and stays reachable by keyboard." />
+    <Example Of="typeof(AvatarRoster)" Title="A crew roster" Description="Avatars in context: who is on shift at the observatory, with status that is spelled out rather than shown by color alone." />
+    <Example Of="typeof(AvatarPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

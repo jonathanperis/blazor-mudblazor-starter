@@ -1,0 +1,47 @@
+<MudPaper Outlined="true" MaxWidth="24rem" Class="mx-auto pa-5">
+    <MudText Typo="Typo.h6" HtmlTag="h3" Align="Align.Center">Crumb &amp; Crust Bakery</MudText>
+    <MudText Typo="Typo.caption" HtmlTag="p" Align="Align.Center" Class="mud-text-secondary">Order 2048 · Saturday 09:12</MudText>
+
+    <MudDivider Class="my-4" />
+
+    @foreach (var (item, quantity, price) in Items)
+    {
+        <MudStack Row="true" Justify="Justify.SpaceBetween" Class="py-1">
+            <MudText Typo="Typo.body2">@quantity × @item</MudText>
+            <MudText Typo="Typo.body2">@((quantity * price).ToString("0.00", CultureInfo.InvariantCulture))</MudText>
+        </MudStack>
+    }
+
+    <MudDivider DividerType="DividerType.Middle" Class="my-3" />
+
+    <MudStack Row="true" Justify="Justify.SpaceBetween">
+        <MudText Typo="Typo.body2" Class="mud-text-secondary">Subtotal</MudText>
+        <MudText Typo="Typo.body2">@Subtotal.ToString("0.00", CultureInfo.InvariantCulture)</MudText>
+    </MudStack>
+    <MudStack Row="true" Justify="Justify.SpaceBetween">
+        <MudText Typo="Typo.body2" Class="mud-text-secondary">Loyalty card</MudText>
+        <MudText Typo="Typo.body2">−1.00</MudText>
+    </MudStack>
+
+    <MudDivider Class="my-3" />
+
+    <MudStack Row="true" Justify="Justify.SpaceBetween">
+        <MudText Typo="Typo.subtitle1">Total (EUR)</MudText>
+        <MudText Typo="Typo.subtitle1">@((Subtotal - 1m).ToString("0.00", CultureInfo.InvariantCulture))</MudText>
+    </MudStack>
+
+    <MudDivider Light="true" Class="my-4" />
+
+    <MudText Typo="Typo.caption" HtmlTag="p" Align="Align.Center" Class="mud-text-secondary">Thank you. Bread baked before 7:00 every morning.</MudText>
+</MudPaper>
+
+@code {
+    private static readonly (string Item, int Quantity, decimal Price)[] Items =
+    [
+        ("Rye sourdough", 1, 4.60m),
+        ("Cardamom bun", 3, 2.40m),
+        ("Seeded baguette", 2, 2.10m)
+    ];
+
+    private static decimal Subtotal => Items.Sum(line => line.Quantity * line.Price);
+}

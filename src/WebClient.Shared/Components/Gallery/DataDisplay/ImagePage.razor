@@ -1,0 +1,11 @@
+@page "/components/image"
+@attribute [ComponentPage("Image", GalleryGroup.DataDisplay, "MudImage renders an img with theme-aware elevation, fluid sizing and object-fit control. Use it for photographs and illustrations; every image needs alt text, or an empty alt when it is decorative.", MudDocs = "image", Types = ["MudImage"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ImageBasics)" Title="Fixed and fluid sizes" Description="Width and Height set the image's size in pixels. Fluid scales it to the container's width instead, keeping the aspect ratio." />
+    <Example Of="typeof(ImageFitAndPosition)" Title="Every fit and position" Description="ObjectFit × ObjectPosition for a wide picture in a square frame. Fill stretches; Cover crops; Contain and ScaleDown letterbox; None keeps the natural size. Position chooses which part stays visible." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(ImageElevationAndShape)" Title="Elevation and shape" Description="Elevation adds a shadow. Rounded corners come from the border-radius utility classes, and rounded-circle turns a square crop into a portrait disc." />
+    <Example Of="typeof(ImageFallback)" Title="Fallback source" Description="When Src fails to load, FallbackSrc replaces it. Keep the fallback local so it cannot fail for the same reason." />
+    <Example Of="typeof(ImageExhibition)" Title="An exhibition grid" Description="Uniform thumbnails from mixed artwork: Cover with a fixed height fills each frame, and figure captions name every piece." />
+    <Example Of="typeof(ImagePlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

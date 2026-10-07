@@ -1,0 +1,17 @@
+@* The frame is square and the 120 × 68 picture is wide, so fits and positions differ.
+   preserveAspectRatio='none' lets an SVG stretch under Fill like a photograph would. *@
+<EnumMatrix TRow="ObjectPosition" TColumn="ObjectFit" Caption="MudImage: ObjectPosition × ObjectFit in an 88 × 88 frame">
+    <Cell>
+        <MudImage Src="@Hills" Alt="" Width="88" Height="88" ObjectFit="@context.Column" ObjectPosition="@context.Row"
+                  Style="background: var(--mud-palette-background-gray); outline: 1px solid var(--mud-palette-lines-default)" />
+    </Cell>
+</EnumMatrix>
+
+@code {
+    private static readonly string Hills = "data:image/svg+xml;utf8," + Uri.EscapeDataString(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='120' height='68' viewBox='0 0 320 180' preserveAspectRatio='none'>" +
+        "<rect width='320' height='180' fill='#F3E3C3'/><circle cx='250' cy='52' r='22' fill='#E0893A'/>" +
+        "<path d='M0 130 70 80l60 40 70-60 120 75v45H0z' fill='#8FA27A'/>" +
+        "<path d='M0 150q80-20 160 0t160-5v35H0z' fill='#4E6B4A'/>" +
+        "<path d='M40 120h34v26H40z' fill='#B4441F'/><path d='m36 122 21-18 21 18z' fill='#5E2A16'/></svg>");
+}

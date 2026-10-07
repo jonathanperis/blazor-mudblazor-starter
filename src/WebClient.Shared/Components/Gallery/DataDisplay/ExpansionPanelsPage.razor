@@ -1,0 +1,11 @@
+@page "/components/expansion-panels"
+@attribute [ComponentPage("Expansion panels", GalleryGroup.DataDisplay, "MudExpansionPanels stack sections that open and close in place. Use them to let readers skim headings and expand only what they need, such as FAQs, settings groups and long forms.", MudDocs = "expansion-panels", Types = ["MudExpansionPanels", "MudExpansionPanel"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ExpansionPanelsBasics)" Title="One section at a time" Description="By default opening a panel closes the others. Expanded sets the panel that starts open; Text is the header." />
+    <Example Of="typeof(ExpansionPanelsMulti)" Title="Multi-expansion with expand all" Description="MultiExpansion lets several panels stay open. Binding Expanded on each panel lets one button open or close them all." />
+    <Example Of="typeof(ExpansionPanelsHeaders)" Title="Custom header content" Description="TitleContent replaces the plain text header with any layout: an icon, a title, a summary of the contents and a status." />
+    <Example Of="typeof(ExpansionPanelsStates)" Title="Disabled, icons and lazy content" Description="Disabled panels stay closed. Icon swaps the chevron and HideIcon removes it. MaxHeight scrolls long content. KeepContentAlive=false renders content only while open." />
+    <Example Of="typeof(ExpansionPanelsFaq)" Title="A searchable FAQ" Description="A transit agency's help page: the search narrows the questions, matches are highlighted and an empty state explains what to do next." />
+    <Example Of="typeof(ExpansionPanelsPlayground)" Title="Playground" Description="Outlined, Dense, Gutters, Square and Elevation on the container. The markup below lists only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

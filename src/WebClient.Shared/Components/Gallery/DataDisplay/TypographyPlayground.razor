@@ -1,0 +1,48 @@
+<Playground Code="@Code">
+    <Preview>
+        <div style="width: 100%; max-width: 30rem">
+            <MudText Typo="_typo" Color="_color" Align="_align" GutterBottom="_gutterBottom" Inline="_inline" HtmlTag="@_htmlTag">@_text</MudText>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">The next block starts here.</MudText>
+        </div>
+    </Preview>
+    <Controls>
+        <MudTextField @bind-Value="_text" Label="Text" Variant="Variant.Outlined" Margin="Margin.Dense" Immediate="true" />
+        <MudSelect @bind-Value="_typo" Label="Typo" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Typo>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_align" Label="Align" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Align>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_htmlTag" Label="HtmlTag" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var tag in Tags) { <MudSelectItem Value="tag">@tag</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_gutterBottom" Label="Gutter bottom" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_inline" Label="Inline" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    // The preview always sets a tag, so choosing Typo.h1 cannot add a second h1 to the page.
+    private static readonly string[] Tags = ["p", "span", "div", "h3", "h4", "h5", "h6", "blockquote"];
+    private string _text = "Platform 4 for Harbour Point";
+    private Typo _typo = Typo.h5;
+    private Color _color = Color.Inherit;
+    private Align _align = Align.Inherit;
+    private string _htmlTag = "p";
+    private bool _gutterBottom;
+    private bool _inline;
+
+    // MudText defaults: Typo.body1, Color.Inherit, Align.Inherit.
+    private string Code => Snippet.Element("MudText",
+    [
+        ("Typo", Snippet.Enum(_typo, Typo.body1)),
+        ("Color", Snippet.Enum(_color, Color.Inherit)),
+        ("Align", Snippet.Enum(_align, Align.Inherit)),
+        ("HtmlTag", _htmlTag),
+        ("GutterBottom", Snippet.Flag(_gutterBottom)),
+        ("Inline", Snippet.Flag(_inline))
+    ], _text);
+}

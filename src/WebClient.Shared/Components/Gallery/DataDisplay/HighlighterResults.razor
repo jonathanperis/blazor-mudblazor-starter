@@ -1,0 +1,41 @@
+<MudStack Spacing="3" Style="max-width: 32rem">
+    <MudTextField @bind-Value="_search" Label="Find a station" Immediate="true" Clearable="true" Variant="Variant.Outlined"
+                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Train" />
+    <MudPaper Outlined="true">
+        @if (Results.Count == 0)
+        {
+            <MudText Typo="Typo.body2" Class="pa-4 mud-text-secondary">No station matches “@_search”.</MudText>
+        }
+        @foreach (var (station, line) in Results)
+        {
+            <MudStack Row="true" Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Class="px-4 py-2" @key="station">
+                <MudText Typo="Typo.body1">
+                    @* A bold primary run reads well on a paper surface; the default mark is a yellow fill. *@
+                    <MudHighlighter Text="@station" HighlightedText="@_search" Class="mud-primary-text" Style="background-color: transparent; font-weight: 600" />
+                </MudText>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@line</MudText>
+            </MudStack>
+        }
+    </MudPaper>
+    <MudText Typo="Typo.caption" Class="mud-text-secondary" role="status">@Results.Count of @Stations.Length stations</MudText>
+</MudStack>
+
+@code {
+    private static readonly (string Station, string Line)[] Stations =
+    [
+        ("Central Station", "Harbour, Riverside"),
+        ("Riverside", "Riverside"),
+        ("River Gardens", "Riverside"),
+        ("Old Market", "Harbour"),
+        ("Market Hall", "Airport"),
+        ("Harbour Point", "Harbour"),
+        ("Airport Terminal", "Airport"),
+        ("University", "Riverside, Airport")
+    ];
+
+    private string _search = "river";
+
+    private List<(string Station, string Line)> Results => Stations
+        .Where(stop => string.IsNullOrWhiteSpace(_search) || stop.Station.Contains(_search.Trim(), StringComparison.OrdinalIgnoreCase))
+        .ToList();
+}

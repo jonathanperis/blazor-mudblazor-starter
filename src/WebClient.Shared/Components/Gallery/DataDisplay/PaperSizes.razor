@@ -1,0 +1,29 @@
+<MudStack Spacing="4">
+    <MudPaper Outlined="true" Width="12rem" Height="4rem" Class="pa-3">
+        <MudText Typo="Typo.caption">Width="12rem" Height="4rem"</MudText>
+    </MudPaper>
+    <MudPaper Outlined="true" Width="60%" MinHeight="4rem" Class="pa-3">
+        <MudText Typo="Typo.caption">Width="60%" MinHeight="4rem": grows with its content</MudText>
+    </MudPaper>
+    <MudPaper Outlined="true" MaxWidth="28rem" Class="pa-3">
+        <MudText Typo="Typo.caption">MaxWidth="28rem": fluid until it reaches the bound, then stops</MudText>
+    </MudPaper>
+    <MudPaper Outlined="true" MaxHeight="7rem" Class="pa-3" Style="overflow-y: auto" role="region" tabindex="0" aria-label="Delivery notes">
+        <MudText Typo="Typo.caption" HtmlTag="p">MaxHeight="7rem" with overflow-y: auto scrolls the rest.</MudText>
+        @foreach (var note in Notes)
+        {
+            <MudText Typo="Typo.body2">@note</MudText>
+        }
+    </MudPaper>
+</MudStack>
+
+@code {
+    private static readonly string[] Notes =
+    [
+        "06:10 · Flour delivery checked in, 40 sacks.",
+        "06:45 · Oven 2 serviced; temperature probe replaced.",
+        "07:20 · Café order for the station kiosk packed.",
+        "08:05 · Rye starter refreshed for tomorrow.",
+        "09:30 · School order confirmed for Thursday."
+    ];
+}

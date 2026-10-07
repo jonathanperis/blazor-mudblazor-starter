@@ -1,0 +1,48 @@
+@* Heading specimens render as <p>: the page keeps one h1 and an outline that matches its content. *@
+<MudStack Spacing="0">
+    @foreach (var (typo, specimen) in Specimens)
+    {
+        <div class="d-flex flex-wrap align-baseline gap-x-6 gap-y-1 py-3" style="border-bottom: 1px solid var(--mud-palette-divider)">
+            <MudStack Spacing="0" Style="width: 9rem">
+                <MudText Typo="Typo.overline">@typo</MudText>
+                <MudText Typo="Typo.caption" Class="mud-text-secondary">@Describe(typo)</MudText>
+            </MudStack>
+            <MudText Typo="typo" HtmlTag="p" Style="flex: 1 1 18rem">@specimen</MudText>
+        </div>
+    }
+</MudStack>
+
+@code {
+    private static readonly (Typo Typo, string Specimen)[] Specimens =
+    [
+        (Typo.h1, "Night sky"),
+        (Typo.h2, "Comet season"),
+        (Typo.h3, "Observing log"),
+        (Typo.h4, "The northern dome"),
+        (Typo.h5, "Tonight's targets"),
+        (Typo.h6, "Seeing conditions"),
+        (Typo.subtitle1, "Clear skies expected after 22:00"),
+        (Typo.subtitle2, "Telescope 2 · 300 mm reflector"),
+        (Typo.body1, "Saturn rises in the east shortly after sunset and stays visible until dawn."),
+        (Typo.body2, "Bring a red torch: white light spoils night vision for twenty minutes."),
+        (Typo.button, "Book a session"),
+        (Typo.caption, "Figure 3. The lunar terminator, 8 May, 21:40."),
+        (Typo.overline, "Field notes"),
+        (Typo.inherit, "Inherit keeps the font of the parent element.")
+    ];
+
+    private static string Describe(Typo typo)
+    {
+        var scale = LearningTheme.Theme.Typography;
+        BaseTypography? style = typo switch
+        {
+            Typo.h1 => scale.H1, Typo.h2 => scale.H2, Typo.h3 => scale.H3,
+            Typo.h4 => scale.H4, Typo.h5 => scale.H5, Typo.h6 => scale.H6,
+            Typo.subtitle1 => scale.Subtitle1, Typo.subtitle2 => scale.Subtitle2,
+            Typo.body1 => scale.Body1, Typo.body2 => scale.Body2,
+            Typo.button => scale.Button, Typo.caption => scale.Caption, Typo.overline => scale.Overline,
+            _ => null
+        };
+        return style is null ? "from the parent" : $"{style.FontFamily?.FirstOrDefault()} · {style.FontSize}";
+    }
+}

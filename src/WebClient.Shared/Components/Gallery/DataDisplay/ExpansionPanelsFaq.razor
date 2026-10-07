@@ -1,0 +1,50 @@
+<MudStack Spacing="3" Style="max-width: 44rem">
+    <MudText Typo="Typo.h5" HtmlTag="h3">Help with tickets and travel</MudText>
+    <MudTextField @bind-Value="_search" Label="Search the questions" Immediate="true" Clearable="true" Variant="Variant.Outlined"
+                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" />
+    <MudText Typo="Typo.caption" Class="mud-text-secondary" role="status">@(Matches.Count == Questions.Length ? $"{Questions.Length} questions" : $"{Matches.Count} of {Questions.Length} questions match")</MudText>
+
+    @if (Matches.Count == 0)
+    {
+        <MudPaper Outlined="true" Class="pa-5">
+            <MudText Typo="Typo.subtitle2" HtmlTag="p">Nothing matches “@_search”.</MudText>
+            <MudText Typo="Typo.body2" Class="mud-text-secondary">Try a single word such as “refund” or “bike”, or call the travel line on 0800 555 0199.</MudText>
+        </MudPaper>
+    }
+    else
+    {
+        <MudExpansionPanels Elevation="0">
+            @foreach (var faq in Matches)
+            {
+                <MudExpansionPanel @key="faq.Question">
+                    <TitleContent>
+                        <MudText Typo="Typo.subtitle2"><MudHighlighter Text="@faq.Question" HighlightedText="@_search" /></MudText>
+                    </TitleContent>
+                    <ChildContent>
+                        <MudText Typo="Typo.body2"><MudHighlighter Text="@faq.Answer" HighlightedText="@_search" /></MudText>
+                    </ChildContent>
+                </MudExpansionPanel>
+            }
+        </MudExpansionPanels>
+    }
+</MudStack>
+
+@code {
+    private sealed record Faq(string Question, string Answer);
+
+    private static readonly Faq[] Questions =
+    [
+        new("Can I get a refund for an unused ticket?", "Single tickets are refundable until the day before travel. Day passes are refundable only if they have not been validated."),
+        new("Can I bring my bike on the train?", "Bikes travel free outside the morning and evening peaks. Folding bikes are welcome at any time."),
+        new("What happens if my train is late?", "Delays over 30 minutes earn a 50 % refund of the fare; over an hour, a full refund. Claim within 28 days."),
+        new("Do children need a ticket?", "Children under six travel free with an adult. From six to fifteen they pay the reduced fare."),
+        new("Is there step-free access at every station?", "Twenty-one of our twenty-four stations are step-free. The journey planner marks the three that are not.")
+    ];
+
+    private string _search = "";
+
+    private List<Faq> Matches => string.IsNullOrWhiteSpace(_search)
+        ? [.. Questions]
+        : Questions.Where(faq => faq.Question.Contains(_search.Trim(), StringComparison.OrdinalIgnoreCase)
+                              || faq.Answer.Contains(_search.Trim(), StringComparison.OrdinalIgnoreCase)).ToList();
+}
