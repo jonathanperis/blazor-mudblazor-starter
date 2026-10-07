@@ -1,5 +1,5 @@
 <MudPaper Outlined="true" Style="max-width: 26rem">
-    <MudList T="string" ReadOnly="true">
+    <MudList T="string" aria-label="Staff on shift" ReadOnly="true">
         <MudListSubheader>On shift at the field station</MudListSubheader>
         @foreach (var person in _crew)
         {

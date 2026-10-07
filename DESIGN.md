@@ -6,6 +6,7 @@ The sandbox looks like a printed lab manual: warm paper, ink, one vermilion acce
 
 - **Palette:** paper `#F4F1EA`, sheet `#FBFAF6`, ink `#1C1B19`, soft ink `#5E5A52`, rules `#DDD7CB`, vermilion `#B4441F`. Dark: paper `#141311`, ink `#ECE7DD`, vermilion `#FF8A5C`. Secondary teal and ochre exist for MudBlazor's color parameters only. The palette lives in `LearningTheme.cs` (app) and `site.css` (guide); keep them identical and keep every text pair at WCAG AA, input borders at 3:1.
 - **Type:** Fraunces (serif, often italic) for display and headings; IBM Plex Sans for text; IBM Plex Mono for code, metadata, kickers and numbers. All self-hosted under the OFL, never requested from a third party. Buttons are sentence case.
+- **Links:** always underlined (a quiet underline at rest, full on hover), so they never rely on color alone.
 - **Devices:** mono uppercase kickers, numbered chapters and parts, dotted leaders, ruled tables (2px ink rule above, hairlines between), figure captions ("Plate 1 · …"), roman-numeral steps, a colophon. Corners are small (6px); shadows are rare; outlined papers over elevation.
 - **Avoid:** gradients and glows, glassmorphism, emoji, icon-in-a-circle feature cards, purple, all-caps buttons, generic stock phrasing. If a section could appear on any SaaS landing page, rewrite it.
 

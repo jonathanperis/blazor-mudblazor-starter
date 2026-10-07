@@ -18,7 +18,7 @@
                 <MudTd>
                     @* Row clicks are a mouse shortcut; the button keeps the action reachable from the keyboard. *@
                     <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Primary" OnClick="() => _shown = context"
-                               aria-label="@($"Show order {context.Number}")">Details</MudButton>
+                               aria-label="@($"Details for order {context.Number}")">Details</MudButton>
                 </MudTd>
             </RowTemplate>
         </MudTable>

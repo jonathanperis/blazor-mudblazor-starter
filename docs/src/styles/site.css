@@ -13,7 +13,7 @@
 
 :root {
   color-scheme: light dark;
-  --paper: #F4F1EA; --sheet: #FBFAF6; --ink: #1C1B19; --ink-soft: #5E5A52; --ink-faint: #8E877A;
+  --paper: #F4F1EA; --sheet: #FBFAF6; --ink: #1C1B19; --ink-soft: #5E5A52; --ink-faint: #6B655B;
   --rule: #DDD7CB; --rule-strong: #1C1B19; --accent: #B4441F; --accent-ink: #8C2F14; --accent-wash: #F3E3D9;
   --code-bg: #EFEBE2; --mark: #F6E1A6;
   --serif: "Fraunces", ui-serif, Georgia, Cambria, serif;
@@ -24,7 +24,7 @@
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --paper: #141311; --sheet: #1C1B18; --ink: #ECE7DD; --ink-soft: #A9A397; --ink-faint: #76705F;
+    --paper: #141311; --sheet: #1C1B18; --ink: #ECE7DD; --ink-soft: #A9A397; --ink-faint: #938D80;
     --rule: #34312C; --rule-strong: #ECE7DD; --accent: #FF8A5C; --accent-ink: #FFB08F; --accent-wash: #2A1A12;
     --code-bg: #100F0D; --mark: #4A3A12;
   }
