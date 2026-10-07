@@ -8,6 +8,7 @@ using WebClient.Shared.Features.Forecasts;
 using WebClient.Shared.Features.Learning;
 using WebClient.Shared.Features.Notebook;
 using WebClient.Shared.Features.StaticDemo;
+using TestContext = Xunit.TestContext;
 
 namespace WebClient.Tests;
 
@@ -19,15 +20,16 @@ public sealed class StaticDemoTests : BunitContext
     [Fact]
     public async Task Simulated_api_pages_validates_fails_and_cancels_like_the_endpoint()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         using var http = Client();
-        var page = await http.GetFromJsonAsync<ForecastPage>("api/forecasts?count=10&page=1&pageSize=3");
+        var page = await http.GetFromJsonAsync<ForecastPage>("api/forecasts?count=10&page=1&pageSize=3", cancellationToken);
         Assert.Equal(10, page!.Total);
         Assert.Equal(ForecastData.Generate(10).Skip(3).Take(3).Select(r => r.Id), page.Items.Select(r => r.Id));
-        Assert.Equal(HttpStatusCode.BadRequest, (await http.GetAsync("api/forecasts?count=1000000")).StatusCode);
-        Assert.Equal(HttpStatusCode.BadRequest, (await http.GetAsync("api/forecasts?count=ten")).StatusCode);
-        Assert.Equal(HttpStatusCode.BadRequest, (await http.GetAsync("api/forecasts?culture=fr-FR")).StatusCode);
-        Assert.Equal(HttpStatusCode.ServiceUnavailable, (await http.GetAsync("api/forecasts?fail=true")).StatusCode);
-        Assert.Equal(HttpStatusCode.NotFound, (await http.GetAsync("api/other")).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await http.GetAsync("api/forecasts?count=1000000", cancellationToken)).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await http.GetAsync("api/forecasts?count=ten", cancellationToken)).StatusCode);
+        Assert.Equal(HttpStatusCode.BadRequest, (await http.GetAsync("api/forecasts?culture=fr-FR", cancellationToken)).StatusCode);
+        Assert.Equal(HttpStatusCode.ServiceUnavailable, (await http.GetAsync("api/forecasts?fail=true", cancellationToken)).StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, (await http.GetAsync("api/other", cancellationToken)).StatusCode);
         using var cancellation = new CancellationTokenSource(50);
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => http.GetAsync("api/forecasts?delayMs=2000", cancellation.Token));
     }
@@ -35,14 +37,16 @@ public sealed class StaticDemoTests : BunitContext
     [Fact]
     public async Task Typed_client_reaches_the_simulator_with_an_encoded_search()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var client = new ForecastApiClient(Client());
-        var page = await client.ReadAsync(new ForecastQuery { Count = 100, Search = "2026-01-02" }, CancellationToken.None);
+        var page = await client.ReadAsync(new ForecastQuery { Count = 100, Search = "2026-01-02" }, cancellationToken);
         Assert.Equal(new DateTime(2026, 1, 2), Assert.Single(page.Items).Date);
     }
 
     [Fact]
     public async Task Browser_notebook_maps_storage_outcomes_to_the_shared_contract()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         var store = new BrowserNotebookStore(Services.GetRequiredService<IJSRuntime>());
         var id = Guid.NewGuid();
         var version = Guid.NewGuid();
@@ -50,20 +54,21 @@ public sealed class StaticDemoTests : BunitContext
         JSInterop.Setup<string>("learningNotebook.insert", _ => true).SetResult("limit");
         JSInterop.Setup<string>("learningNotebook.update", _ => true).SetResult("conflict");
         JSInterop.Setup<string>("learningNotebook.remove", _ => true).SetResult("ok");
-        await Assert.ThrowsAsync<NotebookLimitException>(() => store.SaveAsync(new NoteDraft { Title = "One too many" }));
-        await Assert.ThrowsAsync<NotebookConflictException>(() => store.SaveAsync(new NoteDraft { Title = "Stale" }, new NoteSnapshot(id, "Old", "", version)));
-        await store.DeleteAsync(new NoteSnapshot(id, "Old", "", version));
+        await Assert.ThrowsAsync<NotebookLimitException>(() => store.SaveAsync(new NoteDraft { Title = "One too many" }, cancellationToken: cancellationToken));
+        await Assert.ThrowsAsync<NotebookConflictException>(() => store.SaveAsync(new NoteDraft { Title = "Stale" }, new NoteSnapshot(id, "Old", "", version), cancellationToken));
+        await store.DeleteAsync(new NoteSnapshot(id, "Old", "", version), cancellationToken);
         var removal = Assert.Single(JSInterop.Invocations["learningNotebook.remove"]);
         Assert.Equal(new object?[] { id.ToString(), version.ToString() }, removal.Arguments);
-        await Assert.ThrowsAnyAsync<System.ComponentModel.DataAnnotations.ValidationException>(() => store.SaveAsync(new NoteDraft { Title = "" }));
+        await Assert.ThrowsAnyAsync<System.ComponentModel.DataAnnotations.ValidationException>(() => store.SaveAsync(new NoteDraft { Title = "" }, cancellationToken: cancellationToken));
     }
 
     [Fact]
     public async Task Browser_notebook_reports_unavailable_storage()
     {
+        var cancellationToken = TestContext.Current.CancellationToken;
         JSInterop.Setup<BrowserNote[]?>("learningNotebook.list").SetException(new JSException("Browser storage is unavailable."));
         var store = new BrowserNotebookStore(Services.GetRequiredService<IJSRuntime>());
-        await Assert.ThrowsAsync<NotebookUnavailableException>(() => store.ListAsync());
+        await Assert.ThrowsAsync<NotebookUnavailableException>(() => store.ListAsync(cancellationToken));
     }
 
     [Fact]
