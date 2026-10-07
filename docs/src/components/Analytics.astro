@@ -1,5 +1,7 @@
 ---
-const GA_ID = import.meta.env.PUBLIC_GA_ID;
+// Optional Google Analytics 4. Loads only when PUBLIC_GA_ID is a valid measurement ID; see the documentation guide.
+const configured = import.meta.env.PUBLIC_GA_ID;
+const GA_ID = typeof configured === 'string' && /^G-[A-Z0-9]+$/.test(configured) ? configured : undefined;
 ---
 
 {GA_ID && (
