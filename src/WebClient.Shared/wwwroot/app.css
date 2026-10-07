@@ -125,7 +125,7 @@ h1[tabindex="-1"]:focus, main[tabindex="-1"]:focus { outline: none; }
 .matrix th, .matrix td { padding: .65rem .75rem; border-bottom: 1px solid var(--rule); text-align: center; vertical-align: middle; white-space: nowrap; }
 .matrix thead th { font-family: var(--font-mono); font-weight: 500; font-size: .72rem; color: var(--ink-soft); background: color-mix(in srgb, var(--paper) 60%, transparent); position: sticky; top: 0; }
 .matrix tbody th { text-align: left; font-family: var(--font-mono); font-weight: 500; font-size: .72rem; color: var(--ink-soft); position: sticky; left: 0; background: var(--sheet); }
-.matrix-axis { font-weight: 400; opacity: .8; }
+.matrix-axis { font-weight: 400; opacity: .8; display: inline-block; max-width: 7.5rem; white-space: normal; line-height: 1.35; text-align: left; }
 .matrix tbody tr:last-child th, .matrix tbody tr:last-child td { border-bottom: 0; }
 
 /* Playground: stage, controls, generated code */
