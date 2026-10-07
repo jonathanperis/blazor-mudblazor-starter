@@ -1,0 +1,24 @@
+---
+interface Props { current?: 'home' | 'guide' }
+const { current } = Astro.props;
+// Base-absolute links also work on the 404 page, which GitHub Pages serves at any unknown path.
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <a class="wordmark" href={`${base}/`} aria-current={current === 'home' ? 'page' : undefined}>
+      <span class="wordmark-name">Blazor learning sandbox</span>
+      <span class="wordmark-edition">A lab manual · .NET 10 · MudBlazor 9</span>
+    </a>
+    <nav aria-label="Site">
+      <ul class="masthead-nav">
+        <li><a href={`${base}/docs/`}>Guide</a></li>
+        <li><a href={`${base}/demo/components`}>Components</a></li>
+        <li><a href={`${base}/demo/samples`}>Page samples</a></li>
+        <li><a href="https://github.com/jonathanperis/blazor-mudblazor-starter" rel="noopener noreferrer">Source</a></li>
+        <li><a class="masthead-demo" href={`${base}/demo/`}>Live demo →</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>

@@ -68,3 +68,6 @@ __pycache__/
 .env.*
 !.env.example
 **/App_Data/
+
+# Local agent tooling and worktrees
+.claude/

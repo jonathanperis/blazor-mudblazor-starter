@@ -37,9 +37,11 @@ The build validates sidebar/page coverage. The source drift check compares SDK/p
 
 ## Navigation and accessibility
 
-The sidebar highlights the current page and provides topic filtering with a result announcement. On mobile, closed navigation is inert. Opening it moves focus, traps keyboard focus within navigation, and makes content inert; Escape closes it and restores focus. A skip link targets the main content.
+Guide pages use a book layout: numbered contents on the left (the current page is marked with `aria-current`), the article, and an "On this page" list built from the page's `h2` headings on wide screens, with previous and next links at the end. On small screens the contents collapse behind a native `<details>` disclosure, so keyboard and screen-reader behavior comes from the browser; without JavaScript the contents stay open. A skip link targets the main content.
 
-The shared styles support light/dark schemes, visible focus indicators, table/code overflow, and reduced-motion preferences. Wide tables are wrapped in a focusable scroll region that keeps native table semantics, and overflowing code blocks become focusable so keyboard users can scroll them. The site loads no web fonts; it uses Roboto when installed and system fonts otherwise. Manual browser/assistive-technology verification remains a separate test layer.
+The landing page reads the lab catalog, the gallery pages and the page samples from the application source at build time (`src/lib/catalog.ts`), so its contents cannot drift from the app. Links into the demo are checked against the app's real routes by `check:rendered`.
+
+The design matches the application: warm paper, ink and one vermilion accent, Fraunces for display type and IBM Plex for text and code. The shared styles support light/dark schemes (code blocks use Shiki's dual themes), visible focus indicators, table/code overflow, and reduced-motion preferences. Wide tables are wrapped in a focusable scroll region that keeps native table semantics, and overflowing code blocks become focusable so keyboard users can scroll them. Fonts are self-hosted from `src/fonts` and bundled by Vite, so the site makes no third-party font requests. Manual browser/assistive-technology verification remains a separate test layer.
 
 ## Dependency updates
 

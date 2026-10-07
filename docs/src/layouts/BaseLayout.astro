@@ -1,6 +1,8 @@
 ---
-import '../styles/globals.css';
+import '../styles/site.css';
 import Analytics from '../components/Analytics.astro';
+import plexSans from '../fonts/ibm-plex-sans-latin-400-normal.woff2?url';
+import fraunces from '../fonts/fraunces-latin-wght-normal.woff2?url';
 
 interface Props {
   title?: string;
@@ -10,17 +12,13 @@ interface Props {
 }
 
 const {
-  title = 'Blazor learning sandbox | MudBlazor labs',
+  title = 'Blazor learning sandbox · A lab manual for Blazor and MudBlazor',
   noindex = false,
-  description = 'Hands-on Blazor and MudBlazor labs: state, forms, data grids, APIs, SQLite, authentication, localization, files, and observability. Learn locally with Docker and hosting exercises.'
+  description = 'Hands-on Blazor and MudBlazor labs, a working example of every MudBlazor component, and complete page samples. Read the source, change one thing, and see what happens.'
 } = Astro.props;
 
 const pageUrl = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : `https://jonathanperis.github.io${Astro.url.pathname}`;
 const basePath = import.meta.env.BASE_URL.endsWith('/') ? import.meta.env.BASE_URL : `${import.meta.env.BASE_URL}/`;
-const faviconHref = `${basePath}favicon.ico`;
-const faviconPngHref = `${basePath}favicon.png`;
-const appleTouchIconHref = `${basePath}apple-touch-icon.png`;
-const sitemapHref = `${basePath}sitemap-index.xml`;
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -31,11 +29,7 @@ const jsonLd = {
   'codeRepository': 'https://github.com/jonathanperis/blazor-mudblazor-starter',
   'programmingLanguage': 'C#',
   'license': 'https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/LICENSE',
-  'author': {
-    '@type': 'Person',
-    'name': 'Jonathan Peris',
-    'url': 'https://jonathanperis.github.io/'
-  }
+  'author': { '@type': 'Person', 'name': 'Jonathan Peris', 'url': 'https://jonathanperis.github.io/' }
 };
 ---
 
@@ -46,11 +40,14 @@ const jsonLd = {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
     {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={pageUrl} />}
-    <link rel="sitemap" href={sitemapHref} />
-    <link rel="icon" href={faviconHref} sizes="any" />
-    <link rel="icon" type="image/png" href={faviconPngHref} />
-    <link rel="apple-touch-icon" href={appleTouchIconHref} />
-    <meta name="theme-color" content="#673ab7" />
+    <link rel="sitemap" href={`${basePath}sitemap-index.xml`} />
+    <link rel="icon" href={`${basePath}favicon.ico`} sizes="any" />
+    <link rel="icon" type="image/png" href={`${basePath}favicon.png`} />
+    <link rel="apple-touch-icon" href={`${basePath}apple-touch-icon.png`} />
+    <link rel="preload" href={plexSans} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={fraunces} as="font" type="font/woff2" crossorigin />
+    <meta name="theme-color" content="#F4F1EA" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#141311" media="(prefers-color-scheme: dark)" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content={title} />
@@ -58,14 +55,12 @@ const jsonLd = {
     <meta property="og:url" content={pageUrl} />
     <meta property="og:site_name" content="Blazor learning sandbox" />
     <meta property="og:locale" content="en_US" />
-
     <meta name="twitter:card" content="summary" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:creator" content="@jperis_silva" />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-
     <title>{title}</title>
     <slot name="head" />
     <Analytics />

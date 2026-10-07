@@ -22,9 +22,7 @@
     "astro": "^7.3.6"
   },
   "devDependencies": {
-    "@tailwindcss/vite": "^4.3.3",
     "playwright": "^1.63.0",
-    "tailwindcss": "^4.3.3",
     "typescript": "^7.0.2"
   }
 }

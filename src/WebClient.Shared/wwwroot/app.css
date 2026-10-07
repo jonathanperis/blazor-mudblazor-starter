@@ -189,3 +189,13 @@ h1[tabindex="-1"]:focus, main[tabindex="-1"]:focus { outline: none; }
 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0s !important; transition-duration: 0s !important; } }
 @media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+
+/* Labs: the experiment sits on a specimen plate; notes read like the manual's margin. */
+.lab-experiment { display: grid; gap: 1rem; }
+.lab-reset { display: flex; justify-content: flex-end; padding-top: .75rem; border-top: 1px dashed var(--rule); }
+.lab-notes { display: grid; gap: 2rem; margin-top: 2.5rem; max-width: 72rem; }
+@media (min-width: 1000px) { .lab-notes { grid-template-columns: minmax(0, 1fr) 18rem; } .lab-notes > section:last-child { grid-column: 1; } .lab-mistake { grid-column: 2; grid-row: 1 / span 2; align-self: start; } }
+.lab-notes p { margin: .5rem 0 0; max-width: var(--measure); color: var(--ink); }
+.lab-mistake { padding: 1rem 1.25rem; border-left: 2px solid var(--accent); background: color-mix(in srgb, var(--accent) 6%, transparent); }
+.lab-mistake .kicker { margin: 0; color: var(--accent); }
+.lab-mistake p { font-family: var(--font-serif); font-style: italic; font-size: 1.05rem; line-height: 1.5; }

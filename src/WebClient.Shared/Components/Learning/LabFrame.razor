@@ -2,55 +2,69 @@
 @inject LearningHost Host
 
 <PageTitle>@Lab.Title · Blazor learning sandbox</PageTitle>
-<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4 pb-8">
-    <MudLink Href="labs">← All labs</MudLink>
-    <MudText Typo="Typo.h4" HtmlTag="h1" Class="mt-3">@Lab.Title</MudText>
-    <MudText Typo="Typo.body1" Class="my-3">@Lab.Objective</MudText>
-    <MudStack Row Class="flex-wrap mb-4" AlignItems="AlignItems.Center">
-        <MudChip T="string" Size="Size.Small" Color="Color.Primary">@Lab.Level</MudChip>
-        <MudText Typo="Typo.body2">
-            @Lab.Minutes min · Prerequisites:
-            @if (Lab.Prerequisites.Length == 0)
-            {
-                <span>none</span>
-            }
-            @foreach (var (prerequisite, index) in Lab.Prerequisites.Select((slug, index) => (LabCatalog.Get(slug), index)))
-            {
-                @(index > 0 ? ", " : " ")<MudLink Href="@prerequisite.Href" Typo="Typo.body2">@prerequisite.Title</MudLink>
-            }
-        </MudText>
-        <MudLink Href="@Lab.SourceUrl" Target="_blank" rel="noopener noreferrer">View source</MudLink>
-    </MudStack>
+<article class="gallery-page lab-page">
+    <header class="gallery-hero">
+        <p class="kicker"><a href="labs">Labs</a><span aria-hidden="true"> / </span>Lab @Number.ToString("00") · @Lab.Level · @Lab.Minutes min</p>
+        <MudText Typo="Typo.h3" HtmlTag="h1">@Lab.Title</MudText>
+        <p class="lede">@Lab.Objective</p>
+        <ul class="gallery-meta" aria-label="About this lab">
+            <li>
+                Prerequisites:
+                @if (Lab.Prerequisites.Length == 0)
+                {
+                    <span>none</span>
+                }
+                @foreach (var (prerequisite, index) in Lab.Prerequisites.Select((slug, index) => (LabCatalog.Get(slug), index)))
+                {
+                    @(index > 0 ? ", " : " ")<a href="@prerequisite.Href">@prerequisite.Title</a>
+                }
+            </li>
+            <li><a href="@Lab.SourceUrl" target="_blank" rel="noopener noreferrer">View source ↗</a></li>
+        </ul>
+    </header>
     @if (Host.LabNotes.TryGetValue(Lab.Slug, out var note))
     {
-        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-4">In this @Host.Name host: @note</MudAlert>
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-6">In this @Host.Name host: @note</MudAlert>
     }
-    <MudPaper Class="pa-4 mb-4" Outlined>
-        <ErrorBoundary @ref="_boundary">
-            <ChildContent><div @key="_generation">@ChildContent</div></ChildContent>
-            <ErrorContent>
-                <MudAlert Severity="Severity.Error">This experiment failed. Reset its state or reload the page to try again.</MudAlert>
-                @if (OnReset.HasDelegate)
-                {
-                    <MudButton OnClick="Recover" Class="mt-2">Reset and retry</MudButton>
-                }
-                else
-                {
-                    <MudButton OnClick="Reload" Class="mt-2" StartIcon="@Icons.Material.Filled.Refresh">Reload lab</MudButton>
-                }
-            </ErrorContent>
-        </ErrorBoundary>
-        @if (OnReset.HasDelegate)
-        {
-            <MudButton OnClick="OnReset" Disabled="ResetDisabled" StartIcon="@Icons.Material.Filled.RestartAlt" Class="mt-4">Reset experiment</MudButton>
-        }
-    </MudPaper>
-    <MudText Typo="Typo.h6" HtmlTag="h2">Why it works</MudText>
-    <MudText Class="mt-2 mb-4">@Lab.Explanation</MudText>
-    <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Class="mb-4">Common mistake: @Lab.Pitfall</MudAlert>
-    <MudText Typo="Typo.h6" HtmlTag="h2">Try it yourself</MudText>
-    <MudText Class="mt-2">@Lab.Exercise</MudText>
-</MudContainer>
+    <section class="example" aria-label="Experiment">
+        <div class="example-preview lab-experiment">
+            <ErrorBoundary @ref="_boundary">
+                <ChildContent><div @key="_generation">@ChildContent</div></ChildContent>
+                <ErrorContent>
+                    <MudAlert Severity="Severity.Error">This experiment failed. Reset its state or reload the page to try again.</MudAlert>
+                    @if (OnReset.HasDelegate)
+                    {
+                        <MudButton OnClick="Recover" Class="mt-2">Reset and retry</MudButton>
+                    }
+                    else
+                    {
+                        <MudButton OnClick="Reload" Class="mt-2" StartIcon="@Icons.Material.Filled.Refresh">Reload lab</MudButton>
+                    }
+                </ErrorContent>
+            </ErrorBoundary>
+            @if (OnReset.HasDelegate)
+            {
+                <div class="lab-reset">
+                    <MudButton OnClick="OnReset" Disabled="ResetDisabled" StartIcon="@Icons.Material.Outlined.RestartAlt" Variant="Variant.Outlined" Size="Size.Small">Reset experiment</MudButton>
+                </div>
+            }
+        </div>
+    </section>
+    <div class="lab-notes">
+        <section aria-labelledby="lab-why">
+            <h2 id="lab-why" class="example-title">Why it works</h2>
+            <p>@Lab.Explanation</p>
+        </section>
+        <aside class="lab-mistake" aria-labelledby="lab-mistake">
+            <h2 id="lab-mistake" class="kicker">Common mistake</h2>
+            <p>@Lab.Pitfall</p>
+        </aside>
+        <section aria-labelledby="lab-try">
+            <h2 id="lab-try" class="example-title">Try it yourself</h2>
+            <p>@Lab.Exercise</p>
+        </section>
+    </div>
+</article>
 
 @code {
     [Parameter, EditorRequired] public string Slug { get; set; } = "";
@@ -58,6 +72,7 @@
     [Parameter] public EventCallback OnReset { get; set; }
     [Parameter] public bool ResetDisabled { get; set; }
     private Lab Lab => LabCatalog.Get(Slug);
+    private int Number => LabCatalog.All.ToList().FindIndex(lab => lab.Slug == Slug) + 1;
     private ErrorBoundary? _boundary;
     private int _generation;
     private async Task Recover() { await OnReset.InvokeAsync(); _generation++; _boundary?.Recover(); }
