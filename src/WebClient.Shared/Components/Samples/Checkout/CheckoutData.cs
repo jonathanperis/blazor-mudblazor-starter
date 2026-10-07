@@ -51,7 +51,7 @@ public sealed record OrderTotals(decimal Subtotal, decimal Discount, decimal Del
     }
 }
 
-public static partial class CheckoutData
+public static class CheckoutData
 {
     public const string PromoCode = "LEAF10";
     public const decimal PromoRate = .10m;
@@ -82,11 +82,10 @@ public static partial class CheckoutData
         $"""<svg viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" style="display:block;width:100%;height:100%"><rect x="6" y="4" width="48" height="10" rx="2" fill="{tea.Tin}" opacity=".75"/><rect x="8" y="12" width="44" height="64" rx="3" fill="{tea.Tin}"/><rect x="8" y="34" width="44" height="22" fill="{tea.Band}"/><circle cx="30" cy="45" r="6" fill="none" stroke="{tea.Tin}" stroke-width="1.5"/><path d="M30 39 q4 6 0 12 q-4 -6 0 -12" fill="{tea.Tin}"/></svg>""";
 
     // UK postcodes, loosely: "SW1A 1AA", "M1 1AE", "EH8 9YL". The space is optional.
-    [GeneratedRegex(@"^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$", RegexOptions.IgnoreCase)]
-    private static partial Regex PostcodePattern();
+    private static readonly Regex PostcodePattern = new(@"^[A-Z]{1,2}\d[A-Z\d]? ?\d[A-Z]{2}$", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
 
     public static string? CheckPostcode(string? postcode) =>
-        string.IsNullOrWhiteSpace(postcode) ? null : PostcodePattern().IsMatch(postcode.Trim()) ? null : "Enter a UK postcode, such as EH8 9YL.";
+        string.IsNullOrWhiteSpace(postcode) ? null : PostcodePattern.IsMatch(postcode.Trim()) ? null : "Enter a UK postcode, such as EH8 9YL.";
 
     public static string? CheckEmail(string? email) =>
         string.IsNullOrWhiteSpace(email) ? null
