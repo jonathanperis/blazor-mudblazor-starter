@@ -40,7 +40,7 @@ The no-launch-profile example uses the default Production environment, so demo s
 
 Only theme and drawer preferences use localStorage. Storage denial leaves controls usable for the current visit. Viewport size is derived, not stored.
 
-Request localization supports English and Brazilian Portuguese. The culture form performs a full redirect so a fresh circuit inherits the culture. The WebAssembly demo stores the culture in localStorage and applies it before the .NET runtime starts; it loads full ICU data (`BlazorWebAssemblyLoadAllGlobalizationData`) so pt-BR formatting works whatever the browser's language. This example and MudBlazor's translated strings change; the teaching guide remains English.
+Request localization supports English and Brazilian Portuguese. Only the culture cookie selects a culture: the browser's `Accept-Language` is ignored, so MudBlazor's built-in labels never switch language on their own inside an English interface, and both hosts behave the same. The culture form performs a full redirect so a fresh circuit inherits the culture. The WebAssembly demo stores the culture in localStorage and applies it before the .NET runtime starts; it loads full ICU data (`BlazorWebAssemblyLoadAllGlobalizationData`) so pt-BR formatting works whatever the browser's language. This example and MudBlazor's translated strings change; the teaching guide remains English.
 
 The notebook uses a separate protected workspace cookie, issued for page renders only and renewed on each visit. Retain its cookie and the data-protection keys to retain access to the same notes. Demo personas do not identify notebook ownership.
 

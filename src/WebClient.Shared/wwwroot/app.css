@@ -50,11 +50,12 @@ pre { overflow-x: auto; padding: 1rem; background: var(--code-bg); color: var(--
 h1[tabindex="-1"]:focus, main[tabindex="-1"]:focus { outline: none; }
 
 /* App bar wordmark */
-.wordmark { display: inline-flex; align-items: baseline; gap: .55rem; color: inherit; text-decoration: none; }
+.wordmark { display: inline-flex; align-items: baseline; gap: .55rem; min-width: 0; color: inherit; text-decoration: none; white-space: nowrap; }
 .wordmark-mark { font-family: var(--font-serif); font-style: italic; font-size: 1.35rem; font-weight: 500; letter-spacing: -.01em; }
 .wordmark-tag { font-family: var(--font-mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase; opacity: .7; }
 .mobile-theme { display: none; }
 @media (max-width: 960px) { .desktop-theme { display: none; } .mobile-theme { display: block; } .wordmark-tag { display: none; } }
+@media (max-width: 480px) { .wordmark-mark { font-size: 1.1rem; overflow: hidden; text-overflow: ellipsis; } }
 
 /* Drawer: a table of contents rather than a menu */
 .app-drawer .mud-navmenu { padding-block: .5rem 2rem; }

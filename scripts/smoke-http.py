@@ -9,8 +9,12 @@ from urllib.request import urlopen
 
 # Route and the page heading it must prerender. Lab titles come from LabCatalog.
 ROUTES = {
-    "/": "Your Blazor and MudBlazor toolbox",
-    "/labs": "Choose an experiment",
+    "/": "Learn by changing working examples.",
+    "/labs": "Nine experiments, in order",
+    "/components": "Every MudBlazor component, working",
+    "/samples": "Whole pages, composed",
+    "/components/button": "Button",
+    "/samples/dashboard": "Analytics dashboard",
     "/counter": "State and lifecycle",
     "/weather": "DataGrid experiments",
     "/labs/forms": "Forms and transactional dialogs",
