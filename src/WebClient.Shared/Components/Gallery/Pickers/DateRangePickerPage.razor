@@ -1,0 +1,12 @@
+@page "/components/date-range-picker"
+@attribute [ComponentPage("Date range picker", GalleryGroup.Pickers, "Two dates chosen in one calendar: a start and an end. Choose it for stays, reports and leave requests, where the span matters as much as either date.", MudDocs = "daterangepicker", Types = ["MudDateRangePicker", "DateRange"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(DateRangePickerBasic)" Title="Basic usage" Description="Bind a DateRange with @@bind-DateRange. Start and End are nullable while the range is being chosen." />
+    <Example Of="typeof(DateRangePickerStatic)" Title="Two months side by side" Description="DisplayMonths shows several months at once, which makes ranges across a month boundary easy to pick." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(DateRangePickerCombinations)" Title="Every variant and margin" Description="Variant and Margin shape the closed field exactly as they shape a text field." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(DateRangePickerConstraints)" Title="Bounds and allowed lengths" Description="MinDate and MaxDate limit the calendar, MinDays and MaxDays limit the length, and IsDateDisabledFunc blocks days that a range may not include." />
+    <Example Of="typeof(DateRangePickerEditable)" Title="Typing, clearing and formats" Description="Editable ranges accept typed dates in both halves. Placeholders name each half, and Culture with DateFormat sets the text." />
+    <Example Of="typeof(DateRangePickerPresets)" Title="Presets and action buttons" Description="Common ranges are one click away beside the field; inside the calendar, OK commits and Cancel restores the previous range." />
+    <Example Of="typeof(DateRangePickerStates)" Title="Disabled, read-only and required" Description="The same field states as every MudBlazor input." />
+</ComponentPageFrame>

@@ -1,0 +1,39 @@
+@using MudBlazor.Charts
+
+<MudChart T="double" ChartType="ChartType.Timeseries" ChartSeries="_series" ChartOptions="_options" Width="100%" Height="300px" />
+
+@code {
+    private static readonly DateTime Start = new(2026, 11, 14, 20, 0, 0);
+    private List<ChartSeries<double>> _series = [];
+
+    private readonly TimeSeriesChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1", "#D9622B"],
+        TimeLabelSpacing = TimeSpan.FromMinutes(30),
+        TimeLabelFormat = "HH:mm",
+        TooltipTimeLabelFormat = "HH:mm",
+        YAxisTitle = "Temperature (°C)",
+        YAxisTicks = 1,
+        ShowDataMarkers = true
+    };
+
+    protected override void OnInitialized()
+    {
+        // Outside: every 5 minutes, cooling steadily after sunset.
+        var outside = Enumerable.Range(0, 37)
+            .Select(i => new TimeValue<double>(Start.AddMinutes(5 * i), Math.Round(6.0 - 0.06 * i, 1)))
+            .ToArray();
+
+        // Inside the dome: every 20 minutes, with an hour lost to a logger restart.
+        var dome = Enumerable.Range(0, 10)
+            .Where(i => i is < 3 or > 5)
+            .Select(i => new TimeValue<double>(Start.AddMinutes(20 * i), Math.Round(8.5 - 0.3 * i, 1)))
+            .ToArray();
+
+        _series =
+        [
+            new() { Name = "Outside (5 min)", Data = outside },
+            new() { Name = "Dome (20 min)", Data = dome }
+        ];
+    }
+}

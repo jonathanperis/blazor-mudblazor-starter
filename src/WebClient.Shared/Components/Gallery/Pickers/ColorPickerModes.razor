@@ -1,0 +1,27 @@
+@using MudBlazor.Utilities
+
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="6">
+        <MudStack Spacing="2">
+            <MudText Typo="Typo.subtitle2" HtmlTag="h3">HSL inputs, no mode switch</MudText>
+            <MudColorPicker @bind-Value="_highlight" PickerVariant="PickerVariant.Static" ColorPickerMode="ColorPickerMode.HSL" ShowModeSwitch="false" PopupAriaLabel="Highlight, HSL" />
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudStack Spacing="2">
+            <MudText Typo="Typo.subtitle2" HtmlTag="h3">Hex input, alpha hidden</MudText>
+            <MudColorPicker @bind-Value="_highlight" PickerVariant="PickerVariant.Static" ColorPickerMode="ColorPickerMode.HEX" ShowAlpha="false" PopupAriaLabel="Highlight, hex" />
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudStack Spacing="2">
+            <MudText Typo="Typo.subtitle2" HtmlTag="h3">Color field only</MudText>
+            <MudColorPicker @bind-Value="_highlight" PickerVariant="PickerVariant.Static" ShowSliders="false" ShowInputs="false" ShowPreview="false" ShowToolbar="false" PopupAriaLabel="Highlight, field only" />
+        </MudStack>
+    </MudItem>
+</MudGrid>
+<MudText Typo="Typo.body2" Class="mt-4" role="status">Shared value: @_highlight.ToString(MudColorOutputFormats.RGBA)</MudText>
+
+@code {
+    private MudColor _highlight = new(224, 184, 92, 0.8);
+}

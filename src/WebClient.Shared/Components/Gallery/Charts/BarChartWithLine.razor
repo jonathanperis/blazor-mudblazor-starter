@@ -1,0 +1,22 @@
+@using MudBlazor.Charts
+
+<MudChart T="double" ChartType="ChartType.Bar" ChartSeries="_baked" ChartLabels="_days" ChartOptions="_barOptions" Width="100%" Height="320px">
+    <Line ChartSeries="_target" ChartOptions="_lineOptions" />
+</MudChart>
+
+@code {
+    private readonly string[] _days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+    private readonly List<ChartSeries<double>> _baked =
+    [
+        new() { Name = "Loaves baked", Data = new double[] { 120, 115, 128, 131, 160, 214 } }
+    ];
+
+    private readonly List<ChartSeries<double>> _target =
+    [
+        new() { Name = "Daily target", Data = new double[] { 125, 125, 125, 135, 165, 205 } }
+    ];
+
+    private readonly BarChartOptions _barOptions = new() { ChartPalette = ["#2F7FC1"], YAxisTitle = "Loaves", YAxisTicks = 50 };
+    private readonly LineChartOptions _lineOptions = new() { ChartPalette = ["#D9622B"], ShowDataMarkers = true, LineStrokeWidth = 2 };
+}

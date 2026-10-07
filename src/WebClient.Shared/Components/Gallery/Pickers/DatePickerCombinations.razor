@@ -1,0 +1,11 @@
+<EnumMatrix TRow="Variant" TColumn="Adornment" Caption="MudDatePicker: Variant × Adornment">
+    <Cell>
+        <div style="min-width: 12rem">
+            <MudDatePicker @bind-Date="_date" Label="Due date" Variant="@context.Row" Adornment="@context.Column" Margin="Margin.Dense" />
+        </div>
+    </Cell>
+</EnumMatrix>
+
+@code {
+    private DateTime? _date = new DateTime(2026, 12, 4);
+}

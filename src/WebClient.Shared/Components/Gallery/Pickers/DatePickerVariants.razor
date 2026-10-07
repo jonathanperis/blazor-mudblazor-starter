@@ -1,0 +1,17 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="5">
+        <MudStack Spacing="4">
+            <MudDatePicker @bind-Date="_date" Label="Inline" HelperText="The calendar opens in a popover" PickerVariant="PickerVariant.Inline" Variant="Variant.Outlined" />
+            <MudDatePicker @bind-Date="_date" Label="Dialog" HelperText="The calendar opens in a modal dialog" PickerVariant="PickerVariant.Dialog" Variant="Variant.Outlined" />
+            <MudText Typo="Typo.body2">All three pickers share one value: @_date?.ToString("d")</MudText>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" md="7">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3" Class="mb-2">Static</MudText>
+        <MudDatePicker @bind-Date="_date" PickerVariant="PickerVariant.Static" PopupAriaLabel="Delivery date" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private DateTime? _date = new DateTime(2026, 11, 20);
+}

@@ -1,0 +1,23 @@
+<MudStack Spacing="3" Style="max-width: 32rem">
+    <MudStack Row Wrap="Wrap.Wrap" Spacing="2" role="group" aria-label="Preset ranges">
+        @foreach (var (name, days) in _presets)
+        {
+            <MudButton Variant="Variant.Outlined" Size="Size.Small" OnClick="@(() => ApplyPreset(days))">@name</MudButton>
+        }
+    </MudStack>
+    <MudDateRangePicker @bind-DateRange="_period" Label="Sales report period" Variant="Variant.Outlined" PickerVariant="PickerVariant.Dialog">
+        <PickerActions>
+            <MudButton Class="mr-auto align-self-start" OnClick="@(() => context.ClearAsync())">Clear</MudButton>
+            <MudButton OnClick="@(() => context.CloseAsync(false))">Cancel</MudButton>
+            <MudButton Color="Color.Primary" OnClick="@(() => context.CloseAsync())">OK</MudButton>
+        </PickerActions>
+    </MudDateRangePicker>
+</MudStack>
+
+@code {
+    private static readonly DateTime ClosingDay = new(2026, 10, 31);
+    private readonly (string Name, int Days)[] _presets = [("Last 7 days", 7), ("Last 30 days", 30), ("Last 90 days", 90)];
+    private DateRange _period = new(ClosingDay.AddDays(-6), ClosingDay);
+
+    private void ApplyPreset(int days) => _period = new DateRange(ClosingDay.AddDays(1 - days), ClosingDay);
+}

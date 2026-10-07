@@ -1,0 +1,13 @@
+@using MudBlazor.Utilities
+
+<EnumMatrix TRow="Variant" TColumn="Adornment" Caption="MudColorPicker: Variant × Adornment">
+    <Cell>
+        <div style="min-width: 12rem">
+            <MudColorPicker @bind-Value="_color" Label="Accent" Variant="@context.Row" Adornment="@context.Column" Margin="Margin.Dense" ShowAlpha="false" />
+        </div>
+    </Cell>
+</EnumMatrix>
+
+@code {
+    private MudColor _color = "#2B5C8A";
+}

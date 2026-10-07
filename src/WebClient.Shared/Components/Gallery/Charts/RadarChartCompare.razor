@@ -1,0 +1,25 @@
+<MudChart T="double" ChartType="ChartType.Radar" ChartSeries="_series" ChartLabels="_attributes" ChartOptions="_options"
+          CanHideSeries="true" Width="100%" Height="360px" />
+
+@code {
+    private readonly string[] _attributes = ["Crust", "Crumb", "Sourness", "Sweetness", "Aroma", "Keeps fresh"];
+
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "Country sourdough", Data = new double[] { 9, 7.5, 8, 3, 8.5, 7 } },
+        new() { Name = "Dark rye", Data = new double[] { 7, 6, 6.5, 4, 9, 9 } },
+        new() { Name = "Brioche", Data = new double[] { 4, 9, 1, 9, 7.5, 4 } }
+    ];
+
+    // A categorical palette checked for contrast and color-vision separation on both the light and dark surfaces.
+    private readonly RadarChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1", "#D9622B", "#0B9585", "#B07D0E", "#A65DB0", "#4F9A2E"],
+        AxisSuggestedMax = 10,
+        GridLevels = 5,
+        FillOpacity = 0.12,
+        StrokeWidth = 2,
+        ShowDataMarkers = true,
+        TooltipTitleFormat = "{{SERIES_NAME}}: {{X_VALUE}}"
+    };
+}

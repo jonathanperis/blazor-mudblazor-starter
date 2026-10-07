@@ -1,0 +1,46 @@
+<MudChart T="double" ChartType="ChartType.Radar" ChartSeries="_series" ChartLabels="_criteria" ChartOptions="_options" Width="100%" Height="340px" />
+
+<MudGrid Spacing="2" Class="mt-2">
+    <MudItem xs="12" sm="6">
+        <MudSlider T="int" @bind-Value="_options.GridLevels" Min="2" Max="5" Color="Color.Primary">Grid levels: @_options.GridLevels</MudSlider>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSlider T="double" @bind-Value="_options.AngleOffset" Min="0" Max="60" Step="15" Color="Color.Primary">Angle offset: @_options.AngleOffset°</MudSlider>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSlider T="double" @bind-Value="_options.FillOpacity" Min="0" Max="0.6" Step="0.05" Color="Color.Primary">Fill opacity: @_options.FillOpacity.ToString("0.00")</MudSlider>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSlider T="double" @bind-Value="_options.StrokeWidth" Min="1" Max="4" Step="0.5" Color="Color.Primary">Stroke width: @_options.StrokeWidth</MudSlider>
+    </MudItem>
+    <MudItem xs="12">
+        <MudStack Row Wrap="Wrap.Wrap" Spacing="4">
+            <MudSwitch T="bool" @bind-Value="_options.ShowGridLines" Label="Grid lines" Color="Color.Primary" />
+            <MudSwitch T="bool" @bind-Value="_options.ShowAxisValues" Label="Axis values" Color="Color.Primary" />
+            <MudSwitch T="bool" @bind-Value="_options.ShowDataMarkers" Label="Data markers" Color="Color.Primary" />
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private readonly string[] _criteria = ["Aperture", "Portability", "Set-up speed", "Planetary detail", "Deep-sky reach"];
+
+    // The observatory's two loan telescopes, rated from 1 to 5.
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "80 mm refractor", Data = new double[] { 2, 5, 5, 3, 2 } },
+        new() { Name = "250 mm Dobsonian", Data = new double[] { 5, 2, 3, 4, 5 } }
+    ];
+
+    private readonly RadarChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1", "#D9622B"],
+        AxisSuggestedMax = 5,
+        GridLevels = 5,
+        FillOpacity = 0.15,
+        StrokeWidth = 2,
+        ShowGridLines = true,
+        ShowAxisValues = true,
+        ShowDataMarkers = true
+    };
+}

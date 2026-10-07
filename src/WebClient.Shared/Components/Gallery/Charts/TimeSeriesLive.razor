@@ -1,0 +1,86 @@
+@using MudBlazor.Charts
+@implements IDisposable
+
+<MudStack Row Spacing="3" AlignItems="AlignItems.Center">
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="Toggle"
+               StartIcon="@(_cts is null ? Icons.Material.Outlined.PlayArrow : Icons.Material.Outlined.Pause)">
+        @(_cts is null ? "Resume" : "Pause")
+    </MudButton>
+    <MudText Typo="Typo.body2" role="status">@(_cts is null ? "Paused." : "Receiving one reading per second.")</MudText>
+</MudStack>
+
+<MudChart T="double" ChartType="ChartType.Timeseries" ChartSeries="_series" ChartOptions="_options" Width="100%" Height="280px" />
+
+@code {
+    private const int Window = 120;
+    private readonly Random _sensor = new(7);
+    private readonly Queue<TimeValue<double>> _readings = new();
+    private List<ChartSeries<double>> _series = [];
+    private CancellationTokenSource? _cts;
+    private DateTime _clock = new(2026, 11, 14, 22, 0, 0);
+    private double _level = 48;
+
+    private readonly TimeSeriesChartOptions _options = new()
+    {
+        ChartPalette = ["#D9622B"],
+        TimeLabelSpacing = TimeSpan.FromSeconds(30),
+        TimeLabelFormat = "HH:mm:ss",
+        YAxisTitle = "Wind (km/h)",
+        YAxisTicks = 5,
+        ShowLegend = false
+    };
+
+    protected override void OnInitialized()
+    {
+        for (var i = 0; i < Window; i++) AddReading();
+        Start();
+    }
+
+    private void Toggle()
+    {
+        if (_cts is null) Start();
+        else Stop();
+    }
+
+    private void Start()
+    {
+        _cts = new CancellationTokenSource();
+        _ = RunAsync(_cts.Token);
+    }
+
+    private void Stop()
+    {
+        _cts?.Cancel();
+        _cts?.Dispose();
+        _cts = null;
+    }
+
+    private async Task RunAsync(CancellationToken token)
+    {
+        try
+        {
+            while (!token.IsCancellationRequested)
+            {
+                await Task.Delay(1000, token);
+                AddReading();
+                await InvokeAsync(StateHasChanged);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            // Paused or disposed.
+        }
+    }
+
+    private void AddReading()
+    {
+        _clock = _clock.AddSeconds(1);
+        _level = Math.Clamp(_level + (_sensor.NextDouble() - 0.5) * 6, 20, 80);
+        _readings.Enqueue(new TimeValue<double>(_clock, Math.Round(_level, 1)));
+        if (_readings.Count > Window) _readings.Dequeue();
+        // A new series instance tells the chart that the data changed.
+        _series = [new() { Name = "Anemometer", Data = _readings.ToArray() }];
+    }
+
+    public void Dispose() => Stop();
+}

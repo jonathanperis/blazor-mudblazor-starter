@@ -1,0 +1,31 @@
+<EnumMatrix TRow="YAxisLabelPosition" TColumn="XAxisLabelPosition" Caption="HeatMapChartOptions: YAxisLabelPosition × XAxisLabelPosition">
+    <Cell>
+        <div style="width: 9rem">
+            <MudChart T="double" ChartType="ChartType.HeatMap" ChartSeries="_series" ChartLabels="_columns"
+                      ChartOptions="@Options(context.Row, context.Column)" MatchBoundsToSize="true" Width="100%" Height="110px" />
+        </div>
+    </Cell>
+</EnumMatrix>
+
+@code {
+    private readonly string[] _columns = ["Q1", "Q2", "Q3"];
+
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "North", Data = new double[] { 4, 7, 9 } },
+        new() { Name = "South", Data = new double[] { 8, 5, 3 } }
+    ];
+
+    // Options are cached so each cell keeps the same instance between renders.
+    private readonly Dictionary<(YAxisLabelPosition, XAxisLabelPosition), HeatMapChartOptions> _options = [];
+
+    private HeatMapChartOptions Options(YAxisLabelPosition y, XAxisLabelPosition x)
+    {
+        if (!_options.TryGetValue((y, x), out var options))
+        {
+            options = new() { ChartPalette = ["#D5ECE8", "#0B9585", "#05584F"], YAxisLabelPosition = y, XAxisLabelPosition = x, ShowLegend = false, ValueFormatString = "0" };
+            _options[(y, x)] = options;
+        }
+        return options;
+    }
+}

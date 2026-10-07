@@ -1,0 +1,24 @@
+@using MudBlazor.Utilities
+
+<MudStack Row Wrap="Wrap.Wrap" Spacing="6" AlignItems="AlignItems.Start">
+    <MudColorPicker @bind-Value="_label" PickerVariant="PickerVariant.Static" ColorPickerView="ColorPickerView.Palette"
+                    Palette="_inks" ShowToolbar="false" PopupAriaLabel="Shelf label color" />
+    <MudStack Spacing="2" Style="max-width: 18rem">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Shelf label inks</MudText>
+        <MudText Typo="Typo.body2">
+            Five tints and shades of each of the bookshop's three inks, generated with
+            <code>MudColor.GenerateTintShadePalette</code>.
+        </MudText>
+        <MudChip T="string" Style="@($"background: {_label}; color: {TextOn(_label)}")">Poetry · aisle 4</MudChip>
+    </MudStack>
+</MudStack>
+
+@code {
+    private MudColor _label = "#1F5F5B";
+
+    private readonly IEnumerable<MudColor> _inks = new MudColor[] { "#B4441F", "#1F5F5B", "#7A5C14" }
+        .SelectMany(ink => MudColor.GenerateTintShadePalette(ink, 5));
+
+    // Light text on dark labels, dark text on light ones.
+    private static string TextOn(MudColor background) => background.L < 0.55 ? "#FFFFFF" : "#1C1B19";
+}

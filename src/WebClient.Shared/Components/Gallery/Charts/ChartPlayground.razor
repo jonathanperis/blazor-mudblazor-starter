@@ -1,0 +1,75 @@
+@using MudBlazor.Charts
+
+<Playground Code="@Code">
+    <Preview>
+        <div style="width: 100%">
+            <MudChart T="double" ChartType="_type" ChartSeries="_series" ChartLabels="_months" ChartOptions="Options"
+                      LegendPosition="_legend" CanHideSeries="_canHideSeries" MatchBoundsToSize="true" Width="100%" Height="320px" />
+        </div>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_type" Label="Chart type" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in _types) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_legend" Label="Legend position" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in _positions) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_canHideSeries" Label="Legend check boxes" Color="Color.Primary" />
+        @foreach (var series in _series)
+        {
+            <MudSwitch T="bool" @bind-Value="series.Visible" Label="@series.Name" Color="Color.Primary" />
+        }
+    </Controls>
+</Playground>
+
+@code {
+    private readonly ChartType[] _types = [ChartType.Bar, ChartType.StackedBar, ChartType.Line, ChartType.Radar];
+    private readonly Position[] _positions = [Position.Bottom, Position.Top, Position.Left, Position.Right, Position.Start, Position.End];
+    private readonly string[] _months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun"];
+    private static readonly string[] Palette = ["#2F7FC1", "#D9622B", "#0B9585"];
+
+    // Average monthly rainfall in millimetres.
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "Lisbon", Data = new double[] { 100, 90, 60, 65, 50, 15 } },
+        new() { Name = "Bergen", Data = new double[] { 250, 190, 200, 140, 120, 135 } },
+        new() { Name = "Manaus", Data = new double[] { 260, 290, 300, 290, 210, 100 } }
+    ];
+
+    private ChartType _type = ChartType.Bar;
+    private Position _legend = Position.Bottom;
+    private bool _canHideSeries;
+
+    // Each chart type reads its own options class.
+    private readonly BarChartOptions _bar = new() { ChartPalette = Palette, YAxisTicks = 50, YAxisTitle = "Rainfall (mm)" };
+    private readonly StackedBarChartOptions _stacked = new() { ChartPalette = Palette, YAxisTicks = 100, YAxisTitle = "Rainfall (mm)" };
+    private readonly LineChartOptions _line = new() { ChartPalette = Palette, YAxisTicks = 50, ShowDataMarkers = true, YAxisTitle = "Rainfall (mm)" };
+    private readonly RadarChartOptions _radar = new() { ChartPalette = Palette, ShowDataMarkers = true, FillOpacity = 0.15 };
+
+    private IChartOptions Options => _type switch
+    {
+        ChartType.StackedBar => _stacked,
+        ChartType.Line => _line,
+        ChartType.Radar => _radar,
+        _ => _bar
+    };
+
+    private string Code
+    {
+        get
+        {
+            var markup = Snippet.Element("MudChart",
+            [
+                ("T", "double"),
+                ("ChartType", $"ChartType.{_type}"),
+                ("ChartSeries", "_series"),
+                ("ChartLabels", "_months"),
+                ("ChartOptions", "_options"),
+                ("LegendPosition", Snippet.Enum(_legend, Position.Bottom)),
+                ("CanHideSeries", Snippet.Flag(_canHideSeries))
+            ]);
+            var hidden = _series.Where(series => !series.Visible).Select(series => series.Name).ToList();
+            return hidden.Count == 0 ? markup : $"{markup}\n@* Hidden with ChartSeries.Visible = false: {string.Join(", ", hidden)} *@";
+        }
+    }
+}

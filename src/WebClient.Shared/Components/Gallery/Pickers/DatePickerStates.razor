@@ -1,0 +1,26 @@
+<MudForm @ref="_form">
+    <MudGrid Spacing="3">
+        <MudItem xs="12" md="4">
+            <MudDatePicker Date="_issued" Label="Issued on" Disabled="true" Variant="Variant.Outlined" HelperText="Disabled: set by the system" />
+        </MudItem>
+        <MudItem xs="12" md="4">
+            <MudDatePicker Date="_renewed" Label="Renewed on" ReadOnly="true" Variant="Variant.Outlined" HelperText="Read-only: visible, not editable" />
+        </MudItem>
+        <MudItem xs="12" md="4">
+            <MudDatePicker @bind-Date="_expires" Label="Expires on" Required="true" RequiredError="Choose the expiry date of the card."
+                           MinDate="_renewed" Variant="Variant.Outlined" Clearable="true" />
+        </MudItem>
+        <MudItem xs="12">
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="ValidateAsync">Validate</MudButton>
+        </MudItem>
+    </MudGrid>
+</MudForm>
+
+@code {
+    private MudForm _form = null!;
+    private readonly DateTime _issued = new(2024, 9, 1);
+    private readonly DateTime _renewed = new(2026, 9, 1);
+    private DateTime? _expires;
+
+    private Task ValidateAsync() => _form.ValidateAsync();
+}

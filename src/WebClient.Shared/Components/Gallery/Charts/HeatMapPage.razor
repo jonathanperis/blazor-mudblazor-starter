@@ -1,0 +1,10 @@
+@page "/components/heat-map"
+@attribute [ComponentPage("Heat map", GalleryGroup.Charts, "A grid of cells shaded by value, for patterns across two categories such as day and hour. Choose it when the shape of the pattern matters more than exact values; turn labels on when they do.", MudDocs = "charts/heatmap", Types = ["MudChart", "MudHeatMapCell", "HeatMapChartOptions"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(HeatMapBasic)" Title="Busy hours" Description="Each series is a row and each value a column; ChartLabels name the columns. A one-hue palette runs from quiet to busy." />
+    <Example Of="typeof(HeatMapLabels)" Title="Every axis label position" Description="XAxisLabelPosition and YAxisLabelPosition, combined. None hides that axis's labels." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(HeatMapOptions)" Title="Labels, gradient and legend" Description="Cell values, a smooth gradient instead of steps, and the legend with its value labels." />
+    <Example Of="typeof(HeatMapDiverging)" Title="A diverging scale" Description="Two hues meeting at a neutral midpoint show values above and below a baseline. Keep the range symmetric so zero lands on the neutral color." />
+    <Example Of="typeof(HeatMapCustomCells)" Title="Custom cells" Description="MudHeatMapCell replaces one cell's content or color, here to label closed hours instead of showing a misleading zero." />
+</ComponentPageFrame>

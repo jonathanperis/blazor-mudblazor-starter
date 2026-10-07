@@ -1,0 +1,29 @@
+<MudChart T="double" ChartType="ChartType.ScatterPlot" ChartSeries="_series" ChartOptions="_options" CanHideSeries="true" Width="100%" Height="340px" />
+
+@code {
+    // A park's tree survey: trunk diameter at chest height against tree height.
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new()
+        {
+            Name = "English oak",
+            Data = new([(22, 9.5), (31, 12.0), (38, 14.5), (45, 16.0), (52, 18.5), (60, 19.0), (67, 21.5), (74, 22.0), (83, 23.5), (95, 24.0)])
+        },
+        new()
+        {
+            Name = "Silver birch",
+            Data = new([(12, 8.0), (16, 10.5), (19, 12.0), (23, 14.5), (27, 16.0), (30, 17.5), (34, 19.5), (38, 20.0), (41, 21.5)])
+        }
+    ];
+
+    // Two hues that stay apart for every pair of points, in both themes and for common color-vision deficiencies.
+    private readonly ScatterPlotChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1", "#D9622B"],
+        XAxisTitle = "Trunk diameter (cm)",
+        YAxisTitle = "Height (m)",
+        XAxisTicks = 10,
+        YAxisTicks = 5,
+        PointRadius = 5
+    };
+}

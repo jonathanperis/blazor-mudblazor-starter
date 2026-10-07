@@ -1,0 +1,8 @@
+@page "/components/sankey"
+@attribute [ComponentPage("Sankey diagram", GalleryGroup.Charts, "A flow diagram: nodes are stages and the width of each link is the amount that moves between them. Choose it to show where a quantity comes from and where it ends up.", MudDocs = "charts/sankey", Types = ["MudChart", "SankeyEdge", "SankeyNode", "SankeyChartOptions"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(SankeyBasic)" Title="Energy flows of a town" Description="A series holds SankeyEdge values: source, target and weight. Nodes and columns are inferred from the edges." />
+    <Example Of="typeof(SankeyOptions)" Title="Labels, values and highlighting" Description="Turn labels, node values and edge values on or off, highlight a node's links on hover and size the nodes." />
+    <Example Of="typeof(SankeyNodes)" Title="Node colors, columns and selection" Description="NodeOverrides assign a column and color per node. Clicking a node sets SelectedIndex, and ChartReference exposes the node list." />
+</ComponentPageFrame>

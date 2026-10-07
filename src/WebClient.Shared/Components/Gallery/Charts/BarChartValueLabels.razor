@@ -1,0 +1,33 @@
+<MudChart T="double" ChartType="ChartType.Bar" ChartSeries="_series" ChartLabels="_pastries" ChartOptions="_options" Width="100%" Height="320px" />
+
+<MudGrid Spacing="3" Class="mt-2">
+    <MudItem xs="12" sm="6">
+        <MudSlider T="double" @bind-Value="_options.BarWidthRatio" Min="0.2" Max="1" Step="0.1" Color="Color.Primary">
+            Bar width ratio: @_options.BarWidthRatio.ToString("0.0")
+        </MudSlider>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSlider T="int" @bind-Value="_options.XAxisLabelRotation" Min="0" Max="90" Step="15" Color="Color.Primary">
+            Label rotation: @_options.XAxisLabelRotation°
+        </MudSlider>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private readonly string[] _pastries = ["Croissant", "Pain au chocolat", "Cinnamon bun", "Almond tart", "Fruit danish"];
+
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "Left unsold at closing", Data = new double[] { 6, 11, 3, 8, 14 } }
+    ];
+
+    private readonly BarChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1"],
+        ShowValues = true,
+        ShowLegend = false,
+        BarWidthRatio = 0.5,
+        YAxisTitle = "Pastries",
+        YAxisTicks = 5
+    };
+}

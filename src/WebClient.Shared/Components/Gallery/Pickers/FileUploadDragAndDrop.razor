@@ -1,0 +1,29 @@
+<MudFileUpload T="IReadOnlyList<IBrowserFile>" @bind-Files="_photos" @bind-Dragging="_dragging" DragAndDrop="true"
+               AppendMultipleFiles="true" Accept="image/*" tabindex="-1">
+    <CustomContent>
+        <MudPaper Outlined="true" Class="@ZoneClass" Style="min-height: 12rem" @ondragenter="@(() => _dragging = true)">
+            <MudIcon Icon="@Icons.Material.Outlined.AddPhotoAlternate" Size="Size.Large" Color="@(_dragging ? Color.Primary : Color.Default)" />
+            <MudText Typo="Typo.subtitle1">@(_dragging ? "Release to add the photos" : "Drop specimen photos here")</MudText>
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="@context.OpenFilePickerAsync">Browse files</MudButton>
+            @if (context.GetFilenames().Count > 0)
+            {
+                <MudStack Row Wrap="Wrap.Wrap" Justify="Justify.Center" Spacing="1">
+                    @foreach (var name in context.GetFilenames())
+                    {
+                        <MudChip T="string" Size="Size.Small" Text="@name" OnClose="@(() => context.RemoveFileAsync(name))" />
+                    }
+                </MudStack>
+                <MudButton Variant="Variant.Text" Size="Size.Small" Color="Color.Error" OnClick="@context.ClearAsync">Remove all</MudButton>
+            }
+        </MudPaper>
+    </CustomContent>
+    <SelectedTemplate />
+</MudFileUpload>
+
+@code {
+    private IReadOnlyList<IBrowserFile>? _photos;
+    private bool _dragging;
+
+    private string ZoneClass => "d-flex flex-column align-center justify-center gap-3 pa-6 border-2 border-dashed rounded-lg"
+        + (_dragging ? " mud-border-primary" : "");
+}

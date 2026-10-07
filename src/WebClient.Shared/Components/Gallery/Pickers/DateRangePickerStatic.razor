@@ -1,0 +1,8 @@
+<div class="pa-6" style="overflow-x: auto">
+    <MudDateRangePicker @bind-DateRange="_exhibition" PickerVariant="PickerVariant.Static" DisplayMonths="2"
+                        Color="Color.Secondary" StartMonth="@(new DateTime(2026, 11, 1))" PopupAriaLabel="Exhibition dates" />
+</div>
+
+@code {
+    private DateRange _exhibition = new(new DateTime(2026, 11, 23), new DateTime(2026, 12, 6));
+}

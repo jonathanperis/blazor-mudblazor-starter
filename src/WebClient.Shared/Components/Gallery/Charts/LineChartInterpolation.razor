@@ -1,0 +1,36 @@
+<MudChart T="double" ChartType="ChartType.Line" ChartSeries="_series" ChartLabels="_months" ChartOptions="_options" Width="100%" Height="300px" />
+
+<MudGrid Spacing="3" Class="mt-2">
+    <MudItem xs="12">
+        <MudRadioGroup T="InterpolationOption" @bind-Value="_options.InterpolationOption">
+            @foreach (var option in Enum.GetValues<InterpolationOption>())
+            {
+                <MudRadio Value="option" Color="Color.Primary">@option</MudRadio>
+            }
+        </MudRadioGroup>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSwitch T="bool" @bind-Value="_options.ShowDataMarkers" Label="Data markers" Color="Color.Primary" />
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudSlider T="double" @bind-Value="_options.LineStrokeWidth" Min="1" Max="6" Step="0.5" Color="Color.Primary">Stroke: @_options.LineStrokeWidth px</MudSlider>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private readonly string[] _months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "Rainfall in Porto (mm)", Data = new double[] { 147, 112, 95, 118, 89, 40, 20, 33, 76, 154, 160, 182 } }
+    ];
+
+    private readonly LineChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1"],
+        InterpolationOption = InterpolationOption.Straight,
+        ShowDataMarkers = true,
+        LineStrokeWidth = 2,
+        YAxisTicks = 50
+    };
+}

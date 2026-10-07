@@ -1,0 +1,22 @@
+<MudChart T="double" ChartType="ChartType.Line" ChartSeries="_series" ChartLabels="_months" ChartOptions="_options" Width="100%" Height="320px" />
+
+@code {
+    private readonly string[] _months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "Lisbon", Data = new double[] { 11.6, 12.6, 14.9, 16.2, 18.7, 21.8, 23.5, 23.9, 22.2, 19.1, 14.9, 12.4 } },
+        new() { Name = "Oslo", Data = new double[] { -4.3, -4.0, -0.2, 4.5, 10.8, 15.2, 16.4, 15.2, 10.8, 6.3, 0.7, -3.1 } },
+        new() { Name = "Belém", Data = new double[] { 25.9, 25.7, 25.8, 26.1, 26.4, 26.5, 26.4, 26.6, 26.8, 27.0, 27.2, 26.7 } }
+    ];
+
+    // A categorical palette checked for contrast and color-vision separation on both the light and dark surfaces.
+    private readonly LineChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1", "#D9622B", "#0B9585", "#B07D0E", "#A65DB0", "#4F9A2E"],
+        YAxisTitle = "Mean temperature (°C)",
+        YAxisTicks = 5,
+        ShowDataMarkers = true,
+        LineStrokeWidth = 2
+    };
+}

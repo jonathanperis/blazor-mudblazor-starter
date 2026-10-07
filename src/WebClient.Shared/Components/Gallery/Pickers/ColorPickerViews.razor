@@ -1,0 +1,17 @@
+@using MudBlazor.Utilities
+
+<MudGrid Spacing="4">
+    @foreach (var view in Enum.GetValues<ColorPickerView>())
+    {
+        <MudItem xs="12" md="6">
+            <MudStack Spacing="2">
+                <MudText Typo="Typo.subtitle2" HtmlTag="h3">@view</MudText>
+                <MudColorPicker @bind-Value="_ink" ColorPickerView="view" PickerVariant="PickerVariant.Static" ShowToolbar="false" PopupAriaLabel="@($"Ink color, {view} view")" />
+            </MudStack>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    private MudColor _ink = "#B4441F";
+}

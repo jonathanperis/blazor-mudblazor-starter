@@ -1,0 +1,21 @@
+<MudChart T="double" ChartType="ChartType.HeatMap" ChartSeries="_series" ChartLabels="_months" ChartOptions="_options" Width="100%" Height="260px" />
+
+@code {
+    private readonly string[] _months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+    // Difference from the 1991–2020 monthly average, in °C. The data spans exactly −2 to +2, so 0 sits mid-scale.
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "2023", Data = new double[] { 0.4, -0.6, 1.1, 0.2, -0.3, 1.4, 0.9, 1.6, 2.0, 1.2, -0.2, 0.5 } },
+        new() { Name = "2024", Data = new double[] { -1.2, 0.8, 0.3, -0.9, 0.6, 1.0, 1.5, 0.7, -0.4, 0.9, 0.1, -2.0 } },
+        new() { Name = "2025", Data = new double[] { 1.3, 0.2, -0.5, 1.1, 1.7, 0.4, -0.8, 1.2, 0.6, -0.1, 0.8, 1.0 } }
+    ];
+
+    // Diverging: blue below the baseline, gray at it, red above.
+    private readonly HeatMapChartOptions _options = new()
+    {
+        ChartPalette = ["#2F6EB0", "#9DBEDE", "#B9B5AC", "#E8A487", "#C2461E"],
+        ShowLabels = true,
+        ValueFormatString = "+0.0;−0.0;0.0"
+    };
+}

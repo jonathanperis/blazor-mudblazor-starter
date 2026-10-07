@@ -1,0 +1,20 @@
+<MudGrid Spacing="3">
+    <MudItem xs="12" md="4">
+        <MudDatePicker @bind-Date="_birthday" Label="Date of birth" OpenTo="OpenTo.Year" Variant="Variant.Outlined"
+                       HelperText="@($"Opens on the year list · {_birthday:d}")" />
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudDatePicker @bind-Date="_billingMonth" Label="Billing month" OpenTo="OpenTo.Month" FixDay="1" DateFormat="MMMM yyyy"
+                       Variant="Variant.Outlined" HelperText="@($"Day fixed to the 1st · {_billingMonth:d}")" />
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudDatePicker @bind-Date="_edition" Label="Almanac edition" OpenTo="OpenTo.Year" FixMonth="1" FixDay="1" DateFormat="yyyy"
+                       Variant="Variant.Outlined" HelperText="@($"Month and day fixed · {_edition:d}")" />
+    </MudItem>
+</MudGrid>
+
+@code {
+    private DateTime? _birthday = new DateTime(1991, 6, 23);
+    private DateTime? _billingMonth = new DateTime(2026, 10, 1);
+    private DateTime? _edition = new DateTime(2027, 1, 1);
+}

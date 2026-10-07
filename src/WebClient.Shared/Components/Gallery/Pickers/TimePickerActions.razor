@@ -1,0 +1,22 @@
+<MudStack Spacing="3" Style="max-width: 20rem">
+    <MudTimePicker @bind-Time="_reading" Label="Meter reading taken at" Variant="Variant.Outlined">
+        <PickerActions>
+            @* The context is the picker, so the buttons need no @ref. *@
+            <MudButton Class="mr-auto align-self-start" OnClick="@(() => UseNowAsync(context))">Now</MudButton>
+            <MudButton OnClick="@(() => context.CloseAsync(false))">Cancel</MudButton>
+            <MudButton Color="Color.Primary" OnClick="@(() => context.CloseAsync())">OK</MudButton>
+        </PickerActions>
+    </MudTimePicker>
+    <MudText Typo="Typo.body2" role="status">Committed: @(_reading?.ToString(@"hh\:mm") ?? "none")</MudText>
+</MudStack>
+
+@code {
+    private TimeSpan? _reading = new TimeSpan(9, 0, 0);
+
+    private async Task UseNowAsync(MudPicker<TimeSpan?> picker)
+    {
+        await picker.CloseAsync(false);
+        var now = DateTime.Now;
+        _reading = new TimeSpan(now.Hour, now.Minute, 0);
+    }
+}

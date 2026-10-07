@@ -1,0 +1,8 @@
+<MudStack Spacing="2" Style="max-width: 20rem">
+    <MudTimePicker @bind-Time="_slot" Label="Telescope slot" HelperText="Slots last 30 minutes" Variant="Variant.Outlined" />
+    <MudText Typo="Typo.body2" role="status">@(_slot is { } time ? $"Your slot starts at {time.ToString(@"hh\:mm")}." : "No slot chosen yet.")</MudText>
+</MudStack>
+
+@code {
+    private TimeSpan? _slot = new TimeSpan(21, 30, 0);
+}

@@ -1,0 +1,13 @@
+@page "/components/color-picker"
+@attribute [ComponentPage("Color picker", GalleryGroup.Pickers, "A field that opens a spectrum, a grid or a palette of colors and returns a MudColor. Choose it for themes, labels and drawing tools; offer a short palette when only a few colors make sense.", MudDocs = "colorpicker", Types = ["MudColorPicker", "MudColor"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(ColorPickerBasic)" Title="Basic usage" Description="Bind a MudColor with @@bind-Value. MudColor converts from and to hex, RGB and HSL strings." />
+    <Example Of="typeof(ColorPickerViews)" Title="Spectrum, palette and grids" Description="ColorPickerView picks the starting surface. The toolbar lets people switch between views unless it is hidden." />
+    <Example Of="typeof(ColorPickerModes)" Title="Modes, alpha and slimmer pickers" Description="ColorPickerMode chooses the input fields. Hide alpha when transparency makes no sense, and hide sliders, inputs or preview for a compact picker." />
+    <Example Of="typeof(ColorPickerPalette)" Title="A custom palette" Description="Palette replaces the quick colors with your own. MudColor can generate tints, shades and gradients." />
+    <Example Of="typeof(ColorPickerCombinations)" Title="Every variant and adornment" Description="Closed, the picker is a text field showing the color value, with the same Variant and adornment options." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(ColorPickerLivePreview)" Title="Binding to a live preview" Description="Two pickers drive a poster preview and its contrast ratio, recalculated as you drag." />
+    <Example Of="typeof(ColorPickerStates)" Title="Typing, disabled and read-only" Description="Editable fields accept a typed color such as #1F5F5B or rgb(31, 95, 91)." />
+    <Example Of="typeof(ColorPickerPlayground)" Title="Playground" Description="Change the parameters; the markup below lists only what differs from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

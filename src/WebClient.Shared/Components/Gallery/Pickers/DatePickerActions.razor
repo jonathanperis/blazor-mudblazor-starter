@@ -1,0 +1,15 @@
+<MudStack Spacing="3" Style="max-width: 22rem">
+    <MudDatePicker @bind-Date="_deadline" Label="Manuscript deadline" Variant="Variant.Outlined" AutoClose="false">
+        <PickerActions>
+            @* The context is the picker itself, so the buttons need no @ref. *@
+            <MudButton Class="mr-auto align-self-start" OnClick="@(() => context.ClearAsync())">Clear</MudButton>
+            <MudButton OnClick="@(() => context.CloseAsync(false))">Cancel</MudButton>
+            <MudButton Color="Color.Primary" OnClick="@(() => context.CloseAsync())">OK</MudButton>
+        </PickerActions>
+    </MudDatePicker>
+    <MudText Typo="Typo.body2" role="status">Committed: @(_deadline?.ToString("D") ?? "none")</MudText>
+</MudStack>
+
+@code {
+    private DateTime? _deadline = new DateTime(2027, 2, 15);
+}

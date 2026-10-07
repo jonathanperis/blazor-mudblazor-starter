@@ -1,0 +1,81 @@
+@implements IDisposable
+
+<MudStack Spacing="3">
+    <MudStack Row Wrap="Wrap.Wrap" Spacing="2" AlignItems="AlignItems.Center">
+        <MudFileUpload T="IBrowserFile" Accept=".txt,.csv,.md" FilesChanged="ReadAsync" Disabled="_reading">
+            <CustomContent>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Description" OnClick="@context.OpenFilePickerAsync">
+                    Choose a text file
+                </MudButton>
+            </CustomContent>
+            <SelectedTemplate />
+        </MudFileUpload>
+        @if (_reading)
+        {
+            <MudButton Variant="Variant.Outlined" OnClick="Cancel">Cancel</MudButton>
+        }
+    </MudStack>
+
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+    @if (_preview is not null)
+    {
+        <MudSimpleTable Dense="true" Bordered="true" Style="max-width: 28rem">
+            <tbody>
+                <tr><th scope="row">Lines</th><td>@_lines.ToString("N0")</td></tr>
+                <tr><th scope="row">Words</th><td>@_words.ToString("N0")</td></tr>
+                <tr><th scope="row">Characters</th><td>@_characters.ToString("N0")</td></tr>
+            </tbody>
+        </MudSimpleTable>
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">First lines</MudText>
+        <pre class="mud-typography-body2 pa-3 mud-background-gray rounded" style="overflow-x: auto; white-space: pre; margin: 0">@_preview</pre>
+    }
+</MudStack>
+
+@code {
+    private const long MaxBytes = 512 * 1024;
+    private CancellationTokenSource? _cts;
+    private bool _reading;
+    private string _status = "Choose a .txt, .csv or .md file up to 512 KB. It is read here and never posted anywhere.";
+    private string? _preview;
+    private int _lines, _words, _characters;
+
+    private async Task ReadAsync(IBrowserFile file)
+    {
+        _cts?.Cancel();
+        _cts = new CancellationTokenSource();
+        var token = _cts.Token;
+        (_reading, _preview, _status) = (true, null, $"Reading {file.Name}…");
+        try
+        {
+            // OpenReadStream throws if the file is larger than the limit, before reading any bytes.
+            await using var stream = file.OpenReadStream(MaxBytes, token);
+            using var reader = new StreamReader(stream);
+            var text = await reader.ReadToEndAsync(token);
+            var lines = text.Split('\n');
+            (_lines, _characters) = (lines.Length, text.Length);
+            _words = text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Length;
+            _preview = string.Join('\n', lines.Take(5));
+            _status = $"Read {file.Name} in the app; nothing was uploaded.";
+        }
+        catch (IOException)
+        {
+            _status = $"{file.Name} is larger than 512 KB, so it was not read.";
+        }
+        catch (OperationCanceledException)
+        {
+            _status = "Reading was cancelled.";
+        }
+        finally
+        {
+            _reading = false;
+        }
+    }
+
+    private void Cancel() => _cts?.Cancel();
+
+    public void Dispose()
+    {
+        _cts?.Cancel();
+        _cts?.Dispose();
+    }
+}

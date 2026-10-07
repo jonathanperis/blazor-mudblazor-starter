@@ -1,0 +1,18 @@
+<MudStack Row Wrap="Wrap.Wrap" Spacing="6" AlignItems="AlignItems.Start">
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Portrait, week numbers, Monday first</MudText>
+        <MudDatePicker @bind-Date="_date" PickerVariant="PickerVariant.Static" ShowWeekNumbers="true" FirstDayOfWeek="DayOfWeek.Monday" PopupAriaLabel="Sprint start" />
+    </MudStack>
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Without toolbar, with adjacent days</MudText>
+        <MudDatePicker @bind-Date="_date" PickerVariant="PickerVariant.Static" ShowToolbar="false" ShowAdjacentMonthDays="true" Color="Color.Tertiary" PopupAriaLabel="Sprint start" />
+    </MudStack>
+    <MudStack Spacing="2">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Landscape in the secondary color</MudText>
+        <MudDatePicker @bind-Date="_date" PickerVariant="PickerVariant.Static" Orientation="Orientation.Landscape" Color="Color.Secondary" PopupAriaLabel="Sprint start" />
+    </MudStack>
+</MudStack>
+
+@code {
+    private DateTime? _date = new DateTime(2026, 10, 19);
+}

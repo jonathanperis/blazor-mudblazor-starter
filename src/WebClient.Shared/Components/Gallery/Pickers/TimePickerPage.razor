@@ -1,0 +1,13 @@
+@page "/components/time-picker"
+@attribute [ComponentPage("Time picker", GalleryGroup.Pickers, "A text field that opens a clock face. Choose it for a time of day, such as an appointment or a shift; for durations, use a numeric field instead.", MudDocs = "timepicker", Types = ["MudTimePicker"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(TimePickerBasic)" Title="Basic usage" Description="Bind a nullable TimeSpan with @@bind-Time. The value is a time of day, not a date." />
+    <Example Of="typeof(TimePickerClock)" Title="12-hour and 24-hour clocks" Description="AmPm switches to a 12-hour clock with AM and PM. TimeFormat controls the text in the field independently." />
+    <Example Of="typeof(TimePickerStatic)" Title="Static clocks" Description="A clock that is always open, in portrait or landscape and in any theme color." />
+    <Example Of="typeof(TimePickerSteps)" Title="Minute steps and edit modes" Description="MinuteSelectionStep snaps minutes to a grid. OpenTo starts on minutes, and TimeEditMode restricts editing to hours or to minutes." />
+    <Example Of="typeof(TimePickerCombinations)" Title="Every variant and adornment" Description="The closed field shares its Variant and adornment placement with every other picker." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(TimePickerEditable)" Title="Typing and validating a time" Description="Editable fields accept typed times. A validation function keeps the value inside opening hours." />
+    <Example Of="typeof(TimePickerActions)" Title="Action buttons" Description="PickerActions adds a shortcut for the current time and explicit Cancel and OK buttons." />
+    <Example Of="typeof(TimePickerPlayground)" Title="Playground" Description="Change the parameters; the markup below lists only what differs from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

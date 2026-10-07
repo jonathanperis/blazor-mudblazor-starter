@@ -1,0 +1,12 @@
+@page "/components/bar-chart"
+@attribute [ComponentPage("Bar chart", GalleryGroup.Charts, "Bars compare amounts across categories, side by side or stacked into a total. Choose grouped bars to compare series and stacked bars when the total matters. MudChart draws vertical bars only.", MudDocs = "charts/bar", Types = ["MudChart", "ChartSeries", "BarChartOptions", "StackedBarChartOptions"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(BarChartGrouped)" Title="Grouped bars" Description="One series per bread, one group per day. The y-axis title names the unit and the legend names the series." />
+    <Example Of="typeof(BarChartStacked)" Title="Stacked bars" Description="ChartType.StackedBar adds the series on top of each other, so the bar height is the total takings of the month." />
+    <Example Of="typeof(BarChartValueLabels)" Title="Value labels and bar width" Description="ShowValues prints each value on its bar. BarWidthRatio and XAxisLabelRotation adjust the geometry." />
+    <Example Of="typeof(BarChartAxes)" Title="Axis options" Description="Tick spacing, a suggested maximum, grid lines and a formatter for the y-axis labels." />
+    <Example Of="typeof(BarChartSelection)" Title="Selecting a series" Description="Clicking a bar selects its series through @@bind-SelectedIndex. Tooltip formats choose what hovering shows." />
+    <Example Of="typeof(BarChartWithLine)" Title="Bars with a line" Description="A Line child component draws a line on the same axes, here the daily target over the loaves baked." />
+    <Example Of="typeof(ChartPlayground)" Title="Chart playground" Description="One dataset, any chart type. Move the legend, hide series and see the markup that results." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

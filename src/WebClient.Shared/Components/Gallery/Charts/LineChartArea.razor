@@ -1,0 +1,36 @@
+@using MudBlazor.Charts
+
+<MudChart T="double" ChartType="ChartType.Line" ChartSeries="_series" ChartLabels="_weeks" ChartOptions="_options" Width="100%" Height="300px" />
+
+<MudSwitch T="bool" Value="_allAreas" ValueChanged="ShowAllAsAreas" Label="Fill under every line" Color="Color.Primary" Class="mt-2" />
+
+@code {
+    private readonly string[] _weeks = ["W1", "W2", "W3", "W4", "W5", "W6", "W7", "W8"];
+    private readonly ChartSeries<double> _observed = new() { Name = "Reservoir level (%)", Data = new double[] { 64, 61, 59, 55, 52, 50, 49, 47 } };
+    private readonly ChartSeries<double> _forecast = new() { Name = "Forecast (%)", Data = new double[] { 64, 62, 61, 59, 58, 57, 56, 55 } };
+    private List<ChartSeries<double>> _series = [];
+    private LineChartOptions _options = new();
+    private bool _allAreas;
+
+    protected override void OnInitialized()
+    {
+        _series = [_observed, _forecast];
+        _options = new()
+        {
+            ChartPalette = ["#2F7FC1", "#D9622B"],
+            YAxisRequireZeroPoint = true,
+            YAxisTicks = 10,
+            // Overrides are keyed by the series instance.
+            SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
+            {
+                [_observed] = new() { LineDisplayType = LineDisplayType.Area, FillOpacity = 0.3 }
+            }
+        };
+    }
+
+    private void ShowAllAsAreas(bool value)
+    {
+        _allAreas = value;
+        _options.LineDisplayType = value ? LineDisplayType.Area : LineDisplayType.Line;
+    }
+}

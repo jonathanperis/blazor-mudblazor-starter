@@ -1,0 +1,46 @@
+<MudStack Spacing="4">
+    <MudStack Row Wrap="Wrap.Wrap" Spacing="3" AlignItems="AlignItems.Center">
+        <MudFileUpload T="IBrowserFile" FilesChanged="Show">
+            <CustomContent>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.UploadFile" OnClick="@context.OpenFilePickerAsync">
+                    Choose a manuscript
+                </MudButton>
+            </CustomContent>
+            <SelectedTemplate />
+        </MudFileUpload>
+        <MudFileUpload T="IBrowserFile" FilesChanged="Show" Accept="image/*">
+            <CustomContent>
+                <MudButton Variant="Variant.Outlined" Color="Color.Secondary" StartIcon="@Icons.Material.Outlined.Image" OnClick="@context.OpenFilePickerAsync">
+                    Choose a cover image
+                </MudButton>
+            </CustomContent>
+            <SelectedTemplate />
+        </MudFileUpload>
+        <MudFileUpload T="IBrowserFile" FilesChanged="Show">
+            <CustomContent>
+                <MudIconButton Icon="@Icons.Material.Outlined.AttachFile" Variant="Variant.Outlined" OnClick="@context.OpenFilePickerAsync" aria-label="Attach a file" />
+            </CustomContent>
+            <SelectedTemplate />
+        </MudFileUpload>
+    </MudStack>
+
+    @if (_file is null)
+    {
+        <MudText Typo="Typo.body2" role="status">No file chosen. Files stay on this page; nothing is uploaded.</MudText>
+    }
+    else
+    {
+        <MudPaper Outlined="true" Class="pa-3" role="status">
+            <MudText Typo="Typo.subtitle2">@_file.Name</MudText>
+            <MudText Typo="Typo.body2">@(_file.ContentType is { Length: > 0 } type ? type : "Unknown type") · @FormatSize(_file.Size) · modified @_file.LastModified.ToString("g")</MudText>
+        </MudPaper>
+    }
+</MudStack>
+
+@code {
+    private IBrowserFile? _file;
+
+    private void Show(IBrowserFile file) => _file = file;
+
+    private static string FormatSize(long bytes) => bytes < 1024 * 1024 ? $"{bytes / 1024.0:0.#} KB" : $"{bytes / (1024.0 * 1024):0.#} MB";
+}

@@ -1,0 +1,28 @@
+<MudChart T="double" ChartType="ChartType.Donut" ChartSeries="_series" ChartLabels="_sources" ChartOptions="_options"
+          LegendPosition="Position.Right" Width="100%" Height="300px">
+    <CustomGraphics>
+        <text x="50%" y="46%" text-anchor="middle" dominant-baseline="middle" class="mud-typography-h5" style="fill: var(--mud-palette-text-primary)">@Total.ToString("N0")</text>
+        <text x="50%" y="56%" text-anchor="middle" dominant-baseline="middle" class="mud-typography-caption" style="fill: var(--mud-palette-text-secondary)">GWh in total</text>
+    </CustomGraphics>
+</MudChart>
+
+<MudSlider T="double" @bind-Value="_options.DonutRingRatio" Min="0.1" Max="0.6" Step="0.05" Color="Color.Primary" Class="mt-2" Style="max-width: 20rem">
+    Ring ratio: @_options.DonutRingRatio.ToString("0.00")
+</MudSlider>
+
+@code {
+    private readonly string[] _sources = ["Wind", "Solar", "Gas", "Hydro", "Biomass"];
+
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "Generation (GWh)", Data = new double[] { 264, 182, 141, 96, 38 } }
+    ];
+
+    private readonly DonutChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1", "#D9622B", "#0B9585", "#B07D0E", "#A65DB0", "#4F9A2E"],
+        DonutRingRatio = 0.3
+    };
+
+    private double Total => _series[0].Data.Values.Sum();
+}

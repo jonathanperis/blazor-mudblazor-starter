@@ -1,0 +1,35 @@
+<MudStack Spacing="3" Style="max-width: 36rem">
+    <MudFileUpload T="IReadOnlyList<IBrowserFile>" Accept=".csv,.tsv" MaxFileSize="MaxBytes" FilesChanged="Check">
+        <CustomContent>
+            @* The wrapper keeps the button at its natural width above the error text. *@
+            <div>
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.TableChart" OnClick="@context.OpenFilePickerAsync">
+                    Choose survey data
+                </MudButton>
+            </div>
+        </CustomContent>
+        <SelectedTemplate />
+    </MudFileUpload>
+    <MudText Typo="Typo.body2" Class="mud-text-secondary">CSV or TSV, up to 200 KB each. Larger files are dropped and named in the error above.</MudText>
+
+    <MudList T="string" Dense="true" ReadOnly="true" aria-live="polite">
+        @foreach (var (name, accepted) in _checked)
+        {
+            <MudListItem Icon="@(accepted ? Icons.Material.Outlined.CheckCircle : Icons.Material.Outlined.Cancel)"
+                         IconColor="@(accepted ? Color.Success : Color.Error)">
+                <MudText Typo="Typo.body2"><strong>@name</strong>: @(accepted ? "accepted" : "rejected, not a .csv or .tsv file")</MudText>
+            </MudListItem>
+        }
+    </MudList>
+</MudStack>
+
+@code {
+    private const long MaxBytes = 200 * 1024;
+    private static readonly string[] Extensions = [".csv", ".tsv"];
+    private List<(string Name, bool Accepted)> _checked = [];
+
+    // MaxFileSize removes oversized files before FilesChanged runs. Accept is only a hint for the file dialog,
+    // so a dropped or renamed file can still be anything: check the extension here.
+    private void Check(IReadOnlyList<IBrowserFile> files) =>
+        _checked = files.Select(file => (file.Name, Extensions.Contains(Path.GetExtension(file.Name), StringComparer.OrdinalIgnoreCase))).ToList();
+}

@@ -1,0 +1,38 @@
+@using MudBlazor.Charts
+
+<MudChart T="double" ChartType="ChartType.ScatterPlot" ChartSeries="_series" ChartOptions="_options" Width="100%" Height="320px" />
+<MudText Typo="Typo.body2" Class="mt-2">Each extra minute of preheating adds about @_slope.ToString("0.0") cm³ to every 100 g of loaf.</MudText>
+
+@code {
+    private readonly (double Minutes, double Volume)[] _bakes =
+        [(10, 182), (12, 190), (15, 201), (15, 196), (18, 214), (20, 219), (22, 223), (25, 236), (25, 229), (28, 241), (30, 248), (32, 251)];
+
+    private List<ChartSeries<double>> _series = [];
+    private ScatterPlotChartOptions _options = new();
+    private double _slope;
+
+    protected override void OnInitialized()
+    {
+        // Least squares: slope = cov(x, y) / var(x); the line passes through the means.
+        var meanX = _bakes.Average(b => b.Minutes);
+        var meanY = _bakes.Average(b => b.Volume);
+        _slope = _bakes.Sum(b => (b.Minutes - meanX) * (b.Volume - meanY)) / _bakes.Sum(b => Math.Pow(b.Minutes - meanX, 2));
+        double Fit(double x) => Math.Round(meanY + _slope * (x - meanX), 1);
+
+        var trend = new ChartSeries<double> { Name = "Trend", Data = new([(10, Fit(10)), (32, Fit(32))]) };
+        _series = [new() { Name = "Test bakes", Data = new(_bakes) }, trend];
+        _options = new()
+        {
+            ChartPalette = ["#2F7FC1", "#D9622B"],
+            XAxisTitle = "Preheating (minutes)",
+            YAxisTitle = "Loaf volume (cm³ per 100 g)",
+            XAxisTicks = 5,
+            YAxisTicks = 10,
+            PointRadius = 5,
+            SeriesDisplayOverrides = new Dictionary<IChartSeries, SeriesDisplayOverride>
+            {
+                [trend] = new ScatterSeriesDisplayOverride { ScatterSeriesType = ScatterSeriesType.Line, StrokeOpacity = 0.9 }
+            }
+        };
+    }
+}

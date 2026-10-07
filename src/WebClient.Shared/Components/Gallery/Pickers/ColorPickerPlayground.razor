@@ -1,0 +1,54 @@
+@using MudBlazor.Utilities
+
+<Playground Code="@Code">
+    <Preview>
+        <MudColorPicker @bind-Value="_color" PickerVariant="PickerVariant.Static" ColorPickerView="_view" ColorPickerMode="_mode"
+                        ShowAlpha="_showAlpha" ShowToolbar="_showToolbar" ShowColorField="_showColorField" ShowSliders="_showSliders"
+                        ShowInputs="_showInputs" ShowPreview="_showPreview" ShowModeSwitch="_showModeSwitch" PopupAriaLabel="Playground color" />
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_view" Label="View" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<ColorPickerView>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_mode" Label="Mode" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<ColorPickerMode>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_showAlpha" Label="Alpha" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_showToolbar" Label="Toolbar" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_showColorField" Label="Color field" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_showSliders" Label="Sliders" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_showInputs" Label="Inputs" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_showPreview" Label="Preview" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_showModeSwitch" Label="Mode switch" Color="Color.Primary" />
+        <MudText Typo="Typo.body2">Value: @_color.ToString(MudColorOutputFormats.HexA)</MudText>
+    </Controls>
+</Playground>
+
+@code {
+    private MudColor _color = "#1F5F5BFF";
+    private ColorPickerView _view = ColorPickerView.Spectrum;
+    private ColorPickerMode _mode = ColorPickerMode.RGB;
+    private bool _showAlpha = true;
+    private bool _showToolbar = true;
+    private bool _showColorField = true;
+    private bool _showSliders = true;
+    private bool _showInputs = true;
+    private bool _showPreview = true;
+    private bool _showModeSwitch = true;
+
+    // MudColorPicker defaults: ColorPickerView.Spectrum, ColorPickerMode.RGB, every part shown.
+    private string Code => Snippet.Element("MudColorPicker",
+    [
+        ("@bind-Value", "_color"),
+        ("PickerVariant", "PickerVariant.Static"),
+        ("ColorPickerView", Snippet.Enum(_view, ColorPickerView.Spectrum)),
+        ("ColorPickerMode", Snippet.Enum(_mode, ColorPickerMode.RGB)),
+        ("ShowAlpha", _showAlpha ? null : "false"),
+        ("ShowToolbar", _showToolbar ? null : "false"),
+        ("ShowColorField", _showColorField ? null : "false"),
+        ("ShowSliders", _showSliders ? null : "false"),
+        ("ShowInputs", _showInputs ? null : "false"),
+        ("ShowPreview", _showPreview ? null : "false"),
+        ("ShowModeSwitch", _showModeSwitch ? null : "false")
+    ]);
+}

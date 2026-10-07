@@ -1,0 +1,11 @@
+<EnumMatrix TRow="Variant" TColumn="Adornment" Caption="MudTimePicker: Variant × Adornment">
+    <Cell>
+        <div style="min-width: 10rem">
+            <MudTimePicker @bind-Time="_time" Label="Pickup" Variant="@context.Row" Adornment="@context.Column" Margin="Margin.Dense" />
+        </div>
+    </Cell>
+</EnumMatrix>
+
+@code {
+    private TimeSpan? _time = new TimeSpan(8, 15, 0);
+}

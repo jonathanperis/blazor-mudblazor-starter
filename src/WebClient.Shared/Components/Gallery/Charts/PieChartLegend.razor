@@ -1,0 +1,26 @@
+<MudRadioGroup T="Position" @bind-Value="_legend">
+    @foreach (var position in _positions)
+    {
+        <MudRadio Value="position" Color="Color.Primary">@position</MudRadio>
+    }
+</MudRadioGroup>
+
+<MudChart T="double" ChartType="ChartType.Donut" ChartSeries="_series" ChartLabels="_genres" ChartOptions="_options"
+          LegendPosition="_legend" Width="100%" Height="280px" />
+
+@code {
+    private readonly Position[] _positions = [Position.Bottom, Position.Top, Position.Left, Position.Right, Position.Start, Position.End];
+    private Position _legend = Position.Bottom;
+    private readonly string[] _genres = ["Fiction", "Children's", "Poetry", "Travel"];
+
+    // Books sold at the bookshop's autumn fair.
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "Books sold", Data = new double[] { 312, 207, 64, 118 } }
+    ];
+
+    private readonly DonutChartOptions _options = new()
+    {
+        ChartPalette = ["#2F7FC1", "#D9622B", "#0B9585", "#B07D0E", "#A65DB0", "#4F9A2E"]
+    };
+}

@@ -1,0 +1,11 @@
+<EnumMatrix TRow="Variant" TColumn="Margin" Caption="MudDateRangePicker: Variant × Margin">
+    <Cell>
+        <div style="min-width: 13rem">
+            <MudDateRangePicker @bind-DateRange="_range" Label="Report period" Variant="@context.Row" Margin="@context.Column" DateFormat="d MMM" />
+        </div>
+    </Cell>
+</EnumMatrix>
+
+@code {
+    private DateRange _range = new(new DateTime(2026, 7, 1), new DateTime(2026, 9, 30));
+}

@@ -1,0 +1,41 @@
+<MudChart T="double" ChartType="ChartType.HeatMap" ChartSeries="_series" ChartLabels="_weeks" ChartOptions="_options"
+          LegendPosition="_legend" Width="100%" Height="280px" />
+
+<MudGrid Spacing="2" Class="mt-2">
+    <MudItem xs="12" sm="6" md="3">
+        <MudSwitch T="bool" @bind-Value="_options.ShowLabels" Label="Cell values" Color="Color.Primary" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudSwitch T="bool" @bind-Value="_options.EnableSmoothGradient" Label="Smooth gradient" Color="Color.Primary" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudSwitch T="bool" @bind-Value="_options.ShowLegendLabels" Label="Legend values" Color="Color.Primary" />
+    </MudItem>
+    <MudItem xs="12" sm="6" md="3">
+        <MudSelect T="Position" @bind-Value="_legend" Label="Legend position" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var position in new[] { Position.Bottom, Position.Top, Position.Left, Position.Right }) { <MudSelectItem Value="position">@position</MudSelectItem> }
+        </MudSelect>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private readonly string[] _weeks = ["Week 1", "Week 2", "Week 3", "Week 4", "Week 5", "Week 6"];
+    private Position _legend = Position.Bottom;
+
+    // Hours of clear sky recorded each night of the week, over six weeks.
+    private readonly List<ChartSeries<double>> _series =
+    [
+        new() { Name = "Mon", Data = new double[] { 2.5, 6.0, 0.5, 4.0, 7.5, 3.0 } },
+        new() { Name = "Wed", Data = new double[] { 5.0, 1.5, 3.5, 8.0, 6.5, 0.0 } },
+        new() { Name = "Fri", Data = new double[] { 7.0, 4.5, 2.0, 6.0, 9.0, 5.5 } },
+        new() { Name = "Sun", Data = new double[] { 1.0, 8.5, 6.5, 3.0, 4.0, 7.0 } }
+    ];
+
+    private readonly HeatMapChartOptions _options = new()
+    {
+        ChartPalette = ["#D6E6F5", "#6FA6D8", "#2F7FC1", "#1B4F7D"],
+        ShowLabels = true,
+        ShowLegendLabels = true,
+        ValueFormatString = "0.0 h"
+    };
+}

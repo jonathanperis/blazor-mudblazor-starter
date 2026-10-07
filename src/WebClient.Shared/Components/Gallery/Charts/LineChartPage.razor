@@ -1,0 +1,10 @@
+@page "/components/line-chart"
+@attribute [ComponentPage("Line chart", GalleryGroup.Charts, "Lines show how values change across ordered categories such as months. Choose a line when the trend matters more than any single value; for real timestamps, use a time series.", MudDocs = "charts/line", Types = ["MudChart", "ChartSeries", "LineChartOptions", "SeriesDisplayOverride"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(LineChartBasic)" Title="Several series" Description="Mean monthly temperature in three cities. Values below zero extend the axis automatically." />
+    <Example Of="typeof(LineChartInterpolation)" Title="Interpolation, markers and stroke" Description="InterpolationOption bends the line between points. Straight is the honest default; splines are smoother but may overshoot the data." />
+    <Example Of="typeof(LineChartArea)" Title="Areas and per-series overrides" Description="LineDisplayType.Area fills under every line. SeriesDisplayOverrides changes one series only, here the observed level against a forecast line." />
+    <Example Of="typeof(LineChartToggleSeries)" Title="Showing and hiding series" Description="CanHideSeries adds check boxes to the legend. Your own controls can set ChartSeries.Visible too." />
+    <Example Of="typeof(LineChartAxes)" Title="Axis range and format" Description="Small changes look dramatic on a cropped axis. YAxisRequireZeroPoint starts the axis at zero; YAxisFormat formats the tick labels." />
+</ComponentPageFrame>
