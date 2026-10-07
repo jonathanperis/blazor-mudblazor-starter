@@ -1,0 +1,61 @@
+@inject IDialogService DialogService
+
+<MudStack Spacing="2" Style="max-width: 32rem">
+    <MudPaper Outlined="true">
+        @foreach (var shelf in _shelves)
+        {
+            <MudStack @key="shelf.Name" Row AlignItems="AlignItems.Center" Spacing="3" Class="px-4 py-2">
+                <MudIcon Icon="@Icons.Material.Outlined.MenuBook" Color="Color.Secondary" />
+                <MudText Class="flex-grow-1">@shelf.Name <MudText Inline="true" Typo="Typo.body2" Class="mud-text-secondary">· @shelf.Books books</MudText></MudText>
+                <MudIconButton Icon="@Icons.Material.Outlined.Delete" Color="Color.Error" Size="Size.Small"
+                               aria-label="@($"Delete {shelf.Name}")" OnClick="() => DeleteAsync(shelf)" />
+            </MudStack>
+        }
+        @if (_shelves.Count == 0)
+        {
+            <MudText Typo="Typo.body2" Class="mud-text-secondary pa-4">No shelves left.</MudText>
+        }
+    </MudPaper>
+    <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+        <MudText Typo="Typo.body2" role="status">@_status</MudText>
+        @if (_shelves.Count < Shelves.Length)
+        {
+            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Primary" OnClick="Reset">Reset</MudButton>
+        }
+    </MudStack>
+</MudStack>
+
+@code {
+    private sealed record Shelf(string Name, int Books);
+
+    private static readonly Shelf[] Shelves = [new("Maritime history", 42), new("Children's picture books", 118), new("Local authors", 27)];
+    private List<Shelf> _shelves = [.. Shelves];
+    private string _status = "";
+
+    private async Task DeleteAsync(Shelf shelf)
+    {
+        var parameters = new DialogParameters<DialogDeleteDialog>
+        {
+            { x => x.ShelfName, shelf.Name },
+            { x => x.BookCount, shelf.Books }
+        };
+        var options = new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, CloseOnEscapeKey = true };
+
+        var dialog = await DialogService.ShowAsync<DialogDeleteDialog>($"Delete {shelf.Name}", parameters, options);
+        var result = await dialog.Result;
+        if (result is null || result.Canceled)
+        {
+            _status = $"Kept “{shelf.Name}”.";
+            return;
+        }
+
+        _shelves.Remove(shelf);
+        _status = $"Deleted “{shelf.Name}”.";
+    }
+
+    private void Reset()
+    {
+        _shelves = [.. Shelves];
+        _status = "";
+    }
+}

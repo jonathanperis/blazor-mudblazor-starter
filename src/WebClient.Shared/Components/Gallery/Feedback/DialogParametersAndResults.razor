@@ -1,0 +1,34 @@
+@inject IDialogService DialogService
+
+<MudStack Spacing="3">
+    <MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+        @foreach (var (title, available) in Books)
+        {
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.BookmarkAdd"
+                       OnClick="() => ReserveAsync(title, available)">@title</MudButton>
+        }
+    </MudStack>
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+@code {
+    private static readonly (string Title, int Available)[] Books = [("Salt and Stone", 3), ("A Field Guide to Moths", 1), ("Winter Orbit", 5)];
+    private string _status = "Choose a book to reserve.";
+
+    private async Task ReserveAsync(string title, int available)
+    {
+        var parameters = new DialogParameters<DialogReserveDialog>
+        {
+            { x => x.BookTitle, title },
+            { x => x.Available, available }
+        };
+        var options = new DialogOptions { MaxWidth = MaxWidth.ExtraSmall, FullWidth = true, CloseOnEscapeKey = true };
+
+        var dialog = await DialogService.ShowAsync<DialogReserveDialog>("Reserve", parameters, options);
+        var result = await dialog.Result;
+
+        _status = result is { Canceled: false, Data: DialogReserveDialog.Reservation reservation }
+            ? $"Reserved {reservation.Copies} × “{reservation.BookTitle}” for pick-up at {reservation.Branch}."
+            : $"Canceled: “{title}” was not reserved.";
+    }
+}

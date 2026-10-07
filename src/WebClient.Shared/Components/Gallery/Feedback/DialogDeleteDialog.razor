@@ -1,0 +1,22 @@
+@* FirstChild focuses "Keep it", so pressing Enter by reflex never deletes anything. *@
+<MudDialog DefaultFocus="DefaultFocus.FirstChild">
+    <TitleContent>
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+            <MudIcon Icon="@Icons.Material.Outlined.DeleteForever" Color="Color.Error" />
+            <MudText Typo="Typo.h6">Delete “@ShelfName”?</MudText>
+        </MudStack>
+    </TitleContent>
+    <DialogContent>
+        <MudText>The shelf and its @BookCount catalogue entries will be removed. This cannot be undone.</MudText>
+    </DialogContent>
+    <DialogActions>
+        <MudButton Variant="Variant.Outlined" OnClick="() => Dialog.Cancel()">Keep it</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Error" DropShadow="false" OnClick="() => Dialog.Close(DialogResult.Ok(true))">Delete shelf</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = null!;
+    [Parameter, EditorRequired] public string ShelfName { get; set; } = "";
+    [Parameter] public int BookCount { get; set; }
+}

@@ -1,0 +1,32 @@
+@inject IDialogService DialogService
+
+<MudGrid Spacing="2" Style="max-width: 36rem">
+    @foreach (var position in Positions)
+    {
+        <MudItem xs="4">
+            <MudButton Variant="Variant.Outlined" Color="Color.Primary" FullWidth="true" OnClick="() => OpenAsync(position)">@position</MudButton>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    // DialogPosition.Custom is left out: it expects your own CSS class through BackgroundClass.
+    private static readonly DialogPosition[] Positions =
+    [
+        DialogPosition.TopLeft, DialogPosition.TopCenter, DialogPosition.TopRight,
+        DialogPosition.CenterLeft, DialogPosition.Center, DialogPosition.CenterRight,
+        DialogPosition.BottomLeft, DialogPosition.BottomCenter, DialogPosition.BottomRight
+    ];
+
+    private Task OpenAsync(DialogPosition position)
+    {
+        var parameters = new DialogParameters<DialogNoticeDialog>
+        {
+            { x => x.Message, $"This dialog opened with Position = DialogPosition.{position}." },
+            { x => x.ConfirmText, "Got it" },
+            { x => x.CancelText, null }
+        };
+        var options = new DialogOptions { Position = position, CloseButton = true, CloseOnEscapeKey = true };
+        return DialogService.ShowAsync<DialogNoticeDialog>(position.ToString(), parameters, options);
+    }
+}

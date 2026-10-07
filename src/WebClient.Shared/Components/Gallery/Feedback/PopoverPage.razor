@@ -1,0 +1,10 @@
+@page "/components/popover"
+@attribute [ComponentPage("Popover", GalleryGroup.Feedback, "A popover floats content next to the element that contains it. It is the building block behind menus, selects and tooltips; reach for it directly when you need a custom floating panel.", MudDocs = "popover", Types = ["MudPopover", "MudPopoverProvider"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(PopoverBasic)" Title="Open and close" Description="Open is a plain parameter: you own the state. The popover anchors to its parent element, and Paper=false lets you supply your own surface." />
+    <Example Of="typeof(PopoverOrigins)" Title="Anchor and transform origins" Description="AnchorOrigin picks a point on the anchor; TransformOrigin picks the point of the popover that is placed there. Six common pairs, all open at once." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(PopoverOverflow)" Title="Overflow behavior" Description="Near the edge of the window a popover can flip to the opposite side. FlipOnOpen decides once, FlipAlways keeps deciding while you scroll, FlipNever stays put." />
+    <Example Of="typeof(PopoverFilterPanel)" Title="A filter panel that closes on outside click" Description="A transparent MudOverlay behind the popover catches the outside click. The trigger reports its state with aria-expanded." />
+    <Example Of="typeof(PopoverPlayground)" Title="Playground" Description="Try any combination of origins and surface options; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

@@ -1,0 +1,32 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="5">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Open on</MudText>
+        <MudCheckBox @bind-Value="_hover" Label="Hover" Color="Color.Primary" />
+        <MudCheckBox @bind-Value="_focus" Label="Keyboard focus" Color="Color.Primary" />
+        <MudCheckBox @bind-Value="_click" Label="Click" Color="Color.Primary" />
+    </MudItem>
+    <MudItem xs="12" sm="7">
+        <MudStack Spacing="3" AlignItems="AlignItems.Start">
+            <MudTooltip Text="Points the telescope at the Moon" ShowOnHover="_hover" ShowOnFocus="_focus" ShowOnClick="_click">
+                <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.NightsStay">Slew to the Moon</MudButton>
+            </MudTooltip>
+            <MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+                <MudTooltip Text="Appeared after 800 ms" Delay="800">
+                    <MudButton Variant="Variant.Outlined">Delay 800 ms</MudButton>
+                </MudTooltip>
+                <MudTooltip Text="Faded in over one second" Duration="1000">
+                    <MudButton Variant="Variant.Outlined">Duration 1000 ms</MudButton>
+                </MudTooltip>
+                <MudTooltip Text="No transition at all" Duration="0">
+                    <MudButton Variant="Variant.Outlined">Duration 0</MudButton>
+                </MudTooltip>
+            </MudStack>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private bool _hover = true;
+    private bool _focus = true;
+    private bool _click;
+}

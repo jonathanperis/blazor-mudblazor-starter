@@ -1,0 +1,48 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudAlert Severity="_severity" Variant="_variant" Dense="_dense" Square="_square" NoIcon="_noIcon"
+                  ShowCloseIcon="_showCloseIcon" Elevation="_elevation" ContentAlignment="_alignment" Style="width: 100%">@_message</MudAlert>
+    </Preview>
+    <Controls>
+        <MudTextField @bind-Value="_message" Label="Message" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSelect @bind-Value="_severity" Label="Severity" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Severity>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_variant" Label="Variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_alignment" Label="Content alignment" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<HorizontalAlignment>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudNumericField @bind-Value="_elevation" Label="Elevation" Min="0" Max="12" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_square" Label="Square" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_noIcon" Label="No icon" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_showCloseIcon" Label="Close icon" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private string _message = "The archive is read-only during the weekly backup.";
+    private Severity _severity = Severity.Info;
+    private Variant _variant = Variant.Text;
+    private HorizontalAlignment _alignment = HorizontalAlignment.Start;
+    private int _elevation;
+    private bool _dense;
+    private bool _square;
+    private bool _noIcon;
+    private bool _showCloseIcon;
+
+    // MudAlert defaults: Severity.Normal, Variant.Text, ContentAlignment.Start, Elevation 0.
+    private string Code => Snippet.Element("MudAlert",
+    [
+        ("Severity", Snippet.Enum(_severity, Severity.Normal)),
+        ("Variant", Snippet.Enum(_variant, Variant.Text)),
+        ("ContentAlignment", Snippet.Enum(_alignment, HorizontalAlignment.Start)),
+        ("Elevation", _elevation == 0 ? null : _elevation.ToString()),
+        ("Dense", Snippet.Flag(_dense)),
+        ("Square", Snippet.Flag(_square)),
+        ("NoIcon", Snippet.Flag(_noIcon)),
+        ("ShowCloseIcon", Snippet.Flag(_showCloseIcon))
+    ], _message);
+}

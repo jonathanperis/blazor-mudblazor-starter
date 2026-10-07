@@ -1,0 +1,69 @@
+@inject IDialogService DialogService
+
+<Playground Code="@Code">
+    <Preview>
+        <MudStack AlignItems="AlignItems.Center" Spacing="2">
+            <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAsync">Open dialog</MudButton>
+            <MudText Typo="Typo.body2" role="status">@_status</MudText>
+        </MudStack>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_maxWidth" Label="Max width" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<MaxWidth>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_position" Label="Position" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<DialogPosition>().Where(value => value != DialogPosition.Custom)) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_fullWidth" Label="Full width" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_fullScreen" Label="Full screen" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_closeButton" Label="Close button" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_noHeader" Label="No header" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_backdropClick" Label="Close on backdrop click" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_closeOnEscapeKey" Label="Close on Escape" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private MaxWidth _maxWidth = MaxWidth.Small;
+    private DialogPosition _position = DialogPosition.Center;
+    private bool _fullWidth;
+    private bool _fullScreen;
+    private bool _closeButton = true;
+    private bool _noHeader;
+    private bool _backdropClick = true;
+    private bool _closeOnEscapeKey = true;
+    private string _status = "Not opened yet.";
+
+    private DialogOptions Options => new()
+    {
+        MaxWidth = _maxWidth, Position = _position, FullWidth = _fullWidth, FullScreen = _fullScreen, CloseButton = _closeButton,
+        NoHeader = _noHeader, BackdropClick = _backdropClick, CloseOnEscapeKey = _closeOnEscapeKey
+    };
+
+    private async Task OpenAsync()
+    {
+        var parameters = new DialogParameters<DialogNoticeDialog> { { x => x.Message, "Close this dialog the ways you allowed: a button, the close icon, the backdrop or Escape." } };
+        var dialog = await DialogService.ShowAsync<DialogNoticeDialog>("Dialog options", parameters, Options);
+        var result = await dialog.Result;
+        _status = result is { Canceled: false } ? "Closed with OK." : "Canceled.";
+    }
+
+    // Lists MaxWidth always, and the other options only where they differ from DialogOptions' defaults.
+    private string Code
+    {
+        get
+        {
+            List<string> lines = [$"MaxWidth = MaxWidth.{_maxWidth}"];
+            if (_position != DialogPosition.Center) lines.Add($"Position = DialogPosition.{_position}");
+            if (_fullWidth) lines.Add("FullWidth = true");
+            if (_fullScreen) lines.Add("FullScreen = true");
+            if (_closeButton) lines.Add("CloseButton = true");
+            if (_noHeader) lines.Add("NoHeader = true");
+            if (!_backdropClick) lines.Add("BackdropClick = false");
+            if (_closeOnEscapeKey) lines.Add("CloseOnEscapeKey = true");
+            return $"var options = new DialogOptions\n{{\n    {string.Join(",\n    ", lines)}\n}};\n" +
+                   "var dialog = await DialogService.ShowAsync<DialogNoticeDialog>(\"Dialog options\", parameters, options);\n" +
+                   "var result = await dialog.Result;";
+        }
+    }
+}

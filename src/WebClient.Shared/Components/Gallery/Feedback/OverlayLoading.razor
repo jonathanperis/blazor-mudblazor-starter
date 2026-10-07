@@ -1,0 +1,51 @@
+@implements IDisposable
+
+<MudStack Spacing="3" Style="max-width: 26rem">
+    <MudPaper Outlined="true" Class="pa-4" Style="position: relative; overflow: hidden">
+        <MudText Typo="Typo.subtitle2">Line 7 status</MudText>
+        <MudText Typo="Typo.body2">@_status</MudText>
+        <MudText Typo="Typo.caption" Class="mud-text-secondary">Updated @_updated</MudText>
+        <MudOverlay Visible="_cts is not null" Absolute="true" LightBackground="true">
+            <MudStack AlignItems="AlignItems.Center" Spacing="2">
+                <MudProgressCircular Indeterminate="true" Color="Color.Primary" Size="Size.Small" aria-label="Refreshing" />
+                <MudButton Size="Size.Small" Variant="Variant.Outlined" OnClick="Cancel">Cancel</MudButton>
+            </MudStack>
+        </MudOverlay>
+    </MudPaper>
+    <div>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Refresh" Disabled="_cts is not null" OnClick="RefreshAsync">Refresh</MudButton>
+    </div>
+</MudStack>
+
+@code {
+    private static readonly string[] Statuses = ["Good service", "Minor delays near Canal Bridge", "Good service, extra trams to the stadium"];
+    private CancellationTokenSource? _cts;
+    private int _next;
+    private string _status = Statuses[0];
+    private string _updated = "08:00";
+
+    private async Task RefreshAsync()
+    {
+        _cts = new CancellationTokenSource();
+        try
+        {
+            await Task.Delay(2500, _cts.Token);
+            _next = (_next + 1) % Statuses.Length;
+            _status = Statuses[_next];
+            _updated = DateTime.Now.ToString("HH:mm:ss");
+        }
+        catch (OperationCanceledException)
+        {
+            _status = $"{Statuses[_next]} (refresh canceled)";
+        }
+        finally
+        {
+            _cts?.Dispose();
+            _cts = null;
+        }
+    }
+
+    private void Cancel() => _cts?.Cancel();
+
+    public void Dispose() => _cts?.Cancel();
+}

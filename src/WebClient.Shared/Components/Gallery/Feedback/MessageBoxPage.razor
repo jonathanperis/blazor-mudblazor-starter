@@ -1,0 +1,9 @@
+@page "/components/message-box"
+@attribute [ComponentPage("Message box", GalleryGroup.Feedback, "A message box asks one question and returns the answer: true for yes, false for no, null for cancel. Use it instead of writing a dialog component when the content is a sentence and two or three buttons.", MudDocs = "messagebox", Types = ["MudMessageBox", "IDialogService", "MessageBoxOptions"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(MessageBoxBasic)" Title="Acknowledge" Description="With only yesText, the box has a single button. Await the call; it completes when the box closes." />
+    <Example Of="typeof(MessageBoxYesNoCancel)" Title="Yes, no and cancel" Description="Three answers map to true, false and null. Name the buttons after their effect, not “Yes” and “No”." />
+    <Example Of="typeof(MessageBoxOptionsAndMarkup)" Title="MessageBoxOptions and dialog options" Description="MessageBoxOptions groups the texts; MarkupMessage renders trusted HTML. The second argument takes the usual DialogOptions." />
+    <Example Of="typeof(MessageBoxCustomContent)" Title="Declared in markup with custom content" Description="A MudMessageBox in the page accepts any content and custom buttons. Open it with ShowAsync through a component reference." />
+</ComponentPageFrame>

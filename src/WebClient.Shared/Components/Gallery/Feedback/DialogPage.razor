@@ -1,0 +1,13 @@
+@page "/components/dialog"
+@attribute [ComponentPage("Dialog", GalleryGroup.Feedback, "Dialogs interrupt the page for a decision or a short task that must finish before the user continues. Show them through IDialogService, or inline with a bound Visible.", MudDocs = "dialog", Types = ["MudDialog", "IDialogService", "DialogOptions", "IMudDialogInstance"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(DialogBasic)" Title="Show a dialog and await its result" Description="ShowAsync renders a dialog component; awaiting Result gives you Canceled and Data. The dialog itself is DialogNoticeDialog.razor in the same folder." />
+    <Example Of="typeof(DialogPositions)" Title="Positions" Description="DialogOptions.Position places the dialog. Corners suit non-blocking panels; center suits decisions." />
+    <Example Of="typeof(DialogParametersAndResults)" Title="Passing parameters, returning data" Description="DialogParameters<T> sets the dialog's parameters with type checking; DialogResult.Ok(value) returns typed data. The dialog is DialogReserveDialog.razor." />
+    <Example Of="typeof(DialogConfirmDelete)" Title="Confirm a deletion" Description="Name the thing being deleted, make the destructive button say what it does, and keep Cancel the safe default. The dialog is DialogDeleteDialog.razor." />
+    <Example Of="typeof(DialogEditCopy)" Title="Edit a copy in a form" Description="The dialog edits a copy and validates it; the list changes only when Save returns the copy. Cancel, Escape and the backdrop discard it. The dialog is DialogEditDialog.razor." />
+    <Example Of="typeof(DialogNested)" Title="Nested dialogs" Description="A dialog may open another. Each level closes on its own; CancelAll closes the whole stack. The dialog is DialogNestedDialog.razor." />
+    <Example Of="typeof(DialogInline)" Title="Inline dialog" Description="A MudDialog declared in the page and bound to Visible needs no separate component, and shares the page's state directly." />
+    <Example Of="typeof(DialogPlayground)" Title="Options playground" Description="Combine any DialogOptions, open the dialog to see the effect, and copy the generated options." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

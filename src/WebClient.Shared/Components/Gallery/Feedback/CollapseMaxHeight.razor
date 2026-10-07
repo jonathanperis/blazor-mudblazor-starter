@@ -1,0 +1,26 @@
+<MudStack Spacing="2" Style="max-width: 30rem">
+    <MudStack Row AlignItems="AlignItems.Center" Spacing="3">
+        <MudButton Variant="Variant.Outlined" Color="Color.Primary" aria-expanded="@(_expanded ? "true" : "false")" aria-controls="oven-log"
+                   OnClick="() => _expanded = !_expanded">@(_expanded ? "Close the oven log" : "Open the oven log")</MudButton>
+        <MudText Typo="Typo.caption" role="status" Class="mud-text-secondary">@_status</MudText>
+    </MudStack>
+    <MudCollapse Expanded="_expanded" MaxHeight="140" OnAnimationEnd="ReportAnimationEnd">
+        <MudPaper id="oven-log" Outlined="true" Class="pa-3" tabindex="0" aria-label="Oven log">
+            @foreach (var entry in Log)
+            {
+                <MudText Typo="Typo.body2">@entry</MudText>
+            }
+        </MudPaper>
+    </MudCollapse>
+</MudStack>
+
+@code {
+    private static readonly string[] Log = Enumerable.Range(0, 10)
+        .Select(i => $"{4 + i / 2:00}:{(i % 2) * 30:00} · deck oven at {230 - i * 5} °C · batch {i + 1}")
+        .ToArray();
+
+    private bool _expanded;
+    private string _status = "Closed.";
+
+    private void ReportAnimationEnd() => _status = _expanded ? "Opened." : "Closed.";
+}

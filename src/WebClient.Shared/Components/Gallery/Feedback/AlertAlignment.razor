@@ -1,0 +1,6 @@
+<MudStack Spacing="2">
+    @foreach (var alignment in Enum.GetValues<HorizontalAlignment>())
+    {
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Dense="true" ContentAlignment="alignment">ContentAlignment.@alignment</MudAlert>
+    }
+</MudStack>

@@ -1,0 +1,38 @@
+<MudStack Spacing="3" Style="max-width: 32rem">
+    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+        <MudSelect @bind-Value="_defaultFocus" Label="Default focus" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="_active" Style="min-width: 12rem">
+            @foreach (var value in Enum.GetValues<DefaultFocus>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="_active" OnClick="Start">Start the trap</MudButton>
+    </MudStack>
+
+    @* Rendered on request only: a trap that appeared on page load would capture keyboard users. *@
+    @if (_active)
+    {
+        <MudPaper Outlined="true" Class="pa-4">
+            <MudFocusTrap DefaultFocus="_defaultFocus" Disabled="_disabled">
+                <MudStack Spacing="2">
+                    <MudText Typo="Typo.body2">Press Tab: focus cycles through these controls only.</MudText>
+                    <MudTextField T="string" Label="Observer" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                    <MudTextField T="string" Label="Target object" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                    <MudSwitch @bind-Value="_disabled" Label="Disabled: let focus leave" Color="Color.Primary" />
+                    <MudStack Row Justify="Justify.FlexEnd">
+                        <MudButton Variant="Variant.Outlined" OnClick="() => _active = false">Done</MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudFocusTrap>
+        </MudPaper>
+    }
+</MudStack>
+
+@code {
+    private DefaultFocus _defaultFocus = DefaultFocus.FirstChild;
+    private bool _active;
+    private bool _disabled;
+
+    private void Start()
+    {
+        _disabled = false;
+        _active = true;
+    }
+}

@@ -1,0 +1,7 @@
+@page "/components/focus-trap"
+@attribute [ComponentPage("Focus trap", GalleryGroup.Feedback, "A focus trap keeps Tab and Shift+Tab inside a region, as dialogs do. Use it for custom modal panels, and always give people a visible way out.", MudDocs = "focustrap", Types = ["MudFocusTrap"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(FocusTrapDefaultFocus)" Title="Default focus and disabling" Description="DefaultFocus picks what receives focus when the trap appears: the first or last focusable child, the trap element itself, or nothing. Disabled lets focus leave again." />
+    <Example Of="typeof(FocusTrapPanel)" Title="A custom panel with Escape and focus return" Description="The trap holds focus inside the panel. Escape and the close button both dismiss it and return focus to the button that opened it." />
+</ComponentPageFrame>

@@ -1,0 +1,25 @@
+@inject IDialogService DialogService
+
+<MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="OpenAsync">Join the waiting list</MudButton>
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+@code {
+    private string _status = "No answer yet.";
+
+    private async Task OpenAsync()
+    {
+        var parameters = new DialogParameters<DialogNoticeDialog>
+        {
+            { x => x.Message, "We will email you when a copy of “The Lighthouse Keeper” comes back. Join the waiting list?" },
+            { x => x.ConfirmText, "Join" }
+        };
+        var options = new DialogOptions { CloseOnEscapeKey = true };
+
+        var dialog = await DialogService.ShowAsync<DialogNoticeDialog>("Waiting list", parameters, options);
+        var result = await dialog.Result;
+
+        _status = result is { Canceled: false } ? "You joined the waiting list." : "Canceled: nothing changed.";
+    }
+}

@@ -1,0 +1,8 @@
+@page "/components/collapse"
+@attribute [ComponentPage("Collapse", GalleryGroup.Feedback, "Collapse animates a block of content open and closed. It is the bare mechanism behind expansion panels: use it when you design the trigger yourself.", MudDocs = "collapse", Types = ["MudCollapse"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(CollapseBasic)" Title="Show and hide details" Description="Bind Expanded to your own state. The trigger is yours too, so give it aria-expanded and aria-controls." />
+    <Example Of="typeof(CollapseMaxHeight)" Title="Maximum height and animation end" Description="MaxHeight caps the open height in pixels and scrolls the rest. OnAnimationEnd fires when the transition finishes." />
+    <Example Of="typeof(CollapseQuestions)" Title="A list of questions" Description="Independent collapses, each with its own trigger, plus controls to open or close them all." />
+</ComponentPageFrame>

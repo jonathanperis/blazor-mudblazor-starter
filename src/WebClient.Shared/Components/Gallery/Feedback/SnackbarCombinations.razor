@@ -1,0 +1,13 @@
+@inject ISnackbar Snackbar
+
+<EnumMatrix TRow="Severity" TColumn="Variant" Caption="Snackbar: Severity × SnackbarVariant">
+    <Cell>
+        <MudButton Size="Size.Small" Variant="@context.Column" Color="Color.Primary" DropShadow="false"
+                   aria-label="@($"Show a {context.Row} {context.Column} snackbar")" OnClick="() => Show(context.Row, context.Column)">Show</MudButton>
+    </Cell>
+</EnumMatrix>
+
+@code {
+    private void Show(Severity severity, Variant variant) =>
+        Snackbar.Add($"{severity} message, {variant} variant.", severity, options => options.SnackbarVariant = variant);
+}

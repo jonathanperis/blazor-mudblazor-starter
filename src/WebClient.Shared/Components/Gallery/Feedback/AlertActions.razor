@@ -1,0 +1,17 @@
+<MudStack Spacing="2">
+    <MudAlert Severity="Severity.Warning" Variant="Variant.Outlined">
+        <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="2">
+            <span>Your membership expires on 30 November.</span>
+            <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Warning" OnClick="@(() => _status = "Reminder set for one week before expiry.")">Remind me</MudButton>
+            <MudButton Size="Size.Small" Variant="Variant.Filled" Color="Color.Warning" DropShadow="false" OnClick="@(() => _status = "Membership renewed until next November.")">Renew now</MudButton>
+        </MudStack>
+    </MudAlert>
+    <MudAlert Severity="Severity.Info" OnClick="@(() => _status = "Opened the event calendar.")" Style="cursor: pointer">
+        A signing with the author of “Tidal Clocks” on Saturday. Select this alert to open the calendar.
+    </MudAlert>
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+@code {
+    private string _status = "";
+}

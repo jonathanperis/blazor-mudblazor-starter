@@ -1,0 +1,20 @@
+<MudExitPrompt Disabled="!IsDirty" UseNativePrompt="_useNativePrompt"
+               Title="Leave without saving?" Text="Your notes on tonight's session have not been saved." />
+
+<MudStack Spacing="3" Style="max-width: 34rem">
+    <MudTextField @bind-Value="_draft" Label="Session notes" Lines="4" Variant="Variant.Outlined" Immediate="true"
+                  HelperText="@(IsDirty ? "Unsaved changes: leaving will ask first." : "Saved. You can leave freely.")" />
+    <MudSwitch @bind-Value="_useNativePrompt" Label="Use the browser's confirm instead of a message box" Color="Color.Primary" />
+    <MudStack Row Wrap="Wrap.Wrap" Spacing="2">
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" Disabled="!IsDirty" OnClick="() => _saved = _draft">Save</MudButton>
+        <MudButton Variant="Variant.Outlined" Href="components/alert" EndIcon="@Icons.Material.Outlined.ArrowForward">Try leaving: go to Alert</MudButton>
+    </MudStack>
+</MudStack>
+
+@code {
+    private string _saved = "Seeing was steady after midnight.";
+    private string _draft = "Seeing was steady after midnight.";
+    private bool _useNativePrompt;
+
+    private bool IsDirty => _draft != _saved;
+}

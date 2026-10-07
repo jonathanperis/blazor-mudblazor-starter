@@ -1,0 +1,28 @@
+<MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+    <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Publish" OnClick="AskAsync">Publish the weekly menu</MudButton>
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+<MudMessageBox @ref="_box" Title="Publish the weekly menu?" CancelText="Not yet">
+    <MessageContent>
+        <MudText Typo="Typo.body2" Class="mb-2">These changes go live on the website and the shop screen:</MudText>
+        <MudList T="string" Dense="true" ReadOnly="true">
+            <MudListItem T="string" Icon="@Icons.Material.Outlined.Add">New: rye and caraway loaf, Tuesday to Friday</MudListItem>
+            <MudListItem T="string" Icon="@Icons.Material.Outlined.Remove">Paused: pumpkin scones, until autumn</MudListItem>
+        </MudList>
+    </MessageContent>
+    <YesButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Publish">Publish</MudButton>
+    </YesButton>
+</MudMessageBox>
+
+@code {
+    private MudMessageBox _box = null!;
+    private string _status = "Draft: not published.";
+
+    private async Task AskAsync()
+    {
+        bool? result = await _box.ShowAsync(new DialogOptions { CloseOnEscapeKey = true });
+        _status = result == true ? "Published." : "Draft: not published.";
+    }
+}

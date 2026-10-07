@@ -1,0 +1,75 @@
+@implements IDisposable
+
+<MudStack Spacing="3" Style="max-width: 22rem">
+    <MudCard Outlined="true" aria-busy="@(_loading ? "true" : "false")">
+        @if (_loading)
+        {
+            <MudCardHeader>
+                <CardHeaderAvatar><MudSkeleton SkeletonType="SkeletonType.Circle" Width="40px" Height="40px" /></CardHeaderAvatar>
+                <CardHeaderContent>
+                    <MudSkeleton Width="60%" />
+                    <MudSkeleton Width="35%" />
+                </CardHeaderContent>
+            </MudCardHeader>
+            <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="140px" />
+            <MudCardContent>
+                <MudSkeleton Width="80%" Height="32px" />
+                <MudSkeleton />
+                <MudSkeleton Width="90%" />
+            </MudCardContent>
+            <MudCardActions>
+                <MudSkeleton Width="96px" Height="36px" Class="ml-2" />
+            </MudCardActions>
+        }
+        else
+        {
+            <MudCardHeader>
+                <CardHeaderAvatar><MudAvatar Color="Color.Secondary">MR</MudAvatar></CardHeaderAvatar>
+                <CardHeaderContent>
+                    <MudText Typo="Typo.subtitle2">Mira Rautio</MudText>
+                    <MudText Typo="Typo.caption" Class="mud-text-secondary">Staff pick · Fiction</MudText>
+                </CardHeaderContent>
+            </MudCardHeader>
+            <div class="mud-theme-secondary d-flex align-center justify-center" style="height: 140px">
+                <MudIcon Icon="@Icons.Material.Outlined.AutoStories" Style="font-size: 3.5rem" aria-hidden="true" />
+            </div>
+            <MudCardContent>
+                <MudText Typo="Typo.h6" HtmlTag="h3">The Cartographer's Daughter</MudText>
+                <MudText Typo="Typo.body2">A quiet novel about maps, memory and a coastline that keeps changing.</MudText>
+            </MudCardContent>
+            <MudCardActions>
+                <MudButton Variant="Variant.Text" Color="Color.Primary">Reserve a copy</MudButton>
+            </MudCardActions>
+        }
+    </MudCard>
+    <div>
+        <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Refresh" Disabled="_loading" OnClick="LoadAsync">Load again</MudButton>
+    </div>
+</MudStack>
+
+@code {
+    private readonly CancellationTokenSource _disposed = new();
+    private bool _loading = true;
+
+    protected override Task OnInitializedAsync() => LoadAsync();
+
+    private async Task LoadAsync()
+    {
+        _loading = true;
+        try
+        {
+            await Task.Delay(1800, _disposed.Token);
+            _loading = false;
+        }
+        catch (OperationCanceledException)
+        {
+            // The example left the page; there is nothing to update.
+        }
+    }
+
+    public void Dispose()
+    {
+        _disposed.Cancel();
+        _disposed.Dispose();
+    }
+}

@@ -1,0 +1,20 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="4">
+        <MudText Typo="Typo.caption">Text (default)</MudText>
+        <MudSkeleton />
+        <MudSkeleton Width="80%" />
+        <MudSkeleton Width="55%" />
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudText Typo="Typo.caption">Circle</MudText>
+        <MudStack Row AlignItems="AlignItems.Center" Spacing="2">
+            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="24px" Height="24px" />
+            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="40px" Height="40px" />
+            <MudSkeleton SkeletonType="SkeletonType.Circle" Width="56px" Height="56px" />
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" sm="4">
+        <MudText Typo="Typo.caption">Rectangle</MudText>
+        <MudSkeleton SkeletonType="SkeletonType.Rectangle" Height="96px" />
+    </MudItem>
+</MudGrid>

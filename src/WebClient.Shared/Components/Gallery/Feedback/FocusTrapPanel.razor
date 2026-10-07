@@ -1,0 +1,44 @@
+<MudStack Spacing="3" Style="max-width: 32rem">
+    <div>
+        <MudButton @ref="_trigger" Variant="Variant.Outlined" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Settings"
+                   aria-expanded="@(_open ? "true" : "false")" aria-controls="exposure-panel" OnClick="() => _open = true">Exposure settings</MudButton>
+    </div>
+    @if (_open)
+    {
+        <MudPaper id="exposure-panel" Outlined="true" Class="pa-4" role="dialog" aria-labelledby="exposure-title" @onkeydown="OnKeyDown">
+            <MudFocusTrap DefaultFocus="DefaultFocus.FirstChild">
+                <MudStack Spacing="2">
+                    <MudText id="exposure-title" Typo="Typo.subtitle1" HtmlTag="h3">Exposure settings</MudText>
+                    <MudNumericField @bind-Value="_seconds" Label="Exposure (seconds)" Min="1" Max="600" Variant="Variant.Outlined" Margin="Margin.Dense" />
+                    <MudRadioGroup T="string" @bind-Value="_filter" aria-label="Filter">
+                        @foreach (var filter in Filters) { <MudRadio Value="filter" Color="Color.Primary">@filter</MudRadio> }
+                    </MudRadioGroup>
+                    <MudStack Row Justify="Justify.FlexEnd">
+                        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="CloseAsync">Close</MudButton>
+                    </MudStack>
+                </MudStack>
+            </MudFocusTrap>
+        </MudPaper>
+    }
+    <MudText Typo="Typo.body2">Current: @_seconds s through the @_filter filter.</MudText>
+</MudStack>
+
+@code {
+    private static readonly string[] Filters = ["Luminance", "Hydrogen-alpha", "Oxygen III"];
+
+    private MudButton _trigger = null!;
+    private bool _open;
+    private int _seconds = 120;
+    private string _filter = Filters[0];
+
+    private async Task OnKeyDown(KeyboardEventArgs e)
+    {
+        if (e.Key == "Escape") await CloseAsync();
+    }
+
+    private async Task CloseAsync()
+    {
+        _open = false;
+        await _trigger.FocusAsync();
+    }
+}

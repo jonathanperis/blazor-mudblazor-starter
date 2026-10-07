@@ -1,0 +1,23 @@
+<MudStack Spacing="4" AlignItems="AlignItems.Center">
+    <MudSwitch @bind-Value="_showAll" Label="Show all tooltips" Color="Color.Primary" />
+    <div style="display: grid; grid-template-columns: repeat(3, 8rem); gap: 3.5rem 2rem; justify-items: center; padding: 2rem 7rem">
+        @foreach (var (placement, column, row) in Placements)
+        {
+            <div style="grid-column: @column; grid-row: @row">
+                <MudTooltip Text="@($"Placement.{placement}")" Placement="placement" Arrow="true" Visible="_showAll">
+                    <MudButton Variant="Variant.Outlined" Color="Color.Primary" Style="width: 7rem">@placement</MudButton>
+                </MudTooltip>
+            </div>
+        }
+    </div>
+</MudStack>
+
+@code {
+    private static readonly (Placement Placement, int Column, int Row)[] Placements =
+    [
+        (Placement.Top, 2, 1), (Placement.Left, 1, 2), (Placement.Right, 3, 2),
+        (Placement.Start, 1, 3), (Placement.Bottom, 2, 3), (Placement.End, 3, 3)
+    ];
+
+    private bool _showAll;
+}

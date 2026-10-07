@@ -1,0 +1,16 @@
+@inject IDialogService DialogService
+
+<MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+    <MudButton Variant="Variant.Outlined" Color="Color.Primary" OnClick="ShowAsync">Show the opening hours</MudButton>
+    <MudText Typo="Typo.body2" role="status">@_status</MudText>
+</MudStack>
+
+@code {
+    private string _status = "";
+
+    private async Task ShowAsync()
+    {
+        await DialogService.ShowMessageBoxAsync("Opening hours", "The bakery opens at 7:00 on weekdays and 8:00 on Saturdays. Closed on Sundays.", yesText: "Got it");
+        _status = "Acknowledged.";
+    }
+}

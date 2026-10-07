@@ -1,0 +1,19 @@
+<MudPaper Outlined="true" Class="pa-4" Style="max-width: 30rem">
+    <MudText Typo="Typo.subtitle2">Country sourdough · £4.20</MudText>
+    <MudText Typo="Typo.body2">Baked every morning with a 36-hour ferment.</MudText>
+    <MudButton Variant="Variant.Text" Color="Color.Primary" Class="mt-2 ml-n2"
+               EndIcon="@(_expanded ? Icons.Material.Outlined.ExpandLess : Icons.Material.Outlined.ExpandMore)"
+               aria-expanded="@(_expanded ? "true" : "false")" aria-controls="sourdough-details" OnClick="() => _expanded = !_expanded">
+        @(_expanded ? "Hide ingredients" : "Show ingredients")
+    </MudButton>
+    <MudCollapse @bind-Expanded="_expanded">
+        <div id="sourdough-details" class="pt-2">
+            <MudText Typo="Typo.body2">Stoneground wheat flour, water, rye starter, sea salt.</MudText>
+            <MudText Typo="Typo.body2" Class="mud-text-secondary">Contains gluten. Made in a kitchen that handles nuts and sesame.</MudText>
+        </div>
+    </MudCollapse>
+</MudPaper>
+
+@code {
+    private bool _expanded;
+}

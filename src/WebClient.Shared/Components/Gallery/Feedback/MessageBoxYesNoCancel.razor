@@ -1,0 +1,28 @@
+@inject IDialogService DialogService
+
+<MudStack Spacing="2">
+    <div>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" OnClick="AskAsync">Close the order form</MudButton>
+    </div>
+    <MudText Typo="Typo.body2" role="status">Last answer: <code>@_answer</code> · @_meaning</MudText>
+</MudStack>
+
+@code {
+    private string _answer = "none";
+    private string _meaning = "Not asked yet.";
+
+    private async Task AskAsync()
+    {
+        bool? result = await DialogService.ShowMessageBoxAsync(
+            "Unsaved order",
+            "You have two sourdough loaves and a dozen rolls in an unsaved order.",
+            yesText: "Save order", noText: "Discard", cancelText: "Keep editing");
+
+        (_answer, _meaning) = result switch
+        {
+            true => ("true", "The order was saved."),
+            false => ("false", "The order was discarded."),
+            null => ("null", "Canceled: still editing.")
+        };
+    }
+}

@@ -1,0 +1,54 @@
+<Playground Code="@Code">
+    <Preview>
+        @if (_linear)
+        {
+            <MudProgressLinear Value="_value" Indeterminate="_indeterminate" Color="_color" Size="_size" Rounded="_rounded"
+                               Striped="_striped" Buffer="_buffer" BufferValue="@(Math.Min(100, _value + 20))" Style="width: 18rem" aria-label="Preview progress" />
+        }
+        else
+        {
+            <MudProgressCircular Value="_value" Indeterminate="_indeterminate" Color="_color" Size="_size" Rounded="_rounded" aria-label="Preview progress" />
+        }
+    </Preview>
+    <Controls>
+        <MudRadioGroup T="bool" @bind-Value="_linear">
+            <MudRadio Value="false" Color="Color.Primary">Circular</MudRadio>
+            <MudRadio Value="true" Color="Color.Primary">Linear</MudRadio>
+        </MudRadioGroup>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_size" Label="Size" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Size>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSlider @bind-Value="_value" Min="0" Max="100" Disabled="_indeterminate" Color="Color.Primary">Value: @_value</MudSlider>
+        <MudSwitch @bind-Value="_indeterminate" Label="Indeterminate" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_rounded" Label="Rounded" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_striped" Label="Striped (linear)" Color="Color.Primary" Disabled="!_linear" />
+        <MudSwitch @bind-Value="_buffer" Label="Buffer (linear)" Color="Color.Primary" Disabled="!_linear" />
+    </Controls>
+</Playground>
+
+@code {
+    private bool _linear = true;
+    private Color _color = Color.Primary;
+    private Size _size = Size.Medium;
+    private double _value = 45;
+    private bool _indeterminate;
+    private bool _rounded = true;
+    private bool _striped;
+    private bool _buffer;
+
+    // Defaults for both: Color.Default, Size.Medium, Value 0.
+    private string Code => Snippet.Element(_linear ? "MudProgressLinear" : "MudProgressCircular",
+    [
+        ("Value", _indeterminate ? null : _value.ToString(CultureInfo.InvariantCulture)),
+        ("Indeterminate", Snippet.Flag(_indeterminate)),
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("Size", Snippet.Enum(_size, Size.Medium)),
+        ("Rounded", Snippet.Flag(_rounded)),
+        ("Striped", Snippet.Flag(_linear && _striped)),
+        ("Buffer", Snippet.Flag(_linear && _buffer)),
+        ("BufferValue", _linear && _buffer ? Math.Min(100, _value + 20).ToString(CultureInfo.InvariantCulture) : null)
+    ]);
+}

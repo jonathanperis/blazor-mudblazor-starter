@@ -1,0 +1,11 @@
+@inject IDialogService DialogService
+
+<MudButton Variant="Variant.Filled" Color="Color.Primary" StartIcon="@Icons.Material.Outlined.Layers" OnClick="OpenAsync">Book a telescope</MudButton>
+
+@code {
+    private Task OpenAsync()
+    {
+        var parameters = new DialogParameters<DialogNestedDialog> { { x => x.Level, 1 } };
+        return DialogService.ShowAsync<DialogNestedDialog>("Level 1", parameters, new DialogOptions { CloseOnEscapeKey = true });
+    }
+}

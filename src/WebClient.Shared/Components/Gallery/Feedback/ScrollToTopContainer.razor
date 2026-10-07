@@ -1,0 +1,26 @@
+@* The wrapper is positioned and does not scroll, so the absolute button stays in its corner. *@
+<div style="position: relative; max-width: 28rem">
+    <div id="timetable-panel" tabindex="0" role="region" aria-label="Line 7 departures"
+         style="height: 18rem; overflow-y: auto; border: 1px solid var(--mud-palette-lines-default); border-radius: 6px">
+        <MudSimpleTable Dense="true" Elevation="0">
+            <thead><tr><th>Departs</th><th>Destination</th></tr></thead>
+            <tbody>
+                @foreach (var (time, destination) in Departures)
+                {
+                    <tr><td>@time</td><td>@destination</td></tr>
+                }
+            </tbody>
+        </MudSimpleTable>
+    </div>
+    <MudScrollToTop Selector="#timetable-panel" TopOffset="120" VisibleCssClass="visible absolute" HiddenCssClass="hidden absolute">
+        <MudFab Color="Color.Primary" Size="Size.Small" StartIcon="@Icons.Material.Outlined.ArrowUpward" aria-label="Back to the first departure" />
+    </MudScrollToTop>
+</div>
+
+@code {
+    private static readonly string[] Destinations = ["Harbour Street", "North Station", "Ferry Terminal"];
+
+    private static readonly (string Time, string Destination)[] Departures = Enumerable.Range(0, 36)
+        .Select(i => (TimeSpan.FromHours(6).Add(TimeSpan.FromMinutes(i * 20)).ToString(@"hh\:mm"), Destinations[i % Destinations.Length]))
+        .ToArray();
+}

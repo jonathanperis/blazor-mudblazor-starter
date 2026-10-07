@@ -1,0 +1,25 @@
+<div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr))">
+    @foreach (var (name, anchor, transform) in Pairs)
+    {
+        <div style="display: grid; place-items: center; height: 12rem; border-right: 1px solid var(--mud-palette-lines-default); border-bottom: 1px solid var(--mud-palette-lines-default)">
+            <div style="display: grid; place-items: center; width: 5rem; height: 2.5rem; border: 1px dashed var(--mud-palette-primary); border-radius: 4px">
+                <MudText Typo="Typo.caption">Anchor</MudText>
+                <MudPopover Open="true" AnchorOrigin="anchor" TransformOrigin="transform" Elevation="2" Class="px-3 py-1">
+                    <MudText Typo="Typo.caption" Style="white-space: nowrap"><strong>@name</strong><br />@anchor<br />→ @transform</MudText>
+                </MudPopover>
+            </div>
+        </div>
+    }
+</div>
+
+@code {
+    private static readonly (string Name, Origin Anchor, Origin Transform)[] Pairs =
+    [
+        ("Below, aligned start", Origin.BottomLeft, Origin.TopLeft),
+        ("Below, centered", Origin.BottomCenter, Origin.TopCenter),
+        ("Above, aligned end", Origin.TopRight, Origin.BottomRight),
+        ("To the right", Origin.CenterRight, Origin.CenterLeft),
+        ("To the left", Origin.CenterLeft, Origin.CenterRight),
+        ("Covering the anchor", Origin.CenterCenter, Origin.CenterCenter)
+    ];
+}
