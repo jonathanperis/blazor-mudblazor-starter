@@ -10,8 +10,9 @@
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     @* Local-first: fonts are self-hosted in WebClient.Shared, never requested from a third party. *@
     <meta name="theme-color" content="#1C1B19" />
-    <link rel="preload" href="@Assets["_content/WebClient.Shared/fonts/ibm-plex-sans-latin-400-normal.woff2"]" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="@Assets["_content/WebClient.Shared/fonts/fraunces-latin-wght-normal.woff2"]" as="font" type="font/woff2" crossorigin />
+    @* Same URLs as app.css's @font-face rules, so the preloaded files are the ones the stylesheet uses. *@
+    <link rel="preload" href="_content/WebClient.Shared/fonts/ibm-plex-sans-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="_content/WebClient.Shared/fonts/fraunces-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="stylesheet" href="@Assets["_content/MudBlazor/MudBlazor.min.css"]" />
     <link rel="stylesheet" href="@Assets["_content/WebClient.Shared/app.css"]" />
     <ImportMap />
