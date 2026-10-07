@@ -1,0 +1,13 @@
+@page "/components/card"
+@attribute [ComponentPage("Card", GalleryGroup.DataDisplay, "MudCard groups content and actions about a single subject: a product, an article, a person. Compose it from a header, media, content and actions, and keep each card about one thing.", MudDocs = "card", Types = ["MudCard", "MudCardHeader", "MudCardMedia", "MudCardContent", "MudCardActions"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(CardBasics)" Title="Content and actions" Description="The smallest useful card: MudCardContent for the text and MudCardActions for what the reader can do next." />
+    <Example Of="typeof(CardSurfaces)" Title="Outlined, elevated and square" Description="Outlined draws a border and suits this calm theme; Elevation lifts the card with a shadow. Square removes the rounded corners." />
+    <Example Of="typeof(CardHeaderParts)" Title="Header with avatar and actions" Description="MudCardHeader has slots for an avatar, the title content and header actions. Icon-only actions need an accessible name." />
+    <Example Of="typeof(CardMediaImages)" Title="Media" Description="MudCardMedia shows an image as a background at a fixed Height, cropping it to fit. Title gives the image a tooltip; describe it in the content too." />
+    <Example Of="typeof(CardLoading)" Title="Loading skeleton" Description="While data loads, skeletons keep the card's shape so the layout does not jump. Reloading cancels any load still in progress." />
+    <Example Of="typeof(CardProduct)" Title="A product card" Description="A bakery product with media, price, rating, dietary chips and a quantity stepper that updates the action label." />
+    <Example Of="typeof(CardArticle)" Title="Article cards" Description="Cards in a responsive grid that share the same structure, so heights and actions line up across a row." />
+    <Example Of="typeof(CardPlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

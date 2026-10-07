@@ -1,0 +1,33 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudPaper Outlined="true" Width="20rem" Class="@(_vertical ? "d-flex align-center gap-3 pa-4" : "pa-4")">
+            <MudText Typo="Typo.body2">Arrivals</MudText>
+            <MudDivider DividerType="_type" Vertical="_vertical" FlexItem="_flexItem" Light="_light" Class="@(_vertical ? null : "my-3")" />
+            <MudText Typo="Typo.body2">Departures</MudText>
+        </MudPaper>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_type" Label="DividerType" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<DividerType>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_vertical" Label="Vertical" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_flexItem" Label="Flex item" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_light" Label="Light" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private DividerType _type = DividerType.Inset;
+    private bool _vertical;
+    private bool _flexItem = true;
+    private bool _light;
+
+    // MudDivider defaults: DividerType.FullWidth, horizontal, not a flex item.
+    private string Code => Snippet.Element("MudDivider",
+    [
+        ("DividerType", Snippet.Enum(_type, DividerType.FullWidth)),
+        ("Vertical", Snippet.Flag(_vertical)),
+        ("FlexItem", Snippet.Flag(_flexItem)),
+        ("Light", Snippet.Flag(_light))
+    ]);
+}

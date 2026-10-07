@@ -1,0 +1,30 @@
+<MudStack Spacing="3" Style="max-width: 36rem">
+    <MudStack Row="true" Spacing="2">
+        <MudButton Variant="Variant.Outlined" Size="Size.Small" StartIcon="@Icons.Material.Outlined.UnfoldMore" Disabled="@_open.All(open => open)" OnClick="() => SetAll(true)">Expand all</MudButton>
+        <MudButton Variant="Variant.Text" Size="Size.Small" StartIcon="@Icons.Material.Outlined.UnfoldLess" Disabled="@_open.All(open => !open)" OnClick="() => SetAll(false)">Collapse all</MudButton>
+    </MudStack>
+    <MudExpansionPanels MultiExpansion="true">
+        @for (var index = 0; index < Steps.Length; index++)
+        {
+            var step = index;
+            <MudExpansionPanel Text="@($"{step + 1}. {Steps[step].Title}")" @bind-Expanded="_open[step]">
+                @Steps[step].Detail
+            </MudExpansionPanel>
+        }
+    </MudExpansionPanels>
+    <MudText Typo="Typo.caption" Class="mud-text-secondary">@_open.Count(open => open) of @Steps.Length steps open</MudText>
+</MudStack>
+
+@code {
+    private static readonly (string Title, string Detail)[] Steps =
+    [
+        ("Calibrate the balance", "Zero the balance with the draft shield closed, then weigh the 10 g reference mass. Record both readings."),
+        ("Prepare the solution", "Dissolve 2.5 g of the salt in 50 ml of distilled water at 40 °C. Stir until clear."),
+        ("Seed the trays", "Pipette 2 µl drops onto each well of tray 3 and seal with tape before the drops evaporate."),
+        ("Log and store", "Photograph every tray, label it with the date and your initials, and move it to the cold room.")
+    ];
+
+    private readonly bool[] _open = [true, true, false, false];
+
+    private void SetAll(bool open) => Array.Fill(_open, open);
+}

@@ -1,0 +1,11 @@
+@page "/components/badge"
+@attribute [ComponentPage("Badge", GalleryGroup.DataDisplay, "MudBadge pins a count, a short label, a dot or an icon to the corner of another element. Use it for unread counts and small status markers, and give it an accessible label.", MudDocs = "badge", Types = ["MudBadge"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(BadgeContentKinds)" Title="Counts, labels, dots and icons" Description="Content takes a number or a short string. Numbers above Max show as Max+. Dot and Icon replace the content. BadgeAriaLabel says what the badge means." />
+    <Example Of="typeof(BadgeOrigins)" Title="Origins" Description="Origin places the badge on any of nine anchor points. Overlap pulls it inward for round children; Bordered separates it from the element below." />
+    <Example Of="typeof(BadgeCombinations)" Title="Every color and kind" Description="Color × kind of badge. Default and Dark suit neutral counts; reserve Error for things that need attention." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(BadgeOnElements)" Title="On icons, avatars and buttons" Description="Overlap suits circular children such as icon buttons and avatars; rectangular buttons look better without it." />
+    <Example Of="typeof(BadgeInbox)" Title="A live unread count" Description="Visible hides the badge when there is nothing to report, and a status line announces the count without moving focus." />
+    <Example Of="typeof(BadgePlayground)" Title="Playground" Description="Change any parameter; the markup below updates with only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

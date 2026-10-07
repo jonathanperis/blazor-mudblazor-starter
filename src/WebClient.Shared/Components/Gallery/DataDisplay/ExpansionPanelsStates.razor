@@ -1,0 +1,35 @@
+<div style="max-width: 36rem">
+    <MudExpansionPanels MultiExpansion="true">
+        <MudExpansionPanel Text="Disabled: archived season (2023)" Disabled="true">
+            Archived observing logs are read-only.
+        </MudExpansionPanel>
+        <MudExpansionPanel Text="Custom icon" Icon="@Icons.Material.Outlined.AddCircleOutline">
+            Icon replaces the chevron. It still rotates when the panel opens.
+        </MudExpansionPanel>
+        <MudExpansionPanel Text="No icon: the whole header still toggles" HideIcon="true">
+            Without an icon, make sure the header reads as something that can be opened.
+        </MudExpansionPanel>
+        <MudExpansionPanel Text="MaxHeight 120 px: long logs scroll" MaxHeight="120">
+            @foreach (var entry in Log)
+            {
+                <MudText Typo="Typo.body2">@entry</MudText>
+            }
+        </MudExpansionPanel>
+        <MudExpansionPanel Text="Lazy: rendered only while open" KeepContentAlive="false">
+            <MudText Typo="Typo.body2">Rendered at @DateTime.Now.ToString("HH:mm:ss", CultureInfo.InvariantCulture). Close and reopen: the time changes because the content is created again.</MudText>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+</div>
+
+@code {
+    private static readonly string[] Log =
+    [
+        "21:02 · Dome opened, humidity 61 %.",
+        "21:15 · Focused on Vega.",
+        "21:40 · Seeing 2.1″, transparency good.",
+        "22:05 · Imaging M13, 30 × 60 s.",
+        "22:50 · Thin cloud from the west.",
+        "23:20 · Imaging paused.",
+        "23:45 · Dome closed."
+    ];
+}

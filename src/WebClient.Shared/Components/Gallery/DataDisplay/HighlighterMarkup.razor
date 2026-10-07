@@ -1,0 +1,21 @@
+<MudStack Spacing="3" Style="max-width: 44rem">
+    <MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="4">
+        <MudTextField @bind-Value="_search" Label="Highlight" Immediate="true" Variant="Variant.Outlined" Margin="Margin.Dense" Style="max-width: 12rem" />
+        <MudSwitch @bind-Value="_markup" Label="Markup" Color="Color.Primary" />
+    </MudStack>
+    <MudPaper Outlined="true" Class="pa-5">
+        <MudText Typo="Typo.body1">
+            <MudHighlighter Text="@Note" HighlightedText="@_search" Markup="_markup" />
+        </MudText>
+    </MudPaper>
+</MudStack>
+
+@code {
+    // Trusted, hard-coded HTML. With Markup off, the tags appear as literal text.
+    private const string Note =
+        "The <strong>Saturday market</strong> stall opens at <em>eight</em>. " +
+        "Pre-ordered loaves wait in the <strong>blue crates</strong> under the counter.";
+
+    private string _search = "crates";
+    private bool _markup = true;
+}

@@ -1,0 +1,53 @@
+<Playground Code="@Code">
+    <Preview>
+        <div style="width: 100%; max-width: 22rem">
+            <MudImage Src="@Hills" Alt="Green hills under a pale sky, with a red cottage" Fluid="_fluid" Width="@(_fluid ? null : _width)" Height="@(_fluid ? null : _height)"
+                      ObjectFit="_fit" ObjectPosition="_position" Elevation="_elevation" Class="@(_rounded ? "rounded-lg" : null)"
+                      Style="background: var(--mud-palette-background-gray)" />
+        </div>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_fit" Label="ObjectFit" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<ObjectFit>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_position" Label="ObjectPosition" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<ObjectPosition>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudNumericField @bind-Value="_width" Label="Width (px)" Min="40" Max="352" Step="8" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="_fluid" />
+        <MudNumericField @bind-Value="_height" Label="Height (px)" Min="40" Max="320" Step="8" Variant="Variant.Outlined" Margin="Margin.Dense" Disabled="_fluid" />
+        <MudNumericField @bind-Value="_elevation" Label="Elevation" Min="0" Max="25" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSwitch @bind-Value="_fluid" Label="Fluid" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_rounded" Label="Rounded corners" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private ObjectFit _fit = ObjectFit.Cover;
+    private ObjectPosition _position = ObjectPosition.Left;
+    private int? _width = 200;
+    private int? _height = 200;
+    private int _elevation = 2;
+    private bool _fluid;
+    private bool _rounded = true;
+
+    // MudImage defaults: ObjectFit.Fill, ObjectPosition.Center, Elevation 0, not fluid.
+    private string Code => Snippet.Element("MudImage",
+    [
+        ("Src", "@source"),
+        ("Alt", "Green hills under a pale sky, with a red cottage"),
+        ("Fluid", Snippet.Flag(_fluid)),
+        ("Width", _fluid ? null : _width?.ToString(CultureInfo.InvariantCulture)),
+        ("Height", _fluid ? null : _height?.ToString(CultureInfo.InvariantCulture)),
+        ("ObjectFit", Snippet.Enum(_fit, ObjectFit.Fill)),
+        ("ObjectPosition", Snippet.Enum(_position, ObjectPosition.Center)),
+        ("Elevation", _elevation == 0 ? null : _elevation.ToString(CultureInfo.InvariantCulture)),
+        ("Class", _rounded ? "rounded-lg" : null)
+    ]);
+
+    private static readonly string Hills = "data:image/svg+xml;utf8," + Uri.EscapeDataString(
+        "<svg xmlns='http://www.w3.org/2000/svg' width='320' height='180' viewBox='0 0 320 180' preserveAspectRatio='none'>" +
+        "<rect width='320' height='180' fill='#F3E3C3'/><circle cx='250' cy='52' r='22' fill='#E0893A'/>" +
+        "<path d='M0 130 70 80l60 40 70-60 120 75v45H0z' fill='#8FA27A'/>" +
+        "<path d='M0 150q80-20 160 0t160-5v35H0z' fill='#4E6B4A'/>" +
+        "<path d='M40 120h34v26H40z' fill='#B4441F'/><path d='m36 122 21-18 21 18z' fill='#5E2A16'/></svg>");
+}

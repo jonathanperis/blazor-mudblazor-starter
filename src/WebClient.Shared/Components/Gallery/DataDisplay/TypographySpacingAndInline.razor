@@ -1,0 +1,32 @@
+<MudGrid Spacing="6">
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.overline" HtmlTag="p" Class="mb-2">Without GutterBottom</MudText>
+        <MudPaper Outlined="true" Class="pa-4 mb-6">
+            <MudText Typo="Typo.subtitle1">Opening hours</MudText>
+            <MudText Typo="Typo.body2">Monday to Friday, 9:00 to 19:00.</MudText>
+            <MudText Typo="Typo.body2">Saturday, 10:00 to 16:00.</MudText>
+        </MudPaper>
+        <MudText Typo="Typo.overline" HtmlTag="p" Class="mb-2">With GutterBottom</MudText>
+        <MudPaper Outlined="true" Class="pa-4">
+            <MudText Typo="Typo.subtitle1" GutterBottom="true">Opening hours</MudText>
+            <MudText Typo="Typo.body2" GutterBottom="true">Monday to Friday, 9:00 to 19:00.</MudText>
+            <MudText Typo="Typo.body2">Saturday, 10:00 to 16:00.</MudText>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.overline" HtmlTag="p" Class="mb-2">Inline runs inside a paragraph</MudText>
+        <MudPaper Outlined="true" Class="pa-4 mb-6">
+            <MudText Typo="Typo.body1">
+                The 18:42 to Harbour Point departs from platform
+                <MudText Inline="true" HtmlTag="span" Typo="Typo.subtitle2" Color="Color.Primary">4</MudText>
+                and calls at every station after
+                <MudText Inline="true" HtmlTag="span" Typo="Typo.subtitle2">Riverside</MudText>.
+            </MudText>
+        </MudPaper>
+        <MudText Typo="Typo.overline" HtmlTag="p" Class="mb-2">Inline siblings share a line</MudText>
+        <MudPaper Outlined="true" Class="pa-4">
+            <MudText Inline="true" Typo="Typo.h5" HtmlTag="span">€ 4.20</MudText>
+            <MudText Inline="true" Typo="Typo.caption" HtmlTag="span" Class="mud-text-secondary ml-2">single fare, zones 1–2</MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>

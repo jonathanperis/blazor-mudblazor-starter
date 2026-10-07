@@ -1,0 +1,49 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudBadge Content="_content" Max="_max" Origin="_origin" Color="_color" Dot="_dot" Overlap="_overlap" Bordered="_bordered"
+                  Icon="@(_icon ? Icons.Material.Filled.Bolt : null)" Elevation="_elevation">
+            <MudIconButton Icon="@Icons.Material.Outlined.Forum" Variant="Variant.Outlined" Size="Size.Large" aria-label="Discussions" />
+        </MudBadge>
+    </Preview>
+    <Controls>
+        <MudNumericField @bind-Value="_content" Label="Content" Min="0" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudNumericField @bind-Value="_max" Label="Max" Min="1" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSelect @bind-Value="_origin" Label="Origin" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Origin>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudNumericField @bind-Value="_elevation" Label="Elevation" Min="0" Max="25" Variant="Variant.Outlined" Margin="Margin.Dense" />
+        <MudSwitch @bind-Value="_dot" Label="Dot" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_icon" Label="Icon" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_overlap" Label="Overlap" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_bordered" Label="Bordered" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private int _content = 42;
+    private int _max = 99;
+    private Origin _origin = Origin.TopRight;
+    private Color _color = Color.Primary;
+    private int _elevation;
+    private bool _dot;
+    private bool _icon;
+    private bool _overlap = true;
+    private bool _bordered;
+
+    // MudBadge defaults: Origin.TopRight, Color.Default, Max 99, Elevation 0.
+    private string Code => Snippet.Element("MudBadge",
+    [
+        ("Content", _dot || _icon ? null : _content.ToString(CultureInfo.InvariantCulture)),
+        ("Max", _max == 99 ? null : _max.ToString(CultureInfo.InvariantCulture)),
+        ("Origin", Snippet.Enum(_origin, Origin.TopRight)),
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("Elevation", _elevation == 0 ? null : _elevation.ToString(CultureInfo.InvariantCulture)),
+        ("Dot", Snippet.Flag(_dot)),
+        ("Icon", _icon ? "@Icons.Material.Filled.Bolt" : null),
+        ("Overlap", Snippet.Flag(_overlap)),
+        ("Bordered", Snippet.Flag(_bordered))
+    ], "\n    <MudIconButton Icon=\"@Icons.Material.Outlined.Forum\" aria-label=\"Discussions\" />\n");
+}

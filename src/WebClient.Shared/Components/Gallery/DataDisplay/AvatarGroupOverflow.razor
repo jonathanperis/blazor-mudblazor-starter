@@ -1,0 +1,46 @@
+<MudStack Spacing="4">
+    <MudText Typo="Typo.subtitle2" HtmlTag="p">Tonight's volunteers (@Crew.Length)</MudText>
+    <MudAvatarGroup Max="_max" Spacing="_spacing" Outlined="_outlined" MaxColor="Color.Primary" MaxVariant="Variant.Outlined">
+        @foreach (var (name, skin, hair, shirt) in Crew)
+        {
+            <MudAvatar>
+                <MudImage Src="@Portrait(skin, hair, shirt)" Alt="@name" />
+            </MudAvatar>
+        }
+    </MudAvatarGroup>
+    <MudGrid Spacing="4">
+        <MudItem xs="12" sm="5">
+            <MudSlider @bind-Value="_max" Min="1" Max="@Crew.Length" Color="Color.Primary">Max: @_max</MudSlider>
+        </MudItem>
+        <MudItem xs="12" sm="5">
+            <MudSlider @bind-Value="_spacing" Min="0" Max="16" Color="Color.Secondary">Spacing: @_spacing</MudSlider>
+        </MudItem>
+        <MudItem xs="12" sm="2">
+            <MudSwitch @bind-Value="_outlined" Label="Outlined" Color="Color.Primary" />
+        </MudItem>
+    </MudGrid>
+</MudStack>
+
+@code {
+    private static readonly (string Name, string Skin, string Hair, string Shirt)[] Crew =
+    [
+        ("Inês Albuquerque", "#E9C7A6", "#7B4A2E", "#1F5F5B"),
+        ("Tomás Okafor", "#8D5A3B", "#1E1A17", "#B4441F"),
+        ("Mei Lin", "#F0D2B4", "#2A2420", "#7A5C14"),
+        ("Rafael Duarte", "#C99A72", "#4A2F1E", "#2B5C8A"),
+        ("Amara Nwosu", "#6E4430", "#14110F", "#2F6B3A"),
+        ("Saskia Berg", "#F3D9C2", "#C9A15E", "#9A5B0B"),
+        ("Yusuf Demir", "#B98260", "#2B211C", "#5E5A52"),
+        ("Clara Moreau", "#EBC9AE", "#8C3B22", "#A8261B")
+    ];
+
+    private int _max = 4;
+    private int _spacing = 3;
+    private bool _outlined = true;
+
+    private static string Portrait(string skin, string hair, string shirt) =>
+        "data:image/svg+xml;utf8," + Uri.EscapeDataString(
+            $"<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><rect width='64' height='64' fill='#F1E6D2'/>" +
+            $"<path d='M8 64c2-13 11-19 24-19s22 6 24 19z' fill='{shirt}'/><circle cx='32' cy='27' r='12' fill='{skin}'/>" +
+            $"<path d='M19 26c0-9 6-14 13-14s13 5 13 14c-3-4-8-6-13-6s-10 2-13 6z' fill='{hair}'/></svg>");
+}

@@ -1,0 +1,20 @@
+<EnumMatrix TRow="Size" TColumn="Color" Caption="MudIcon: Size × Color">
+    <Cell>
+        <MudIcon Icon="@Icons.Material.Outlined.Park" Size="@context.Row" Color="@context.Column" />
+    </Cell>
+</EnumMatrix>
+
+<MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="6" Class="pa-5">
+    <MudStack AlignItems="AlignItems.Center" Spacing="1">
+        <MudIcon Icon="@Icons.Material.Outlined.Park" Color="Color.Primary" Disabled="true" />
+        <MudText Typo="Typo.caption">Primary, but Disabled</MudText>
+    </MudStack>
+    <MudStack AlignItems="AlignItems.Center" Spacing="1">
+        <MudIcon Icon="@Icons.Material.Outlined.Park" Color="Color.Secondary" Style="font-size: 3.5rem" />
+        <MudText Typo="Typo.caption">font-size: 3.5rem</MudText>
+    </MudStack>
+    <MudStack AlignItems="AlignItems.Center" Spacing="1">
+        <MudIcon Icon="@Icons.Material.Outlined.Park" Style="font-size: 5rem; color: var(--mud-palette-tertiary)" />
+        <MudText Typo="Typo.caption">font-size: 5rem</MudText>
+    </MudStack>
+</MudStack>

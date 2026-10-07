@@ -1,0 +1,25 @@
+<MudStack Spacing="3" Style="max-width: 44rem">
+    <MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="4">
+        <MudTextField @bind-Value="_search" Label="Highlight" Immediate="true" Variant="Variant.Outlined" Margin="Margin.Dense" Style="max-width: 12rem" />
+        <MudSwitch @bind-Value="_caseSensitive" Label="Case sensitive" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_untilNextBoundary" Label="Until next boundary" Color="Color.Primary" />
+    </MudStack>
+    <MudPaper Outlined="true" Class="pa-5">
+        <MudText Typo="Typo.body1">
+            <MudHighlighter Text="@Text" HighlightedText="@_search" CaseSensitive="_caseSensitive" UntilNextBoundary="_untilNextBoundary" />
+        </MudText>
+    </MudPaper>
+    <MudText Typo="Typo.caption" Class="mud-text-secondary">
+        Try "Star" with case sensitivity on, then "star" with word boundaries on.
+    </MudText>
+</MudStack>
+
+@code {
+    private const string Text =
+        "Star parties begin at dusk. Bring a starter guide to the stars, a flask of tea and patience: " +
+        "the North Star is easy, but faint starlight needs twenty minutes of dark adaptation.";
+
+    private string _search = "star";
+    private bool _caseSensitive;
+    private bool _untilNextBoundary;
+}
