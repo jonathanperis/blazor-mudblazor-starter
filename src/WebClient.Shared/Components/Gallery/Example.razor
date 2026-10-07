@@ -29,7 +29,18 @@
     </div>
     @if (_showCode)
     {
-        <div id="@($"{Anchor}-code")"><CodeBlock Source="@Source" /></div>
+        <div id="@($"{Anchor}-code")" class="example-code">
+            @if (Related.Length > 0)
+            {
+                <p class="code-file">@($"{Of.Name}.razor")</p>
+            }
+            <CodeBlock Source="@Source" Label="@($"{Of.Name}.razor")" />
+            @foreach (var related in Related)
+            {
+                <p class="code-file">@($"{related.Name}.razor")</p>
+                <CodeBlock Source="@(ExampleSources.Get(related) ?? $"// Source for {related.Name} is not embedded.")" Label="@($"{related.Name}.razor")" />
+            }
+        </div>
     }
 </section>
 
@@ -42,6 +53,8 @@
     /// <summary>Extra classes for the preview area, such as "example-preview-flush" for full-bleed layouts.</summary>
     [Parameter] public string? PreviewClass { get; set; }
     [Parameter] public bool ShowCode { get; set; }
+    /// <summary>Companion components the example uses, such as a dialog it opens; their source is shown too.</summary>
+    [Parameter] public Type[] Related { get; set; } = [];
 
     private bool _showCode;
     internal string Anchor => Of.Name.ToLowerInvariant();
