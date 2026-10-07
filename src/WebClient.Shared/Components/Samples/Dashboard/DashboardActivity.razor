@@ -1,0 +1,55 @@
+@* The shop log for the selected range; chain-wide entries appear under every shop. *@
+<MudPaper Outlined Class="pa-4" Style="height: 100%">
+    <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Start">
+        <div>
+            <MudText Typo="Typo.h6" HtmlTag="h3">Activity</MudText>
+            <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">@Entries.Count @(Entries.Count == 1 ? "entry" : "entries") in this range</MudText>
+        </div>
+        @if (Entries.Count > Collapsed)
+        {
+            <MudButton Variant="Variant.Text" Size="Size.Small" OnClick="() => _expanded = !_expanded" aria-expanded="@(_expanded ? "true" : "false")">
+                @(_expanded ? "Show fewer" : $"Show all {Entries.Count}")
+            </MudButton>
+        }
+    </MudStack>
+
+    @if (Entries.Count == 0)
+    {
+        <MudStack AlignItems="AlignItems.Center" Class="py-8" Spacing="1">
+            <MudIcon Icon="@Icons.Material.Outlined.EventNote" Size="Size.Large" Style="color: var(--mud-palette-text-disabled)" />
+            <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">Nothing was logged in this range.</MudText>
+        </MudStack>
+    }
+    else
+    {
+        <MudTimeline TimelinePosition="TimelinePosition.Start" TimelineAlign="TimelineAlign.Start" Class="mt-2">
+            @foreach (var entry in _expanded ? Entries : Entries.Take(Collapsed))
+            {
+                <MudTimelineItem Color="entry.Color" Icon="@entry.Icon" Size="Size.Medium" Variant="Variant.Filled" Elevation="0">
+                    <ItemContent>
+                        <MudText Typo="Typo.subtitle2">@entry.Title</MudText>
+                        <MudText Typo="Typo.body2">@entry.Detail</MudText>
+                        <MudText Typo="Typo.caption" Style="color: var(--mud-palette-text-secondary)">
+                            @DashboardData.Date(entry.At, "ddd d MMM, HH:mm") · @(entry.ShopId == DashboardData.AllShops ? "Every shop" : DashboardData.ShopName(entry.ShopId))
+                        </MudText>
+                    </ItemContent>
+                </MudTimelineItem>
+            }
+        </MudTimeline>
+    }
+</MudPaper>
+
+@code {
+    private const int Collapsed = 4;
+    private bool _expanded;
+
+    [Parameter, EditorRequired] public string Shop { get; set; } = DashboardData.AllShops;
+    [Parameter, EditorRequired] public DateTime Start { get; set; }
+    [Parameter, EditorRequired] public DateTime End { get; set; }
+
+    private IReadOnlyList<ShopActivity> Entries => DashboardData.Activity
+        .Where(entry => entry.At.Date >= Start && entry.At.Date <= End)
+        .Where(entry => Shop == DashboardData.AllShops || entry.ShopId == Shop || entry.ShopId == DashboardData.AllShops)
+        .OrderByDescending(entry => entry.At)
+        .ToList();
+}

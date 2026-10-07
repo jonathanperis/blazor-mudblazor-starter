@@ -1,0 +1,32 @@
+@* A short message composer: required text with a counter; the page decides what "sending" means. *@
+<MudDialog>
+    <TitleContent>
+        <MudText Typo="Typo.h6" HtmlTag="h2">Message @Recipient</MudText>
+    </TitleContent>
+    <DialogContent>
+        <MudForm @ref="_form">
+            <MudTextField T="string" @bind-Value="_text" Label="Message" Variant="Variant.Outlined" Lines="4" AutoFocus Immediate
+                          Counter="Limit" MaxLength="Limit" Required RequiredError="Write a message first."
+                          HelperText="Messages to observatory staff are read during office hours." />
+        </MudForm>
+    </DialogContent>
+    <DialogActions>
+        <MudButton OnClick="() => Dialog.Cancel()">Cancel</MudButton>
+        <MudButton Variant="Variant.Filled" Color="Color.Primary" EndIcon="@Icons.Material.Outlined.Send" OnClick="SendAsync">Send</MudButton>
+    </DialogActions>
+</MudDialog>
+
+@code {
+    private const int Limit = 280;
+    private MudForm _form = null!;
+    private string _text = "";
+
+    [CascadingParameter] private IMudDialogInstance Dialog { get; set; } = null!;
+    [Parameter, EditorRequired] public string Recipient { get; set; } = "";
+
+    private async Task SendAsync()
+    {
+        await _form.ValidateAsync();
+        if (_form.IsValid) Dialog.Close(DialogResult.Ok(_text.Trim()));
+    }
+}

@@ -1,0 +1,36 @@
+@* About: prose first, then facts as a list with icons, then a compact career history. *@
+<MudStack Spacing="5">
+    <div style="max-width: 62ch">
+        @foreach (var paragraph in ProfileData.Bio)
+        {
+            <MudText Typo="Typo.body1" Class="mb-3">@paragraph</MudText>
+        }
+    </div>
+
+    <MudGrid Spacing="4">
+        <MudItem xs="12" sm="6">
+            <MudText Typo="Typo.overline" HtmlTag="h3" Style="color: var(--mud-palette-text-secondary)">Details</MudText>
+            <MudList T="string" ReadOnly Dense Padding="false">
+                @foreach (var (icon, label, value) in ProfileData.Details)
+                {
+                    <MudListItem Icon="@icon" Text="@value" SecondaryText="@label" Gutters="false" />
+                }
+            </MudList>
+        </MudItem>
+        <MudItem xs="12" sm="6">
+            <MudText Typo="Typo.overline" HtmlTag="h3" Style="color: var(--mud-palette-text-secondary)">Experience</MudText>
+            <MudStack Spacing="3" Class="mt-2">
+                @foreach (var (years, title, place) in ProfileData.Experience)
+                {
+                    <div style="display: grid; grid-template-columns: 6.5rem 1fr; gap: .75rem">
+                        <MudText Typo="Typo.caption" Style="font-family: var(--font-mono); color: var(--mud-palette-text-secondary); padding-top: .2rem">@years</MudText>
+                        <div>
+                            <MudText Typo="Typo.body1">@title</MudText>
+                            <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">@place</MudText>
+                        </div>
+                    </div>
+                }
+            </MudStack>
+        </MudItem>
+    </MudGrid>
+</MudStack>

@@ -1,0 +1,61 @@
+@* One plan: price for the chosen billing period and team size, the call to action, and what is included. *@
+<MudPaper Outlined Class="pa-6 d-flex flex-column gap-4"
+          Style="@($"height: 100%; position: relative; {(Plan.Featured ? "border: 2px solid var(--mud-palette-primary)" : "")}")">
+    <div>
+        <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center">
+            <MudText Typo="Typo.h5" HtmlTag="h3">@Plan.Name</MudText>
+            @if (Plan.Featured)
+            {
+                <MudChip T="string" Size="Size.Small" Color="Color.Primary" Variant="Variant.Filled" Class="ma-0">Most popular</MudChip>
+            }
+        </MudStack>
+        <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary); min-height: 2.75em">@Plan.Tagline</MudText>
+    </div>
+
+    <div>
+        <MudStack Row Spacing="1" AlignItems="AlignItems.Baseline">
+            <MudText Typo="Typo.h2" HtmlTag="p" Style="font-variant-numeric: tabular-nums">@PricingData.Money(PerSeat)</MudText>
+            @if (Plan.MonthlyPrice > 0)
+            {
+                <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">per seat / month</MudText>
+            }
+        </MudStack>
+        <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary); min-height: 3em">
+            @Billed
+        </MudText>
+    </div>
+
+    <MudButton Variant="@(Plan.Featured ? Variant.Filled : Variant.Outlined)" Color="Color.Primary" Size="Size.Large" FullWidth
+               Disabled="TooSmall" OnClick="() => Choose.InvokeAsync(Plan)">
+        @(TooSmall ? $"Up to {Plan.MaxSeats} people" : Plan.MonthlyPrice == 0 ? "Start for free" : "Start 30-day trial")
+    </MudButton>
+
+    <MudDivider />
+
+    <MudStack Spacing="2" Style="margin: 0; padding: 0; list-style: none" HtmlTag="ul">
+        @foreach (var highlight in Plan.Highlights)
+        {
+            <li class="d-flex gap-2 align-start">
+                <MudIcon Icon="@Icons.Material.Filled.Check" Size="Size.Small" Color="@(Plan.Featured ? Color.Primary : Color.Secondary)" Style="margin-top: .15rem" />
+                <MudText Typo="Typo.body2">@highlight</MudText>
+            </li>
+        }
+    </MudStack>
+</MudPaper>
+
+@code {
+    [Parameter, EditorRequired] public PricingPlan Plan { get; set; } = null!;
+    [Parameter] public Billing Billing { get; set; }
+    [Parameter] public int Seats { get; set; } = 1;
+    [Parameter] public EventCallback<PricingPlan> Choose { get; set; }
+
+    private decimal PerSeat => PricingData.PerSeat(Plan, Billing);
+    private bool TooSmall => Plan.MaxSeats is { } max && Seats > max;
+
+    private string Billed => (Plan.MonthlyPrice, Billing) switch
+    {
+        (0m, _) => TooSmall ? $"Free for teams of up to {Plan.MaxSeats}. Yours has {Seats}." : "Free for good, for teams of up to 3.",
+        (_, Billing.Yearly) => $"{PricingData.Money(PricingData.MonthlyTotal(Plan, Billing, Seats) * 12)} billed yearly for {Seats} {(Seats == 1 ? "seat" : "seats")}",
+        _ => $"{PricingData.Money(PricingData.MonthlyTotal(Plan, Billing, Seats))} billed monthly for {Seats} {(Seats == 1 ? "seat" : "seats")}"
+    };
+}

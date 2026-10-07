@@ -1,0 +1,39 @@
+@* Activity: filter chips choose which kinds of entry the timeline shows. *@
+<MudStack Spacing="3">
+    <MudChipSet T="ActivityKind" @bind-SelectedValues="_kinds" SelectionMode="SelectionMode.MultiSelection" CheckMark Variant="Variant.Outlined" Size="Size.Small" aria-label="Filter activity">
+        @foreach (var kind in Enum.GetValues<ActivityKind>())
+        {
+            <MudChip Value="kind" Icon="@ProfileData.Style(kind).Icon" Text="@($"{kind}s")" />
+        }
+    </MudChipSet>
+
+    @if (Entries.Count == 0)
+    {
+        <MudPaper Outlined Class="pa-8 d-flex flex-column align-center gap-2" Style="border-style: dashed">
+            <MudIcon Icon="@Icons.Material.Outlined.FilterAltOff" Style="color: var(--mud-palette-text-disabled)" Size="Size.Large" />
+            <MudText Typo="Typo.body2" Style="color: var(--mud-palette-text-secondary)">No activity matches. Choose at least one kind above.</MudText>
+        </MudPaper>
+    }
+    else
+    {
+        <MudTimeline TimelinePosition="TimelinePosition.Start" TimelineAlign="TimelineAlign.Start">
+            @foreach (var entry in Entries)
+            {
+                var (icon, color) = ProfileData.Style(entry.Kind);
+                <MudTimelineItem Color="color" Icon="@icon" Size="Size.Medium" Variant="Variant.Filled" Elevation="0">
+                    <ItemContent>
+                        <MudText Typo="Typo.caption" Style="color: var(--mud-palette-text-secondary)">@entry.Kind · @entry.On.ToString("d MMMM yyyy", System.Globalization.CultureInfo.InvariantCulture)</MudText>
+                        <MudText Typo="Typo.subtitle1">@entry.Title</MudText>
+                        <MudText Typo="Typo.body2">@entry.Detail</MudText>
+                    </ItemContent>
+                </MudTimelineItem>
+            }
+        </MudTimeline>
+    }
+</MudStack>
+
+@code {
+    private IReadOnlyCollection<ActivityKind> _kinds = Enum.GetValues<ActivityKind>();
+
+    private IReadOnlyList<ProfileActivity> Entries => ProfileData.Activity.Where(entry => _kinds.Contains(entry.Kind)).ToList();
+}
