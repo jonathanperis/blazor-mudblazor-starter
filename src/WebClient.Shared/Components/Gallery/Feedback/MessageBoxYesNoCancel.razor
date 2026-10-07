@@ -18,11 +18,9 @@
             "You have two sourdough loaves and a dozen rolls in an unsaved order.",
             yesText: "Save order", noText: "Discard", cancelText: "Keep editing");
 
-        (_answer, _meaning) = result switch
-        {
-            true => ("true", "The order was saved."),
-            false => ("false", "The order was discarded."),
-            null => ("null", "Canceled: still editing.")
-        };
+        // ShowMessageBox returns true for yes, false for no, and null when canceled.
+        (_answer, _meaning) = result is null ? ("null", "Canceled: still editing.")
+            : result.Value ? ("true", "The order was saved.")
+            : ("false", "The order was discarded.");
     }
 }

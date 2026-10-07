@@ -155,18 +155,19 @@ public static class MemberCsv
     public static string Export(IEnumerable<LibraryMember> members)
     {
         var csv = new StringBuilder("Card number,Name,Email,Branch,Tier,Status,Joined,Loans,Fines\n");
-        foreach (var member in members)
+        foreach (var fields in members.Select(Fields))
         {
-            string[] fields =
-            [
-                member.CardNumber, member.Name, member.Email, member.Branch, member.Tier.ToString(), member.Status.ToString(),
-                member.Joined.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), member.Loans.ToString(CultureInfo.InvariantCulture),
-                member.Fines.ToString("0.00", CultureInfo.InvariantCulture)
-            ];
             csv.AppendJoin(',', fields.Select(Quote)).Append('\n');
         }
         return csv.ToString();
     }
+
+    private static string[] Fields(LibraryMember member) =>
+    [
+        member.CardNumber, member.Name, member.Email, member.Branch, member.Tier.ToString(), member.Status.ToString(),
+        member.Joined.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture), member.Loans.ToString(CultureInfo.InvariantCulture),
+        member.Fines.ToString("0.00", CultureInfo.InvariantCulture)
+    ];
 
     private static string Quote(string value)
     {

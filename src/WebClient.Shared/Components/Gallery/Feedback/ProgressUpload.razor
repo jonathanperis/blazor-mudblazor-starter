@@ -27,14 +27,15 @@
 
     private async Task UploadAsync()
     {
-        _cts = new CancellationTokenSource();
+        using var cts = new CancellationTokenSource();
+        _cts = cts;
         _percent = 0;
         _status = "Uploading…";
         try
         {
             while (_percent < 100)
             {
-                await Task.Delay(120, _cts.Token);
+                await Task.Delay(120, cts.Token);
                 _percent = Math.Min(100, _percent + 4);
                 StateHasChanged();
             }
@@ -46,7 +47,6 @@
         }
         finally
         {
-            _cts.Dispose();
             _cts = null;
         }
     }
