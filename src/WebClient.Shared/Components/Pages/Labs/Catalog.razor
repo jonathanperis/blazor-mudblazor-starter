@@ -1,32 +1,40 @@
 @page "/labs"
 
-<PageTitle>Learning paths · Blazor sandbox</PageTitle>
-<MudContainer MaxWidth="MaxWidth.Large" Class="pa-4 pb-8">
-    <MudText Typo="Typo.h4" HtmlTag="h1">Choose an experiment</MudText>
-    <MudText Class="my-3">Follow the list from top to bottom, or jump to a topic. Open the source beside the lab, try the exercise, then change one thing and observe the result.</MudText>
-    <MudTextField T="string" @bind-Value="_search" Label="Find a lab" Immediate="true" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Filled.Search" Class="mb-4" />
-    <MudText Typo="Typo.body2" Class="mb-2" role="status">@(Matching.Count == LabCatalog.All.Count ? $"{Matching.Count} labs" : $"{Matching.Count} of {LabCatalog.All.Count} labs match")</MudText>
+<PageTitle>Labs · Blazor learning sandbox</PageTitle>
+<article class="index-page">
+    <header class="index-hero">
+        <p class="kicker">Labs</p>
+        <MudText Typo="Typo.h3" HtmlTag="h1">Nine experiments, in order</MudText>
+        <p class="lede">
+            Follow the list from top to bottom, or jump to a topic. Open the source beside the lab, try the exercise,
+            then change one thing and observe the result.
+        </p>
+        <MudTextField T="string" @bind-Value="_search" Label="Find a lab" Immediate="true" Variant="Variant.Outlined" Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" Class="index-search" Clearable="true" />
+        <p class="index-count" role="status">@(Matching.Count == LabCatalog.All.Count ? $"{Matching.Count} labs, {LabCatalog.All.Sum(lab => lab.Minutes)} minutes in all" : $"{Matching.Count} of {LabCatalog.All.Count} labs match")</p>
+    </header>
     @if (Matching.Count == 0)
     {
         <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">No lab matches “@_search”. Try a topic such as forms, SQLite or culture, or clear the search.</MudAlert>
     }
-    <MudGrid>
+    <ol class="sample-list">
         @foreach (var lab in Matching)
         {
-            <MudItem xs="12" md="6">
-                <MudPaper Class="pa-4 h-100" Outlined>
-                    <MudText Typo="Typo.overline">@lab.Level · @lab.Minutes min</MudText>
-                    <MudText Typo="Typo.h6" HtmlTag="h2"><MudLink Href="@lab.Href">@lab.Title</MudLink></MudText>
-                    <MudText Class="my-2">@lab.Objective</MudText>
-                    <MudText Typo="Typo.caption">Prerequisites: @(lab.Prerequisites.Length == 0 ? "none" : string.Join(", ", lab.Prerequisites.Select(slug => LabCatalog.Get(slug).Title)))</MudText>
-                </MudPaper>
-            </MudItem>
+            <li>
+                <a href="@lab.Href" class="sample-entry">
+                    <span class="sample-number">@((LabCatalog.All.ToList().IndexOf(lab) + 1).ToString("00"))</span>
+                    <span class="sample-text">
+                        <span class="sample-title">@lab.Title</span>
+                        <span class="sample-summary">@lab.Objective</span>
+                        <span class="sample-uses">@lab.Level · @lab.Minutes min · Prerequisites: @(lab.Prerequisites.Length == 0 ? "none" : string.Join(", ", lab.Prerequisites.Select(slug => LabCatalog.Get(slug).Title)))</span>
+                    </span>
+                </a>
+            </li>
         }
-    </MudGrid>
-</MudContainer>
+    </ol>
+</article>
 
 @code {
     private string _search = "";
     private List<Lab> Matching => LabCatalog.All.Where(Matches).ToList();
-    private bool Matches(Lab lab) => $"{lab.Title} {lab.Objective} {lab.Level} {lab.Explanation}".Contains(_search.Trim(), StringComparison.OrdinalIgnoreCase);
+    private bool Matches(Lab lab) => $"{lab.Title} {lab.Objective} {lab.Level} {lab.Explanation}".Contains((_search ?? "").Trim(), StringComparison.OrdinalIgnoreCase);
 }

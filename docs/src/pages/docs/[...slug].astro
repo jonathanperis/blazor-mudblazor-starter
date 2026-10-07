@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '@/layouts/BaseLayout.astro';
-import '../../styles/docs.css';
+import Masthead from '@/components/Masthead.astro';
+import Colophon from '@/components/Colophon.astro';
 import { PAGE_METADATA, SECTION_CATEGORIES, SECTION_ORDER } from '@/lib/sidebar.config';
 
 const modules = import.meta.glob('../../../wiki/*.md', { eager: true });
@@ -16,90 +17,69 @@ export function getStaticPaths() {
   return [{ params: { slug: undefined } }, ...SECTION_ORDER.filter(slug => slug !== 'home').map(slug => ({ params: { slug } }))];
 }
 const slug = Astro.params.slug ?? 'home';
-const Content = pages[slug].default;
+const page = pages[slug];
+const Content = page.default;
+const headings: { depth: number; slug: string; text: string }[] = typeof page.getHeadings === 'function' ? page.getHeadings() : [];
+const sections = headings.filter((heading) => heading.depth === 2);
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const href = (id: string) => `${base}/docs/${id === 'home' ? '' : id + '/'}`;
+const index = SECTION_ORDER.indexOf(slug);
+const previous = index > 0 ? SECTION_ORDER[index - 1] : undefined;
+const next = index < SECTION_ORDER.length - 1 ? SECTION_ORDER[index + 1] : undefined;
+const roman = ['I', 'II', 'III', 'IV', 'V'];
 ---
 
 <BaseLayout title={`${PAGE_METADATA[slug].label} · Blazor learning sandbox`} description={PAGE_METADATA[slug].description}>
-  <noscript slot="head"><style>.sidebar { transform: none; position: static; width: 100%; height: auto; } .mobile-header, .search-box { display: none; } .content-wrapper { margin-left: 0; width: 100%; } body { display: block; }</style></noscript>
-  <div class="mobile-header">
-    <button class="menu-toggle" id="menuToggle" aria-label="Open documentation navigation" aria-controls="sidebar" aria-expanded="false"><span></span><span></span><span></span></button>
-    <span class="repo-title">Learning guide</span>
-  </div>
-  <div class="overlay" id="overlay"></div>
-  <aside class="sidebar" id="sidebar" aria-label="Documentation navigation">
-    <div class="sidebar-header">
-      <p class="repo-title">Blazor learning sandbox</p>
-      <p class="repo-description">Small experiments. Working source. Explicit tradeoffs.</p>
-      <label for="searchInput" class="sr-only">Find a documentation topic</label>
-      <input type="search" id="searchInput" class="search-box" placeholder="Find a topic..." />
-      <p id="searchStatus" class="sr-only" role="status"></p>
-    </div>
-    <div class="sidebar-nav-container">
-      {SECTION_CATEGORIES.map(category => (
-        <div class="sidebar-category-group">
-          <div class="sidebar-category">{category.label}</div>
-          <ul>{category.ids.map(id => <li><a class:list={['nav-item', { active: id === slug }]} href={href(id)} aria-current={id === slug ? 'page' : undefined}>{PAGE_METADATA[id].label}</a></li>)}</ul>
+  <Masthead current="guide" />
+  <div class="guide">
+    <details class="guide-contents" id="guide-contents" open>
+      <summary>Contents</summary>
+      <nav class="guide-nav" aria-label="Guide">
+        {SECTION_CATEGORIES.map((category, part) => (
+          <>
+            <p class="guide-part">Part {roman[part]} · {category.label}</p>
+            <ol>
+              {category.ids.map((id) => (
+                <li><a href={href(id)} aria-current={id === slug ? 'page' : undefined}><span>{part + 1}.{category.ids.indexOf(id) + 1}</span><span>{PAGE_METADATA[id].label}</span></a></li>
+              ))}
+            </ol>
+          </>
+        ))}
+        <div class="guide-extra">
+          <a href={`${base}/demo/`}>Open the live demo</a>
+          <a href={`${base}/`}>Project overview</a>
+          <a href="https://github.com/jonathanperis/blazor-mudblazor-starter" rel="noopener noreferrer">Source on GitHub</a>
         </div>
-      ))}
-    </div>
-    <div class="sidebar-footer">
-      <a href={`${base}/`}>← Project overview</a>
-      <a href={`${base}/demo/`}>Open the live demo</a>
-      <a href="https://github.com/jonathanperis/blazor-mudblazor-starter" target="_blank" rel="noopener noreferrer">View source on GitHub</a>
-    </div>
-  </aside>
-  <div class="content-wrapper" id="contentWrapper">
-    <main class="content" id="main-content" tabindex="-1"><article class="doc-section"><Content /></article></main>
+      </nav>
+    </details>
+
+    <main class="prose" id="main-content" tabindex="-1">
+      <article><Content /></article>
+      <nav class="pager" aria-label="Previous and next topics">
+        {previous ? <a href={href(previous)} rel="prev"><small>Previous</small><span>{PAGE_METADATA[previous].label}</span></a> : <span></span>}
+        {next ? <a href={href(next)} rel="next" class="pager-next"><small>Next</small><span>{PAGE_METADATA[next].label}</span></a> : <span></span>}
+      </nav>
+    </main>
+
+    {sections.length > 1 && (
+      <aside class="guide-onpage" aria-label="On this page">
+        <p>On this page</p>
+        <ol>{sections.map((section) => <li><a href={`#${section.slug}`}>{section.text}</a></li>)}</ol>
+      </aside>
+    )}
   </div>
+  <Colophon />
 
   <script>
-    const toggle = document.querySelector<HTMLButtonElement>('#menuToggle')!;
-    const sidebar = document.querySelector<HTMLElement>('#sidebar')!;
-    const overlay = document.querySelector<HTMLElement>('#overlay')!;
-    const content = document.querySelector<HTMLElement>('#contentWrapper')!;
-    const mobile = matchMedia('(max-width: 768px)');
-    let open = false;
-    function update() {
-      sidebar.classList.toggle('open', open && mobile.matches);
-      overlay.classList.toggle('open', open && mobile.matches);
-      sidebar.inert = mobile.matches && !open;
-      content.inert = mobile.matches && open;
-      toggle.setAttribute('aria-expanded', String(open && mobile.matches));
-      toggle.setAttribute('aria-label', open ? 'Close documentation navigation' : 'Open documentation navigation');
-    }
-    function close() { open = false; update(); toggle.focus(); }
-    toggle.addEventListener('click', () => {
-      if (open) close();
-      else { open = true; update(); sidebar.querySelector<HTMLInputElement>('input')?.focus(); }
-    });
-    overlay.addEventListener('click', close);
-    mobile.addEventListener('change', () => { open = false; update(); });
-    document.addEventListener('keydown', event => {
-      if (!mobile.matches || !open) return;
-      if (event.key === 'Escape') { event.preventDefault(); close(); }
-      if (event.key === 'Tab') {
-        const controls = [toggle, ...sidebar.querySelectorAll<HTMLElement>('a[href], input')].filter(element => element.getClientRects().length);
-        const first = controls[0], last = controls[controls.length - 1];
-        if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
-        else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
-      }
-    });
-    const search = document.querySelector<HTMLInputElement>('#searchInput')!;
-    search.addEventListener('input', () => {
-      const query = search.value.trim().toLowerCase();
-      let matches = 0;
-      sidebar.querySelectorAll<HTMLLIElement>('li').forEach(item => {
-        item.hidden = !(item.textContent ?? '').toLowerCase().includes(query);
-        if (!item.hidden) matches++;
-      });
-      sidebar.querySelectorAll<HTMLElement>('.sidebar-category-group').forEach(group => { group.hidden = !group.querySelector('li:not([hidden])'); });
-      document.querySelector('#searchStatus')!.textContent = `${matches} ${matches === 1 ? 'topic' : 'topics'} found`;
-    });
-    // Wide tables and code blocks scroll inside a focusable region, so keyboard users can scroll them too.
-    // Wrapping keeps native table semantics; without JavaScript, the CSS fallback scrolls the table itself.
-    document.querySelectorAll<HTMLTableElement>('.content table').forEach(table => {
+    // The contents start open (useful without JavaScript); on small screens they collapse behind a native disclosure.
+    const contents = document.querySelector<HTMLDetailsElement>('#guide-contents')!;
+    const wide = matchMedia('(min-width: 980px)');
+    const sync = () => { contents.open = wide.matches; };
+    sync();
+    wide.addEventListener('change', sync);
+
+    // Wide tables scroll inside a focusable region that keeps native table semantics.
+    document.querySelectorAll<HTMLTableElement>('.prose table').forEach((table) => {
       const region = document.createElement('div');
       region.className = 'table-scroll';
       region.tabIndex = 0;
@@ -108,9 +88,8 @@ const href = (id: string) => `${base}/docs/${id === 'home' ? '' : id + '/'}`;
       table.replaceWith(region);
       region.append(table);
     });
-    document.querySelectorAll<HTMLPreElement>('.content pre').forEach(pre => {
-      if (pre.scrollWidth > pre.clientWidth) { pre.tabIndex = 0; pre.setAttribute('aria-label', 'Scrollable code'); }
+    document.querySelectorAll<HTMLPreElement>('.prose pre').forEach((pre) => {
+      if (pre.scrollWidth > pre.clientWidth) pre.setAttribute('aria-label', 'Scrollable code');
     });
-    update();
   </script>
 </BaseLayout>

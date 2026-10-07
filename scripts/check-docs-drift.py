@@ -33,10 +33,10 @@ def main():
         require(f"`{path.split('/')[1]}`" in read("README.md") or f"`src/{path.split('/')[1]}/`" in readme, f"README structure misses {path}")
     target_major = projects["src/WebClient/WebClient.csproj"].findtext(".//TargetFramework", default="").removeprefix("net").split(".")[0]
     mud_major = projects["src/WebClient.Shared/WebClient.Shared.csproj"].findall(".//PackageReference[@Include='MudBlazor']")[0].attrib["Version"].split(".")[0]
-    hero = read("docs/src/components/home/Hero.astro")
+    masthead = read("docs/src/components/Masthead.astro")
     for label in [f".NET {target_major}", f"MudBlazor {mud_major}"]:
-        require(f">{label}</span>" in hero, f"landing-page stack differs: {label}")
-    require("dotnet restore --locked-mode" in read("docs/src/components/home/Dashboard.astro"), "landing quickstart missing locked restore")
+        require(label in masthead, f"site masthead stack differs: {label}")
+    require("dotnet restore --locked-mode" in read("docs/src/pages/index.astro"), "landing quickstart missing locked restore")
     for path in [*(project.replace(Path(project).name, "packages.lock.json") for project in projects), "tests/WebClient.Tests/packages.lock.json", "docs/bun.lock"]:
         require((ROOT / path).is_file(), f"missing lockfile: {path}")
 
