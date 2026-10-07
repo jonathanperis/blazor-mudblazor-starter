@@ -30,7 +30,7 @@ Both publishing modes keep culture and diagnostics support. `ghcr.io/jonathanper
 
 The scan uses the official, digest-pinned Trivy container with a read-only exported image archive. This preserves the repository's action allow-list and avoids requiring a nested third-party setup action or access to the Docker socket.
 
-The existing protected-branch names `setup-build-test` and `container-test` are preserved. The latter requires the complete container matrix to pass.
+The existing protected-branch names `setup-build-test`, `docs` (the `pages` job) and `container-test` are preserved. The latter requires the complete container matrix to pass.
 
 ## Release flow
 
