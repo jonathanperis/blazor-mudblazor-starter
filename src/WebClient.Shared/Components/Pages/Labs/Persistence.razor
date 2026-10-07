@@ -2,6 +2,7 @@
 @using WebClient.Shared.Features.Notebook
 @inject INotebookStore Notebook
 @inject LearningHost Host
+@inject ILogger<Persistence> Logger
 @implements IDisposable
 
 <LabFrame Slug="persistence">
@@ -69,7 +70,7 @@
             Notes = notes;
             _status = LoadedStatus(notes.Count);
         }
-        catch (OperationCanceledException) when (_lifetime.IsCancellationRequested) { }
+        catch (OperationCanceledException) when (_lifetime.IsCancellationRequested) { Logger.LogDebug("Notebook load canceled: the page was disposed."); }
         catch (NotebookUnavailableException error) when (generation == _loadGeneration) { Notes = []; _status = error.Message; }
     }
 
@@ -83,7 +84,7 @@
         try { await operation(_lifetime.Token); await Load(); NewDraft(); _status = "Notebook updated."; }
         catch (NotebookConflictException) { _status = "Conflict: another tab changed or deleted this note. Your draft is retained. Reload notes, then select Edit to start from the current version."; }
         catch (Exception error) when (error is NotebookLimitException or NotebookUnavailableException) { _status = error.Message; }
-        catch (OperationCanceledException) when (_lifetime.IsCancellationRequested) { }
+        catch (OperationCanceledException) when (_lifetime.IsCancellationRequested) { Logger.LogDebug("Notebook update canceled: the page was disposed."); }
         finally { _busy = false; }
     }
 

@@ -38,6 +38,8 @@ jobs:
   # Builds the GitHub Pages site exactly as it is deployed: the Astro guide plus the WebAssembly demo under /demo/.
   # On main the validated site becomes the Pages artifact that the release workflow deploys.
   pages:
+    # Keeps the protected-branch check name from before the job also built the WebAssembly demo.
+    name: docs
     runs-on: ubuntu-latest
     timeout-minutes: 25
     steps:

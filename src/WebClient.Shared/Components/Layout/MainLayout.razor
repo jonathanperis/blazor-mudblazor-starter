@@ -2,6 +2,7 @@
 @inject UiPreferences Preferences
 @inject NavigationManager Navigation
 @inject LearningHost Host
+@inject ILogger<MainLayout> Logger
 
 <MudThemeProvider IsDarkMode="Preferences.IsDarkMode" />
 <MudPopoverProvider />
@@ -73,8 +74,11 @@
     private async Task SkipToContent()
     {
         try { await _main.FocusAsync(); }
-        catch (JSException) { }
-        catch (JSDisconnectedException) { }
+        catch (Exception error) when (error is JSException or JSDisconnectedException)
+        {
+            // The browser still follows the link's href to #main-content.
+            Logger.LogDebug(error, "Could not move focus to the main content.");
+        }
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -85,7 +89,10 @@
             await Preferences.LoadAsync();
             StateHasChanged();
         }
-        catch (JSDisconnectedException) { }
-        catch (TaskCanceledException) { }
+        catch (Exception error) when (error is JSDisconnectedException or TaskCanceledException)
+        {
+            // The circuit or page went away first; defaults stay in effect for this render.
+            Logger.LogDebug(error, "Preferences were not loaded.");
+        }
     }
 }

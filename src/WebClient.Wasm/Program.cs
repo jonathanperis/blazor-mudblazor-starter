@@ -39,11 +39,14 @@ builder.Services.AddLearningLabs(new LearningHost
     }
 });
 builder.Services.AddScoped<INotebookStore, BrowserNotebookStore>();
-builder.Services.AddScoped(services => new ForecastApiClient(new HttpClient(new ForecastApiSimulator(services.GetRequiredService<ForecastCatalog>()))
-{
-    BaseAddress = new Uri(builder.HostEnvironment.BaseAddress),
-    Timeout = TimeSpan.FromSeconds(10)
-}));
+// The container owns the client and its in-browser handler, so both are disposed with the app's scope.
+builder.Services.AddKeyedScoped(nameof(ForecastApiClient), (services, _) =>
+    new HttpClient(new ForecastApiSimulator(services.GetRequiredService<ForecastCatalog>()))
+    {
+        BaseAddress = new Uri(builder.HostEnvironment.BaseAddress),
+        Timeout = TimeSpan.FromSeconds(10)
+    });
+builder.Services.AddScoped(services => new ForecastApiClient(services.GetRequiredKeyedService<HttpClient>(nameof(ForecastApiClient))));
 builder.Services.AddAuthorizationCore(options => options.AddPolicy(LearningPolicies.Instructor, policy => policy.RequireAuthenticatedUser().RequireRole("instructor")));
 builder.Services.AddScoped<AuthenticationStateProvider, DemoAuthenticationStateProvider>();
 

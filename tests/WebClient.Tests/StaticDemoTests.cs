@@ -84,11 +84,11 @@ public sealed class StaticDemoTests : BunitContext
     public void Every_lab_links_to_existing_source_and_prerequisites()
     {
         var root = AppContext.BaseDirectory;
-        while (!File.Exists(Path.Combine(root, "WebClient.sln"))) root = Path.GetDirectoryName(root)!;
+        while (!File.Exists(Path.Join(root, "WebClient.sln"))) root = Path.GetDirectoryName(root)!;
         foreach (var lab in LabCatalog.All)
         {
-            Assert.True(File.Exists(Path.Combine(root, lab.Source)), $"Missing source for {lab.Slug}: {lab.Source}");
-            Assert.Contains($"@page \"{lab.Route}\"", File.ReadAllText(Path.Combine(root, lab.Source)));
+            Assert.True(File.Exists(Path.Join(root, lab.Source)), $"Missing source for {lab.Slug}: {lab.Source}");
+            Assert.Contains($"@page \"{lab.Route}\"", File.ReadAllText(Path.Join(root, lab.Source)));
             Assert.All(lab.Prerequisites, slug => LabCatalog.Get(slug));
         }
     }
