@@ -68,11 +68,13 @@ jobs:
           python3 scripts/prepare-pages-demo.py
       - run: npm run check:rendered
         working-directory: docs
+      # Uses the Google Chrome preinstalled on GitHub-hosted Ubuntu runners: no browser download or apt step.
       - name: Check the demo in a browser
         working-directory: docs
-        run: |
-          npx playwright install --with-deps chromium
-          npm run check:demo
+        timeout-minutes: 10
+        env:
+          PLAYWRIGHT_CHANNEL: chrome
+        run: npm run check:demo
       - if: github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@fc324d3547104276b827a68afc52ff2a11cc49c9 # v5
         with:
