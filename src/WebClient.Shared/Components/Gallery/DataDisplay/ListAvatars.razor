@@ -1,0 +1,32 @@
+<MudPaper Outlined="true" Style="max-width: 26rem">
+    <MudList T="string" ReadOnly="true">
+        <MudListSubheader>On shift at the field station</MudListSubheader>
+        @foreach (var person in _crew)
+        {
+            <MudListItem Text="@person.Name" SecondaryText="@person.Role">
+                <AvatarContent>
+                    <MudAvatar Color="person.Color" Size="Size.Medium" aria-hidden="true">@Initials(person.Name)</MudAvatar>
+                </AvatarContent>
+            </MudListItem>
+        }
+        <MudDivider DividerType="DividerType.Inset" />
+        <MudListItem Text="Duty phone" SecondaryText="Forwarded to whoever is on call">
+            <AvatarContent>
+                <MudAvatar Variant="Variant.Outlined" aria-hidden="true"><MudIcon Icon="@Icons.Material.Outlined.Phone" /></MudAvatar>
+            </AvatarContent>
+        </MudListItem>
+    </MudList>
+</MudPaper>
+
+@code {
+    private record Person(string Name, string Role, Color Color);
+
+    private readonly Person[] _crew =
+    [
+        new("Morag Fraser", "Station keeper", Color.Primary),
+        new("Callum Reid", "Instrument technician", Color.Secondary),
+        new("Aisha Bello", "Visiting hydrologist", Color.Tertiary)
+    ];
+
+    private static string Initials(string name) => string.Concat(name.Split(' ').Select(part => part[0]));
+}

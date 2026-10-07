@@ -1,0 +1,50 @@
+<MudTable Items="_books" GroupBy="_byGenre" Elevation="0" Dense="true" Hover="true"
+          GroupHeaderStyle="background-color: var(--mud-palette-background-gray)">
+    <HeaderContent>
+        <MudTh>Title</MudTh>
+        <MudTh Style="text-align: right">Copies</MudTh>
+        <MudTh Style="text-align: right">Shelf value</MudTh>
+    </HeaderContent>
+    <GroupHeaderTemplate>
+        <MudTh colspan="3">
+            <strong>@context.Key</strong>
+            <MudText Typo="Typo.caption" Inline="true" Class="ml-2">@context.Items.Count() titles</MudText>
+        </MudTh>
+    </GroupHeaderTemplate>
+    <RowTemplate>
+        <MudTd DataLabel="Title">@context.Title</MudTd>
+        <MudTd DataLabel="Copies" Style="text-align: right">@context.Copies</MudTd>
+        <MudTd DataLabel="Shelf value" Style="text-align: right">@((context.Copies * context.Price).ToString("C", Prices))</MudTd>
+    </RowTemplate>
+    <GroupFooterTemplate>
+        <MudTd colspan="3" Style="text-align: right">
+            <MudText Typo="Typo.body2">Subtotal: @context.Items.Sum(book => book.Copies * book.Price).ToString("C", Prices)</MudText>
+        </MudTd>
+    </GroupFooterTemplate>
+</MudTable>
+
+@code {
+    private record Book(string Title, string Genre, int Copies, decimal Price);
+
+    private static readonly CultureInfo Prices = CultureInfo.GetCultureInfo("en-GB");
+
+    // Expandable adds a toggle to each group header; IsInitiallyExpanded decides the first view.
+    private readonly TableGroupDefinition<Book> _byGenre = new()
+    {
+        GroupName = "Genre",
+        Selector = book => book.Genre,
+        Expandable = true,
+        IsInitiallyExpanded = true
+    };
+
+    private readonly Book[] _books =
+    [
+        new("The Clockmaker's Daughter", "Fiction", 21, 11.99m),
+        new("Winter at the Observatory", "Fiction", 6, 12.99m),
+        new("Salt and Ledger", "History", 4, 24.00m),
+        new("A Short History of Ink", "History", 3, 27.00m),
+        new("A Field Guide to Quiet Rivers", "Nature", 9, 15.99m),
+        new("Moths of the Northern Coast", "Nature", 5, 22.40m),
+        new("The Lighthouse Keeper's Almanac", "Nature", 12, 18.50m)
+    ];
+}

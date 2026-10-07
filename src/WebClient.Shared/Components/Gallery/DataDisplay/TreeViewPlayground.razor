@@ -1,0 +1,58 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudPaper Outlined="true" Class="pa-2" Style="width: 18rem">
+            <MudTreeView T="string" SelectionMode="_mode" Color="_color" CheckBoxColor="_color" Dense="_dense" Hover="_hover"
+                         ExpandOnClick="_expandOnClick" Ripple="_ripple" Disabled="_disabled" ReadOnly="_readOnly">
+                <MudTreeViewItem Value="@("Recipes")" Icon="@Icons.Material.Outlined.MenuBook" Expanded="true">
+                    <MudTreeViewItem Value="@("Breads")" Icon="@Icons.Material.Outlined.Folder" Expanded="true">
+                        <MudTreeViewItem Value="@("Sourdough")" Icon="@Icons.Material.Outlined.Article" />
+                        <MudTreeViewItem Value="@("Seeded rye")" Icon="@Icons.Material.Outlined.Article" />
+                    </MudTreeViewItem>
+                    <MudTreeViewItem Value="@("Cakes")" Icon="@Icons.Material.Outlined.Folder">
+                        <MudTreeViewItem Value="@("Lemon drizzle")" Icon="@Icons.Material.Outlined.Article" />
+                    </MudTreeViewItem>
+                </MudTreeViewItem>
+            </MudTreeView>
+        </MudPaper>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_mode" Label="Selection mode" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<SelectionMode>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_hover" Label="Hover" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_expandOnClick" Label="Expand on click" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_ripple" Label="Ripple" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_disabled" Label="Disabled" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_readOnly" Label="Read-only" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private SelectionMode _mode = SelectionMode.SingleSelection;
+    private Color _color = Color.Primary;
+    private bool _dense;
+    private bool _hover = true;
+    private bool _expandOnClick;
+    private bool _ripple = true;
+    private bool _disabled;
+    private bool _readOnly;
+
+    // MudTreeView defaults: SingleSelection, Color.Primary, CheckBoxColor Default, Ripple on, the rest off.
+    private string Code => Snippet.Element("MudTreeView",
+    [
+        ("T", "string"),
+        ("SelectionMode", Snippet.Enum(_mode, SelectionMode.SingleSelection)),
+        ("Color", Snippet.Enum(_color, Color.Primary)),
+        ("CheckBoxColor", _mode == SelectionMode.MultiSelection ? Snippet.Enum(_color, Color.Default) : null),
+        ("Dense", Snippet.Flag(_dense)),
+        ("Hover", Snippet.Flag(_hover)),
+        ("ExpandOnClick", Snippet.Flag(_expandOnClick)),
+        ("Ripple", _ripple ? null : "false"),
+        ("Disabled", Snippet.Flag(_disabled)),
+        ("ReadOnly", Snippet.Flag(_readOnly))
+    ], "\n    <MudTreeViewItem Value=\"@(\"Recipes\")\" Expanded=\"true\">…</MudTreeViewItem>\n");
+}

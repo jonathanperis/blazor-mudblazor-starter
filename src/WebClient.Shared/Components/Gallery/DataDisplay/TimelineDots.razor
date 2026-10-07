@@ -1,0 +1,26 @@
+<EnumMatrix TRow="Variant" TColumn="Size" Caption="MudTimelineItem: Variant × Size, Color.Primary with an icon">
+    <Cell>
+        <MudTimeline TimelinePosition="TimelinePosition.Start" Class="mx-auto" Style="width: 11rem">
+            <MudTimelineItem Variant="@context.Row" Size="@context.Column" Color="Color.Primary" Icon="@Icons.Material.Outlined.Star">
+                <MudText Typo="Typo.caption">@context.Row, @context.Column</MudText>
+            </MudTimelineItem>
+        </MudTimeline>
+    </Cell>
+</EnumMatrix>
+
+<div class="pa-4">
+    <MudText Typo="Typo.overline" HtmlTag="h3">Theme colors, Variant.Filled</MudText>
+    <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal" TimelinePosition="TimelinePosition.Bottom">
+        @foreach (var color in Colors)
+        {
+            <MudTimelineItem Color="color" Variant="Variant.Filled" Size="Size.Medium">
+                <MudText Typo="Typo.caption" Align="Align.Center">@color</MudText>
+            </MudTimelineItem>
+        }
+    </MudTimeline>
+</div>
+
+@code {
+    private static readonly Color[] Colors =
+        [Color.Default, Color.Primary, Color.Secondary, Color.Tertiary, Color.Info, Color.Success, Color.Warning, Color.Error, Color.Dark];
+}

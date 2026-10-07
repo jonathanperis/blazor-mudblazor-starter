@@ -1,0 +1,79 @@
+<MudTable Items="_books" Elevation="0" Hover="true" EditTrigger="TableEditTrigger.EditButton"
+          CanCancelEdit="true" IsEditRowSwitchingBlocked="true" CommitEditTooltip="Save changes" CancelEditTooltip="Discard changes"
+          RowEditPreview="Backup" RowEditCancel="Restore" RowEditCommit="Commit">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6" HtmlTag="h3">Price list</MudText>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Title</MudTh>
+        <MudTh Style="text-align: right">Price (£)</MudTh>
+        <MudTh Style="text-align: right">Stock</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Title">@context.Title</MudTd>
+        <MudTd DataLabel="Price (£)" Style="text-align: right">@context.Price.ToString("0.00")</MudTd>
+        <MudTd DataLabel="Stock" Style="text-align: right">@context.Stock</MudTd>
+    </RowTemplate>
+    <RowEditingTemplate>
+        <MudTd DataLabel="Title">
+            <MudTextField @bind-Value="context.Title" Label="Title" Required="true" RequiredError="A title is required." MaxLength="80" Margin="Margin.Dense" />
+        </MudTd>
+        <MudTd DataLabel="Price (£)">
+            <MudNumericField @bind-Value="context.Price" Label="Price" Min="0.5m" Max="500m" Step="0.5m" Format="0.00" Margin="Margin.Dense" />
+        </MudTd>
+        <MudTd DataLabel="Stock">
+            <MudNumericField @bind-Value="context.Stock" Label="Stock" Min="0" Max="999" Margin="Margin.Dense" />
+        </MudTd>
+    </RowEditingTemplate>
+    <EditButtonContent Context="button">
+        <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" OnClick="button.ButtonAction" Disabled="button.ButtonDisabled"
+                       aria-label="@($"Edit {(button.Item as Book)?.Title}")" />
+    </EditButtonContent>
+</MudTable>
+
+<MudText Typo="Typo.body2" Class="pa-4" role="status">@_status</MudText>
+
+@code {
+    private sealed class Book(string title, decimal price, int stock)
+    {
+        public string Title { get; set; } = title;
+        public decimal Price { get; set; } = price;
+        public int Stock { get; set; } = stock;
+    }
+
+    private readonly List<Book> _books =
+    [
+        new("Salt and Ledger", 24.00m, 4),
+        new("The Patient Garden", 17.50m, 2),
+        new("Ferries and Fog", 9.99m, 11)
+    ];
+
+    private (string Title, decimal Price, int Stock) _backup;
+    private string _status = "Use the pencil to edit a row, then save or discard.";
+
+    // The fields edit the row in place, so take a copy first and put it back on cancel.
+    private void Backup(object item)
+    {
+        var book = (Book)item;
+        _backup = (book.Title, book.Price, book.Stock);
+    }
+
+    private void Restore(object item)
+    {
+        var book = (Book)item;
+        (book.Title, book.Price, book.Stock) = _backup;
+        _status = $"Discarded changes to “{book.Title}”.";
+    }
+
+    private void Commit(object item)
+    {
+        var book = (Book)item;
+        if (string.IsNullOrWhiteSpace(book.Title))
+        {
+            Restore(item);
+            _status = "A book needs a title; the previous values were kept.";
+            return;
+        }
+        _status = $"Saved “{book.Title}” at {book.Price:0.00}, {book.Stock} in stock.";
+    }
+}

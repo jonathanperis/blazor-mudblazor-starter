@@ -1,0 +1,68 @@
+<div class="pa-4">
+    <MudTextField @bind-Value="_filter" Immediate="true" Label="Filter lines" Placeholder="For example 7A or night" Clearable="true"
+                  Variant="Variant.Outlined" Margin="Margin.Dense" Style="max-width: 18rem" />
+</div>
+
+<MudSimpleTable Bordered="true" Dense="true" Elevation="0">
+    <caption style="caption-side: top; text-align: left; padding: 0 1rem .5rem">Passenger journeys in 2025, thousands</caption>
+    <thead>
+        <tr>
+            <th scope="col" rowspan="2">Line</th>
+            <th scope="colgroup" colspan="2" style="text-align: center">First half</th>
+            <th scope="colgroup" colspan="2" style="text-align: center">Second half</th>
+            <th scope="col" rowspan="2" style="text-align: right">Year</th>
+        </tr>
+        <tr>
+            @foreach (var quarter in Quarters)
+            {
+                <th scope="col" style="text-align: right">@quarter</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @if (Visible.Count == 0)
+        {
+            <tr>
+                <td colspan="6" style="text-align: center; padding: 1.5rem">No line matches “@_filter”.</td>
+            </tr>
+        }
+        @foreach (var line in Visible)
+        {
+            <tr>
+                <th scope="row" style="font-weight: 500">@line.Name</th>
+                @foreach (var value in line.Quarters)
+                {
+                    <td style="text-align: right">@value.ToString("N0")</td>
+                }
+                <td style="text-align: right; font-weight: 600">@line.Quarters.Sum().ToString("N0")</td>
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <th scope="row">Total</th>
+            @for (var quarter = 0; quarter < Quarters.Length; quarter++)
+            {
+                <td style="text-align: right; font-weight: 600">@Visible.Sum(line => line.Quarters[quarter]).ToString("N0")</td>
+            }
+            <td style="text-align: right; font-weight: 600">@Visible.Sum(line => line.Quarters.Sum()).ToString("N0")</td>
+        </tr>
+    </tfoot>
+</MudSimpleTable>
+
+@code {
+    private record Line(string Name, int[] Quarters);
+
+    private static readonly string[] Quarters = ["Q1", "Q2", "Q3", "Q4"];
+    private string _filter = "";
+
+    private readonly Line[] _lines =
+    [
+        new("12 Harbour Quay", [412, 436, 471, 455]),
+        new("7A University Park", [380, 352, 298, 401]),
+        new("31 Northgate", [205, 214, 226, 219]),
+        new("N4 Night bus", [61, 66, 74, 70])
+    ];
+
+    private List<Line> Visible => _lines.Where(line => line.Name.Contains(_filter ?? "", StringComparison.OrdinalIgnoreCase)).ToList();
+}

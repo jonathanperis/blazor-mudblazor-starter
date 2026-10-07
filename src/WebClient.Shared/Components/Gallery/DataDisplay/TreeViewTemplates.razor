@@ -1,0 +1,61 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.overline" HtmlTag="h3" Class="mb-1">EndText from a derived item</MudText>
+        <MudPaper Outlined="true" Class="pa-2">
+            <MudTreeView T="string" Items="_left" Hover="true">
+                <ItemTemplate>
+                    <MudTreeViewItem Value="@context.Value" Text="@context.Text" Icon="@context.Icon" Items="@context.Children"
+                                     @bind-Expanded="@context.Expanded" EndText="@(((Shelf)context).Books.ToString())" EndTextTypo="Typo.caption" />
+                </ItemTemplate>
+            </MudTreeView>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudText Typo="Typo.overline" HtmlTag="h3" Class="mb-1">BodyContent laid out by hand</MudText>
+        <MudPaper Outlined="true" Class="pa-2">
+            <MudTreeView T="string" Items="_right" Hover="true">
+                <ItemTemplate Context="item">
+                    @{ var shelf = (Shelf)item; }
+                    <MudTreeViewItem T="string" Value="@shelf.Value" Icon="@shelf.Icon" Items="@shelf.Children" @bind-Expanded="@shelf.Expanded">
+                        <BodyContent>
+                            <MudStack Row AlignItems="AlignItems.Center" Justify="Justify.SpaceBetween" Style="width: 100%">
+                                <MudText Typo="Typo.body2">@shelf.Text</MudText>
+                                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined"
+                                         Color="@(shelf.Books < 20 ? Color.Warning : Color.Default)">
+                                    @(shelf.Books < 20 ? $"{shelf.Books}, low" : shelf.Books.ToString())
+                                </MudChip>
+                            </MudStack>
+                        </BodyContent>
+                    </MudTreeViewItem>
+                </ItemTemplate>
+            </MudTreeView>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    // TreeItemData carries Value, Text, Icon, Children and Expanded; a subclass adds what your rows need.
+    private sealed class Shelf : TreeItemData<string>
+    {
+        public Shelf(string name, int books, params Shelf[] children) : base(name)
+        {
+            Text = name;
+            Books = books;
+            Icon = children.Length > 0 ? Icons.Material.Outlined.Folder : Icons.Material.Outlined.Bookmark;
+            Children = children.Length > 0 ? [.. children] : null;
+            Expanded = children.Length > 0;
+        }
+
+        public int Books { get; }
+    }
+
+    // Each tree gets its own items, because Expanded lives on the item.
+    private readonly List<TreeItemData<string>> _left = Shelves();
+    private readonly List<TreeItemData<string>> _right = Shelves();
+
+    private static List<TreeItemData<string>> Shelves() =>
+    [
+        new Shelf("Fiction", 412, new Shelf("Crime", 96), new Shelf("Historical", 71), new Shelf("Poetry", 18)),
+        new Shelf("Non-fiction", 538, new Shelf("Nature", 120), new Shelf("Local history", 14))
+    ];
+}

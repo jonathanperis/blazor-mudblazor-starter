@@ -1,0 +1,89 @@
+<MudGrid Spacing="0">
+    <MudItem xs="12" md="6">
+        <MudStack Spacing="2" Class="pa-4">
+            <MudTextField T="string" Value="_search" ValueChanged="FilterAsync" Immediate="true" Label="Find a file" Clearable="true"
+                          Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" Variant="Variant.Outlined" Margin="Margin.Dense" />
+            <MudStack Row Spacing="1">
+                <MudButton Size="Size.Small" StartIcon="@Icons.Material.Outlined.UnfoldMore" OnClick="() => _tree.ExpandAllAsync()">Expand all</MudButton>
+                <MudButton Size="Size.Small" StartIcon="@Icons.Material.Outlined.UnfoldLess" OnClick="() => _tree.CollapseAllAsync()">Collapse all</MudButton>
+            </MudStack>
+            <MudTreeView @ref="_tree" T="string" Items="_root" FilterFunc="Matches" @bind-SelectedValue="_selected" Hover="true" Dense="true"
+                         ExpandOnClick="true" MaxHeight="320px">
+                <ItemTemplate>
+                    <MudTreeViewItem Value="@context.Value" Text="@context.Text" Icon="@context.Icon" Items="@context.Children"
+                                     @bind-Expanded="@context.Expanded" Visible="@context.Visible"
+                                     IconExpanded="@(context.HasChildren ? Icons.Material.Outlined.FolderOpen : null)" />
+                </ItemTemplate>
+            </MudTreeView>
+        </MudStack>
+    </MudItem>
+    <MudItem xs="12" md="6">
+        <MudPaper Outlined="true" Square="true" Class="pa-4" Style="height: 100%; border-width: 0 0 0 1px">
+            @if (_selected is not null && _byPath.TryGetValue(_selected, out var file))
+            {
+                <MudText Typo="Typo.overline" HtmlTag="p">@(file.HasChildren ? "Folder" : "File")</MudText>
+                <MudText Typo="Typo.h6" HtmlTag="h3" GutterBottom="true">@file.Text</MudText>
+                <MudSimpleTable Dense="true" Elevation="0">
+                    <tbody>
+                        <tr><th scope="row">Path</th><td style="font-family: var(--font-mono)">@file.Value</td></tr>
+                        <tr><th scope="row">Size</th><td>@(file.HasChildren ? $"{file.Children!.Count} items" : $"{file.SizeKb:N0} KB")</td></tr>
+                        <tr><th scope="row">Modified</th><td>@file.Modified.ToString("d MMM yyyy", CultureInfo.InvariantCulture)</td></tr>
+                    </tbody>
+                </MudSimpleTable>
+            }
+            else
+            {
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">Select a file or folder to see its details.</MudText>
+            }
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private sealed class FileEntry : TreeItemData<string>
+    {
+        public FileEntry(string path, int sizeKb, DateOnly modified, params FileEntry[] children) : base(path)
+        {
+            Text = path[(path.LastIndexOf('/') + 1)..];
+            SizeKb = sizeKb;
+            Modified = modified;
+            Icon = children.Length > 0 ? Icons.Material.Outlined.Folder : Icons.Material.Outlined.InsertDriveFile;
+            Children = children.Length > 0 ? [.. children] : null;
+        }
+
+        public int SizeKb { get; }
+        public DateOnly Modified { get; }
+    }
+
+    private MudTreeView<string> _tree = null!;
+    private string? _selected;
+    private string _search = "";
+
+    private readonly List<TreeItemData<string>> _root =
+    [
+        new FileEntry("survey-2026", 0, new(2026, 4, 2),
+            new FileEntry("survey-2026/readings", 0, new(2026, 4, 2),
+                new FileEntry("survey-2026/readings/ben-alder.csv", 184, new(2026, 4, 1)),
+                new FileEntry("survey-2026/readings/loch-ossian.csv", 151, new(2026, 4, 2))),
+            new FileEntry("survey-2026/photos", 0, new(2026, 3, 28),
+                new FileEntry("survey-2026/photos/rain-gauge.jpg", 2_310, new(2026, 3, 28))),
+            new FileEntry("survey-2026/field-notes.md", 12, new(2026, 3, 30))),
+        new FileEntry("calibration-certificates.pdf", 640, new(2025, 11, 20))
+    ];
+
+    private Dictionary<string, FileEntry> _byPath = [];
+
+    protected override void OnInitialized() => _byPath = Flatten(_root).ToDictionary(entry => entry.Value!);
+
+    private static IEnumerable<FileEntry> Flatten(IEnumerable<ITreeItemData<string>> items) =>
+        items.OfType<FileEntry>().SelectMany(entry => Flatten(entry.Children ?? []).Prepend(entry));
+
+    private Task<bool> Matches(ITreeItemData<string> item) =>
+        Task.FromResult(string.IsNullOrWhiteSpace(_search) || item.Text?.Contains(_search, StringComparison.OrdinalIgnoreCase) == true);
+
+    private async Task FilterAsync(string text)
+    {
+        _search = text ?? "";
+        await _tree.FilterAsync();
+    }
+}

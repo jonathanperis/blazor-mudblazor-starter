@@ -1,0 +1,37 @@
+@* Template bullets render inside plain divs that the keyboard cannot reach, so the
+   template only draws the progress marks; real buttons below do the navigating. *@
+<MudCarousel TData="object" AutoCycle="false" ShowArrows="false" @bind-SelectedIndex="_index" Style="height: 220px">
+    <BulletTemplate Context="selected">
+        @* Width, not only color, tells the current slide apart. *@
+        <span aria-hidden="true" style="display: block; height: 6px; margin: 0 2px; border-radius: 3px; transition: width .2s;
+              width: @(selected ? "28px" : "10px"); background: var(@(selected ? "--mud-palette-primary" : "--mud-palette-lines-inputs"))"></span>
+    </BulletTemplate>
+    <ChildContent>
+        @foreach (var exhibit in Exhibits)
+        {
+            <MudCarouselItem>
+                <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Spacing="1" Style="height: 100%; text-align: center">
+                    <MudText Typo="Typo.overline">@exhibit.Year</MudText>
+                    <MudText Typo="Typo.h5" HtmlTag="h3">@exhibit.Name</MudText>
+                </MudStack>
+            </MudCarouselItem>
+        }
+    </ChildContent>
+</MudCarousel>
+
+<MudStack Row Justify="Justify.Center" AlignItems="AlignItems.Center" Spacing="2" Class="pa-4">
+    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.ChevronLeft" Disabled="_index <= 0" OnClick="() => _index--">Earlier</MudButton>
+    <MudText Typo="Typo.body2" Style="min-width: 7rem; text-align: center">Exhibit @(_index + 1) of @Exhibits.Length</MudText>
+    <MudButton Variant="Variant.Outlined" EndIcon="@Icons.Material.Outlined.ChevronRight" Disabled="_index >= Exhibits.Length - 1" OnClick="() => _index++">Later</MudButton>
+</MudStack>
+
+@code {
+    private static readonly (int Year, string Name)[] Exhibits =
+    [
+        (1761, "Marine chronometer"),
+        (1851, "Harbour tide clock"),
+        (1924, "Station barometer")
+    ];
+
+    private int _index;
+}

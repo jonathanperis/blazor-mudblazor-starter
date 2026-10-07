@@ -1,0 +1,75 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudTimeline TimelineOrientation="_orientation" TimelinePosition="_position" TimelineAlign="_align" Reverse="_reverse"
+                     Modifiers="_modifiers" Style="width: 100%">
+            @foreach (var stage in Stages)
+            {
+                <MudTimelineItem Color="_color" Variant="_variant" Size="_size">
+                    <ItemOpposite><MudText Typo="Typo.caption">@stage.When</MudText></ItemOpposite>
+                    <ItemContent><MudText Typo="Typo.body2">@stage.What</MudText></ItemContent>
+                </MudTimelineItem>
+            }
+        </MudTimeline>
+    </Preview>
+    <Controls>
+        <MudSelect T="TimelineOrientation" Value="_orientation" ValueChanged="ChangeOrientation" Label="Orientation" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<TimelineOrientation>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_position" Label="Position" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Positions) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_align" Label="Align" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<TimelineAlign>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_variant" Label="Dot variant" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Variant>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_size" Label="Dot size" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Size>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Dot color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_reverse" Label="Reverse" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_modifiers" Label="Modifiers" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private static readonly (string When, string What)[] Stages = [("Monday", "Dough mixed"), ("Tuesday", "Loaves baked"), ("Wednesday", "Sold out")];
+
+    private TimelineOrientation _orientation = TimelineOrientation.Vertical;
+    private TimelinePosition _position = TimelinePosition.Alternate;
+    private TimelineAlign _align = TimelineAlign.Default;
+    private Variant _variant = Variant.Outlined;
+    private Size _size = Size.Small;
+    private Color _color = Color.Primary;
+    private bool _reverse;
+    private bool _modifiers = true;
+
+    private TimelinePosition[] Positions => _orientation == TimelineOrientation.Vertical
+        ? [TimelinePosition.Start, TimelinePosition.Left, TimelinePosition.Alternate, TimelinePosition.Right, TimelinePosition.End]
+        : [TimelinePosition.Top, TimelinePosition.Alternate, TimelinePosition.Bottom];
+
+    // Keep the position valid for the new orientation.
+    private void ChangeOrientation(TimelineOrientation orientation)
+    {
+        _orientation = orientation;
+        if (!Positions.Contains(_position)) _position = TimelinePosition.Alternate;
+    }
+
+    // Defaults: Vertical, Alternate, TimelineAlign.Default, Modifiers on; items Outlined, Small, Color.Default.
+    private string Code => Snippet.Element("MudTimeline",
+    [
+        ("TimelineOrientation", Snippet.Enum(_orientation, TimelineOrientation.Vertical)),
+        ("TimelinePosition", Snippet.Enum(_position, TimelinePosition.Alternate)),
+        ("TimelineAlign", Snippet.Enum(_align, TimelineAlign.Default)),
+        ("Reverse", Snippet.Flag(_reverse)),
+        ("Modifiers", _modifiers ? null : "false")
+    ], "\n    " + Snippet.Element("MudTimelineItem",
+    [
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("Variant", Snippet.Enum(_variant, Variant.Outlined)),
+        ("Size", Snippet.Enum(_size, Size.Small))
+    ], "…") + "\n");
+}

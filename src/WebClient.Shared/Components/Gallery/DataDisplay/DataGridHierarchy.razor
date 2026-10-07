@@ -1,0 +1,45 @@
+<MudDataGrid @ref="_grid" Items="_stations" ExpandSingleRow="_singleRow" Elevation="0" Dense="true">
+    <ToolBarContent>
+        <MudSwitch @bind-Value="_singleRow" Label="One row open at a time" Color="Color.Primary" />
+        <MudSpacer />
+        <MudButton Size="Size.Small" OnClick="() => _grid.ExpandAllHierarchy()">Expand all</MudButton>
+        <MudButton Size="Size.Small" OnClick="() => _grid.CollapseAllHierarchy()">Collapse all</MudButton>
+    </ToolBarContent>
+    <Columns>
+        <HierarchyColumn T="Station" ButtonDisabledFunc="station => station.Instruments.Length == 0"
+                         InitiallyExpandedFunc="station => station.Name == _stations[0].Name" />
+        <PropertyColumn Property="station => station.Name" Title="Station" />
+        <PropertyColumn Property="station => station.Keeper" />
+        <TemplateColumn Title="Instruments">
+            <CellTemplate>@(context.Item.Instruments.Length == 0 ? "None fitted yet" : context.Item.Instruments.Length.ToString())</CellTemplate>
+        </TemplateColumn>
+    </Columns>
+    <ChildRowContent>
+        <MudStack Spacing="1" Class="py-2 pl-12">
+            <MudText Typo="Typo.subtitle2" HtmlTag="h3">Instruments at @context.Item.Name</MudText>
+            @foreach (var instrument in context.Item.Instruments)
+            {
+                <MudStack Row Spacing="2" AlignItems="AlignItems.Center">
+                    <MudIcon Icon="@Icons.Material.Outlined.Sensors" Size="Size.Small" aria-hidden="true" />
+                    <MudText Typo="Typo.body2">@instrument.Name, calibrated @instrument.Calibrated.ToString("d MMM yyyy", CultureInfo.InvariantCulture)</MudText>
+                </MudStack>
+            }
+        </MudStack>
+    </ChildRowContent>
+</MudDataGrid>
+
+@code {
+    private record Instrument(string Name, DateOnly Calibrated);
+    private record Station(string Name, string Keeper, Instrument[] Instruments);
+
+    private MudDataGrid<Station> _grid = null!;
+    private bool _singleRow;
+
+    private readonly Station[] _stations =
+    [
+        new("Ben Alder ridge", "Morag Fraser", [new("Anemometer", new(2026, 2, 3)), new("Thermometer screen", new(2025, 11, 20))]),
+        new("Loch Ossian shore", "Callum Reid", [new("Tipping-bucket rain gauge", new(2026, 1, 14))]),
+        new("Harbour wall", "Aisha Bello", [new("Barometer", new(2025, 9, 2)), new("Tide sensor", new(2026, 3, 9)), new("Anemometer", new(2026, 3, 9))]),
+        new("Cairn summit", "Morag Fraser", [])
+    ];
+}

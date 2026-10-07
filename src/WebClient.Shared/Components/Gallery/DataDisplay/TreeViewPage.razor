@@ -1,0 +1,12 @@
+@page "/components/tree-view"
+@attribute [ComponentPage("Tree view", GalleryGroup.DataDisplay, "A hierarchy people can expand, collapse and select from: folders, categories, organisation charts. Choose it when depth matters; for one level of grouping a nested list is lighter.", MudDocs = "treeview", Types = ["MudTreeView", "MudTreeViewItem", "TreeItemData"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(TreeViewBasics)" Title="Declared items" Description="Nest MudTreeViewItem elements to write a small tree by hand. IconExpanded swaps the icon of an open branch, and Expanded opens it on first render." />
+    <Example Of="typeof(TreeViewSelectionModes)" Title="Selection modes" Description="SingleSelection keeps one item selected, ToggleSelection lets a second click clear it, and MultiSelection adds checkboxes. Values come from each item's Value." />
+    <Example Of="typeof(TreeViewCheckboxes)" Title="Checkboxes, tri-state and parents" Description="In MultiSelection, TriState shows a dash on partly selected branches and AutoSelectParent ticks a parent when all its children are ticked. Try both switches." />
+    <Example Of="typeof(TreeViewLazyLoading)" Title="Lazy loading with ServerData" Description="Items start without children. When a branch opens, ServerData fetches its children and the expand button shows a loading icon meanwhile. Expandable = false marks leaves." />
+    <Example Of="typeof(TreeViewTemplates)" Title="Data-bound items and custom templates" Description="Items takes TreeItemData objects and ItemTemplate renders each one. Derive from TreeItemData to carry your own fields, and use BodyContent to lay out the row yourself." />
+    <Example Of="typeof(TreeViewFileExplorer)" Title="A file explorer" Description="A filterable tree beside a details panel: FilterFunc decides which items stay visible, FilterAsync reapplies it as you type, and SelectedValue drives the panel." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(TreeViewPlayground)" Title="Playground" Description="Change the tree's parameters; the markup lists only the values that differ from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

@@ -1,0 +1,42 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudPaper Outlined="true">
+            <MudList T="string" SelectionMode="_mode" @bind-SelectedValue="_one" @bind-SelectedValues="_many"
+                     Color="Color.Primary" CheckBoxColor="Color.Primary">
+                <MudListSubheader>Pastries in the window</MudListSubheader>
+                @foreach (var pastry in Pastries)
+                {
+                    <MudListItem Value="pastry" Text="@pastry" />
+                }
+            </MudList>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudStack Spacing="3">
+            <MudRadioGroup @bind-Value="_mode" aria-label="Selection mode">
+                @foreach (var mode in Enum.GetValues<SelectionMode>())
+                {
+                    <MudRadio Value="mode" Color="Color.Primary">@mode</MudRadio>
+                }
+            </MudRadioGroup>
+            <MudText Typo="Typo.body2" role="status">
+                @if (_mode == SelectionMode.MultiSelection)
+                {
+                    @(_many.Count == 0 ? "Nothing in the basket." : $"Basket: {string.Join(", ", _many)}.")
+                }
+                else
+                {
+                    @(_one is null ? "Nothing chosen." : $"Chosen: {_one}.")
+                }
+            </MudText>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private static readonly string[] Pastries = ["Cardamom bun", "Almond croissant", "Rhubarb tart", "Cheese scone"];
+
+    private SelectionMode _mode = SelectionMode.SingleSelection;
+    private string? _one = "Cardamom bun";
+    private IReadOnlyCollection<string> _many = ["Rhubarb tart"];
+}

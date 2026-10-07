@@ -1,0 +1,38 @@
+<MudSimpleTable Elevation="0">
+    <caption class="mud-sr-only">Line 12 weekday departures</caption>
+    <thead>
+        <tr>
+            <th scope="col">Stop</th>
+            @foreach (var run in Runs)
+            {
+                <th scope="col" style="text-align: right">Run @run</th>
+            }
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var stop in _stops)
+        {
+            <tr>
+                <th scope="row" style="font-weight: 500">@stop.Name</th>
+                @foreach (var time in stop.Departures)
+                {
+                    <td style="text-align: right; font-variant-numeric: tabular-nums">@time.ToString("HH:mm")</td>
+                }
+            </tr>
+        }
+    </tbody>
+</MudSimpleTable>
+
+@code {
+    private record Stop(string Name, TimeOnly[] Departures);
+
+    private static readonly int[] Runs = [1, 2, 3, 4];
+
+    private readonly Stop[] _stops =
+    [
+        new("Northgate Depot", [new(6, 5), new(6, 35), new(7, 5), new(7, 35)]),
+        new("Market Square", [new(6, 14), new(6, 44), new(7, 16), new(7, 46)]),
+        new("University Park", [new(6, 22), new(6, 52), new(7, 25), new(7, 55)]),
+        new("Harbour Quay", [new(6, 31), new(7, 1), new(7, 35), new(8, 5)])
+    ];
+}

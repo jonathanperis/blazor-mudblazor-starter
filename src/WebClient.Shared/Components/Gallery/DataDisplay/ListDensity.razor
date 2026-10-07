@@ -1,0 +1,28 @@
+<MudGrid Spacing="4">
+    @foreach (var preset in _presets)
+    {
+        <MudItem xs="12" sm="6" lg="3">
+            <MudText Typo="Typo.overline" HtmlTag="h3" Class="mb-1">@preset.Name</MudText>
+            <MudPaper Outlined="true">
+                <MudList T="string" Dense="preset.Dense" Gutters="preset.Gutters" Padding="preset.Padding" ReadOnly="true">
+                    <MudListItem Icon="@Icons.Material.Outlined.Inbox" Text="Inbox" />
+                    <MudListItem Icon="@Icons.Material.Outlined.Send" Text="Sent" />
+                    <MudDivider DividerType="preset.Divider" />
+                    <MudListItem Icon="@Icons.Material.Outlined.Archive" Text="Archive" />
+                </MudList>
+            </MudPaper>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    private record Preset(string Name, bool Dense, bool Gutters, bool Padding, DividerType Divider);
+
+    private readonly Preset[] _presets =
+    [
+        new("Default", Dense: false, Gutters: true, Padding: false, DividerType.FullWidth),
+        new("Dense", Dense: true, Gutters: true, Padding: false, DividerType.FullWidth),
+        new("No gutters, inset divider", Dense: false, Gutters: false, Padding: false, DividerType.Inset),
+        new("Padding, middle divider", Dense: true, Gutters: true, Padding: true, DividerType.Middle)
+    ];
+}

@@ -1,0 +1,47 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudSimpleTable Dense="_dense" Hover="_hover" Striped="_striped" Bordered="_bordered" Outlined="_outlined" Square="_square"
+                        Elevation="_elevation" Style="width: 100%">
+            <thead>
+                <tr><th scope="col">Bread</th><th scope="col">Flour</th><th scope="col" style="text-align: right">Proof</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Country sourdough</td><td>Wheat and rye</td><td style="text-align: right">14 h</td></tr>
+                <tr><td>Seeded rye</td><td>Whole rye</td><td style="text-align: right">10 h</td></tr>
+                <tr><td>Milk loaf</td><td>Strong white</td><td style="text-align: right">3 h</td></tr>
+                <tr><td>Focaccia</td><td>Type 00</td><td style="text-align: right">18 h</td></tr>
+            </tbody>
+        </MudSimpleTable>
+    </Preview>
+    <Controls>
+        <MudSwitch @bind-Value="_dense" Label="Dense" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_hover" Label="Hover" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_striped" Label="Striped" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_bordered" Label="Bordered" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_outlined" Label="Outlined" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_square" Label="Square" Color="Color.Primary" />
+        <MudSlider @bind-Value="_elevation" Min="0" Max="12" Step="1" Color="Color.Primary">Elevation: @_elevation</MudSlider>
+    </Controls>
+</Playground>
+
+@code {
+    private bool _dense;
+    private bool _hover = true;
+    private bool _striped = true;
+    private bool _bordered;
+    private bool _outlined = true;
+    private bool _square;
+    private int _elevation;
+
+    // MudSimpleTable defaults: Elevation 1, every switch off.
+    private string Code => Snippet.Element("MudSimpleTable",
+    [
+        ("Dense", Snippet.Flag(_dense)),
+        ("Hover", Snippet.Flag(_hover)),
+        ("Striped", Snippet.Flag(_striped)),
+        ("Bordered", Snippet.Flag(_bordered)),
+        ("Outlined", Snippet.Flag(_outlined)),
+        ("Square", Snippet.Flag(_square)),
+        ("Elevation", _elevation == 1 ? null : _elevation.ToString())
+    ], "\n    <thead>…</thead>\n    <tbody>…</tbody>\n");
+}

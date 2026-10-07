@@ -1,0 +1,10 @@
+@page "/components/simple-table"
+@attribute [ComponentPage("Simple table", GalleryGroup.DataDisplay, "MudSimpleTable styles plain HTML table markup: you write thead, tbody and tfoot yourself. Choose it for static, read-only data such as timetables and specifications, where sorting and paging would only add weight.", MudDocs = "simpletable", Types = ["MudSimpleTable"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(SimpleTableBasics)" Title="Basic timetable" Description="Ordinary table markup inside MudSimpleTable. Row headers are th elements with scope=row, so screen readers announce the stop with each time." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(SimpleTableAppearance)" Title="Dense, hover, striped, bordered and outlined" Description="The same fare table under each preset. The switches combine freely, so pick by reading distance: dense for scanning, striped for long rows, bordered for grids of numbers." />
+    <Example Of="typeof(SimpleTableFixedHeader)" Title="Fixed header" Description="Give the table a height through Style and set FixedHeader: the header row stays put while the body scrolls." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(SimpleTableStructure)" Title="Grouped headers, totals and an empty state" Description="Because you own the markup, colspan, caption and tfoot work as in any HTML table. An explicit empty row keeps the layout when a filter removes everything." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(SimpleTablePlayground)" Title="Playground" Description="Combine the switches and the elevation; the markup lists only what differs from the defaults." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

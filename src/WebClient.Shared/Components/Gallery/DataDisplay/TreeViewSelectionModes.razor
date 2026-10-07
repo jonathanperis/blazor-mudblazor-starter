@@ -1,0 +1,42 @@
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudPaper Outlined="true" Class="pa-2">
+            <MudTreeView T="string" SelectionMode="_mode" @bind-SelectedValue="_one" @bind-SelectedValues="_many" CheckBoxColor="Color.Primary">
+                <MudTreeViewItem Value="@("Bread")" Expanded="true">
+                    <MudTreeViewItem Value="@("Sourdough")" />
+                    <MudTreeViewItem Value="@("Rye")" />
+                </MudTreeViewItem>
+                <MudTreeViewItem Value="@("Pastry")" Expanded="true">
+                    <MudTreeViewItem Value="@("Croissant")" />
+                    <MudTreeViewItem Value="@("Cardamom bun")" />
+                </MudTreeViewItem>
+            </MudTreeView>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudStack Spacing="3">
+            <MudRadioGroup @bind-Value="_mode" aria-label="Selection mode">
+                @foreach (var mode in Enum.GetValues<SelectionMode>())
+                {
+                    <MudRadio Value="mode" Color="Color.Primary">@mode</MudRadio>
+                }
+            </MudRadioGroup>
+            <MudText Typo="Typo.body2" role="status">
+                @if (_mode == SelectionMode.MultiSelection)
+                {
+                    @((_many?.Count ?? 0) == 0 ? "Nothing ticked." : $"Ticked: {string.Join(", ", _many!)}.")
+                }
+                else
+                {
+                    @(_one is null ? "Nothing selected." : $"Selected: {_one}.")
+                }
+            </MudText>
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private SelectionMode _mode = SelectionMode.SingleSelection;
+    private string? _one = "Rye";
+    private IReadOnlyCollection<string>? _many = ["Croissant"];
+}

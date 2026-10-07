@@ -1,0 +1,26 @@
+<MudTimeline TimelinePosition="TimelinePosition.Start" Style="max-width: 34rem">
+    <MudTimelineItem Color="Color.Primary">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Default dot</MudText>
+        <MudText Typo="Typo.body2" Class="mud-text-secondary">Outlined, small, Color.Primary.</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem Color="Color.Secondary" Variant="Variant.Filled" Size="Size.Medium" Icon="@Icons.Material.Outlined.Science">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Icon inside the dot</MudText>
+        <MudText Typo="Typo.body2" Class="mud-text-secondary">Icon works best with a medium or large, filled dot.</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem>
+        <ItemDot>
+            <MudAvatar Size="Size.Small" Color="Color.Tertiary" aria-hidden="true">MF</MudAvatar>
+        </ItemDot>
+        <ItemContent>
+            <MudText Typo="Typo.subtitle2" HtmlTag="h3">ItemDot: Morag Fraser signed off</MudText>
+            <MudText Typo="Typo.body2" Class="mud-text-secondary">Any content can stand in for the dot, here an avatar.</MudText>
+        </ItemContent>
+    </MudTimelineItem>
+    <MudTimelineItem DotClass="mud-theme-warning" Variant="Variant.Filled">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">DotClass</MudText>
+        <MudText Typo="Typo.body2" Class="mud-text-secondary">A utility class, mud-theme-warning, paints the dot.</MudText>
+    </MudTimelineItem>
+    <MudTimelineItem HideDot="true">
+        <MudText Typo="Typo.body2" Class="mud-text-secondary">HideDot continues the previous entry without a new marker.</MudText>
+    </MudTimelineItem>
+</MudTimeline>

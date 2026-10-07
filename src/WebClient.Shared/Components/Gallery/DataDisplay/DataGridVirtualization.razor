@@ -1,0 +1,22 @@
+<MudDataGrid Items="_readings" Virtualize="true" FixedHeader="true" Height="360px" ItemSize="37" Dense="true" Elevation="0" Culture="Invariant">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6" HtmlTag="h3">@_readings.Length.ToString("N0") readings from the harbour buoy</MudText>
+    </ToolBarContent>
+    <Columns>
+        <PropertyColumn Property="reading => reading.Sequence" Title="#" />
+        <PropertyColumn Property="reading => reading.Taken" Format="yyyy-MM-dd HH:mm" />
+        <PropertyColumn Property="reading => reading.WaterC" Title="Water (°C)" Format="0.0" />
+        <PropertyColumn Property="reading => reading.WaveM" Title="Wave height (m)" Format="0.00" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private record Reading(int Sequence, DateTime Taken, double WaterC, double WaveM);
+
+    private static readonly CultureInfo Invariant = CultureInfo.InvariantCulture;
+
+    // One reading every ten minutes, computed rather than random so every visit shows the same numbers.
+    private readonly Reading[] _readings = Enumerable.Range(1, 10_000)
+        .Select(i => new Reading(i, new DateTime(2026, 1, 1).AddMinutes(i * 10), 9 + 3 * Math.Sin(i / 900.0), 0.6 + 0.4 * Math.Abs(Math.Sin(i / 37.0))))
+        .ToArray();
+}

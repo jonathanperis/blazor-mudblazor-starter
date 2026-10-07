@@ -1,0 +1,49 @@
+<MudGrid Spacing="0">
+    @foreach (var position in VerticalPositions)
+    {
+        <MudItem xs="12" sm="6" lg="4" Class="pa-4" Style="border-bottom: 1px solid var(--mud-palette-lines-default)">
+            <MudText Typo="Typo.overline" HtmlTag="h3">Vertical · @position</MudText>
+            <MudTimeline TimelineOrientation="TimelineOrientation.Vertical" TimelinePosition="position">
+                @foreach (var milestone in _milestones)
+                {
+                    <MudTimelineItem Color="Color.Primary" Size="Size.Small">
+                        <ItemOpposite><MudText Typo="Typo.caption">@milestone.Year</MudText></ItemOpposite>
+                        <ItemContent><MudText Typo="Typo.body2">@milestone.Text</MudText></ItemContent>
+                    </MudTimelineItem>
+                }
+            </MudTimeline>
+        </MudItem>
+    }
+    @foreach (var position in HorizontalPositions)
+    {
+        <MudItem xs="12" Class="pa-4" Style="border-bottom: 1px solid var(--mud-palette-lines-default)">
+            <MudText Typo="Typo.overline" HtmlTag="h3">Horizontal · @position</MudText>
+            <MudTimeline TimelineOrientation="TimelineOrientation.Horizontal" TimelinePosition="position">
+                @foreach (var milestone in _milestones)
+                {
+                    <MudTimelineItem Color="Color.Secondary" Size="Size.Small">
+                        <ItemOpposite><MudText Typo="Typo.caption" Align="Align.Center">@milestone.Year</MudText></ItemOpposite>
+                        <ItemContent><MudText Typo="Typo.body2" Align="Align.Center">@milestone.Text</MudText></ItemContent>
+                    </MudTimelineItem>
+                }
+            </MudTimeline>
+        </MudItem>
+    }
+</MudGrid>
+
+@code {
+    private record Milestone(int Year, string Text);
+
+    // Each orientation supports its own subset of TimelinePosition.
+    private static readonly TimelinePosition[] VerticalPositions =
+        [TimelinePosition.Start, TimelinePosition.Left, TimelinePosition.Alternate, TimelinePosition.Right, TimelinePosition.End];
+    private static readonly TimelinePosition[] HorizontalPositions =
+        [TimelinePosition.Top, TimelinePosition.Alternate, TimelinePosition.Bottom];
+
+    private readonly Milestone[] _milestones =
+    [
+        new(1891, "Observatory founded"),
+        new(1934, "Great refractor installed"),
+        new(2019, "Opened to the public")
+    ];
+}

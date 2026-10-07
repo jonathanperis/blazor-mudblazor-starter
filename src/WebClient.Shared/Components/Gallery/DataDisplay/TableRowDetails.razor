@@ -1,0 +1,63 @@
+<MudGrid Spacing="0">
+    <MudItem xs="12" md="7">
+        <MudTable T="Order" Items="_orders" OnRowClick="args => _shown = args.Item" RowStyleFunc="Highlight"
+                  Hover="true" Elevation="0" Style="cursor: pointer">
+            <ToolBarContent>
+                <MudText Typo="Typo.h6" HtmlTag="h3">Today's bakery orders</MudText>
+            </ToolBarContent>
+            <HeaderContent>
+                <MudTh>Order</MudTh>
+                <MudTh>Customer</MudTh>
+                <MudTh>Pick-up</MudTh>
+                <MudTh><span class="mud-sr-only">Actions</span></MudTh>
+            </HeaderContent>
+            <RowTemplate>
+                <MudTd DataLabel="Order">@context.Number</MudTd>
+                <MudTd DataLabel="Customer">@context.Customer</MudTd>
+                <MudTd DataLabel="Pick-up">@context.PickUp.ToString("HH:mm")</MudTd>
+                <MudTd>
+                    @* Row clicks are a mouse shortcut; the button keeps the action reachable from the keyboard. *@
+                    <MudButton Size="Size.Small" Variant="Variant.Text" Color="Color.Primary" OnClick="() => _shown = context"
+                               aria-label="@($"Show order {context.Number}")">Details</MudButton>
+                </MudTd>
+            </RowTemplate>
+        </MudTable>
+    </MudItem>
+    <MudItem xs="12" md="5">
+        <MudPaper Outlined="true" Square="true" Class="pa-4" Style="height: 100%; border-width: 0 0 0 1px">
+            @if (_shown is null)
+            {
+                <MudText Typo="Typo.body2" Class="mud-text-secondary">Select an order to see what goes in the box.</MudText>
+            }
+            else
+            {
+                <MudText Typo="Typo.overline" HtmlTag="p">Order @_shown.Number</MudText>
+                <MudText Typo="Typo.h6" HtmlTag="h3" GutterBottom="true">@_shown.Customer</MudText>
+                <MudText Typo="Typo.body2" GutterBottom="true">Ready at @_shown.PickUp.ToString("HH:mm")</MudText>
+                <MudList T="string" Dense="true" ReadOnly="true" Padding="false">
+                    @foreach (var line in _shown.Lines)
+                    {
+                        <MudListItem Text="@line" Icon="@Icons.Material.Outlined.BakeryDining" />
+                    }
+                </MudList>
+            }
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private record Order(string Number, string Customer, TimeOnly PickUp, string[] Lines);
+
+    private Order? _shown;
+
+    private readonly Order[] _orders =
+    [
+        new("B-1042", "Ines Duarte", new(8, 30), ["2 sourdough loaves", "6 cardamom buns"]),
+        new("B-1043", "Harbour Café", new(9, 15), ["24 croissants", "12 pains au chocolat", "1 rye loaf"]),
+        new("B-1044", "Kofi Mensah", new(11, 0), ["1 birthday cake, lemon", "Candles: 7"]),
+        new("B-1045", "Northgate School", new(12, 45), ["40 cheese scones"])
+    ];
+
+    private string Highlight(Order order, int index) =>
+        order == _shown ? "background-color: var(--mud-palette-primary-hover)" : "";
+}

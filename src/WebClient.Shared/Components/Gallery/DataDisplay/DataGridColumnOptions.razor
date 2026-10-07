@@ -1,0 +1,38 @@
+<MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="6" Class="pa-4">
+    <MudRadioGroup @bind-Value="_resizeMode" aria-label="Resize mode">
+        <MudRadio Value="ResizeMode.Column" Color="Color.Primary">Resize one column</MudRadio>
+        <MudRadio Value="ResizeMode.Container" Color="Color.Primary">Resize the grid</MudRadio>
+    </MudRadioGroup>
+    <MudRadioGroup @bind-Value="_reorderMode" aria-label="Reorder mode">
+        <MudRadio Value="DataGridDragAndDropColumnReorderMode.Swap" Color="Color.Primary">Swap on drop</MudRadio>
+        <MudRadio Value="DataGridDragAndDropColumnReorderMode.Insert" Color="Color.Primary">Insert on drop</MudRadio>
+    </MudRadioGroup>
+    <MudSwitch @bind-Value="_showNotes" Label="Show the notes column" Color="Color.Primary" />
+</MudStack>
+
+<MudDataGrid Items="_books" ColumnResizeMode="_resizeMode" DragDropColumnReordering="true" ColumnReorderMode="_reorderMode"
+             Hideable="true" ShowMenuIcon="true" Dense="true" Elevation="0">
+    <Columns>
+        <PropertyColumn Property="book => book.Title" Hideable="false" DragAndDropEnabled="false" />
+        <PropertyColumn Property="book => book.Author" />
+        <PropertyColumn Property="book => book.Shelf" Resizable="false" />
+        <PropertyColumn Property="book => book.Year" />
+        <PropertyColumn Property="book => book.Notes" Hidden="!_showNotes" HiddenChanged="hidden => _showNotes = !hidden" />
+    </Columns>
+</MudDataGrid>
+
+@code {
+    private record Book(string Title, string Author, string Shelf, int Year, string Notes);
+
+    private ResizeMode _resizeMode = ResizeMode.Column;
+    private DataGridDragAndDropColumnReorderMode _reorderMode = DataGridDragAndDropColumnReorderMode.Insert;
+    private bool _showNotes = true;
+
+    private readonly Book[] _books =
+    [
+        new("Salt and Ledger", "Idris Okafor", "H-14", 2019, "Signed copy"),
+        new("The Patient Garden", "Sofia Marchetti", "N-02", 2021, "Staff pick"),
+        new("Ferries and Fog", "Idris Okafor", "T-07", 2015, "Last copy"),
+        new("Winter at the Observatory", "Lena Vogt", "F-31", 2023, "Book club, March")
+    ];
+}

@@ -1,0 +1,28 @@
+<div class="pa-4">
+    <MudRadioGroup @bind-Value="_transition" aria-label="Transition">
+        @foreach (var transition in Enum.GetValues<Transition>())
+        {
+            <MudRadio Value="transition" Color="Color.Primary">@transition</MudRadio>
+        }
+    </MudRadioGroup>
+</div>
+
+<MudCarousel TData="object" AutoCycle="false" Style="height: 220px">
+    @foreach (var room in Rooms)
+    {
+        @* Custom only uses the two class names; with other transitions they are ignored. *@
+        <MudCarouselItem Transition="_transition" CustomTransitionEnter="mud-carousel-transition-fade-in"
+                         CustomTransitionExit="mud-carousel-transition-slide-next-exit">
+            <MudPaper Outlined="true" Square="true" Class="d-flex flex-column justify-center px-16" Style="height: 100%">
+                <MudText Typo="Typo.overline">Museum floor plan</MudText>
+                <MudText Typo="Typo.h5" HtmlTag="h3">@room</MudText>
+            </MudPaper>
+        </MudCarouselItem>
+    }
+</MudCarousel>
+
+@code {
+    private static readonly string[] Rooms = ["Gallery 1: Maps and charts", "Gallery 2: Clocks and instruments", "Gallery 3: The harbour in 1900"];
+
+    private Transition _transition = Transition.Slide;
+}

@@ -1,0 +1,45 @@
+<MudStack Spacing="4">
+    <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="6">
+        <MudRadioGroup @bind-Value="_align" aria-label="Timeline align">
+            @foreach (var align in Enum.GetValues<TimelineAlign>())
+            {
+                <MudRadio Value="align" Color="Color.Primary">@align</MudRadio>
+            }
+        </MudRadioGroup>
+        <MudSwitch @bind-Value="_reverse" Label="Reverse" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_modifiers" Label="Modifiers" Color="Color.Primary" />
+    </MudStack>
+    <MudTimeline TimelineAlign="_align" Reverse="_reverse" Modifiers="_modifiers">
+        @foreach (var issue in _issues)
+        {
+            <MudTimelineItem Color="Color.Info" Elevation="0">
+                <ItemOpposite>
+                    <MudText Typo="Typo.subtitle2">@issue.Date.ToString("MMMM yyyy", CultureInfo.InvariantCulture)</MudText>
+                </ItemOpposite>
+                <ItemContent>
+                    <MudCard Outlined="true">
+                        <MudCardContent>
+                            <MudText Typo="Typo.subtitle1" HtmlTag="h3">@issue.Title</MudText>
+                            <MudText Typo="Typo.body2">@issue.Summary</MudText>
+                        </MudCardContent>
+                    </MudCard>
+                </ItemContent>
+            </MudTimelineItem>
+        }
+    </MudTimeline>
+</MudStack>
+
+@code {
+    private record Issue(DateOnly Date, string Title, string Summary);
+
+    private TimelineAlign _align = TimelineAlign.Default;
+    private bool _reverse;
+    private bool _modifiers = true;
+
+    private readonly Issue[] _issues =
+    [
+        new(new(2026, 1, 1), "Newsletter 41: the winter sky", "Orion returns, with a guide to spotting the Pleiades without a telescope, a star chart for January evenings and the dates of the members' viewing nights."),
+        new(new(2026, 2, 1), "Newsletter 42", "The dome repairs are finished."),
+        new(new(2026, 3, 1), "Newsletter 43: equinox night", "A late opening on 20 March with talks every hour and hot chocolate in the courtyard.")
+    ];
+}

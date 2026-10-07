@@ -1,0 +1,36 @@
+<MudText Typo="Typo.h6" HtmlTag="h3" GutterBottom="true">Harbour Library renovation</MudText>
+<MudTimeline TimelinePosition="TimelinePosition.Start" Style="max-width: 40rem">
+    @foreach (var milestone in _milestones)
+    {
+        var (color, label) = Describe(milestone.Status);
+        <MudTimelineItem Color="color" Variant="@(milestone.Status == Status.Planned ? Variant.Outlined : Variant.Filled)"
+                         Size="Size.Medium" Icon="@milestone.Icon" Elevation="0">
+            <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="2">
+                <MudText Typo="Typo.subtitle1" HtmlTag="h4">@milestone.Title</MudText>
+                <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="color">@label</MudChip>
+            </MudStack>
+            <MudText Typo="Typo.caption" Class="mud-text-secondary">@milestone.When</MudText>
+            <MudText Typo="Typo.body2" Class="mt-1">@milestone.Note</MudText>
+        </MudTimelineItem>
+    }
+</MudTimeline>
+
+@code {
+    private enum Status { Done, InProgress, Planned }
+    private record Milestone(string Title, string When, string Note, string Icon, Status Status);
+
+    private readonly Milestone[] _milestones =
+    [
+        new("Survey and design", "March to June 2025", "Structural survey of the 1904 reading room; designs approved by the town council.", Icons.Material.Outlined.Architecture, Status.Done),
+        new("Collections moved", "September 2025", "62,000 books boxed and moved to the temporary branch on Mill Lane.", Icons.Material.Outlined.LocalShipping, Status.Done),
+        new("Roof and skylights", "October 2025 to May 2026", "Slates replaced; the Victorian skylights are being restored off site.", Icons.Material.Outlined.Roofing, Status.InProgress),
+        new("Reopening", "Spring 2027", "Step-free entrance, a children's library and longer evening hours.", Icons.Material.Outlined.Celebration, Status.Planned)
+    ];
+
+    private static (Color Color, string Label) Describe(Status status) => status switch
+    {
+        Status.Done => (Color.Success, "Done"),
+        Status.InProgress => (Color.Warning, "In progress"),
+        _ => (Color.Default, "Planned")
+    };
+}

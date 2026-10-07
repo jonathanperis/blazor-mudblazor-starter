@@ -1,0 +1,75 @@
+<Playground Code="@Code">
+    <Preview>
+        <MudCarousel TData="object" ShowArrows="_showArrows" ArrowsPosition="_arrowsPosition" ShowBullets="_showBullets"
+                     BulletsPosition="_bulletsPosition" AutoCycle="_autoCycle" AutoCycleTime="TimeSpan.FromSeconds(_seconds)"
+                     EnableSwipeGesture="_swipe" ArrowsColor="_arrowsColor" BulletsColor="_bulletsColor" Style="width: 100%; height: 200px">
+            @foreach (var color in SlideColors)
+            {
+                <MudCarouselItem Color="color" Transition="_transition">
+                    <div class="d-flex align-center justify-center" style="height: 100%">
+                        <MudText Typo="Typo.h5" HtmlTag="p">@color slide</MudText>
+                    </div>
+                </MudCarouselItem>
+            }
+        </MudCarousel>
+    </Preview>
+    <Controls>
+        <MudSwitch @bind-Value="_showArrows" Label="Show arrows" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_showBullets" Label="Show bullets" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_autoCycle" Label="Auto-cycle" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_swipe" Label="Swipe gesture" Color="Color.Primary" />
+        <MudSlider @bind-Value="_seconds" Min="2" Max="10" Step="1" Disabled="!_autoCycle" Color="Color.Primary">Every @_seconds s</MudSlider>
+        <MudSelect @bind-Value="_arrowsPosition" Label="Arrows position" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in ArrowPositions) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_bulletsPosition" Label="Bullets position" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in BulletPositions) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_transition" Label="Transition" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Transitions) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect T="Color?" @bind-Value="_arrowsColor" Label="Arrows color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            <MudSelectItem T="Color?" Value="null">Not set (inherit)</MudSelectItem>
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem T="Color?" Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect T="Color?" @bind-Value="_bulletsColor" Label="Bullets color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            <MudSelectItem T="Color?" Value="null">Not set (slide color)</MudSelectItem>
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem T="Color?" Value="value">@value</MudSelectItem> }
+        </MudSelect>
+    </Controls>
+</Playground>
+
+@code {
+    private static readonly Color[] SlideColors = [Color.Primary, Color.Secondary, Color.Tertiary];
+    private static readonly Position[] ArrowPositions = [Position.Top, Position.Center, Position.Bottom];
+    private static readonly Position[] BulletPositions = [Position.Top, Position.Bottom];
+    // Custom needs your own CSS classes, so the playground offers the built-in transitions.
+    private static readonly Transition[] Transitions = [Transition.Slide, Transition.Fade, Transition.None];
+
+    private bool _showArrows = true;
+    private bool _showBullets = true;
+    private bool _autoCycle;
+    private bool _swipe = true;
+    private int _seconds = 5;
+    private Position _arrowsPosition = Position.Center;
+    private Position _bulletsPosition = Position.Bottom;
+    private Transition _transition = Transition.Slide;
+    private Color? _arrowsColor;
+    private Color? _bulletsColor;
+
+    // MudCarousel defaults: arrows, bullets, swipe and auto-cycle on, every 5 s; arrows Center, bullets Bottom.
+    private string Code => Snippet.Element("MudCarousel",
+    [
+        ("TData", "object"),
+        ("ShowArrows", _showArrows ? null : "false"),
+        ("ArrowsPosition", Snippet.Enum(_arrowsPosition, Position.Center)),
+        ("ShowBullets", _showBullets ? null : "false"),
+        ("BulletsPosition", Snippet.Enum(_bulletsPosition, Position.Bottom)),
+        ("AutoCycle", _autoCycle ? null : "false"),
+        ("AutoCycleTime", _autoCycle && _seconds != 5 ? $"TimeSpan.FromSeconds({_seconds})" : null),
+        ("EnableSwipeGesture", _swipe ? null : "false"),
+        ("ArrowsColor", _arrowsColor is { } arrows ? $"Color.{arrows}" : null),
+        ("BulletsColor", _bulletsColor is { } bullets ? $"Color.{bullets}" : null),
+        ("Style", "height: 200px")
+    ], "\n    " + Snippet.Element("MudCarouselItem", [("Color", "Color.Primary"), ("Transition", Snippet.Enum(_transition, Transition.Slide))], "…") + "\n    …\n");
+}

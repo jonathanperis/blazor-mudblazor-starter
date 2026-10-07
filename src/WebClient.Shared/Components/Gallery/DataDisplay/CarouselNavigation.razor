@@ -1,0 +1,22 @@
+<EnumMatrix TRow="Position" TColumn="Position" Caption="MudCarousel: ArrowsPosition (rows) × BulletsPosition (columns)"
+            RowValues="ArrowPositions" ColumnValues="BulletPositions">
+    <Cell>
+        <MudCarousel TData="object" AutoCycle="false" ArrowsPosition="@context.Row" BulletsPosition="@context.Column"
+                     ArrowsColor="Color.Primary" Style="width: 18rem; height: 150px">
+            @foreach (var slide in Slides)
+            {
+                <MudCarouselItem>
+                    <MudPaper Outlined="true" Square="true" Class="d-flex align-center justify-center" Style="height: 100%">
+                        <MudText Typo="Typo.subtitle2">@slide</MudText>
+                    </MudPaper>
+                </MudCarouselItem>
+            }
+        </MudCarousel>
+    </Cell>
+</EnumMatrix>
+
+@code {
+    private static readonly Position[] ArrowPositions = [Position.Top, Position.Center, Position.Bottom];
+    private static readonly Position[] BulletPositions = [Position.Top, Position.Bottom];
+    private static readonly string[] Slides = ["Platform 1", "Platform 2", "Platform 3"];
+}

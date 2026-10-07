@@ -1,0 +1,69 @@
+<div class="pa-4">
+    <MudRadioGroup @bind-Value="_mode" aria-label="Edit mode">
+        <MudRadio Value="DataGridEditMode.Form" Color="Color.Primary">Form (dialog)</MudRadio>
+        <MudRadio Value="DataGridEditMode.Inline" Color="Color.Primary">Inline</MudRadio>
+        <MudRadio Value="DataGridEditMode.Cell" Color="Color.Primary">Cell</MudRadio>
+    </MudRadioGroup>
+</div>
+
+@* @key rebuilds the grid when the mode changes, so no half-finished edit survives the switch. *@
+<MudDataGrid T="Loaf" @key="_mode" Items="_loaves" ReadOnly="false" EditMode="_mode" EditTrigger="DataGridEditTrigger.Manual"
+             CommittedItemChanges="CommitAsync" CanceledEditingItem="Discarded"
+             Dense="true" Bordered="true" Elevation="0" Culture="Invariant">
+    <Columns>
+        <PropertyColumn Property="loaf => loaf.Name" />
+        <PropertyColumn Property="loaf => loaf.PriceGbp" Title="Price (£)" Format="0.00" />
+        <PropertyColumn Property="loaf => loaf.DailyBatch" Title="Daily batch" />
+        <PropertyColumn Property="loaf => loaf.GlutenFree" Title="Gluten free" />
+        <TemplateColumn Title="Actions" Hidden="_mode == DataGridEditMode.Cell" Sortable="false" Editable="false">
+            <CellTemplate>
+                @if (context.IsEditing)
+                {
+                    <MudIconButton Icon="@Icons.Material.Outlined.Check" Size="Size.Small" Color="Color.Success" aria-label="@($"Save {context.Item.Name}")" OnClick="context.Actions.CommitEditingItemAsync" />
+                    <MudIconButton Icon="@Icons.Material.Outlined.Close" Size="Size.Small" aria-label="Discard changes" OnClick="context.Actions.CancelEditingItemAsync" />
+                }
+                else
+                {
+                    <MudIconButton Icon="@Icons.Material.Outlined.Edit" Size="Size.Small" aria-label="@($"Edit {context.Item.Name}")" OnClick="context.Actions.StartEditingItemAsync" />
+                }
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+<MudText Typo="Typo.body2" Class="pa-4" role="status">@_status</MudText>
+
+@code {
+    private sealed class Loaf
+    {
+        public string Name { get; set; } = "";
+        public decimal PriceGbp { get; set; }
+        public int DailyBatch { get; set; }
+        public bool GlutenFree { get; set; }
+    }
+
+    private static readonly CultureInfo Invariant = CultureInfo.InvariantCulture;
+    private DataGridEditMode _mode = DataGridEditMode.Form;
+    private string _status = "Choose a mode, then edit a loaf.";
+
+    private readonly List<Loaf> _loaves =
+    [
+        new() { Name = "Country sourdough", PriceGbp = 4.80m, DailyBatch = 60 },
+        new() { Name = "Seeded rye", PriceGbp = 4.20m, DailyBatch = 24 },
+        new() { Name = "Buckwheat loaf", PriceGbp = 5.10m, DailyBatch = 12, GlutenFree = true }
+    ];
+
+    // Form and Inline pass the edited copy; returning KeepOpen leaves the editor open and the original untouched.
+    private Task<DataGridEditFormAction> CommitAsync(Loaf loaf)
+    {
+        string? problem =
+            string.IsNullOrWhiteSpace(loaf.Name) ? "A loaf needs a name."
+            : loaf.PriceGbp is <= 0 or > 50 ? "Price must be between £0.01 and £50."
+            : loaf.DailyBatch is < 1 or > 500 ? "Daily batch must be between 1 and 500."
+            : null;
+        _status = problem ?? $"Saved {loaf.Name}.";
+        return Task.FromResult(problem is null ? DataGridEditFormAction.Close : DataGridEditFormAction.KeepOpen);
+    }
+
+    private void Discarded(Loaf loaf) => _status = $"Discarded changes to {loaf.Name}.";
+}

@@ -1,0 +1,44 @@
+<MudCarousel ItemsSource="_quotes" @bind-SelectedIndex="_index" AutoCycle="false" Style="height: 220px">
+    <ItemTemplate>
+        <MudStack Justify="Justify.Center" AlignItems="AlignItems.Center" Class="px-16" Style="height: 100%; text-align: center">
+            <MudText Typo="Typo.h6" HtmlTag="p" Style="font-family: var(--font-serif); font-weight: 400">“@context”</MudText>
+        </MudStack>
+    </ItemTemplate>
+</MudCarousel>
+
+<MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3" Class="pa-4">
+    <MudSelect T="int" @bind-Value="_index" Label="Go to review" Variant="Variant.Outlined" Margin="Margin.Dense" Style="max-width: 14rem"
+               Disabled="_quotes.Count == 0">
+        @for (var i = 0; i < _quotes.Count; i++)
+        {
+            <MudSelectItem Value="i">Review @(i + 1)</MudSelectItem>
+        }
+    </MudSelect>
+    <MudButton Variant="Variant.Outlined" StartIcon="@Icons.Material.Outlined.Add" OnClick="Add" Disabled="_spare.Count == 0">Add a review</MudButton>
+    <MudButton Variant="Variant.Text" Color="Color.Error" StartIcon="@Icons.Material.Outlined.Delete" OnClick="RemoveCurrent"
+               Disabled="_quotes.Count <= 1">Remove this review</MudButton>
+</MudStack>
+
+@code {
+    private readonly List<string> _quotes =
+    [
+        "The cardamom buns are worth the early start.",
+        "Friendly staff and the best rye in town.",
+        "They saved me a loaf when I was late. Twice."
+    ];
+
+    private readonly Queue<string> _spare = new(["The focaccia sells out by ten, so go early.", "A bakery that still writes its menu in chalk."]);
+    private int _index;
+
+    private void Add()
+    {
+        _quotes.Add(_spare.Dequeue());
+        _index = _quotes.Count - 1;
+    }
+
+    private void RemoveCurrent()
+    {
+        _quotes.RemoveAt(_index);
+        _index = Math.Min(_index, _quotes.Count - 1);
+    }
+}

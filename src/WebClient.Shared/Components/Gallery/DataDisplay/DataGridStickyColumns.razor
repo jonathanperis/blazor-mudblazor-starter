@@ -1,0 +1,34 @@
+<MudDataGrid Items="_stations" HorizontalScrollbar="true" Bordered="true" Dense="true" Elevation="0">
+    <Columns>
+        <PropertyColumn Property="station => station.Name" Title="Station" StickyLeft="true" HeaderStyle="min-width: 11rem" />
+        @for (var month = 0; month < 12; month++)
+        {
+            var index = month;
+            <TemplateColumn Title="@Months[index]" HeaderStyle="min-width: 5rem">
+                <CellTemplate>@context.Item.RainMm[index] mm</CellTemplate>
+            </TemplateColumn>
+        }
+        <TemplateColumn Title="Report" StickyRight="true" Sortable="false">
+            <CellTemplate>
+                <MudIconButton Icon="@Icons.Material.Outlined.Description" Size="Size.Small" OnClick="() => _opened = context.Item.Name"
+                               aria-label="@($"Open the rainfall report for {context.Item.Name}")" />
+            </CellTemplate>
+        </TemplateColumn>
+    </Columns>
+</MudDataGrid>
+
+<MudText Typo="Typo.body2" Class="pa-4" role="status">@(_opened is null ? "Scroll sideways: the station and report columns stay pinned." : $"Opened the report for {_opened}.")</MudText>
+
+@code {
+    private record Station(string Name, int[] RainMm);
+
+    private static readonly string[] Months = CultureInfo.InvariantCulture.DateTimeFormat.AbbreviatedMonthNames[..12];
+    private string? _opened;
+
+    private readonly Station[] _stations =
+    [
+        new("Ben Alder ridge", [210, 160, 175, 98, 84, 90, 101, 125, 170, 220, 230, 240]),
+        new("Loch Ossian shore", [180, 132, 140, 80, 70, 76, 88, 104, 140, 190, 196, 205]),
+        new("Harbour wall", [96, 70, 72, 51, 49, 52, 58, 70, 82, 110, 118, 112])
+    ];
+}
