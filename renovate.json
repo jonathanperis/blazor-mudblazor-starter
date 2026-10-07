@@ -1,4 +1,31 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-  "extends": ["github>jonathanperis/.github"]
+  "extends": [
+    "github>jonathanperis/.github"
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "description": "Container images run inside workflow steps",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/.+\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "(?<depName>rhysd/actionlint|aquasec/trivy):(?<currentValue>[0-9][0-9.]*)@(?<currentDigest>sha256:[a-f0-9]{64})"
+      ],
+      "datasourceTemplate": "docker"
+    },
+    {
+      "customType": "regex",
+      "description": "Bicep CLI used to compile infra/",
+      "managerFilePatterns": [
+        "/^\\.github/workflows/.+\\.ya?ml$/"
+      ],
+      "matchStrings": [
+        "az bicep install --version (?<currentValue>v[0-9.]+)"
+      ],
+      "depNameTemplate": "Azure/bicep",
+      "datasourceTemplate": "github-releases"
+    }
+  ]
 }

@@ -24,6 +24,7 @@ resource webApp 'Microsoft.Web/sites@2024-04-01' = {
       healthCheckPath: '/healthz/ready'
       http20Enabled: true
       minTlsVersion: '1.2'
+      scmMinTlsVersion: '1.2'
       ftpsState: 'Disabled'
       appSettings: [
         {
@@ -39,8 +40,18 @@ resource webApp 'Microsoft.Web/sites@2024-04-01' = {
           value: 'https://ghcr.io'
         }
         {
+          // App Service storage at /home survives restarts, so SQLite and data-protection keys stay together.
           name: 'WEBSITES_ENABLE_APP_SERVICE_STORAGE'
-          value: 'false'
+          value: 'true'
+        }
+        {
+          name: 'Learning__DataDirectory'
+          value: '/home/data'
+        }
+        {
+          // App Service terminates TLS; trust its forwarded headers so cookies are marked Secure.
+          name: 'ASPNETCORE_FORWARDEDHEADERS_ENABLED'
+          value: 'true'
         }
         {
           name: 'APPLICATIONINSIGHTS_CONNECTION_STRING'
@@ -48,6 +59,23 @@ resource webApp 'Microsoft.Web/sites@2024-04-01' = {
         }
       ]
     }
+  }
+}
+
+// Deployments pull a container image; disable basic-auth publishing credentials for FTP and SCM.
+resource ftpCredentials 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2024-04-01' = {
+  parent: webApp
+  name: 'ftp'
+  properties: {
+    allow: false
+  }
+}
+
+resource scmCredentials 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2024-04-01' = {
+  parent: webApp
+  name: 'scm'
+  properties: {
+    allow: false
   }
 }
 

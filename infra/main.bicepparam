@@ -2,6 +2,7 @@ using './main.bicep'
 
 param location = 'brazilsouth'
 param projectName = 'github-jonathanperis'
+// Replace with the verified image@sha256 digest from the Main Release run summary before deploying.
 param containerImage = 'ghcr.io/jonathanperis/blazor-mudblazor-starter:latest'
 param appServicePlanName = 'github-jonathanperis'
 param appServicePlanSku = 'B1'

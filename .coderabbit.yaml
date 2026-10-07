@@ -27,37 +27,45 @@ reviews:
     - "!**/package-lock.json"
     - "!**/bun.lock"
     - "!**/bun.lockb"
-    - "!**/yarn.lock"
-    - "!**/Cargo.lock"
-    - "!**/*.snap"
+    - "!**/packages.lock.json"
+    - "!**/Migrations/*.Designer.cs"
+    - "!infra/main.json"
 
   path_instructions:
     - path: "**/*.cs"
       instructions: |
-        Follow .NET coding conventions. Flag missing async/await,
-        ConfigureAwait(false) in library code, IDisposable patterns,
-        and any nullable reference annotation gaps.
-    - path: "**/*.tsx"
+        Follow .NET coding conventions. Flag missing async/await, unobserved
+        tasks, CancellationTokenSource or IDisposable leaks, and nullable
+        annotation gaps. Do not suggest ConfigureAwait(false) in Blazor
+        components or their services: they must resume on the renderer's
+        synchronization context.
+    - path: "**/*.razor"
       instructions: |
-        Flag missing key props in lists, useEffect dependency issues,
-        accessibility gaps (alt, aria-*), and any prop drilling that
-        could be replaced with context.
-    - path: "**/*.go"
+        Read AGENTS.md contracts. Flag async work not cancelled on reset or
+        disposal, stale results that can overwrite newer state, missing
+        StateHasChanged/InvokeAsync after background updates, JS interop
+        failures that can break the shell, absolute "/" links in shared labs
+        (they break under the GitHub Pages base path), server-only APIs in
+        src/WebClient.Shared, and accessibility gaps: labels, accessible
+        names, focus, and live-region noise.
+    - path: "**/*.{astro,ts,mjs}"
       instructions: |
-        Flag missing error checks, channel leaks, goroutine leaks,
-        and any context cancellation issues.
-    - path: "**/*.rs"
-      instructions: |
-        Flag unwrap()/expect() in non-test code, missing Drop impls,
-        and any unnecessary allocations.
+        Flag links that ignore the site base path, inline scripts that break
+        without JavaScript, duplicate IDs, and missing accessible names.
     - path: "**/*.py"
       instructions: |
-        Flag bare except clauses, mutable default arguments, and
-        any synchronous I/O in async functions.
+        Flag bare except clauses, mutable default arguments, and checks that
+        can pass without verifying anything (silent skips, broad regexes).
     - path: ".github/workflows/**/*.yml"
       instructions: |
         Flag any user-controlled input interpolated directly in
         run: blocks (workflow injection risk). Recommend env: + quoting.
+        Require full-SHA action pins, least-privilege permissions per job,
+        and timeouts.
+    - path: "infra/**/*.bicep"
+      instructions: |
+        Historical reference templates. Require infra/main.json to be
+        regenerated with the pinned Bicep version in the same change.
 
 chat:
   auto_reply: true
