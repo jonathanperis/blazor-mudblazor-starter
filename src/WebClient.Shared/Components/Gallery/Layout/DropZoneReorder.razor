@@ -1,0 +1,36 @@
+@using MudBlazor.Utilities
+
+<MudGrid Spacing="4">
+    <MudItem xs="12" sm="6">
+        <MudDropContainer T="Stop" Items="_stops" ItemsSelector="(_, _) => true" ItemDropped="OnDropped">
+            <ChildContent>
+                <MudPaper Outlined="true" Class="pa-2">
+                    <MudDropZone T="Stop" Identifier="route" AllowReorder="true" Class="d-flex flex-column gap-1" />
+                </MudPaper>
+            </ChildContent>
+            <ItemRenderer>
+                <MudPaper Elevation="0" Class="d-flex align-center gap-2 pa-2 mud-background-gray cursor-grab">
+                    <MudIcon Icon="@Icons.Material.Outlined.DragIndicator" Size="Size.Small" />
+                    <MudText Typo="Typo.body2">@context.Name</MudText>
+                </MudPaper>
+            </ItemRenderer>
+        </MudDropContainer>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudText Typo="Typo.subtitle2" HtmlTag="h3">Saved order</MudText>
+        <MudText Typo="Typo.body2" role="status">@string.Join(" → ", _stops.OrderBy(stop => stop.Order).Select(stop => stop.Name))</MudText>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private sealed class Stop(string name, int order)
+    {
+        public string Name { get; } = name;
+        public int Order { get; set; } = order;
+    }
+
+    private readonly List<Stop> _stops = [new("Harbour", 0), new("Old Town", 1), new("Market Square", 2), new("University", 3), new("Ridgeline", 4)];
+
+    // UpdateOrder moves the dropped item to IndexInZone and renumbers the Order of the others.
+    private void OnDropped(MudItemDropInfo<Stop> drop) => _stops.UpdateOrder(drop, stop => stop.Order);
+}

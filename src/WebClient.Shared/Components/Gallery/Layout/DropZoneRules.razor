@@ -1,0 +1,43 @@
+<MudDropContainer T="Delivery" Items="_deliveries" ItemsSelector="(delivery, zone) => delivery.Place == zone" ItemDropped="OnDropped"
+                  CanDropClass="mud-border-success" NoDropClass="mud-border-error" ApplyDropClassesOnDragStarted="true">
+    <ChildContent>
+        <MudStack Spacing="3">
+            <MudPaper Outlined="true" Class="pa-3">
+                <MudText Typo="Typo.subtitle2" HtmlTag="h3" Class="mb-2">Loading bay</MudText>
+                <MudDropZone T="Delivery" Identifier="Bay" CanDrop="_ => false" Class="d-flex flex-wrap gap-2" Style="min-height: 3rem" />
+            </MudPaper>
+            <MudStack Row="true" Wrap="Wrap.Wrap" Spacing="3">
+                <div class="flex-grow-1">
+                    <MudText Typo="Typo.subtitle2" HtmlTag="h3" Class="mb-1">Cold store: chilled only</MudText>
+                    <MudDropZone T="Delivery" Identifier="Cold" CanDrop="delivery => delivery.Chilled"
+                                 Class="d-flex flex-wrap gap-2 pa-3 rounded border-2 border-dashed mud-border-lines-default" Style="min-height: 5rem" />
+                </div>
+                <div class="flex-grow-1">
+                    <MudText Typo="Typo.subtitle2" HtmlTag="h3" Class="mb-1">Dry store: ambient only</MudText>
+                    <MudDropZone T="Delivery" Identifier="Dry" CanDrop="delivery => !delivery.Chilled"
+                                 Class="d-flex flex-wrap gap-2 pa-3 rounded border-2 border-dashed mud-border-lines-default" Style="min-height: 5rem" />
+                </div>
+            </MudStack>
+        </MudStack>
+    </ChildContent>
+    <ItemRenderer>
+        <MudChip T="string" Icon="@(context.Chilled ? Icons.Material.Outlined.AcUnit : Icons.Material.Outlined.Inventory2)"
+                 Variant="Variant.Outlined" Class="cursor-grab ma-0">@context.Name@(context.Chilled ? " (chilled)" : "")</MudChip>
+    </ItemRenderer>
+</MudDropContainer>
+
+@code {
+    private sealed class Delivery(string name, bool chilled)
+    {
+        public string Name { get; } = name;
+        public bool Chilled { get; } = chilled;
+        public string Place { get; set; } = "Bay";
+    }
+
+    private readonly List<Delivery> _deliveries =
+    [
+        new("Butter", true), new("Rye flour", false), new("Cream", true), new("Sugar", false), new("Yeast", true), new("Oats", false)
+    ];
+
+    private static void OnDropped(MudItemDropInfo<Delivery> drop) => drop.Item!.Place = drop.DropzoneIdentifier;
+}

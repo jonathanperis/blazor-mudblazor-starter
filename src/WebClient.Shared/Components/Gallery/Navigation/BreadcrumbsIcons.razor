@@ -1,0 +1,18 @@
+<MudStack Spacing="4">
+    <MudBreadcrumbs Items="_trail" />
+    <MudBreadcrumbs Items="_trail">
+        <ItemTemplate Context="item">
+            <MudChip T="string" Href="@item.Href" Disabled="item.Disabled" Icon="@item.Icon" Size="Size.Small"
+                     Variant="@(item.Disabled ? Variant.Filled : Variant.Outlined)">@item.Text</MudChip>
+        </ItemTemplate>
+    </MudBreadcrumbs>
+</MudStack>
+
+@code {
+    private readonly List<BreadcrumbItem> _trail =
+    [
+        new("Home", href: "components/breadcrumbs", icon: Icons.Material.Outlined.Home),
+        new("Lines", href: "components/breadcrumbs", icon: Icons.Material.Outlined.Route),
+        new("Line 14", href: null, disabled: true, icon: Icons.Material.Outlined.DirectionsBus)
+    ];
+}

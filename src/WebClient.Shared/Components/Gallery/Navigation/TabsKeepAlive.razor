@@ -1,0 +1,17 @@
+@* The text fields are deliberately unbound: their text lives only in the component, so it survives only if the panel does. *@
+<MudGrid Spacing="6">
+    @foreach (var keepAlive in new[] { false, true })
+    {
+        <MudItem xs="12" md="6">
+            <MudText Typo="Typo.overline" HtmlTag="p" Class="mb-2">KeepPanelsAlive="@(keepAlive ? "true" : "false")"</MudText>
+            <MudTabs KeepPanelsAlive="keepAlive" Outlined="true" Rounded="true" ApplyEffectsToContainer="true" TabPanelsClass="pa-4">
+                <MudTabPanel Text="Draft">
+                    <MudTextField T="string" Label="Draft note" Variant="Variant.Outlined" Lines="2" />
+                </MudTabPanel>
+                <MudTabPanel Text="Preview">
+                    <MudText Typo="Typo.body2">Now go back to Draft.</MudText>
+                </MudTabPanel>
+            </MudTabs>
+        </MudItem>
+    }
+</MudGrid>

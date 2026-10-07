@@ -1,0 +1,16 @@
+<MudStack Spacing="4">
+    <MudSelect @bind-Value="_tag" Label="HtmlTag" Variant="Variant.Outlined" Margin="Margin.Dense" Style="max-width: 12rem">
+        @foreach (var tag in new[] { "p", "blockquote", "address", "mark", "code", "small" })
+        {
+            <MudSelectItem Value="tag">&lt;@tag&gt;</MudSelectItem>
+        }
+    </MudSelect>
+    <MudPaper Outlined="true" Class="pa-4">
+        <MudElement HtmlTag="@_tag" Class="ma-0">Harbour Lights Bookshop, 12 Quay Street</MudElement>
+    </MudPaper>
+    <MudText Typo="Typo.body2" role="status">Rendered as &lt;@_tag&gt;.</MudText>
+</MudStack>
+
+@code {
+    private string _tag = "address";
+}

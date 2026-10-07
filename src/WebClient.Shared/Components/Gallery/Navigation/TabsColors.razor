@@ -1,0 +1,13 @@
+<MudGrid Spacing="0">
+    @foreach (var color in Enum.GetValues<Color>())
+    {
+        <MudItem xs="12" md="6" Class="pa-4 border-b border-r border-solid mud-border-lines-default">
+            <MudText Typo="Typo.overline" HtmlTag="p" Class="mb-2">Color.@color</MudText>
+            <MudTabs Color="color" Rounded="true" MinimumTabWidth="96px">
+                <MudTabPanel Text="Arrivals" />
+                <MudTabPanel Text="Departures" />
+                <MudTabPanel Text="Delays" />
+            </MudTabs>
+        </MudItem>
+    }
+</MudGrid>

@@ -1,0 +1,63 @@
+<Playground Code="@Code">
+    <Preview>
+        <div style="width: min(100%, 34rem)">
+            <MudTabs Position="_position" Color="_color" SliderColor="_sliderColor" Centered="_centered" Outlined="_outlined" Rounded="_rounded"
+                     Border="_border" Elevation="_elevation" ApplyEffectsToContainer="_applyToContainer" MinimumTabWidth="96px" TabPanelsClass="pa-4">
+                <MudTabPanel Text="Recipe" Icon="@Icons.Material.Outlined.MenuBook">
+                    <MudText Typo="Typo.body2">500 g strong flour, 350 g water, 100 g starter, 10 g salt.</MudText>
+                </MudTabPanel>
+                <MudTabPanel Text="Method" Icon="@Icons.Material.Outlined.FormatListNumbered">
+                    <MudText Typo="Typo.body2">Mix, rest, fold four times, shape, then prove overnight in the cold.</MudText>
+                </MudTabPanel>
+                <MudTabPanel Text="Notes" Icon="@Icons.Material.Outlined.StickyNote2">
+                    <MudText Typo="Typo.body2">Bake at 250 °C in a covered pot for 20 minutes, then 20 uncovered.</MudText>
+                </MudTabPanel>
+            </MudTabs>
+        </div>
+    </Preview>
+    <Controls>
+        <MudSelect @bind-Value="_position" Label="Position" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in new[] { Position.Top, Position.Bottom, Position.Start, Position.End }) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_color" Label="Color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_sliderColor" Label="Slider color" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in Enum.GetValues<Color>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSelect @bind-Value="_elevation" Label="Elevation" Variant="Variant.Outlined" Margin="Margin.Dense">
+            @foreach (var value in new[] { 0, 1, 2, 4, 8 }) { <MudSelectItem Value="value">@value</MudSelectItem> }
+        </MudSelect>
+        <MudSwitch @bind-Value="_centered" Label="Centered" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_outlined" Label="Outlined" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_rounded" Label="Rounded" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_border" Label="Border" Color="Color.Primary" />
+        <MudSwitch @bind-Value="_applyToContainer" Label="Effects on panels too" Color="Color.Primary" />
+    </Controls>
+</Playground>
+
+@code {
+    private Position _position = Position.Top;
+    private Color _color = Color.Default;
+    private Color _sliderColor = Color.Inherit;
+    private int _elevation;
+    private bool _centered;
+    private bool _outlined = true;
+    private bool _rounded;
+    private bool _border;
+    private bool _applyToContainer;
+
+    // MudTabs defaults: Position.Top, Color.Default, SliderColor.Inherit, Elevation 0, every switch false.
+    private string Code => Snippet.Element("MudTabs",
+    [
+        ("Position", Snippet.Enum(_position, Position.Top)),
+        ("Color", Snippet.Enum(_color, Color.Default)),
+        ("SliderColor", Snippet.Enum(_sliderColor, Color.Inherit)),
+        ("Elevation", _elevation == 0 ? null : _elevation.ToString()),
+        ("Centered", Snippet.Flag(_centered)),
+        ("Outlined", Snippet.Flag(_outlined)),
+        ("Rounded", Snippet.Flag(_rounded)),
+        ("Border", Snippet.Flag(_border)),
+        ("ApplyEffectsToContainer", Snippet.Flag(_applyToContainer))
+    ], "\n    <MudTabPanel Text=\"Recipe\">…</MudTabPanel>\n    <MudTabPanel Text=\"Method\">…</MudTabPanel>\n");
+}

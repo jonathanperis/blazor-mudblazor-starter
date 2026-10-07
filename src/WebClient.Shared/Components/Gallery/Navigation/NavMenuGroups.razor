@@ -1,0 +1,35 @@
+<MudGrid Spacing="6">
+    <MudItem xs="12" sm="6">
+        <MudPaper Outlined="true" Class="py-2">
+            <MudNavMenu>
+                <MudNavLink Icon="@Icons.Material.Outlined.Storefront" OnClick="@(() => _selected = "Shop front")">Shop front</MudNavLink>
+                <MudNavGroup Title="Catalogue" Icon="@Icons.Material.Outlined.MenuBook" @bind-Expanded="_catalogueOpen">
+                    <MudNavGroup Title="Fiction" Expanded="true">
+                        <MudNavLink OnClick="@(() => _selected = "Fiction › Crime and mystery")">Crime and mystery</MudNavLink>
+                        <MudNavLink OnClick="@(() => _selected = "Fiction › Historical")">Historical</MudNavLink>
+                    </MudNavGroup>
+                    <MudNavGroup Title="Non-fiction">
+                        <MudNavLink OnClick="@(() => _selected = "Non-fiction › Travel writing")">Travel writing</MudNavLink>
+                        <MudNavLink OnClick="@(() => _selected = "Non-fiction › Natural history")">Natural history</MudNavLink>
+                    </MudNavGroup>
+                    <MudNavLink Disabled="true">Rare books (opens in spring)</MudNavLink>
+                </MudNavGroup>
+                <MudNavGroup Title="Events" Icon="@Icons.Material.Outlined.Event">
+                    <MudNavLink OnClick="@(() => _selected = "Events › Author readings")">Author readings</MudNavLink>
+                    <MudNavLink OnClick="@(() => _selected = "Events › Book club")">Book club</MudNavLink>
+                </MudNavGroup>
+            </MudNavMenu>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" sm="6">
+        <MudStack Spacing="3">
+            <MudText Typo="Typo.body2" role="status">Selected: <strong>@_selected</strong></MudText>
+            <MudSwitch @bind-Value="_catalogueOpen" Label="Catalogue group expanded" Color="Color.Primary" />
+        </MudStack>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private bool _catalogueOpen = true;
+    private string _selected = "Shop front";
+}

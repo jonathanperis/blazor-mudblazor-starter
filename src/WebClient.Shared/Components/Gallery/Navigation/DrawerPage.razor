@@ -1,0 +1,10 @@
+@page "/components/drawer"
+@attribute [ComponentPage("Drawer", GalleryGroup.Navigation, "A side panel for navigation or secondary content. Choose the variant by how much room you have: persistent and mini push the content aside, temporary floats above it, responsive switches between the two at a breakpoint.", MudDocs = "drawer", Types = ["MudDrawer", "MudDrawerContainer", "MudDrawerHeader", "MudLayout"])]
+
+<ComponentPageFrame Page="GetType()">
+    <Example Of="typeof(DrawerPersistent)" Title="Persistent drawer" Description="Opens beside the content and pushes it aside. Every preview here sits in its own MudDrawerContainer with Fixed set to false, so it never touches this site's own drawer." />
+    <Example Of="typeof(DrawerMini)" Title="Mini drawer" Description="Closed, the mini variant keeps a strip of icons; open, it shows the labels. OpenMiniOnHover expands it while the pointer rests on it." />
+    <Example Of="typeof(DrawerTemporary)" Title="Temporary drawer, anchors and overlay" Description="A temporary drawer floats above the content from any edge. The overlay darkens the rest; OverlayAutoClose decides whether a click on it closes the drawer." />
+    <Example Of="typeof(DrawerClipModes)" Title="Clip modes in a layout" Description="Inside a MudLayout with an app bar, ClipMode decides whether the drawer starts below the bar. The default variant, Responsive, behaves like this persistent drawer above its Breakpoint and like a temporary one below it: this site's own drawer is responsive, so narrow the window to watch it switch." PreviewClass="example-preview-flush" />
+    <Example Of="typeof(DrawerPlayground)" Title="Playground" Description="Variant, anchor, size and color of a drawer in a contained preview, with the markup they produce." PreviewClass="example-preview-flush" />
+</ComponentPageFrame>

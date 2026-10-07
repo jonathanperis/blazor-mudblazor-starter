@@ -1,0 +1,31 @@
+<MudGrid>
+    <MudItem xs="12" md="8">
+        <MudPaper Outlined="true" Class="pa-4">
+            <MudText Typo="Typo.subtitle1" HtmlTag="h3" GutterBottom="true">Reading room today</MudText>
+            <MudGrid Spacing="3">
+                @foreach (var (label, value) in Figures)
+                {
+                    <MudItem xs="6" sm="3">
+                        <MudPaper Outlined="true" Class="pa-3">
+                            <MudText Typo="Typo.h5" HtmlTag="p">@value</MudText>
+                            <MudText Typo="Typo.caption">@label</MudText>
+                        </MudPaper>
+                    </MudItem>
+                }
+            </MudGrid>
+        </MudPaper>
+    </MudItem>
+    <MudItem xs="12" md="4">
+        <MudPaper Outlined="true" Class="pa-4 mud-height-full">
+            <MudText Typo="Typo.subtitle1" HtmlTag="h3" GutterBottom="true">Next talk</MudText>
+            <MudText Typo="Typo.body2">“Mapping the coastline, 1890–1910”, 16:00 in the map room.</MudText>
+        </MudPaper>
+    </MudItem>
+</MudGrid>
+
+@code {
+    private static readonly (string Label, string Value)[] Figures =
+    [
+        ("Visitors", "142"), ("Seats free", "18"), ("Requests", "37"), ("Returns", "61")
+    ];
+}

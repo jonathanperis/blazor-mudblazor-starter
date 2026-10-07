@@ -1,0 +1,19 @@
+<MudGrid Spacing="0">
+    @foreach (var position in new[] { Position.Top, Position.Bottom, Position.Left, Position.Right, Position.Start, Position.End })
+    {
+        <MudItem xs="12" md="6" Class="pa-4 border-b border-r border-solid mud-border-lines-default">
+            <MudText Typo="Typo.overline" HtmlTag="p" Class="mb-2">Position.@position</MudText>
+            <MudTabs Position="position" Outlined="true" Border="true" MinimumTabWidth="96px" TabPanelsClass="pa-4" Style="min-height: 9.5rem">
+                <MudTabPanel Text="Mon">
+                    <MudText Typo="Typo.body2">Sourdough, rye and seeded loaves.</MudText>
+                </MudTabPanel>
+                <MudTabPanel Text="Tue">
+                    <MudText Typo="Typo.body2">Croissants and pain aux raisins.</MudText>
+                </MudTabPanel>
+                <MudTabPanel Text="Wed">
+                    <MudText Typo="Typo.body2">Focaccia with rosemary and sea salt.</MudText>
+                </MudTabPanel>
+            </MudTabs>
+        </MudItem>
+    }
+</MudGrid>

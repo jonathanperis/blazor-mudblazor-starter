@@ -1,0 +1,29 @@
+<MudPaper Outlined="true" Height="18rem" Class="overflow-hidden" Style="position: relative">
+    <MudDrawerContainer Class="mud-height-full">
+        @* Breakpoint.None keeps the mini behaviour at every window size. *@
+        <MudDrawer @bind-Open="_open" Variant="DrawerVariant.Mini" OpenMiniOnHover="_openOnHover" Breakpoint="Breakpoint.None"
+                   Fixed="false" Elevation="0" Class="border-r border-solid mud-border-lines-default">
+            <MudNavMenu>
+                <MudNavLink Icon="@Icons.Material.Outlined.Dashboard" OnClick="() => _page = Pages[0]">@Pages[0]</MudNavLink>
+                <MudNavLink Icon="@Icons.Material.Outlined.Inventory2" OnClick="() => _page = Pages[1]">@Pages[1]</MudNavLink>
+                <MudNavLink Icon="@Icons.Material.Outlined.LocalShipping" OnClick="() => _page = Pages[2]">@Pages[2]</MudNavLink>
+                <MudNavLink Icon="@Icons.Material.Outlined.Insights" OnClick="() => _page = Pages[3]">@Pages[3]</MudNavLink>
+            </MudNavMenu>
+        </MudDrawer>
+        <div class="pa-4">
+            <MudStack Row="true" Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="3">
+                <MudButton Variant="Variant.Outlined" OnClick="() => _open = !_open" aria-expanded="@(_open ? "true" : "false")">@(_open ? "Collapse" : "Expand")</MudButton>
+                <MudSwitch @bind-Value="_openOnHover" Label="Open on hover" Color="Color.Primary" />
+            </MudStack>
+            <MudText Typo="Typo.h6" HtmlTag="h3" Class="mt-4">@_page</MudText>
+            <MudText Typo="Typo.body2">Collapsed, the link text is hidden visually but stays available to screen readers.</MudText>
+        </div>
+    </MudDrawerContainer>
+</MudPaper>
+
+@code {
+    private static readonly string[] Pages = ["Overview", "Flour and stock", "Deliveries", "Weekly sales"];
+    private bool _open;
+    private bool _openOnHover = true;
+    private string _page = Pages[0];
+}

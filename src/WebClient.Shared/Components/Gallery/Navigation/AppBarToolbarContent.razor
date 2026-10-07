@@ -1,0 +1,21 @@
+<MudAppBar Fixed="false" Color="Color.Transparent" Elevation="0">
+    <MudIcon Icon="@Icons.Material.Outlined.DirectionsBus" Color="Color.Primary" Class="mr-2" />
+    <MudText Typo="Typo.h6" HtmlTag="span">Northline Transit</MudText>
+    <MudChip T="string" Size="Size.Small" Variant="Variant.Outlined" Color="Color.Success" Icon="@Icons.Material.Outlined.CheckCircle" Class="ml-4 d-none d-md-flex">All lines running</MudChip>
+    <MudSpacer />
+    <MudTextField @bind-Value="_stop" Placeholder="Find a stop" aria-label="Find a stop" Variant="Variant.Outlined" Margin="Margin.Dense"
+                  Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" Class="mx-2 flex-grow-0" Style="width: 15rem" />
+    <MudBadge Content="_unread" Visible="_unread > 0" Color="Color.Error" Overlap="true" Class="mx-2">
+        <MudIconButton Icon="@Icons.Material.Outlined.Notifications" OnClick="() => _unread = 0" aria-label="@($"Notifications, {_unread} unread")" />
+    </MudBadge>
+    <MudMenu Icon="@Icons.Material.Outlined.AccountCircle" AriaLabel="Account" AnchorOrigin="Origin.BottomRight" TransformOrigin="Origin.TopRight">
+        <MudMenuItem Icon="@Icons.Material.Outlined.Person">Profile</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.Settings">Control room settings</MudMenuItem>
+        <MudMenuItem Icon="@Icons.Material.Outlined.Logout">Sign out</MudMenuItem>
+    </MudMenu>
+</MudAppBar>
+
+@code {
+    private string _stop = "";
+    private int _unread = 3;
+}
