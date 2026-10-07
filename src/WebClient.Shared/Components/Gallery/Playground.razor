@@ -1,0 +1,12 @@
+@* A live component beside its controls, with the markup those controls produce. *@
+<div class="playground">
+    <div class="playground-stage">@Preview</div>
+    <div class="playground-controls" role="group" aria-label="Parameters">@Controls</div>
+    <div class="playground-code"><CodeBlock Source="@Code" Label="Generated markup" /></div>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public RenderFragment Preview { get; set; } = null!;
+    [Parameter, EditorRequired] public RenderFragment Controls { get; set; } = null!;
+    [Parameter, EditorRequired] public string Code { get; set; } = "";
+}

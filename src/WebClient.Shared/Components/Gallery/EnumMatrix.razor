@@ -1,0 +1,39 @@
+@typeparam TRow where TRow : struct, Enum
+@typeparam TColumn where TColumn : struct, Enum
+@* Every combination of two enum parameters. Row and column headers name the values. *@
+<div class="matrix-scroll" role="region" aria-label="@Caption" tabindex="0">
+    <table class="matrix">
+        <caption>@Caption</caption>
+        <thead>
+            <tr>
+                <th scope="col"><span class="matrix-axis">@typeof(TRow).Name ↓ · @typeof(TColumn).Name →</span></th>
+                @foreach (var column in Columns)
+                {
+                    <th scope="col">@column</th>
+                }
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var row in Rows)
+            {
+                <tr>
+                    <th scope="row">@row</th>
+                    @foreach (var column in Columns)
+                    {
+                        <td>@Cell((row, column))</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public RenderFragment<(TRow Row, TColumn Column)> Cell { get; set; } = null!;
+    [Parameter] public string Caption { get; set; } = "";
+    /// <summary>Values to show; defaults to every defined value.</summary>
+    [Parameter] public IEnumerable<TRow>? RowValues { get; set; }
+    [Parameter] public IEnumerable<TColumn>? ColumnValues { get; set; }
+    private IEnumerable<TRow> Rows => RowValues ?? Enum.GetValues<TRow>();
+    private IEnumerable<TColumn> Columns => ColumnValues ?? Enum.GetValues<TColumn>();
+}

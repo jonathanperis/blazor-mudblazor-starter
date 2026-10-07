@@ -1,0 +1,49 @@
+@page "/components"
+
+<PageTitle>Components · Blazor learning sandbox</PageTitle>
+<article class="index-page">
+    <header class="index-hero">
+        <p class="kicker">Component gallery</p>
+        <MudText Typo="Typo.h3" HtmlTag="h1">Every MudBlazor component, working</MudText>
+        <p class="lede">
+            @GalleryCatalog.Components.Count components, each with live examples you can read beside their source,
+            the parameter combinations side by side, and playgrounds that write the markup for you.
+        </p>
+        <MudTextField T="string" @bind-Value="_search" Immediate="true" Label="Find a component" Variant="Variant.Outlined"
+                      Adornment="Adornment.Start" AdornmentIcon="@Icons.Material.Outlined.Search" Class="index-search" Clearable="true" />
+        <p class="index-count" role="status">@(string.IsNullOrWhiteSpace(_search) ? $"{GalleryCatalog.Components.Count} components" : $"{Matching.Count} of {GalleryCatalog.Components.Count} components match")</p>
+    </header>
+    @if (Matching.Count == 0)
+    {
+        <MudAlert Severity="Severity.Info" Variant="Variant.Outlined">Nothing matches “@_search”. Try a MudBlazor type such as MudSelect, or a word such as date.</MudAlert>
+    }
+    @foreach (var group in Matching.GroupBy(entry => entry.Group))
+    {
+        <section class="index-group" aria-labelledby="@($"group-{group.Key}")">
+            <h2 id="@($"group-{group.Key}")" class="index-group-title"><span class="index-group-number">@(((int)group.Key + 1).ToString("00"))</span>@GalleryCatalog.GroupTitle(group.Key)</h2>
+            <ol class="index-list">
+                @foreach (var entry in group)
+                {
+                    <li>
+                        <a href="@entry.Href" class="index-entry">
+                            <span class="index-entry-title">@entry.Title</span>
+                            <span class="index-entry-summary">@entry.Summary</span>
+                            <span class="index-entry-types">@string.Join(" · ", entry.Types)</span>
+                        </a>
+                    </li>
+                }
+            </ol>
+        </section>
+    }
+</article>
+
+@code {
+    private string _search = "";
+    private List<GalleryEntry> Matching => GalleryCatalog.Components.Where(Matches).ToList();
+
+    private bool Matches(GalleryEntry entry)
+    {
+        var term = _search?.Trim() ?? "";
+        return term.Length == 0 || $"{entry.Title} {entry.Summary} {string.Join(' ', entry.Types)} {GalleryCatalog.GroupTitle(entry.Group)}".Contains(term, StringComparison.OrdinalIgnoreCase);
+    }
+}

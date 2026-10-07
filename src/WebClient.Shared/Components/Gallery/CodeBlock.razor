@@ -1,0 +1,35 @@
+@* Highlighted, read-only source. Tokens render as text, so code is never interpreted as markup. *@
+<div class="code-block" role="region" aria-label="@Label" tabindex="0">
+    <pre><code>@foreach (var token in _tokens)
+{
+    if (token.Kind == TokenKind.Text) {@token.Text}
+    else {<span class="@Css(token.Kind)">@token.Text</span>}
+}</code></pre>
+</div>
+
+@code {
+    [Parameter, EditorRequired] public string Source { get; set; } = "";
+    [Parameter] public string Label { get; set; } = "Source code";
+    private IReadOnlyList<SourceToken> _tokens = [];
+    private string? _tokenized;
+
+    protected override void OnParametersSet()
+    {
+        if (_tokenized == Source) return;
+        _tokens = SourceHighlighter.Tokenize(Source);
+        _tokenized = Source;
+    }
+
+    private static string Css(TokenKind kind) => kind switch
+    {
+        TokenKind.Comment => "tok-comment",
+        TokenKind.String => "tok-string",
+        TokenKind.Tag => "tok-tag",
+        TokenKind.Attribute => "tok-attr",
+        TokenKind.Razor => "tok-razor",
+        TokenKind.Keyword => "tok-keyword",
+        TokenKind.Type => "tok-type",
+        TokenKind.Number => "tok-number",
+        _ => ""
+    };
+}

@@ -1,0 +1,59 @@
+@inject NavigationManager Navigation
+
+<PageTitle>@Entry.Title · Components · Blazor learning sandbox</PageTitle>
+<CascadingValue Value="this" IsFixed="true">
+    <article class="gallery-page">
+        <header class="gallery-hero">
+            <p class="kicker"><a href="components">Components</a><span aria-hidden="true"> / </span>@GalleryCatalog.GroupTitle(Entry.Group)</p>
+            <MudText Typo="Typo.h3" HtmlTag="h1">@Entry.Title</MudText>
+            <p class="lede">@Entry.Summary</p>
+            <ul class="gallery-meta" aria-label="About this page">
+                @foreach (var type in Entry.Types)
+                {
+                    <li><code>@type</code></li>
+                }
+                @if (Entry.MudDocsUrl is not null)
+                {
+                    <li><a href="@Entry.MudDocsUrl" target="_blank" rel="noopener noreferrer">MudBlazor reference ↗</a></li>
+                }
+                <li><a href="@Entry.SourceUrl" target="_blank" rel="noopener noreferrer">Page source ↗</a></li>
+            </ul>
+        </header>
+        <div class="gallery-body">
+            @if (_examples.Count > 1)
+            {
+                <nav class="gallery-toc" aria-label="Examples on this page">
+                    <p class="gallery-toc-title">On this page</p>
+                    <ol>
+                        @foreach (var example in _examples)
+                        {
+                            <li><a href="@AnchorHref(example.Anchor)">@example.Title</a></li>
+                        }
+                    </ol>
+                </nav>
+            }
+            <div class="gallery-examples">@ChildContent</div>
+        </div>
+    </article>
+</CascadingValue>
+
+@code {
+    /// <summary>The page type; pass <c>GetType()</c> from the page.</summary>
+    [Parameter, EditorRequired] public Type Page { get; set; } = null!;
+    [Parameter] public RenderFragment? ChildContent { get; set; }
+
+    private readonly List<Example> _examples = [];
+    private GalleryEntry Entry => GalleryCatalog.ForPage(Page) ?? throw new InvalidOperationException($"{Page.Name} needs [ComponentPage] and @page.");
+
+    // Fragment links keep the current path; a bare "#id" would resolve against <base href>.
+    internal string AnchorHref(string anchor) => $"{Navigation.Uri.Split('#')[0]}#{anchor}";
+
+    internal void Register(Example example)
+    {
+        if (_examples.Contains(example)) return;
+        _examples.Add(example);
+        StateHasChanged();
+    }
+
+    internal void Unregister(Example example) => _examples.Remove(example);
+}

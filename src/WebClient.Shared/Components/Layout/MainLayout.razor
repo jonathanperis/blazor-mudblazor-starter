@@ -4,16 +4,16 @@
 @inject LearningHost Host
 @inject ILogger<MainLayout> Logger
 
-<MudThemeProvider IsDarkMode="Preferences.IsDarkMode" />
+<MudThemeProvider Theme="LearningTheme.Theme" IsDarkMode="Preferences.IsDarkMode" />
 <MudPopoverProvider />
 <MudDialogProvider />
 <MudSnackbarProvider />
 @* The href keeps the current path: a bare "#main-content" resolves against <base href> and would leave the page. *@
 <a class="skip-link" href="@SkipHref" @onclick="SkipToContent" @onclick:preventDefault>Skip to content</a>
 <MudLayout Class="@(Preferences.IsDarkMode ? "sandbox-dark" : "sandbox-light")">
-    <MudAppBar Dense Elevation="1">
+    <MudAppBar Elevation="0">
         <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="ToggleDrawer" aria-label="Toggle navigation drawer" />
-        <MudText Typo="Typo.h6" HtmlTag="span">Blazor learning sandbox</MudText>
+        <a href="./" class="wordmark"><span class="wordmark-mark">Blazor learning sandbox</span><span class="wordmark-tag">MudBlazor · .NET 10</span></a>
         <MudSpacer />
         <div class="desktop-theme"><MudSwitch T="bool" Value="Preferences.IsDarkMode" ValueChanged="Preferences.SetThemeAsync" Label="Dark mode" Color="Color.Secondary" /></div>
         <div class="mobile-theme"><MudIconButton Icon="@(Preferences.IsDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" Color="Color.Inherit" OnClick="ToggleTheme" aria-label="@(Preferences.IsDarkMode ? "Use light theme" : "Use dark theme")" /></div>
@@ -29,12 +29,31 @@
     @* OpenChanged also fires when a responsive drawer closes itself on a small screen; only the menu button persists a choice. *@
     <MudDrawer Open="Preferences.DrawerOpen" OpenChanged="Preferences.ObserveDrawer" ClipMode="DrawerClipMode.Always">
         <MudNavMenu>
-            <MudNavLink Href="./" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.Home">Overview</MudNavLink>
-            <MudNavLink Href="labs" Match="NavLinkMatch.All" Icon="@Icons.Material.Filled.School">Learning paths</MudNavLink>
-            <MudDivider />
-            @foreach (var lab in LabCatalog.All)
+            <MudNavLink Href="./" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Home">Overview</MudNavLink>
+            <p class="nav-section" aria-hidden="true">Labs</p>
+            <MudNavLink Href="labs" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.School">Learning paths</MudNavLink>
+            <MudNavGroup Title="The nine labs" Icon="@Icons.Material.Outlined.Science" Expanded="@IsCurrent(LabCatalog.All.Select(lab => lab.Href))">
+                @foreach (var lab in LabCatalog.All)
+                {
+                    <MudNavLink Href="@lab.Href">@lab.Title</MudNavLink>
+                }
+            </MudNavGroup>
+            <p class="nav-section" aria-hidden="true">Components</p>
+            <MudNavLink Href="components" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Widgets">All components</MudNavLink>
+            @foreach (var group in GalleryCatalog.Components.GroupBy(entry => entry.Group))
             {
-                <MudNavLink Href="@lab.Href">@lab.Title</MudNavLink>
+                <MudNavGroup Title="@GalleryCatalog.GroupTitle(group.Key)" Expanded="@IsCurrent(group.Select(entry => entry.Href))">
+                    @foreach (var entry in group)
+                    {
+                        <MudNavLink Href="@entry.Href">@entry.Title</MudNavLink>
+                    }
+                </MudNavGroup>
+            }
+            <p class="nav-section" aria-hidden="true">Page samples</p>
+            <MudNavLink Href="samples" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Dashboard">All samples</MudNavLink>
+            @foreach (var sample in GalleryCatalog.Samples)
+            {
+                <MudNavLink Href="@sample.Href">@sample.Title</MudNavLink>
             }
         </MudNavMenu>
     </MudDrawer>
@@ -42,7 +61,7 @@
         <main id="main-content" tabindex="-1" @ref="_main">
             @if (Host.IsStaticDemo)
             {
-                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Dense Class="ma-4 mb-0">
+                <MudAlert Severity="Severity.Info" Variant="Variant.Outlined" Dense Class="ma-4 mb-0 demo-banner">
                     Static WebAssembly demo on GitHub Pages. Everything runs in your browser; server-only features use labeled stand-ins.
                     <MudLink Href="@($"{LabCatalog.Repository}#run-locally")" Target="_blank" rel="noopener noreferrer">Run locally</MudLink> for the full Blazor Server experience.
                 </MudAlert>
@@ -65,6 +84,13 @@
 
 @code {
     private ElementReference _main;
+    // Expand the drawer group that contains the current page.
+    private bool IsCurrent(IEnumerable<string> hrefs)
+    {
+        var path = Navigation.ToBaseRelativePath(Navigation.Uri).Split('?', '#')[0];
+        return hrefs.Any(href => string.Equals(path, href, StringComparison.OrdinalIgnoreCase));
+    }
+
     private string SkipHref => $"{Navigation.Uri.Split('#')[0]}#main-content";
     private Task ToggleDrawer() => Preferences.SetDrawerAsync(!Preferences.DrawerOpen);
     private Task ToggleTheme() => Preferences.SetThemeAsync(!Preferences.IsDarkMode);
