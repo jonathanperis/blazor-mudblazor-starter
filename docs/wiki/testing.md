@@ -59,6 +59,24 @@ npm run check:demo
 
 The check serves `docs/out` like GitHub Pages (repository path, `404.html` fallback) and verifies deep links, the in-browser API, the skip link, scoped state, notebook conflicts, browser personas, culture reload, atomic CSV import, the largest grid, the not-found page, and a clean console. It then visits every routable page of the shared library inside the running demo — every lab, component page and page sample — and fails if a page lacks a single heading or an example hits its error boundary.
 
+### Accessibility audit
+
+On every demo page, and on the landing and guide pages, the check runs [axe-core](https://github.com/dequelabs/axe-core) with reduced motion and fails on any violation of the rules our markup controls: contrast, links distinguishable without color, unique landmarks, labels and accessible names, names that contain their visible text, and focusable elements hidden from assistive technology.
+
+MudBlazor 9.11 renders a few elements that a page cannot label from outside. They are excluded by selector so the audit stays meaningful, and each is a known library limitation rather than an oversight:
+
+| Excluded | Why |
+|---|---|
+| `.mud-slider-input` | MudSlider does not associate its label with the range input; attributes land on the wrapper |
+| `.mud-treeview .mud-checkbox-input`, `.mud-radio-input` | Tree-view checkboxes and radios with custom content render inputs without associated labels |
+| `.mud-picker-color-content` | The color picker's internal channel inputs have no labels |
+| `.mud-table-pagination`, `.mud-table` menu activators and loading bar, grid header icon buttons | Pager selects, column-option and drag buttons, and the loading bar are unnamed |
+| `.mud-nav-group nav:not([aria-label])`, `.mud-nested-list` | MudNavGroup and nested lists add unlabelled inner landmarks and listboxes |
+| `.mud-popover-provider`, `.mud-avatar-text` | Popover content renders outside the page landmarks; text avatars use low-contrast colors |
+| Duplicate `aria-label="Breadcrumb"` | MudBreadcrumbs always sets its own label, so several trails on one page share it |
+
+Library-level issues such as nested interactive chips, positive `tabindex` in the carousel and ARIA attributes in the color picker belong upstream; the pages document the workarounds.
+
 ## Compare performance honestly
 
 1. Keep the same machine, build configuration, seed, and dataset size.

@@ -1,6 +1,6 @@
 <MudGrid Spacing="4">
     <MudItem xs="12" md="6">
-        <MudAutocomplete T="string" @bind-Value="_star" SearchFunc="SearchCatalogAsync" Label="Star catalog" Variant="Variant.Outlined"
+        <MudAutocomplete AdornmentAriaLabel="Show suggestions" T="string" @bind-Value="_star" SearchFunc="SearchCatalogAsync" Label="Star catalog" Variant="Variant.Outlined"
                          DebounceInterval="300" ShowProgressIndicator="true" ProgressIndicatorColor="Color.Primary"
                          HelperText="Each search takes 0.8 s; keep typing to cancel it" />
     </MudItem>

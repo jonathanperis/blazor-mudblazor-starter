@@ -1,7 +1,7 @@
 <MudStack Spacing="3" Style="max-width: 26rem">
     <MudSwitch @bind-Value="_archiveOpen" Label="Open the archive group" Color="Color.Primary" />
     <MudPaper Outlined="true">
-        <MudList T="string">
+        <MudList T="string" aria-label="Library collections">
             <MudListSubheader>Library collections</MudListSubheader>
             <MudListItem Icon="@Icons.Material.Outlined.MenuBook" Text="Lending library" Expanded="true">
                 <NestedList>

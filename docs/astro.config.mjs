@@ -9,7 +9,7 @@ export default defineConfig({
   markdown: {
     processor: satteri(),
     // Token colors only; backgrounds come from the site palette. defaultColor: false emits --shiki-light/--shiki-dark.
-    shikiConfig: { themes: { light: 'vitesse-light', dark: 'vitesse-dark' }, defaultColor: false },
+    shikiConfig: { themes: { light: 'github-light-high-contrast', dark: 'vitesse-dark' }, defaultColor: false },
   },
   output: 'static',
   outDir: 'out',

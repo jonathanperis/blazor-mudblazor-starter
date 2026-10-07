@@ -4,7 +4,7 @@
         <MudItem xs="12" sm="6" md="3">
             <MudText Typo="Typo.overline" HtmlTag="p">@title</MudText>
             <MudPaper Outlined="true" Class="py-2">
-                <MudNavMenu Dense="dense" Margin="margin" Bordered="bordered" Rounded="rounded" Color="Color.Primary">
+                <MudNavMenu aria-label="@($"Example: {title}")" Dense="dense" Margin="margin" Bordered="bordered" Rounded="rounded" Color="Color.Primary">
                     <MudNavLink Href="components/nav-menu" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Menu">Nav menu</MudNavLink>
                     <MudNavLink Href="components/tabs" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.Tab">Tabs</MudNavLink>
                     <MudNavLink Href="components/stepper" Match="NavLinkMatch.All" Icon="@Icons.Material.Outlined.LinearScale">Stepper</MudNavLink>

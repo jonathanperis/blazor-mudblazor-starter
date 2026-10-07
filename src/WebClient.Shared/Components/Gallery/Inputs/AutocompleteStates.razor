@@ -1,18 +1,18 @@
 <MudForm>
     <MudGrid Spacing="4">
         <MudItem xs="12" sm="6">
-            <MudAutocomplete T="string" @bind-Value="_site" SearchFunc="Search" Label="Observing site" Variant="Variant.Outlined"
+            <MudAutocomplete AdornmentAriaLabel="Show suggestions" T="string" @bind-Value="_site" SearchFunc="Search" Label="Observing site" Variant="Variant.Outlined"
                              Required="true" RequiredError="Choose where you will observe" ResetValueOnEmptyText="true" />
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudAutocomplete T="string" @bind-Value="_backup" SearchFunc="Search" Label="Backup site" Variant="Variant.Outlined"
+            <MudAutocomplete AdornmentAriaLabel="Show suggestions" T="string" @bind-Value="_backup" SearchFunc="Search" Label="Backup site" Variant="Variant.Outlined"
                              Validation="@(new Func<string, string?>(DifferentFromMain))" HelperText="Must differ from the main site" />
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudAutocomplete T="string" Value="@("Ridge station")" SearchFunc="Search" Label="Disabled" Variant="Variant.Outlined" Disabled="true" />
+            <MudAutocomplete AdornmentAriaLabel="Show suggestions" T="string" Value="@("Ridge station")" SearchFunc="Search" Label="Disabled" Variant="Variant.Outlined" Disabled="true" />
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudAutocomplete T="string" Value="@("Valley lab")" SearchFunc="Search" Label="Read-only" Variant="Variant.Outlined" ReadOnly="true" />
+            <MudAutocomplete AdornmentAriaLabel="Show suggestions" T="string" Value="@("Valley lab")" SearchFunc="Search" Label="Read-only" Variant="Variant.Outlined" ReadOnly="true" />
         </MudItem>
     </MudGrid>
 </MudForm>

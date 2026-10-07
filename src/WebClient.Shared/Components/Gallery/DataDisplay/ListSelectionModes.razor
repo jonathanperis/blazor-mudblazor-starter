@@ -1,7 +1,7 @@
 <MudGrid Spacing="4">
     <MudItem xs="12" sm="6">
         <MudPaper Outlined="true">
-            <MudList T="string" SelectionMode="_mode" @bind-SelectedValue="_one" @bind-SelectedValues="_many"
+            <MudList T="string" aria-label="Pastries" SelectionMode="_mode" @bind-SelectedValue="_one" @bind-SelectedValues="_many"
                      Color="Color.Primary" CheckBoxColor="Color.Primary">
                 <MudListSubheader>Pastries in the window</MudListSubheader>
                 @foreach (var pastry in Pastries)

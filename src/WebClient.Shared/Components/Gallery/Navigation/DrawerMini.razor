@@ -3,7 +3,7 @@
         @* Breakpoint.None keeps the mini behaviour at every window size. *@
         <MudDrawer @bind-Open="_open" Variant="DrawerVariant.Mini" OpenMiniOnHover="_openOnHover" Breakpoint="Breakpoint.None"
                    Fixed="false" Elevation="0" Class="border-r border-solid mud-border-lines-default">
-            <MudNavMenu>
+            <MudNavMenu aria-label="Mini drawer navigation">
                 <MudNavLink Icon="@Icons.Material.Outlined.Dashboard" OnClick="() => _page = Pages[0]">@Pages[0]</MudNavLink>
                 <MudNavLink Icon="@Icons.Material.Outlined.Inventory2" OnClick="() => _page = Pages[1]">@Pages[1]</MudNavLink>
                 <MudNavLink Icon="@Icons.Material.Outlined.LocalShipping" OnClick="() => _page = Pages[2]">@Pages[2]</MudNavLink>
