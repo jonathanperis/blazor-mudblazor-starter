@@ -5,7 +5,7 @@ namespace WebClient.Tests;
 
 public sealed class SandboxFactory : WebApplicationFactory<Program>
 {
-    private readonly string _directory = Path.Combine(AppContext.BaseDirectory, "test-data", Guid.NewGuid().ToString("N"));
+    private readonly string _directory = Path.Join(AppContext.BaseDirectory, "test-data", Guid.NewGuid().ToString("N"));
     public bool DemoAuthEnabled { get; init; } = true;
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)

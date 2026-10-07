@@ -161,7 +161,7 @@ public static class DashboardData
         for (var day = Today.AddDays(-364); day <= Today; day = day.AddDays(1))
         {
             var trend = 1 + (day - Today).TotalDays * 0.0007;
-            var season = 1 + 0.07 * Math.Cos((day.DayOfYear - 200) * 2 * Math.PI / 365);
+            var season = 1 + 0.07 * Math.Cos((day.DayOfYear - 200) * 2.0 * Math.PI / 365);
             foreach (var shop in Shops)
             {
                 var revenue = baseRevenue[shop.Id] * weekday[(int)day.DayOfWeek] * trend * season * (0.92 + random.NextDouble() * 0.16);

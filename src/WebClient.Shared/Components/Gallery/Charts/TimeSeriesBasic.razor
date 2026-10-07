@@ -23,7 +23,7 @@
         var noise = new Random(1114); // seeded, so every visit draws the same night
         var readings = Enumerable.Range(0, 73).Select(step =>
         {
-            var time = Dusk.AddMinutes(10 * step);
+            var time = Dusk.AddMinutes(10.0 * step);
             var hours = (time - Dusk).TotalHours;
             // Darkens through twilight, then brightens after moonrise at 02:00.
             var darkness = 17.5 + 3.8 * (1 - Math.Exp(-hours / 1.2)) - (hours > 8 ? 0.6 * (hours - 8) : 0);
