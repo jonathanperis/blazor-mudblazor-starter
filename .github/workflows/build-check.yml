@@ -63,10 +63,12 @@ jobs:
         working-directory: docs
         env:
           PUBLIC_GA_ID: ${{ github.event_name != 'pull_request' && secrets.PUBLIC_GA_ID || '' }}
-      - name: Publish the WebAssembly demo into the site
+      - name: Publish and prerender the WebAssembly demo into the site
         run: |
           dotnet restore src/WebClient.Wasm --locked-mode
+          dotnet restore src/WebClient.Prerender --locked-mode
           dotnet publish src/WebClient.Wasm -c Release --no-restore -o artifacts/wasm
+          dotnet run --project src/WebClient.Prerender -c Release --no-restore -- artifacts/wasm/wwwroot
           python3 scripts/prepare-pages-demo.py
       - run: npm run check:rendered
         working-directory: docs

@@ -7,7 +7,7 @@ A Swiss-army-knife learning project for **Blazor and MudBlazor**. Explore workin
 
 **[Live demo](https://jonathanperis.github.io/blazor-mudblazor-starter/demo/)** · **[Learning guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/)** · Run the full labs locally using the commands below.
 
-The live demo runs entirely in your browser. Labs that need a server (HTTP API, SQLite notebook, sign-in, culture cookie, diagnostics) use labeled browser stand-ins there; run the server app to see the real boundaries.
+The live demo runs entirely in your browser. Labs that need a server (HTTP API, SQLite notebook, sign-in, culture cookie, diagnostics) use labeled browser stand-ins there; run the server app to see the real boundaries. Every demo page is prerendered, so a link opens readable content at once while .NET starts; after the first visit the runtime comes from a service-worker cache and the demo works offline.
 
 ## Run locally
 
@@ -62,6 +62,7 @@ Each lab includes an objective, prerequisites, an approximate duration, a source
 | Microsoft.AspNetCore.Components.WebAssembly | 10.0.12 |
 | Microsoft.EntityFrameworkCore.Sqlite | 10.0.12 |
 | Microsoft.Extensions.Localization | 10.0.12 |
+| Microsoft.Extensions.Logging.Console | 10.0.12 |
 | MudBlazor | 9.11.0 |
 | MudBlazor.Translations | 3.6.0 |
 
@@ -73,6 +74,7 @@ The docs use Astro 7, Sätteri, and TypeScript 7, with a committed Bun lockfile;
 dotnet test -c Release --no-restore
 dotnet publish src/WebClient -c Release --no-restore -o artifacts/publish
 dotnet publish src/WebClient.Wasm -c Release --no-restore -o artifacts/wasm
+dotnet run --project src/WebClient.Prerender -c Release -- artifacts/wasm/wwwroot
 dotnet tool restore
 dotnet ef migrations list --project src/WebClient
 ```
@@ -115,7 +117,7 @@ Follow the [hosting guide](https://jonathanperis.github.io/blazor-mudblazor-star
 
 ## Structure
 
-`src/WebClient.Shared/` contains the shell, the lab pages and browser-safe feature code shared by both hosts. `src/WebClient/` is the Blazor Server host: endpoints, SQLite notebook, cookie identity and server panels. `src/WebClient.Wasm/` is the static WebAssembly host for the live demo. `tests/WebClient.Tests/` contains component, integration and static-demo tests. `docs/wiki/` is the learning guide; `infra/` retains the previous Azure templates as reference material.
+`src/WebClient.Shared/` contains the shell, the lab pages and browser-safe feature code shared by both hosts. `src/WebClient/` is the Blazor Server host: endpoints, SQLite notebook, cookie identity and server panels. `src/WebClient.Wasm/` is the static WebAssembly host for the live demo. `src/WebClient.Prerender/` renders every demo route to static HTML at build time, so the demo's pages are readable before .NET starts. `tests/WebClient.Tests/` contains component, integration and static-demo tests. `docs/wiki/` is the learning guide; `infra/` retains the previous Azure templates as reference material.
 
 ## License
 
