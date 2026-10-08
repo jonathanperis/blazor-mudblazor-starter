@@ -6,7 +6,7 @@ namespace WebClient.Prerender;
 /// <summary>Places a prerendered page into the published index.html.</summary>
 internal static class Shell
 {
-    public static string Compose(string shell, string url, string body, string head, string description, string dark)
+    public static string Compose(string shell, string url, string body, string head, string description, string dark, string image)
     {
         var title = Regex.Match(head, "<title>(.*?)</title>", RegexOptions.Singleline) is { Success: true } match ? match.Groups[1].Value : "Blazor learning sandbox";
         var attribute = HtmlEncoder.Default;
@@ -19,7 +19,14 @@ internal static class Shell
                 <meta property="og:title" content="{title}" />
                 <meta property="og:description" content="{attribute.Encode(description)}" />
                 <meta property="og:url" content="{attribute.Encode(url)}" />
-                <meta name="twitter:card" content="summary" />
+                <meta property="og:image" content="{attribute.Encode(image)}" />
+                <meta property="og:image:type" content="image/png" />
+                <meta property="og:image:width" content="1200" />
+                <meta property="og:image:height" content="630" />
+                <meta property="og:image:alt" content="{ImageAlt}" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:image" content="{attribute.Encode(image)}" />
+                <meta name="twitter:image:alt" content="{ImageAlt}" />
             """;
         var html = Replace(shell, @"<title>.*?</title>\s*<meta name=""description"" content=""[^""]*"" />", meta, "title and description");
         // The page as rendered in light mode, a note while .NET starts, and the dark palette for visitors who chose it.
@@ -32,6 +39,9 @@ internal static class Shell
             """;
         return Replace(html, @"<div id=""app"">.*?</div>\s*(?=<div id=""blazor-error-ui"")", app + "\n    ", "#app");
     }
+
+    // Matches the guide's BaseLayout, which publishes the image (docs/scripts/render-brand.mjs).
+    private const string ImageAlt = "Blazor learning sandbox: Learn by changing working examples, beside the Button page of the component gallery.";
 
     // The theme mirrors learningPreferences.read in learning.js, which loads after this content: a stored choice, else
     // the system's. The dark palette's variables follow the light ones, so they win; the layout class switches the code colors.
