@@ -45,8 +45,12 @@ internal sealed class CollectingErrorBoundaryLogger : IErrorBoundaryLogger
 /// </summary>
 internal sealed class PendingNotebookStore : INotebookStore
 {
+    /// <summary>Whether a page asked for the notes, so its prerender may stop at the loading state.</summary>
+    public bool Waiting { get; private set; }
+
     public async Task<List<NoteSnapshot>> ListAsync(CancellationToken cancellationToken = default)
     {
+        Waiting = true;
         await Task.Delay(Timeout.Infinite, cancellationToken);
         return [];
     }
