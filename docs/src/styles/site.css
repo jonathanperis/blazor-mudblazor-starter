@@ -78,11 +78,8 @@ code, kbd, samp, pre { font-family: var(--mono); }
 .plate { margin: 0; }
 .plate-frame { position: relative; border: 1px solid var(--rule-strong); background: var(--sheet); box-shadow: 10px 10px 0 -1px var(--paper), 10px 10px 0 0 var(--rule-strong); }
 .plate-frame img { width: 100%; }
-.plate-frame iframe { display: block; width: 100%; aspect-ratio: 16 / 10; border: 0; background: var(--paper); }
 .plate figcaption { display: flex; flex-wrap: wrap; justify-content: space-between; gap: .5rem 1rem; margin-top: 1.4rem; font-size: .9rem; color: var(--ink-soft); }
 .plate figcaption em { font-family: var(--serif); font-style: italic; color: var(--ink); }
-.plate-boot { font: inherit; color: var(--accent-ink); background: none; border: 0; padding: 0; cursor: pointer; border-bottom: 1px solid currentColor; }
-.plate-boot:hover { color: var(--accent); }
 .figure-number { font-family: var(--mono); font-size: .72rem; letter-spacing: .08em; text-transform: uppercase; }
 
 /* Contents: chapters with dotted leaders */
