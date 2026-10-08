@@ -1,10 +1,10 @@
 <MudStack Spacing="4">
     <MudGrid Spacing="4">
         <MudItem xs="12" sm="6">
-            <MudSlider @bind-Value="_boundaryCount" Min="0" Max="3" TickMarks="true" Color="Color.Primary">BoundaryCount: @_boundaryCount</MudSlider>
+            <MudSlider @bind-Value="_boundaryCount" Min="0" Max="3" TickMarks="true" Color="Color.Primary" aria-label="BoundaryCount">BoundaryCount: @_boundaryCount</MudSlider>
         </MudItem>
         <MudItem xs="12" sm="6">
-            <MudSlider @bind-Value="_middleCount" Min="1" Max="5" Step="2" TickMarks="true" Color="Color.Primary">MiddleCount: @_middleCount</MudSlider>
+            <MudSlider @bind-Value="_middleCount" Min="1" Max="5" Step="2" TickMarks="true" Color="Color.Primary" aria-label="MiddleCount">MiddleCount: @_middleCount</MudSlider>
         </MudItem>
     </MudGrid>
     <MudPagination Count="40" @bind-Selected="_page" BoundaryCount="_boundaryCount" MiddleCount="_middleCount"

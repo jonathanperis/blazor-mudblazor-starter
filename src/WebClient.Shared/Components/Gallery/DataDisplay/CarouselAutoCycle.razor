@@ -14,7 +14,7 @@
 <MudStack Row Wrap="Wrap.Wrap" AlignItems="AlignItems.Center" Spacing="4" Class="pa-4">
     <MudButton Variant="Variant.Outlined" StartIcon="@(_playing ? Icons.Material.Outlined.Pause : Icons.Material.Outlined.PlayArrow)"
                OnClick="() => _playing = !_playing">@(_playing ? "Pause" : "Play")</MudButton>
-    <MudSlider @bind-Value="_seconds" Min="2" Max="10" Step="1" Color="Color.Primary" Style="max-width: 16rem">Every @_seconds seconds</MudSlider>
+    <MudSlider @bind-Value="_seconds" Min="2" Max="10" Step="1" Color="Color.Primary" Style="max-width: 16rem" aria-label="Seconds per slide">Every @_seconds seconds</MudSlider>
     <MudText Typo="Typo.body2">Notice @(_index + 1) of @Notices.Length</MudText>
 </MudStack>
 

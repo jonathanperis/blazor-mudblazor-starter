@@ -1,5 +1,5 @@
 <MudStack Spacing="3">
-    <MudSlider @bind-Value="_sensitivity" Min="20" Max="300" Step="20" Color="Color.Primary" Style="max-width: 24rem">Sensitivity: @_sensitivity px</MudSlider>
+    <MudSlider @bind-Value="_sensitivity" Min="20" Max="300" Step="20" Color="Color.Primary" Style="max-width: 24rem" aria-label="Sensitivity">Sensitivity: @_sensitivity px</MudSlider>
     <MudSwipeArea OnSwipeEnd="OnSwipeEnd" Sensitivity="_sensitivity"
                   Class="d-flex align-center justify-center rounded border-2 border-dashed mud-border-primary" Style="height: 12rem; user-select: none">
         <MudText Typo="Typo.body1">Swipe here</MudText>

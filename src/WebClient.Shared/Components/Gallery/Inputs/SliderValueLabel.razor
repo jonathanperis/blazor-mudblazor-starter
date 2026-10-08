@@ -1,11 +1,11 @@
 <MudStack Spacing="6" Class="pt-6">
-    <MudSlider @bind-Value="_budget" Min="0m" Max="500m" Step="10m" ValueLabel="true" ValueLabelFormat="C0" Culture="_culture">
+    <MudSlider @bind-Value="_budget" Min="0m" Max="500m" Step="10m" ValueLabel="true" ValueLabelFormat="C0" Culture="_culture" aria-label="Equipment budget">
         Equipment budget: @_budget.ToString("C0", _culture)
     </MudSlider>
-    <MudSlider @bind-Value="_humidity" Min="0" Max="1" Step="0.05" ValueLabel="true" ValueLabelFormat="P0" Color="Color.Secondary">
+    <MudSlider @bind-Value="_humidity" Min="0" Max="1" Step="0.05" ValueLabel="true" ValueLabelFormat="P0" Color="Color.Secondary" aria-label="Dew warning threshold">
         Dew warning threshold
     </MudSlider>
-    <MudSlider @bind-Value="_hour" Min="18" Max="30" ValueLabel="true" Color="Color.Tertiary">
+    <MudSlider @bind-Value="_hour" Min="18" Max="30" ValueLabel="true" Color="Color.Tertiary" aria-label="Session ends at">
         <ValueLabelContent>@($"{context.Value % 24:00}:00")</ValueLabelContent>
         <ChildContent>Session ends at @($"{_hour % 24:00}:00")</ChildContent>
     </MudSlider>

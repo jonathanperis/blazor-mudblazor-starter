@@ -1,12 +1,12 @@
 <MudGrid Spacing="6">
     <MudItem xs="12" md="6">
-        <MudSlider T="int" @bind-NullableValue="_rating" Min="1" Max="10" Immediate="true">
+        <MudSlider T="int" @bind-NullableValue="_rating" Min="1" Max="10" Immediate="true" aria-label="Sky darkness">
             Sky darkness: @(_rating is null ? "not rated" : $"{_rating} of 10")
         </MudSlider>
         <MudButton Size="Size.Small" Variant="Variant.Outlined" Class="mt-2" OnClick="() => _rating = null">Clear rating</MudButton>
     </MudItem>
     <MudItem xs="12" md="6">
-        <MudSlider T="int" Value="70" Disabled="true">Dome speed (locked during tracking): 70%</MudSlider>
+        <MudSlider T="int" Value="70" Disabled="true" aria-label="Dome speed (locked during tracking)">Dome speed (locked during tracking): 70%</MudSlider>
     </MudItem>
 </MudGrid>
 

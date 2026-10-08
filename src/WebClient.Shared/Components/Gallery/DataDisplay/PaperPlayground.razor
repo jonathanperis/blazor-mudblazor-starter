@@ -5,7 +5,7 @@
         </MudPaper>
     </Preview>
     <Controls>
-        <MudSlider @bind-Value="_elevation" Min="0" Max="24" Color="Color.Primary">Elevation: @_elevation</MudSlider>
+        <MudSlider @bind-Value="_elevation" Min="0" Max="24" Color="Color.Primary" aria-label="Elevation">Elevation: @_elevation</MudSlider>
         <MudTextField @bind-Value="_width" Label="Width" Variant="Variant.Outlined" Margin="Margin.Dense" />
         <MudTextField @bind-Value="_height" Label="Height" Variant="Variant.Outlined" Margin="Margin.Dense" />
         <MudSwitch @bind-Value="_outlined" Label="Outlined" Color="Color.Primary" />

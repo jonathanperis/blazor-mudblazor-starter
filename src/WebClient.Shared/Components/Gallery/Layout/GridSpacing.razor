@@ -1,5 +1,5 @@
 <MudStack Spacing="4">
-    <MudSlider @bind-Value="_spacing" Min="0" Max="20" TickMarks="true" Color="Color.Primary" Style="max-width: 28rem">Spacing: @_spacing (@(_spacing * 4) px)</MudSlider>
+    <MudSlider @bind-Value="_spacing" Min="0" Max="20" TickMarks="true" Color="Color.Primary" Style="max-width: 28rem" aria-label="Spacing">Spacing: @_spacing (@(_spacing * 4) px)</MudSlider>
     <MudGrid Spacing="_spacing">
         @for (var i = 0; i < 6; i++)
         {

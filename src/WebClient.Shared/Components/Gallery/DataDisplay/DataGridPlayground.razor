@@ -19,7 +19,7 @@
         <MudSwitch @bind-Value="_filterable" Label="Filterable" Color="Color.Primary" />
         <MudSwitch @bind-Value="_groupable" Label="Groupable" Color="Color.Primary" />
         <MudSwitch @bind-Value="_hideable" Label="Hideable" Color="Color.Primary" />
-        <MudSlider @bind-Value="_elevation" Min="0" Max="12" Step="1" Color="Color.Primary">Elevation: @_elevation</MudSlider>
+        <MudSlider @bind-Value="_elevation" Min="0" Max="12" Step="1" Color="Color.Primary" aria-label="Elevation">Elevation: @_elevation</MudSlider>
         <MudSelect @bind-Value="_sortMode" Label="Sort mode" Variant="Variant.Outlined" Margin="Margin.Dense">
             @foreach (var value in Enum.GetValues<SortMode>()) { <MudSelectItem Value="value">@value</MudSelectItem> }
         </MudSelect>

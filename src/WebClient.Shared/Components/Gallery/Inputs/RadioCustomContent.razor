@@ -4,13 +4,14 @@
         {
             <MudPaper Outlined="true" Class="px-2 py-1" Style="@(_delivery == option.Speed ? "border-color: var(--mud-palette-primary)" : null)">
                 <MudRadio Value="option.Speed" Color="Color.Primary">
-                    <MudStack Row Justify="Justify.SpaceBetween" AlignItems="AlignItems.Center" Style="min-width: min(24rem, 65vw)">
+                    @* A plain element: MudStack adds role="group", which would hide this text from the radio's accessible name. *@
+                    <div class="d-flex justify-space-between align-center gap-4" style="min-width: min(24rem, 65vw)">
                         <div>
                             <MudText Typo="Typo.body1">@option.Title</MudText>
                             <MudText Typo="Typo.caption">@option.Arrival</MudText>
                         </div>
                         <MudText Typo="Typo.subtitle1">@option.Price</MudText>
-                    </MudStack>
+                    </div>
                 </MudRadio>
             </MudPaper>
         }
