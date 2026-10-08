@@ -24,6 +24,8 @@ if (args.Length is < 1 or > 2)
 }
 var wwwroot = Path.GetFullPath(args[0]);
 var publicUrl = args.Length == 2 ? args[1] : "https://jonathanperis.github.io/blazor-mudblazor-starter/demo/";
+// Link previews use the guide's social image, published at the site root above the demo.
+var socialImage = new Uri(new Uri(publicUrl), "../og-image.png").AbsoluteUri;
 var indexPath = Path.Join(wwwroot, "index.html");
 if (!File.Exists(indexPath) || !publicUrl.EndsWith('/'))
 {
@@ -83,7 +85,7 @@ foreach (var (page, route) in routes)
         failures.Add($"{route}: still rendering after {settleTime.TotalSeconds:0} s without waiting on browser data");
         continue;
     }
-    var html = Shell.Compose(template, publicUrl + path, body, head, Description(route), darkTheme);
+    var html = Shell.Compose(template, publicUrl + path, body, head, Description(route), darkTheme, socialImage);
     // "/labs/api" is served from labs/api.html. A route that is also a folder ("/labs") gets labs/index.html too,
     // because a static host may answer "/labs" from either one.
     var files = path.Length == 0 ? ["index.html"] : directories.Contains(path) ? new[] { $"{path}.html", $"{path}/index.html" } : [$"{path}.html"];
