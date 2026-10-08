@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Place the published WebAssembly demo inside the built docs site for GitHub Pages.
 
-Copies the publish output's wwwroot to <site>/demo/, rewrites <base href> for the Pages path, drops
-precompressed copies (GitHub Pages compresses responses itself), and verifies the boot assets exist.
+Copies the publish output's wwwroot to <site>/demo/, rewrites <base href> in every page for the Pages path, drops
+precompressed copies (GitHub Pages compresses responses itself), and verifies the boot assets exist. Run the
+prerenderer (src/WebClient.Prerender) on the publish output first; app.html is the unrendered shell 404.html uses.
 """
 import argparse
 import re
@@ -33,21 +34,28 @@ def main():
         shutil.rmtree(target)
     shutil.copytree(source, target, ignore=shutil.ignore_patterns("*.br", "*.gz"))
 
-    index = target / "index.html"
-    html = index.read_text(encoding="utf-8")
-    html, count = re.subn(r'<base href="/" />', f'<base href="{args.base}" />', html)
-    require(count == 1, 'expected exactly one <base href="/" /> in the published index.html')
-    index.write_text(html, encoding="utf-8")
+    require((target / "app.html").is_file(), "missing app.html; run the prerenderer on the publish output first")
+    pages = sorted(target.rglob("*.html"))
+    for page in pages:
+        text = page.read_text(encoding="utf-8")
+        text, count = re.subn(r'<base href="/" />', f'<base href="{args.base}" />', text)
+        require(count == 1, f'expected exactly one <base href="/" /> in {page.relative_to(target)}')
+        page.write_text(text, encoding="utf-8")
+    require(len(pages) > 100, f"expected a prerendered page per route, found {len(pages)} pages")
+
+    html = (target / "index.html").read_text(encoding="utf-8")
 
     scripts = re.findall(r'<script src="([^"]+)"', html)
     require(any(re.fullmatch(r"_framework/blazor\.webassembly\.[a-z0-9]+\.js", src) for src in scripts), "boot script is not fingerprinted")
     for src in scripts + re.findall(r'<link rel="stylesheet" href="([^"]+)"', html):
         require((target / src).is_file(), f"index.html references missing {src}")
     require(any((target / "_framework").glob("dotnet.*.js")), "missing .NET runtime loader")
+    worker = (target / "service-worker.js").read_text(encoding="utf-8") if (target / "service-worker.js").is_file() else ""
+    require("assetsManifest" in worker and (target / "service-worker-assets.js").is_file(), "missing the published service worker or its asset manifest")
     require(any((target / "_framework").glob("WebClient.Shared.*.wasm")), "missing shared labs assembly")
     files = [path for path in target.rglob("*") if path.is_file()]
     size = sum(path.stat().st_size for path in files) / 1_048_576
-    print(f"WebAssembly demo prepared at {target} for {args.base} ({len(files)} files, {size:.1f} MiB)")
+    print(f"WebAssembly demo prepared at {target} for {args.base} ({len(pages)} pages, {len(files)} files, {size:.1f} MiB)")
 
 
 if __name__ == "__main__":

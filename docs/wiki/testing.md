@@ -50,6 +50,7 @@ Build the Pages site with the demo, then drive it in Chromium:
 
 ```sh
 dotnet publish src/WebClient.Wasm -c Release -o artifacts/wasm
+dotnet run --project src/WebClient.Prerender -c Release -- artifacts/wasm/wwwroot
 cd docs
 npm run build
 python3 ../scripts/prepare-pages-demo.py
@@ -57,7 +58,7 @@ npx playwright install chromium   # once; or set PLAYWRIGHT_CHANNEL=chrome
 npm run check:demo
 ```
 
-The check serves `docs/out` like GitHub Pages (repository path, `404.html` fallback) and verifies deep links, the in-browser API, the skip link, scoped state, notebook conflicts, browser personas, culture reload, atomic CSV import, the largest grid, the not-found page, and a clean console. It then visits every routable page of the shared library inside the running demo — every lab, component page and page sample — and fails if a page lacks a single heading or an example hits its error boundary.
+The check serves `docs/out` like GitHub Pages (repository path, `.html` for extensionless paths, `404.html` fallback) and verifies that deep links arrive prerendered with their own title, that the app takes over, that the demo starts offline after one visit, quick search, playground links, the in-browser API, the skip link, scoped state, notebook conflicts, browser personas, culture reload, atomic CSV import, the largest grid, the not-found page, and a clean console. It then visits every routable page of the shared library inside the running demo — every lab, component page and page sample — and fails if a page lacks a single heading or an example hits its error boundary.
 
 ### Accessibility audit
 

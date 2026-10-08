@@ -79,6 +79,11 @@ h1[tabindex="-1"]:focus, main[tabindex="-1"]:focus { outline: none; }
 .app-drawer .mud-nav-link.active:not(.mud-nav-link-disabled) { background: color-mix(in srgb, var(--accent) 10%, transparent); color: var(--ink); box-shadow: inset 2px 0 0 var(--accent); }
 
 .demo-banner { border-style: dashed !important; }
+/* Prerendered demo pages: readable at once, interactive when .NET has started (the app then removes this note). */
+.demo-booting { position: fixed; inset-inline-start: 1rem; bottom: 1rem; z-index: 1500; margin: 0; padding: .45rem .8rem; border: 1px solid var(--rule); border-radius: 999px; background: var(--sheet); color: var(--ink-soft); font-family: var(--font-mono); font-size: .72rem; letter-spacing: .04em; box-shadow: 0 1px 2px rgb(0 0 0 / .08); }
+.demo-booting::before { content: ""; display: inline-block; width: .5rem; height: .5rem; margin-inline-end: .5rem; border-radius: 50%; background: var(--accent); animation: demo-booting 1.2s ease-in-out infinite; }
+@keyframes demo-booting { 50% { opacity: .25; } }
+@media (prefers-reduced-motion: reduce) { .demo-booting::before { animation: none; } }
 
 /* Shared typographic pieces */
 .kicker { margin: 0 0 .75rem; font-family: var(--font-mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-soft); }
