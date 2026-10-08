@@ -31,7 +31,7 @@ const totalMinutes = allLabs.reduce((sum, lab) => sum + lab.minutes, 0);
         </div>
       </div>
       <figure class="plate" id="plate">
-        <div class="plate-frame" data-plate>
+        <div class="plate-frame">
           <picture>
             <source srcset={`${base}/screens/gallery-dark.jpg`} media="(prefers-color-scheme: dark)" />
             <img src={`${base}/screens/gallery-light.jpg`} width="1440" height="900" alt="The Button page of the component gallery: example plates with live buttons, a table of every variant and color, and the Razor source of the example." />
@@ -39,7 +39,6 @@ const totalMinutes = allLabs.reduce((sum, lab) => sum + lab.minutes, 0);
         </div>
         <figcaption>
           <span><span class="figure-number">Plate 1</span> · <em>The Button page, from the component gallery.</em></span>
-          <button type="button" class="plate-boot" data-boot hidden>Run the demo in this frame</button>
         </figcaption>
       </figure>
     </section>
@@ -141,22 +140,4 @@ const totalMinutes = allLabs.reduce((sum, lab) => sum + lab.minutes, 0);
     </section>
   </main>
   <Colophon />
-
-  <script>
-    // Progressive enhancement: swap the plate's screenshot for the running demo, only when asked.
-    const frame = document.querySelector<HTMLElement>('[data-plate]');
-    const boot = document.querySelector<HTMLButtonElement>('[data-boot]');
-    if (frame && boot) {
-      boot.hidden = false;
-      boot.addEventListener('click', () => {
-        const iframe = document.createElement('iframe');
-        iframe.src = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/demo/components/button`;
-        iframe.title = 'Live demo: the Button page of the component gallery';
-        iframe.loading = 'eager';
-        frame.replaceChildren(iframe);
-        boot.remove();
-        iframe.focus();
-      }, { once: true });
-    }
-  </script>
 </BaseLayout>
