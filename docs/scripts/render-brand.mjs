@@ -5,6 +5,7 @@
 // Usage, from docs/: npm run brand:render (Playwright's Chromium; set PLAYWRIGHT_CHANNEL=chrome to use Google Chrome).
 import { existsSync } from 'node:fs';
 import { readFile, writeFile } from 'node:fs/promises';
+import { fileURLToPath } from 'node:url';
 import { chromium } from 'playwright';
 
 const docs = new URL('../', import.meta.url);
@@ -51,7 +52,7 @@ try {
   const og = await browser.newPage({ viewport: { width: 1200, height: 630 }, deviceScaleFactor: 1 });
   await og.goto(new URL('scripts/og-template.html', docs).href);
   await og.evaluate(() => document.fonts.ready);
-  await og.screenshot({ path: new URL('public/og-image.png', docs).pathname });
+  await og.screenshot({ path: fileURLToPath(new URL('public/og-image.png', docs)) });
   console.log('wrote public/og-image.png');
 
   const render = async (size, options) => {
@@ -71,7 +72,7 @@ try {
   for (const target of iconTargets) {
     const names = Object.keys(icons).filter((name) => existsSync(new URL(name, target)));
     for (const name of names) await writeFile(new URL(name, target), icons[name]);
-    console.log(`wrote ${names.join(', ')} to ${new URL(target).pathname}`);
+    console.log(`wrote ${names.join(', ')} to ${fileURLToPath(target)}`);
   }
 } finally {
   await browser.close();
