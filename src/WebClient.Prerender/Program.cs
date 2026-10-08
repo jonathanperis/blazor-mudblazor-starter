@@ -24,7 +24,7 @@ if (args.Length is < 1 or > 2)
 }
 var wwwroot = Path.GetFullPath(args[0]);
 var publicUrl = args.Length == 2 ? args[1] : "https://jonathanperis.github.io/blazor-mudblazor-starter/demo/";
-var indexPath = Path.Combine(wwwroot, "index.html");
+var indexPath = Path.Join(wwwroot, "index.html");
 if (!File.Exists(indexPath) || !publicUrl.EndsWith('/'))
 {
     Console.Error.WriteLine($"Expected a published index.html in {wwwroot} and a public URL ending in /.");
@@ -36,8 +36,9 @@ CultureInfo.DefaultThreadCurrentCulture = CultureInfo.DefaultThreadCurrentUICult
 var utf8 = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
 var template = File.ReadAllText(indexPath);
 // The unrendered shell stays available: 404.html sends routes without a prerendered page (unknown ones) to it.
-if (!File.Exists(Path.Combine(wwwroot, "app.html"))) File.WriteAllText(Path.Combine(wwwroot, "app.html"), template, utf8);
-else template = File.ReadAllText(Path.Combine(wwwroot, "app.html"));
+var shellPath = Path.Join(wwwroot, "app.html");
+if (!File.Exists(shellPath)) File.WriteAllText(shellPath, template, utf8);
+else template = File.ReadAllText(shellPath);
 
 const string BaseUri = "http://demo.invalid/";
 var settleTime = TimeSpan.FromSeconds(3);
@@ -70,19 +71,24 @@ foreach (var (page, route) in routes)
     var path = route.TrimStart('/');
     await using var scope = provider.CreateAsyncScope();
     scope.ServiceProvider.GetRequiredService<StaticNavigationManager>().Start(BaseUri, BaseUri + path);
-    var (body, head) = await RenderPageAsync(scope.ServiceProvider, page);
+    var (body, head, settled) = await RenderPageAsync(scope.ServiceProvider, page);
     if (scope.ServiceProvider.GetRequiredService<CollectingErrorBoundaryLogger>().Errors is [var error, ..])
     {
         failures.Add($"{route}: an error boundary caught {error.GetType().Name}: {error.Message}");
+        continue;
+    }
+    // Only a page waiting on browser data may be captured before it settles; anything else is slow or stuck.
+    if (!settled && !((PendingNotebookStore)scope.ServiceProvider.GetRequiredService<INotebookStore>()).Waiting)
+    {
+        failures.Add($"{route}: still rendering after {settleTime.TotalSeconds:0} s without waiting on browser data");
         continue;
     }
     var html = Shell.Compose(template, publicUrl + path, body, head, Description(route), darkTheme);
     // "/labs/api" is served from labs/api.html. A route that is also a folder ("/labs") gets labs/index.html too,
     // because a static host may answer "/labs" from either one.
     var files = path.Length == 0 ? ["index.html"] : directories.Contains(path) ? new[] { $"{path}.html", $"{path}/index.html" } : [$"{path}.html"];
-    foreach (var file in files)
+    foreach (var target in files.Select(file => Path.Join(wwwroot, file)))
     {
-        var target = Path.Combine(wwwroot, file);
         Directory.CreateDirectory(Path.GetDirectoryName(target)!);
         await File.WriteAllTextAsync(target, html, utf8);
         bytes += utf8.GetByteCount(html);
@@ -97,18 +103,19 @@ if (failures.Count > 0)
 Console.WriteLine($"Prerendered {routes.Count} routes into {wwwroot} ({bytes / 1_048_576.0:F1} MiB of HTML)");
 return 0;
 
-async Task<(string Body, string Head)> RenderPageAsync(IServiceProvider scoped, Type page)
+async Task<(string Body, string Head, bool Settled)> RenderPageAsync(IServiceProvider scoped, Type page)
 {
     await using var renderer = new HtmlRenderer(scoped, loggerFactory);
     return await renderer.Dispatcher.InvokeAsync(async () =>
     {
         var body = renderer.BeginRenderingComponent<PrerenderedPage>(ParameterView.FromDictionary(new Dictionary<string, object?> { ["Page"] = page }));
         // Most pages settle at once. One that waits on the browser (the notebook) is captured in its loading state.
-        if (await Task.WhenAny(body.QuiescenceTask, Task.Delay(settleTime)) == body.QuiescenceTask) await body.QuiescenceTask;
+        var settled = await Task.WhenAny(body.QuiescenceTask, Task.Delay(settleTime)) == body.QuiescenceTask;
+        if (settled) await body.QuiescenceTask;
         // HeadOutlet shows what the page's PageTitle and HeadContent supplied while the body rendered.
         // Rendering it does not wait for the body: a pending page would keep the renderer from ever settling.
         var head = renderer.BeginRenderingComponent<HeadOutlet>();
-        return (body.ToHtmlString(), head.ToHtmlString());
+        return (body.ToHtmlString(), head.ToHtmlString(), settled);
     });
 }
 
