@@ -31,14 +31,18 @@ public static class PlaygroundState
     /// <summary>Applies the values that parse and are in range; ignores unknown keys. Returns how many were applied.</summary>
     public static int Apply(object owner, IReadOnlyDictionary<string, string> values)
     {
-        var applied = 0;
-        foreach (var field in Fields(owner.GetType()))
-        {
-            if (!values.TryGetValue(Key(field), out var text) || !TryParse(field.FieldType, text, out var value)) continue;
-            field.SetValue(owner, value);
-            applied++;
-        }
-        return applied;
+        var changes = Fields(owner.GetType())
+            .Select(field => (Field: field, Valid: TryRead(field, values, out var value), Value: value))
+            .Where(change => change.Valid)
+            .ToList();
+        foreach (var change in changes) change.Field.SetValue(owner, change.Value);
+        return changes.Count;
+    }
+
+    private static bool TryRead(FieldInfo field, IReadOnlyDictionary<string, string> values, out object? value)
+    {
+        value = null;
+        return values.TryGetValue(Key(field), out var text) && TryParse(field.FieldType, text, out value);
     }
 
     public static string Format(object? value) => value switch
