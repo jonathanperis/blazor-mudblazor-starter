@@ -24,6 +24,7 @@ Run from this directory (`docs/`):
 | `npm run check:types` | Check TypeScript source and configuration with TypeScript 7; does not type-check Astro templates |
 | `npm run check:rendered` | Verify built routes, metadata, links, assets, source references, Markdown, the 404 page, the demo entry point, and sitemap coverage |
 | `npm run check:demo` | Drive the WebAssembly demo in Chromium against a local server that behaves like GitHub Pages |
+| `npm run brand:render` | Redraw the social image (`public/og-image.png`) and the browser icons in this folder and both hosts' `wwwroot` |
 | `bun audit` | Check the locked dependency tree for known vulnerabilities |
 
 Run `npm run build` before previewing or checking rendered HTML. To include the demo, publish it from the repository root (`dotnet publish src/WebClient.Wasm -c Release -o artifacts/wasm`) and run `python3 ../scripts/prepare-pages-demo.py` after each build; `check:demo` needs a Chromium from `npx playwright install chromium` or `PLAYWRIGHT_CHANNEL=chrome`. Development has no repository path prefix: its guide is at `/docs/`. Production and preview use `/blazor-mudblazor-starter/docs/`. If port 4321 is busy, use the address Astro prints.
@@ -40,10 +41,11 @@ Run `npm run build` before previewing or checking rendered HTML. To include the 
 | `src/components/` | Masthead, colophon and optional analytics |
 | `src/styles/site.css`, `src/fonts/` | The lab-manual design system and self-hosted fonts (OFL licenses in `public/fonts/`) |
 | `public/screens/` | Plates on the landing page; regenerate with `node scripts/capture-screens.mjs <app url>` |
+| `scripts/og-template.html`, `scripts/render-brand.mjs` | The link-preview image (the hero beside the gallery plate) and the icons (an italic vermilion *B* on paper), drawn in headless Chromium with the site's fonts; rerun after the plate or the palette changes |
 | `src/pages/404.astro` | Site-wide not-found page; redirects demo deep links into the WebAssembly app |
 | `scripts/check-demo.mjs` | Browser check of the published demo |
 | `src/layouts/BaseLayout.astro` | Shared HTML head, product metadata and optional analytics |
-| `public/` | Icons, font licenses and screenshots |
+| `public/` | Icons, social image, font licenses and screenshots |
 | `astro.config.mjs` | Sätteri processor, sitemap, production base path and output directory |
 | `out/` | Generated output, including `out/demo/` when prepared; ignored by Git |
 | `../scripts/check-docs-*.py` | Offline source and rendered-output verification |

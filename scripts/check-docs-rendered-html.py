@@ -13,6 +13,7 @@ OUT = ROOT / "docs/out"
 BASE = "https://jonathanperis.github.io/blazor-mudblazor-starter/"
 SOURCE = "https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/"
 PRODUCT = "Blazor learning sandbox"
+SOCIAL_IMAGE = BASE + "og-image.png"
 
 
 class Page(HTMLParser):
@@ -128,6 +129,7 @@ def main():
         description = page.metadata.get("description")
         require(description and description == page.metadata.get("og:description") == page.metadata.get("twitter:description"), f"description metadata differs in {route or '/'}")
         require(page.canonical == BASE + (route + "/" if route else ""), f"canonical URL differs in {route or '/'}")
+        require(page.metadata.get("og:image") == page.metadata.get("twitter:image") == SOCIAL_IMAGE and page.metadata.get("twitter:card") == "summary_large_image", f"social image metadata differs in {route or '/'}")
         require(page.lang == "en", f"{route or '/'} must declare its language")
         require(page.sitemap == "/blazor-mudblazor-starter/sitemap-index.xml", f"{route or '/'} must link the sitemap")
         if route.startswith("docs"):
@@ -135,6 +137,7 @@ def main():
             require(page.current == [expected], f"{route} must mark exactly its own navigation link as current, found {page.current}")
         pages[route] = page
 
+    require((OUT / "og-image.png").is_file(), "missing og-image.png: run npm run brand:render in docs/")
     descriptions = [page.metadata["description"] for route, page in pages.items() if route.startswith("docs")]
     require(len(set(descriptions)) == len(descriptions), "guide pages must have distinct topic descriptions")
     titles = [page.title.strip() for page in pages.values()]
@@ -152,6 +155,7 @@ def main():
         html = page.read_text(encoding="utf-8")
         require('<base href="/blazor-mudblazor-starter/demo/" />' in html, f"demo base href must match the Pages path in /{route}")
         require(html.count("<h1") == 1 and 'rel="canonical"' in html, f"prerendered /{route} needs one h1 and a canonical link")
+        require(f'<meta property="og:image" content="{SOCIAL_IMAGE}" />' in html, f"prerendered /{route} needs the social image")
     for route, page in pages.items():
         for href in page.links:
             if href.startswith(SOURCE):
