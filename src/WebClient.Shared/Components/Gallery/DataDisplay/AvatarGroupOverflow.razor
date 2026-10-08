@@ -10,10 +10,10 @@
     </MudAvatarGroup>
     <MudGrid Spacing="4">
         <MudItem xs="12" sm="5">
-            <MudSlider @bind-Value="_max" Min="1" Max="@Crew.Length" Color="Color.Primary">Max: @_max</MudSlider>
+            <MudSlider @bind-Value="_max" Min="1" Max="@Crew.Length" Color="Color.Primary" aria-label="Max">Max: @_max</MudSlider>
         </MudItem>
         <MudItem xs="12" sm="5">
-            <MudSlider @bind-Value="_spacing" Min="0" Max="16" Color="Color.Secondary">Spacing: @_spacing</MudSlider>
+            <MudSlider @bind-Value="_spacing" Min="0" Max="16" Color="Color.Secondary" aria-label="Spacing">Spacing: @_spacing</MudSlider>
         </MudItem>
         <MudItem xs="12" sm="2">
             <MudSwitch @bind-Value="_outlined" Label="Outlined" Color="Color.Primary" />

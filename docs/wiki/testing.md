@@ -64,19 +64,23 @@ The check serves `docs/out` like GitHub Pages (repository path, `.html` for exte
 
 On every demo page, and on the landing and guide pages, the check runs [axe-core](https://github.com/dequelabs/axe-core) with reduced motion and fails on any violation of the rules our markup controls: contrast, links distinguishable without color, unique landmarks, labels and accessible names, names that contain their visible text, and focusable elements hidden from assistive technology.
 
-MudBlazor 9.11 renders a few elements that a page cannot label from outside. They are excluded by selector so the audit stays meaningful, and each is a known library limitation rather than an oversight:
+MudBlazor 9.11 renders a few elements that a page cannot label from outside. They are excluded by selector so the audit stays meaningful. Each is reported upstream:
 
-| Excluded | Why |
-|---|---|
-| `.mud-slider-input` | MudSlider does not associate its label with the range input; attributes land on the wrapper |
-| `.mud-treeview .mud-checkbox-input`, `.mud-radio-input` | Tree-view checkboxes and radios with custom content render inputs without associated labels |
-| `.mud-picker-color-content` | The color picker's internal channel inputs have no labels |
-| `.mud-table-pagination`, `.mud-table` menu activators and loading bar, grid header icon buttons | Pager selects, column-option and drag buttons, and the loading bar are unnamed |
-| `.mud-nav-group nav:not([aria-label])`, `.mud-nested-list` | MudNavGroup and nested lists add unlabelled inner landmarks and listboxes |
-| `.mud-popover-provider`, `.mud-avatar-text` | Popover content renders outside the page landmarks; text avatars use low-contrast colors |
-| Duplicate `aria-label="Breadcrumb"` | MudBreadcrumbs always sets its own label, so several trails on one page share it |
+| Excluded | Why | Issue |
+|---|---|---|
+| `.mud-treeview .mud-checkbox-input` | Multi-selection tree-view checkboxes have no accessible name | [#13977](https://github.com/MudBlazor/MudBlazor/issues/13977) |
+| `.mud-picker-color-content` | The color picker's channel inputs have no names; swatches put `aria-label` on role-less elements | [#13976](https://github.com/MudBlazor/MudBlazor/issues/13976) |
+| `.mud-table-pagination` | The rows-per-page select is not named by its caption | [#13978](https://github.com/MudBlazor/MudBlazor/issues/13978) |
+| `.mud-table` menu activators and loading bar, grid header icon buttons | The data grid's settings menu, column drag handles and loading bar are unnamed | [#13979](https://github.com/MudBlazor/MudBlazor/issues/13979) |
+| `.mud-nav-group nav:not([aria-label])` | MudNavGroup wraps its items in a second, unnamed `<nav>` | [#13980](https://github.com/MudBlazor/MudBlazor/issues/13980) |
+| `.mud-nested-list` | Nested lists render a listbox inside a listbox and `aria-expanded` on options | [#13981](https://github.com/MudBlazor/MudBlazor/issues/13981) |
+| `.mud-avatar-text` | `Variant.Text` ignores `Color` and renders white on light grey | [#13982](https://github.com/MudBlazor/MudBlazor/issues/13982) |
+| `.mud-popover-provider` | Popover content renders outside the page landmarks | — |
+| Duplicate `aria-label="Breadcrumb"` | MudBreadcrumbs names every `<nav>` "Breadcrumb"; a passed `aria-label` lands on the inner `<ol>` | [#13974](https://github.com/MudBlazor/MudBlazor/issues/13974) |
 
-Library-level issues such as nested interactive chips, positive `tabindex` in the carousel and ARIA attributes in the color picker belong upstream; the pages document the workarounds.
+Sliders and radios are not excluded: MudSlider does not link its visible label to the range input ([#13973](https://github.com/MudBlazor/MudBlazor/issues/13973)), so every example passes an `aria-label` that starts with the visible text. A radio's custom content must not use `MudStack`, whose `role="group"` hides the text from the radio's name.
+
+Other library issues the audit does not cover: positive `tabindex` in the carousel ([#13975](https://github.com/MudBlazor/MudBlazor/issues/13975)), a focusable wrapper around a custom menu activator ([#13983](https://github.com/MudBlazor/MudBlazor/issues/13983)), and chips inside a select nested in an interactive element ([#12613](https://github.com/MudBlazor/MudBlazor/issues/12613)). The pages document the workarounds.
 
 ## Compare performance honestly
 

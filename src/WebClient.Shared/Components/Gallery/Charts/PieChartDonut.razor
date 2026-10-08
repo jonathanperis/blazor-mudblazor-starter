@@ -6,7 +6,7 @@
     </CustomGraphics>
 </MudChart>
 
-<MudSlider T="double" @bind-Value="_options.DonutRingRatio" Min="0.1" Max="0.6" Step="0.05" Color="Color.Primary" Class="mt-2" Style="max-width: 20rem">
+<MudSlider T="double" @bind-Value="_options.DonutRingRatio" Min="0.1" Max="0.6" Step="0.05" Color="Color.Primary" Class="mt-2" Style="max-width: 20rem" aria-label="Ring ratio">
     Ring ratio: @_options.DonutRingRatio.ToString("0.00")
 </MudSlider>
 

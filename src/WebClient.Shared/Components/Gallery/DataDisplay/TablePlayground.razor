@@ -22,7 +22,7 @@
         <MudSwitch @bind-Value="_outlined" Label="Outlined" Color="Color.Primary" />
         <MudSwitch @bind-Value="_square" Label="Square" Color="Color.Primary" />
         <MudSwitch @bind-Value="_multiSelection" Label="Multi selection" Color="Color.Primary" />
-        <MudSlider @bind-Value="_elevation" Min="0" Max="12" Step="1" Color="Color.Primary">Elevation: @_elevation</MudSlider>
+        <MudSlider @bind-Value="_elevation" Min="0" Max="12" Step="1" Color="Color.Primary" aria-label="Elevation">Elevation: @_elevation</MudSlider>
         <MudSelect @bind-Value="_breakpoint" Label="Breakpoint (stack below)" Variant="Variant.Outlined" Margin="Margin.Dense">
             @foreach (var value in Breakpoints) { <MudSelectItem Value="value">@value</MudSelectItem> }
         </MudSelect>

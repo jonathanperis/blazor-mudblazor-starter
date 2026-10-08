@@ -15,7 +15,7 @@
         <MudSwitch T="bool" @bind-Value="_options.TimeLabelSpacingRoundingPadSeries" Label="Pad the series" Color="Color.Primary" Disabled="@(!_options.TimeLabelSpacingRounding)" />
     </MudItem>
     <MudItem xs="12" sm="6">
-        <MudSlider T="int" @bind-Value="_options.XAxisLabelRotation" Min="0" Max="60" Step="15" Color="Color.Primary">Rotation: @_options.XAxisLabelRotation°</MudSlider>
+        <MudSlider T="int" @bind-Value="_options.XAxisLabelRotation" Min="0" Max="60" Step="15" Color="Color.Primary" aria-label="Rotation">Rotation: @_options.XAxisLabelRotation°</MudSlider>
     </MudItem>
 </MudGrid>
 

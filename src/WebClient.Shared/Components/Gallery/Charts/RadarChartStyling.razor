@@ -2,16 +2,16 @@
 
 <MudGrid Spacing="2" Class="mt-2">
     <MudItem xs="12" sm="6">
-        <MudSlider T="int" @bind-Value="_options.GridLevels" Min="2" Max="5" Color="Color.Primary">Grid levels: @_options.GridLevels</MudSlider>
+        <MudSlider T="int" @bind-Value="_options.GridLevels" Min="2" Max="5" Color="Color.Primary" aria-label="Grid levels">Grid levels: @_options.GridLevels</MudSlider>
     </MudItem>
     <MudItem xs="12" sm="6">
-        <MudSlider T="double" @bind-Value="_options.AngleOffset" Min="0" Max="60" Step="15" Color="Color.Primary">Angle offset: @_options.AngleOffset°</MudSlider>
+        <MudSlider T="double" @bind-Value="_options.AngleOffset" Min="0" Max="60" Step="15" Color="Color.Primary" aria-label="Angle offset">Angle offset: @_options.AngleOffset°</MudSlider>
     </MudItem>
     <MudItem xs="12" sm="6">
-        <MudSlider T="double" @bind-Value="_options.FillOpacity" Min="0" Max="0.6" Step="0.05" Color="Color.Primary">Fill opacity: @_options.FillOpacity.ToString("0.00")</MudSlider>
+        <MudSlider T="double" @bind-Value="_options.FillOpacity" Min="0" Max="0.6" Step="0.05" Color="Color.Primary" aria-label="Fill opacity">Fill opacity: @_options.FillOpacity.ToString("0.00")</MudSlider>
     </MudItem>
     <MudItem xs="12" sm="6">
-        <MudSlider T="double" @bind-Value="_options.StrokeWidth" Min="1" Max="4" Step="0.5" Color="Color.Primary">Stroke width: @_options.StrokeWidth</MudSlider>
+        <MudSlider T="double" @bind-Value="_options.StrokeWidth" Min="1" Max="4" Step="0.5" Color="Color.Primary" aria-label="Stroke width">Stroke width: @_options.StrokeWidth</MudSlider>
     </MudItem>
     <MudItem xs="12">
         <MudStack Row Wrap="Wrap.Wrap" Spacing="4">

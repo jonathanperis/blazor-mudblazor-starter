@@ -1,7 +1,7 @@
 <MudStack Spacing="6">
-    <MudSlider @bind-Value="_magnification" Min="25" Max="200" Step="25" TickMarks="true">Magnification: @(_magnification)×</MudSlider>
+    <MudSlider @bind-Value="_magnification" Min="25" Max="200" Step="25" TickMarks="true" aria-label="Magnification">Magnification: @(_magnification)×</MudSlider>
     @* One label per step, from Min to Max. *@
-    <MudSlider @bind-Value="_roast" Min="0" Max="4" Step="1" TickMarks="true" TickMarkLabels="_roasts" Color="Color.Tertiary">
+    <MudSlider @bind-Value="_roast" Min="0" Max="4" Step="1" TickMarks="true" TickMarkLabels="_roasts" Color="Color.Tertiary" aria-label="Crust bake">
         Crust bake: @_roasts[_roast]
     </MudSlider>
 </MudStack>

@@ -9,13 +9,13 @@
     <MudItem xs="12" sm="6" md="4"><MudSwitch T="bool" @bind-Value="_options.HighlightOnHover" Label="Highlight on hover" Color="Color.Primary" /></MudItem>
     <MudItem xs="12" sm="6" md="4"><MudSwitch T="bool" @bind-Value="_options.OrderNodesByValue" Label="Order nodes by value" Color="Color.Primary" /></MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudSlider T="double" @bind-Value="_options.NodeWidth" Min="4" Max="30" Color="Color.Primary">Node width: @_options.NodeWidth</MudSlider>
+        <MudSlider T="double" @bind-Value="_options.NodeWidth" Min="4" Max="30" Color="Color.Primary" aria-label="Node width">Node width: @_options.NodeWidth</MudSlider>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudSlider T="double" @bind-Value="_options.EdgeOpacity" Min="0.1" Max="0.8" Step="0.05" Color="Color.Primary">Edge opacity: @_options.EdgeOpacity.ToString("0.00")</MudSlider>
+        <MudSlider T="double" @bind-Value="_options.EdgeOpacity" Min="0.1" Max="0.8" Step="0.05" Color="Color.Primary" aria-label="Edge opacity">Edge opacity: @_options.EdgeOpacity.ToString("0.00")</MudSlider>
     </MudItem>
     <MudItem xs="12" sm="6" md="4">
-        <MudSlider T="double" @bind-Value="_options.MinVerticalSpacing" Min="2" Max="30" Color="Color.Primary">Node spacing: @_options.MinVerticalSpacing</MudSlider>
+        <MudSlider T="double" @bind-Value="_options.MinVerticalSpacing" Min="2" Max="30" Color="Color.Primary" aria-label="Node spacing">Node spacing: @_options.MinVerticalSpacing</MudSlider>
     </MudItem>
 </MudGrid>
 

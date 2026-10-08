@@ -8,7 +8,7 @@
         <MudText Typo="Typo.h6">Reading preferences</MudText>
     </TitleContent>
     <DialogContent>
-        <MudSlider @bind-Value="_draftFontSize" Min="12" Max="24" Step="1" Color="Color.Primary">Font size: @_draftFontSize px</MudSlider>
+        <MudSlider @bind-Value="_draftFontSize" Min="12" Max="24" Step="1" Color="Color.Primary" aria-label="Font size">Font size: @_draftFontSize px</MudSlider>
         <MudSwitch @bind-Value="_draftSerif" Label="Serif typeface" Color="Color.Primary" />
     </DialogContent>
     <DialogActions>

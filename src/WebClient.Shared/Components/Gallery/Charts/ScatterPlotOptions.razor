@@ -2,7 +2,7 @@
 
 <MudGrid Spacing="2" Class="mt-2">
     <MudItem xs="12" sm="6" md="3">
-        <MudSlider T="double" @bind-Value="_options.PointRadius" Min="2" Max="10" Color="Color.Primary">Point radius: @_options.PointRadius</MudSlider>
+        <MudSlider T="double" @bind-Value="_options.PointRadius" Min="2" Max="10" Color="Color.Primary" aria-label="Point radius">Point radius: @_options.PointRadius</MudSlider>
     </MudItem>
     <MudItem xs="12" sm="6" md="3"><MudSwitch T="bool" @bind-Value="_options.ShowDataLabels" Label="Value labels" Color="Color.Primary" /></MudItem>
     <MudItem xs="12" sm="6" md="3"><MudSwitch T="bool" @bind-Value="_options.ShowToolTips" Label="Tooltips" Color="Color.Primary" /></MudItem>
