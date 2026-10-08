@@ -24,7 +24,7 @@ def main():
     require(f'"version": "{sdk}"' in read("docs/wiki/configuration.md"), "configuration guide SDK version differs")
     require(f"dotnet/sdk:{sdk}" in read("src/WebClient/Dockerfile"), "Docker SDK differs from global.json")
     projects = {path.relative_to(ROOT).as_posix(): ET.fromstring(path.read_text(encoding="utf-8")) for path in sorted((ROOT / "src").glob("*/*.csproj"))}
-    require(set(projects) == {"src/WebClient/WebClient.csproj", "src/WebClient.Shared/WebClient.Shared.csproj", "src/WebClient.Wasm/WebClient.Wasm.csproj"}, "update the docs for the changed project set")
+    require(set(projects) == {"src/WebClient/WebClient.csproj", "src/WebClient.Shared/WebClient.Shared.csproj", "src/WebClient.Wasm/WebClient.Wasm.csproj", "src/WebClient.Prerender/WebClient.Prerender.csproj"}, "update the docs for the changed project set")
     for path, project in projects.items():
         for package in project.findall(".//PackageReference"):
             if package.get("PrivateAssets") == "all":

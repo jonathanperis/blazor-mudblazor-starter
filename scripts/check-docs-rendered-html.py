@@ -101,12 +101,12 @@ APP_ROUTES = None
 def exists(relative):
     global APP_ROUTES
     if relative == "demo" or relative.startswith("demo/"):
-        # The demo is a single-page app: its routes resolve through demo/index.html (and 404.html for deep links).
+        # Every demo route is prerendered: GitHub Pages serves demo/labs/api.html for /demo/labs/api.
         route = relative.removeprefix("demo").strip("/")
         if (OUT / relative).is_file():
             return True
         APP_ROUTES = APP_ROUTES or app_routes()
-        return (OUT / "demo/index.html").is_file() and route in APP_ROUTES
+        return route in APP_ROUTES and (OUT / "demo" / (f"{route}.html" if route else "index.html")).is_file()
     return (OUT / relative).is_file() or (OUT / relative / "index.html").is_file()
 
 
@@ -142,10 +142,16 @@ def main():
 
     not_found = (OUT / "404.html").read_text(encoding="utf-8") if (OUT / "404.html").is_file() else ""
     require('name="robots" content="noindex"' in not_found and 'rel="canonical"' not in not_found, "404.html must exist and not be indexed")
-    require("/demo/" in not_found and "?p=" in not_found, "404.html must redirect demo deep links into the WebAssembly app")
+    require("/demo/" in not_found and "app.html?p=" in not_found, "404.html must send unknown demo paths to the WebAssembly shell")
     demo = OUT / "demo/index.html"
-    require(demo.is_file(), "missing demo/index.html: publish src/WebClient.Wasm and run scripts/prepare-pages-demo.py after the build")
-    require('<base href="/blazor-mudblazor-starter/demo/" />' in demo.read_text(encoding="utf-8"), "demo base href must match the Pages path")
+    require(demo.is_file(), "missing demo/index.html: publish src/WebClient.Wasm, prerender it and run scripts/prepare-pages-demo.py after the build")
+    require((OUT / "demo/app.html").is_file(), "missing demo/app.html, the unrendered shell for unknown demo paths")
+    for route in sorted(app_routes() - {"not-found", "Error"}):
+        page = OUT / "demo" / (f"{route}.html" if route else "index.html")
+        require(page.is_file(), f"demo route /{route} has no prerendered page")
+        html = page.read_text(encoding="utf-8")
+        require('<base href="/blazor-mudblazor-starter/demo/" />' in html, f"demo base href must match the Pages path in /{route}")
+        require(html.count("<h1") == 1 and 'rel="canonical"' in html, f"prerendered /{route} needs one h1 and a canonical link")
     for route, page in pages.items():
         for href in page.links:
             if href.startswith(SOURCE):

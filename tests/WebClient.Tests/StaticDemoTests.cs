@@ -35,6 +35,20 @@ public sealed class StaticDemoTests : BunitContext
     }
 
     [Fact]
+    public async Task Static_demo_host_registers_browser_stand_ins_and_explains_every_lab_difference()
+    {
+        var services = new ServiceCollection().AddSingleton(Services.GetRequiredService<IJSRuntime>()).AddStaticDemo(new Uri("https://example.test/demo/"));
+        await using var provider = services.BuildServiceProvider();
+        await using var scope = provider.CreateAsyncScope();
+        Assert.IsType<BrowserNotebookStore>(scope.ServiceProvider.GetRequiredService<INotebookStore>());
+        Assert.IsType<DemoAuthenticationStateProvider>(scope.ServiceProvider.GetRequiredService<Microsoft.AspNetCore.Components.Authorization.AuthenticationStateProvider>());
+        var page = await scope.ServiceProvider.GetRequiredService<ForecastApiClient>().ReadAsync(new ForecastQuery { Count = 10 }, CancellationToken.None);
+        Assert.Equal(10, page.Total);
+        Assert.True(StaticDemoHost.Profile.IsStaticDemo);
+        Assert.All(StaticDemoHost.Profile.LabNotes.Keys, slug => Assert.Contains(LabCatalog.All, lab => lab.Slug == slug));
+    }
+
+    [Fact]
     public async Task Typed_client_reaches_the_simulator_with_an_encoded_search()
     {
         var cancellationToken = TestContext.Current.CancellationToken;

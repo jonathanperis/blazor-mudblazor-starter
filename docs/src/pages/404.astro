@@ -8,8 +8,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 <BaseLayout noindex title="Page not found · Blazor learning sandbox" description="This page does not exist. Open the learning guide, the live WebAssembly demo, or the project overview.">
   {/*
-    GitHub Pages answers every unknown path with this page. The WebAssembly demo is a single-page app, so a deep
-    link such as /demo/labs/api must load demo/index.html; the demo restores the original path from ?p=.
+    GitHub Pages answers every unknown path with this page. Every demo route has a prerendered page, so only an
+    address the demo does not know reaches this script; it loads the unrendered shell, demo/app.html, which restores
+    the original path from ?p= and lets the app's router show its own not-found page.
   */}
   <script is:inline slot="head" define:vars={{ base }}>
     (function () {
@@ -17,7 +18,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       var path = window.location.pathname;
       if (path.indexOf(demo) === 0 && path.length > demo.length) {
         var route = '/' + path.slice(demo.length) + window.location.search + window.location.hash;
-        window.location.replace(demo + '?p=' + encodeURIComponent(route));
+        window.location.replace(demo + 'app.html?p=' + encodeURIComponent(route));
       }
     })();
   </script>

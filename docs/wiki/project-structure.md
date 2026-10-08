@@ -31,6 +31,8 @@ src/
   WebClient.Wasm/                static WebAssembly host for GitHub Pages
     Program.cs                   browser services and culture startup
     wwwroot/index.html           boot page and deep-link restore
+    wwwroot/service-worker.*.js  runtime cache for repeat and offline visits
+  WebClient.Prerender/           build-time tool: renders every demo route to static HTML
 tests/WebClient.Tests/           bUnit, domain, HTTP, SQLite and static-demo tests
 scripts/                         docs drift/rendered checks, Pages demo assembly, HTTP smoke
 docs/                            Astro guide, 404 page, browser check of the demo
@@ -41,7 +43,7 @@ renovate.json                    shared dependency-update preset
 
 ## Boundaries
 
-Start with [`LabCatalog.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient.Shared/Features/Learning/LabCatalog.cs) for the lesson map, [`LearningHost.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient.Shared/Features/Learning/LearningHost.cs) for what each host provides, and the two host entry points: [`WebClient/Program.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient/Program.cs) and [`WebClient.Wasm/Program.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient.Wasm/Program.cs). [`IntegrationTests.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/tests/WebClient.Tests/IntegrationTests.cs) shows the HTTP and persistence examples. The [documentation-site guide](../documentation/) explains the separate Astro project.
+Start with [`LabCatalog.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient.Shared/Features/Learning/LabCatalog.cs) for the lesson map, [`LearningHost.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient.Shared/Features/Learning/LearningHost.cs) for what each host provides, [`StaticDemoHost.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient.Shared/Features/StaticDemo/StaticDemoHost.cs) for the browser stand-ins and lab notes of the static demo, and the two host entry points: [`WebClient/Program.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient/Program.cs) and [`WebClient.Wasm/Program.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient.Wasm/Program.cs). [`IntegrationTests.cs`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/tests/WebClient.Tests/IntegrationTests.cs) shows the HTTP and persistence examples. The [documentation-site guide](../documentation/) explains the separate Astro project.
 
 Shared code must run in a browser: no `HttpContext`, EF Core, cookies or antiforgery. A lab that needs a server boundary depends on a contract instead:
 
@@ -58,7 +60,7 @@ The labs label each stand-in. Policies are enforced only by the server host: bro
 1. Add its route under `WebClient.Shared/Components/Pages/Labs/`, using a base-relative `Href` for links.
 2. Add metadata to `LabCatalog` and render its content through `LabFrame`.
 3. State ownership, lifetime, failure behavior, and reset semantics.
-4. If it needs a server, define a contract and implement it for both hosts, or add a host panel. Explain the difference in the WebAssembly host's `LabNotes`.
+4. If it needs a server, define a contract and implement it for both hosts, or add a host panel. Explain the difference in `StaticDemoHost`'s `LabNotes`.
 5. Add a meaningful behavior test, update the route smoke checks and the demo browser check, and document the lesson.
 
 ## Change the notebook schema

@@ -7,7 +7,12 @@
     <!-- Culture experiments need ICU data for pt-BR, not only the browser's default shard. -->
     <BlazorWebAssemblyLoadAllGlobalizationData>true</BlazorWebAssemblyLoadAllGlobalizationData>
     <SatelliteResourceLanguages>en;pt;pt-BR</SatelliteResourceLanguages>
+    <!-- Lists every published asset with its hash for the service worker's cache (wwwroot/service-worker.published.js). -->
+    <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
   </PropertyGroup>
+  <ItemGroup>
+    <ServiceWorker Include="wwwroot/service-worker.js" PublishedContent="wwwroot/service-worker.published.js" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="10.0.12" />

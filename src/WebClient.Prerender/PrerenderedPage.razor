@@ -1,0 +1,8 @@
+@* One page inside the shared layout, as the WebAssembly host's router would render it. *@
+<CascadingAuthenticationState>
+    <LayoutView Layout="typeof(MainLayout)"><DynamicComponent Type="Page" /></LayoutView>
+</CascadingAuthenticationState>
+
+@code {
+    [Parameter, EditorRequired] public Type Page { get; set; } = null!;
+}

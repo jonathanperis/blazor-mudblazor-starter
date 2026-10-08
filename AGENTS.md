@@ -9,7 +9,8 @@ A local-first school/playground project for Blazor and MudBlazor. The labs run i
 - `src/WebClient.Shared/`: Razor class library with the shell, every lab page (`Components/Pages/Labs/`; `/counter` and `/weather` remain foundational routes), the lab frame, browser-safe features, and the static-demo stand-ins. It must run in a browser: no `HttpContext`, EF Core, cookies or antiforgery.
 - `src/WebClient.Shared/Components/Gallery/<Group>/`: component gallery pages (`[ComponentPage]`, one file per example, embedded sources); `Components/Samples/<Name>/`: page samples (`[PageSample]`). Catalogs are discovered by reflection; follow `docs/wiki/gallery.md` and `DESIGN.md`.
 - `src/WebClient/`: Blazor Server host: endpoints, SQLite notebook, workspace cookie, demo identity, server panels.
-- `src/WebClient.Wasm/`: static WebAssembly host for the GitHub Pages demo at `/demo/`.
+- `src/WebClient.Wasm/`: static WebAssembly host for the GitHub Pages demo at `/demo/`, with a runtime-caching service worker. Its host profile and browser services are `StaticDemoHost` in the shared library.
+- `src/WebClient.Prerender/`: build-time tool that renders every demo route to static HTML (`labs/api.html`) before the Pages artifact is assembled.
 - `tests/WebClient.Tests/`: xUnit v3 (VSTest via `xunit.v3.mtp-off`)/bUnit, in-process HTTP, real SQLite migration, and static-demo tests.
 - `docs/`: Astro 7/Sätteri static guide, site-wide 404 page and demo browser check; `infra/`: historical Azure reference templates, compiled only.
 
@@ -20,6 +21,7 @@ dotnet restore --locked-mode
 dotnet test -c Release --no-restore
 dotnet publish src/WebClient -c Release -o artifacts/publish
 dotnet publish src/WebClient.Wasm -c Release -o artifacts/wasm
+dotnet run --project src/WebClient.Prerender -c Release -- artifacts/wasm/wwwroot
 dotnet run --project src/WebClient
 dotnet run --project src/WebClient.Wasm
 dotnet tool restore
@@ -27,11 +29,11 @@ dotnet ef migrations list --project src/WebClient
 docker build -t blazor-learning -f src/WebClient/Dockerfile src/
 ```
 
-In `docs/`, run `bun install --frozen-lockfile`, `npm run check:drift`, `npm run check:types`, `npm run build`, `python3 ../scripts/prepare-pages-demo.py` (after publishing the WebAssembly host), `npm run check:rendered`, `npm run check:demo`, and `bun audit`. Select Node from `docs/.node-version`, Bun from `docs/package.json`'s `packageManager`, and Python 3 for the verification scripts. HTTP smoke: `python3 scripts/smoke-http.py --base-url http://127.0.0.1:5000`.
+In `docs/`, run `bun install --frozen-lockfile`, `npm run check:drift`, `npm run check:types`, `npm run build`, `python3 ../scripts/prepare-pages-demo.py` (after publishing and prerendering the WebAssembly host), `npm run check:rendered`, `npm run check:demo`, and `bun audit`. Select Node from `docs/.node-version`, Bun from `docs/package.json`'s `packageManager`, and Python 3 for the verification scripts. HTTP smoke: `python3 scripts/smoke-http.py --base-url http://127.0.0.1:5000`.
 
 ## Contracts to preserve
 
-- Shared labs use base-relative links (`labs`, not `/labs`) so they work at `/` and under `/blazor-mudblazor-starter/demo/`. Server-only behavior goes behind a contract (`INotebookStore`, `ForecastApiClient`'s handler, `LearningHost` panels) with a labeled browser stand-in; explain differences in the WebAssembly host's `LabNotes`.
+- Shared labs use base-relative links (`labs`, not `/labs`) so they work at `/` and under `/blazor-mudblazor-starter/demo/`. Server-only behavior goes behind a contract (`INotebookStore`, `ForecastApiClient`'s handler, `LearningHost` panels) with a labeled browser stand-in; explain differences in `StaticDemoHost`'s `LabNotes`.
 - Edit dialogs work on a copy; only validated confirmation commits changes.
 - API/CSV/notebook inputs are bounded (50 notes per workspace). Imports return an entire valid dataset or fail without partial mutation; CSV export/import round trips are lossless.
 - Notebook queries/writes include the current workspace and use optimistic concurrency. Create a DbContext per operation.
@@ -40,6 +42,7 @@ In `docs/`, run `bun install --frozen-lockfile`, `npm run check:drift`, `npm run
 - Theme and drawer-button writes are awaited; a self-closing responsive drawer is not persisted. Screen size is derived. Render usable content before JS interop, and degrade when storage or interop fails.
 - Reset/disposal cancels owned asynchronous work. Stale results must not overwrite reset state.
 - Globalization and diagnostics stay enabled. Only ReadyToRun is exposed as a server publishing experiment; Native AOT/trimming are not supported server modes. The WebAssembly host uses the SDK's default WebAssembly publishing with full ICU data.
+- Every static-demo route is prerendered at build time, and a page that hits an error boundary fails the build. Pages must render without the browser: JavaScript runs after rendering, and browser-only data (the notebook) shows its loading state until the app starts.
 
 ## Delivery
 

@@ -23,10 +23,17 @@ async function appRoutes(directory = shared) {
 const prefix = '/blazor-mudblazor-starter';
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.wasm': 'application/wasm', '.dat': 'application/octet-stream', '.png': 'image/png', '.ico': 'image/x-icon', '.xml': 'application/xml' };
 
-async function file(path) {
+// Like GitHub Pages: a file, then the same path with .html (prerendered routes), then a folder's index.html.
+async function file(path, extension = true) {
   try {
     const info = await stat(path);
-    return info.isDirectory() ? file(join(path, 'index.html')) : path;
+    if (!info.isDirectory()) return path;
+  } catch {
+    // Not a file or folder under that exact name.
+  }
+  if (extension && !path.endsWith('/') && await file(`${path}.html`, false)) return `${path}.html`;
+  try {
+    return (await stat(join(path, 'index.html'))).isFile() ? join(path, 'index.html') : null;
   } catch {
     return null;
   }
@@ -87,11 +94,25 @@ try {
   });
   const heading = name => page.getByRole('heading', { level: 1, name });
   const timeout = { timeout: 60_000 };
+  // A prerendered page is readable at once but interactive only when .NET has started and removed the start-up note.
+  const started = () => page.locator('.demo-booting').waitFor({ state: 'detached', ...timeout });
 
+  await step('deep links are served prerendered, with their own title, before .NET starts', async () => {
+    for (const [route, title] of [['components/button', 'Button · Components'], ['labs/api', 'API and server paging'], ['samples', 'Page samples'], ['', 'Blazor learning sandbox']]) {
+      const response = await fetch(`${base}${route}`);
+      const html = await response.text();
+      if (response.status !== 200) throw new Error(`/${route} returned ${response.status}`);
+      if (!html.includes(`<title>${title}`) || (html.match(/<h1/g) ?? []).length !== 1) throw new Error(`/${route} is not prerendered`);
+      if (!html.includes('class="demo-booting"')) throw new Error(`/${route} has no start-up note`);
+    }
+  });
   await step('deep link boots the app and keeps the route', async () => {
     await page.goto(`${base}labs/api`);
     await heading('API and server paging').waitFor(timeout);
     if (!page.url().endsWith('/demo/labs/api')) throw new Error(`unexpected URL ${page.url()}`);
+    // The interactive app replaced the prerendered markup: one layout, and no start-up note.
+    await started();
+    if (await page.locator('.mud-layout').count() !== 1) throw new Error('prerendered and interactive layouts are both present');
   });
   await step('typed client pages through the in-browser API', async () => {
     await page.getByRole('button', { name: 'Load page' }).click();
@@ -117,6 +138,7 @@ try {
   await step('notebook stores notes and detects a stale draft', async () => {
     await page.goto(`${base}labs/persistence`);
     await heading('SQLite notebook').waitFor(timeout);
+    await started();
     await page.getByLabel('Title').fill('Browser note');
     await page.getByRole('button', { name: 'Add note' }).click();
     await page.getByRole('heading', { level: 2, name: 'Browser note' }).waitFor();
@@ -139,7 +161,9 @@ try {
   await step('culture choice applies after reload', async () => {
     await page.getByRole('link', { name: 'Localization and accessibility' }).first().click();
     await page.locator('#culture').selectOption('pt-BR');
-    await page.getByRole('button', { name: 'Apply language / Aplicar idioma' }).click();
+    // Applying reloads the page; the prerendered (English) page shows first, then the app in the stored culture.
+    await Promise.all([page.waitForEvent('load', timeout), page.getByRole('button', { name: 'Apply language / Aplicar idioma' }).click()]);
+    await started();
     await page.getByText('Bem-vindo ao laboratório de localização').waitFor(timeout);
     await page.getByText('Valor: 1.234,56').waitFor();
     if (await page.evaluate(() => document.documentElement.lang) !== 'pt') throw new Error('document language not updated');
@@ -148,6 +172,7 @@ try {
   await step('CSV import validates the whole file in the browser', async () => {
     await page.goto(`${base}labs/files`);
     await heading('Files and cancellable work').waitFor(timeout);
+    await started();
     const header = 'Id,Date,TemperatureC,Summary\n';
     await page.locator('#csv-file').setInputFiles({ name: 'bad.csv', mimeType: 'text/csv', buffer: Buffer.from(`${header}not-a-guid,2026-01-01,20,Mild\n`) });
     await page.getByText('Import rejected').waitFor();
@@ -159,6 +184,7 @@ try {
   await step('the largest grid dataset generates in the browser', async () => {
     await page.goto(`${base}weather`);
     await heading('DataGrid experiments').waitFor(timeout);
+    await started();
     await page.getByRole('combobox', { name: 'Dataset size' }).click();
     await page.getByText('69,420', { exact: true }).click();
     await page.getByRole('button', { name: 'Generate dataset' }).click();
@@ -168,6 +194,7 @@ try {
   await step('quick search opens with Ctrl+K and lands on an example', async () => {
     await page.goto(`${base}components/button`);
     await heading('Button').waitFor(timeout);
+    await started();
     await page.keyboard.press('Control+k');
     const search = page.getByRole('dialog').getByRole('combobox');
     await search.fill('alert playground');
@@ -181,12 +208,30 @@ try {
   await step('a playground link restores its settings', async () => {
     await page.goto(`${base}components/button?playground=buttonplayground&label=From%20a%20link&disabled=true#buttonplayground`);
     await heading('Button').waitFor(timeout);
+    await started();
     const playground = page.locator('#buttonplayground');
     await playground.getByText('Settings restored from a shared link.').waitFor();
     await playground.getByRole('button', { name: 'From a link' }).waitFor();
     if (!(await playground.locator('.playground-code').innerText()).includes('Disabled="true"')) throw new Error('generated markup was not restored');
     await playground.getByRole('button', { name: 'Reset' }).click();
     await playground.getByRole('button', { name: 'Buy tickets' }).waitFor();
+  });
+  await step('after one visit, the demo starts offline from the service worker cache', async () => {
+    const context = await browser.newContext({ reducedMotion: 'reduce' });
+    try {
+      const visit = await context.newPage();
+      await visit.goto(`${base}labs/api`);
+      await visit.locator('.demo-booting').waitFor({ state: 'detached', ...timeout });
+      // The worker precaches the runtime while installing, then takes control of the open page.
+      await visit.waitForFunction(() => navigator.serviceWorker.controller !== null, null, timeout);
+      await context.setOffline(true);
+      await visit.goto(`${base}components/button`);
+      await visit.getByRole('heading', { level: 1, name: 'Button' }).waitFor(timeout);
+      await visit.getByRole('button', { name: 'Code' }).first().click();
+      await visit.getByRole('button', { name: 'Hide code' }).waitFor();
+    } finally {
+      await context.close();
+    }
   });
   await step('unknown routes render the not-found page', async () => {
     await page.goto(`${base}no-such-lab`);
@@ -195,7 +240,7 @@ try {
   await step('every page renders without an error boundary', async () => {
     const routes = (await appRoutes()).filter((route) => route !== '/not-found' && route !== '/Error').sort();
     await page.goto(base);
-    await page.getByRole('heading', { level: 1 }).waitFor(timeout);
+    await started();
     const broken = [];
     for (const route of routes) {
       // In-app navigation keeps one runtime, so the sweep covers every page in seconds.

@@ -42,6 +42,10 @@
     <script src="_content/WebClient.Shared/learning.js"></script>
     <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
     <script src="_content/MudBlazor/MudBlazor.min.js"></script>
+    <script>
+        // Caches the runtime for repeat and offline visits (service-worker.published.js). The demo works without it.
+        if ("serviceWorker" in navigator) navigator.serviceWorker.register("service-worker.js").catch(function () { });
+    </script>
 </body>
 
 </html>

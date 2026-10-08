@@ -15,6 +15,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebClient.Shared", "src\Web
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebClient.Wasm", "src\WebClient.Wasm\WebClient.Wasm.csproj", "{57E81172-5CF2-4A5F-B336-388DA41DE76B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebClient.Prerender", "src\WebClient.Prerender\WebClient.Prerender.csproj", "{C1618F78-59FD-4003-8A7A-201DDD1B92A8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -73,6 +75,18 @@ Global
 		{57E81172-5CF2-4A5F-B336-388DA41DE76B}.Release|x64.Build.0 = Release|Any CPU
 		{57E81172-5CF2-4A5F-B336-388DA41DE76B}.Release|x86.ActiveCfg = Release|Any CPU
 		{57E81172-5CF2-4A5F-B336-388DA41DE76B}.Release|x86.Build.0 = Release|Any CPU
+		{C1618F78-59FD-4003-8A7A-201DDD1B92A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1618F78-59FD-4003-8A7A-201DDD1B92A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1618F78-59FD-4003-8A7A-201DDD1B92A8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{C1618F78-59FD-4003-8A7A-201DDD1B92A8}.Debug|x64.Build.0 = Debug|Any CPU
+		{C1618F78-59FD-4003-8A7A-201DDD1B92A8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C1618F78-59FD-4003-8A7A-201DDD1B92A8}.Debug|x86.Build.0 = Debug|Any CPU
+		{C1618F78-59FD-4003-8A7A-201DDD1B92A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1618F78-59FD-4003-8A7A-201DDD1B92A8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1618F78-59FD-4003-8A7A-201DDD1B92A8}.Release|x64.ActiveCfg = Release|Any CPU
+		{C1618F78-59FD-4003-8A7A-201DDD1B92A8}.Release|x64.Build.0 = Release|Any CPU
+		{C1618F78-59FD-4003-8A7A-201DDD1B92A8}.Release|x86.ActiveCfg = Release|Any CPU
+		{C1618F78-59FD-4003-8A7A-201DDD1B92A8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +96,7 @@ Global
 		{A06420BA-B5DF-43C8-8ED3-1856B5FAB605} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{00454264-FDD0-4B13-8289-0718881675F2} = {37DE5221-F973-45B7-A37D-D41A3EC7799F}
 		{57E81172-5CF2-4A5F-B336-388DA41DE76B} = {37DE5221-F973-45B7-A37D-D41A3EC7799F}
+		{C1618F78-59FD-4003-8A7A-201DDD1B92A8} = {37DE5221-F973-45B7-A37D-D41A3EC7799F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {67D12B99-842B-438C-B494-CE6FB10E33F1}

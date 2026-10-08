@@ -79,10 +79,13 @@ az bicep build-params --file infra/main.bicepparam --stdout
 The Pages site is one artifact built in the Build Check `pages` job:
 
 1. Astro builds the guide into `docs/out`, including a site-wide `404.html`.
-2. `dotnet publish src/WebClient.Wasm` produces the static WebAssembly app.
-3. [`prepare-pages-demo.py`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/scripts/prepare-pages-demo.py) copies it to `docs/out/demo/`, rewrites `<base href>` to `/blazor-mudblazor-starter/demo/`, drops precompressed copies (Pages compresses responses itself), and verifies the boot assets.
-4. `npm run check:rendered` checks the guide, and `npm run check:demo` drives the demo in Chromium against a local server that behaves like Pages.
+2. `dotnet publish src/WebClient.Wasm` produces the static WebAssembly app, with a service worker that caches the runtime.
+3. [`WebClient.Prerender`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient.Prerender/Program.cs) renders every route with Blazor's `HtmlRenderer` into the publish output: `labs/api.html` for `/labs/api`, each with its own title, description, canonical URL and Open Graph tags. It keeps the unrendered `index.html` as `app.html`, and fails if any page renders an error boundary.
+4. [`prepare-pages-demo.py`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/scripts/prepare-pages-demo.py) copies it to `docs/out/demo/`, rewrites `<base href>` to `/blazor-mudblazor-starter/demo/` in every page, drops precompressed copies (Pages compresses responses itself), and verifies the boot assets.
+5. `npm run check:rendered` checks the guide and that every demo route has a prerendered page, and `npm run check:demo` drives the demo in Chromium against a local server that behaves like Pages.
 
-GitHub Pages has no rewrite rules. A deep link such as `/demo/labs/api` is answered by `404.html`, which redirects to `/demo/?p=/labs/api`; `index.html` restores the path with `history.replaceState` before Blazor starts. This repository builds its own Pages artifact instead of the shared `pages-docs-deploy.yml` workflow, because the site now needs a .NET build step and the same checks as pull requests.
+GitHub Pages has no rewrite rules, but it serves `labs/api.html` for `/demo/labs/api`. A deep link therefore returns the page itself: readable at once, then made interactive when .NET has started and replaced the prerendered markup on its first render. A note in the corner says so while the runtime loads; an inline script applies a stored dark theme, and hides the English prerender from a visitor who chose another culture. Only an address the demo does not know reaches `404.html`, which redirects to `/demo/app.html?p=/the/path`; the shell restores the path with `history.replaceState`, and the app's router shows its not-found page.
+
+The service worker (`src/WebClient.Wasm/wwwroot/service-worker.published.js`) precaches the fingerprinted runtime, assemblies and static assets, checked against the build's integrity hashes. A repeat visit starts without downloading .NET again. Pages always come from the network first; offline, the cached shell starts the app. This repository builds its own Pages artifact instead of the shared `pages-docs-deploy.yml` workflow, because the site now needs a .NET build step and the same checks as pull requests.
 
 Only the optional public analytics ID is passed as a secret. Pages deployment is separate from hosting the server app.
