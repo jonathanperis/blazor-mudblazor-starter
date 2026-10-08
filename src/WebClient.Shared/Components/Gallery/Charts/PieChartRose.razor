@@ -3,10 +3,10 @@
 
 <MudGrid Spacing="3" Class="mt-2">
     <MudItem xs="12" sm="6">
-        <MudSlider T="double" @bind-Value="_options.AngleOffset" Min="0" Max="90" Step="15" Color="Color.Primary">Angle offset: @_options.AngleOffset°</MudSlider>
+        <MudSlider T="double" @bind-Value="_options.AngleOffset" Min="0" Max="90" Step="15" Color="Color.Primary" aria-label="Angle offset">Angle offset: @_options.AngleOffset°</MudSlider>
     </MudItem>
     <MudItem xs="12" sm="6">
-        <MudSlider T="double" @bind-Value="_options.ScaleFactor" Min="0.5" Max="1" Step="0.1" Color="Color.Primary">Scale factor: @_options.ScaleFactor.ToString("0.0")</MudSlider>
+        <MudSlider T="double" @bind-Value="_options.ScaleFactor" Min="0.5" Max="1" Step="0.1" Color="Color.Primary" aria-label="Scale factor">Scale factor: @_options.ScaleFactor.ToString("0.0")</MudSlider>
     </MudItem>
 </MudGrid>
 

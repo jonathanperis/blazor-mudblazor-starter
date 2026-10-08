@@ -51,16 +51,16 @@ const base = `http://127.0.0.1:${server.address().port}${prefix}/demo/`;
 
 const axeSource = await readFile(new URL('../node_modules/axe-core/axe.min.js', import.meta.url), 'utf8');
 // Accessibility rules our markup controls. MudBlazor's own internals that cannot be labelled from outside are
-// excluded by selector: slider range inputs, tree-view and color-picker internals, pager selects, data-grid header
+// excluded by selector, each reported upstream: tree-view and color-picker internals, pager selects, data-grid header
 // buttons and loading bar, nav-group inner navs, nested lists, the popover provider, and avatar text colors (docs/wiki/testing.md).
 const axeRules = ['link-in-text-block', 'color-contrast', 'landmark-unique', 'label', 'aria-input-field-name', 'button-name',
   'aria-hidden-focus', 'label-content-name-mismatch', 'aria-command-name', 'select-name', 'image-alt', 'duplicate-id-aria',
   'link-name', 'aria-toggle-field-name', 'aria-progressbar-name', 'svg-img-alt', 'document-title', 'page-has-heading-one'];
-const axeExclude = [['.mud-slider-input'], ['.mud-treeview .mud-checkbox-input'], ['.mud-picker-color-content'], ['.mud-table-pagination'],
+const axeExclude = [['.mud-treeview .mud-checkbox-input'], ['.mud-picker-color-content'], ['.mud-table-pagination'],
   ['.mud-table-root th .mud-icon-button'], ['.mud-table .mud-menu-icon-button-activator'], ['.mud-table .mud-progress-linear'],
-  ['.mud-nav-group nav:not([aria-label])'], ['.mud-nested-list'], ['.mud-popover-provider'], ['.mud-radio-input'], ['.mud-avatar-text']];
+  ['.mud-nav-group nav:not([aria-label])'], ['.mud-nested-list'], ['.mud-popover-provider'], ['.mud-avatar-text']];
 
-// MudBreadcrumbs always sets aria-label="Breadcrumb", so several trails on one page cannot be told apart.
+// MudBreadcrumbs names every <nav> "Breadcrumb" and moves a passed aria-label to the inner <ol> (MudBlazor#13974).
 const axeIgnore = [{ rule: 'landmark-unique', html: 'aria-label="Breadcrumb"' }];
 
 async function audit(page, label) {

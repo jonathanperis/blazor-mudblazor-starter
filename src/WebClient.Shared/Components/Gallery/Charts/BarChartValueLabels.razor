@@ -2,12 +2,12 @@
 
 <MudGrid Spacing="3" Class="mt-2">
     <MudItem xs="12" sm="6">
-        <MudSlider T="double" @bind-Value="_options.BarWidthRatio" Min="0.2" Max="1" Step="0.1" Color="Color.Primary">
+        <MudSlider T="double" @bind-Value="_options.BarWidthRatio" Min="0.2" Max="1" Step="0.1" Color="Color.Primary" aria-label="Bar width ratio">
             Bar width ratio: @_options.BarWidthRatio.ToString("0.0")
         </MudSlider>
     </MudItem>
     <MudItem xs="12" sm="6">
-        <MudSlider T="int" @bind-Value="_options.XAxisLabelRotation" Min="0" Max="90" Step="15" Color="Color.Primary">
+        <MudSlider T="int" @bind-Value="_options.XAxisLabelRotation" Min="0" Max="90" Step="15" Color="Color.Primary" aria-label="Label rotation">
             Label rotation: @_options.XAxisLabelRotation°
         </MudSlider>
     </MudItem>
