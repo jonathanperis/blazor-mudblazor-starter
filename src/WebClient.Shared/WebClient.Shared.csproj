@@ -12,9 +12,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.12" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.12" />
-    <PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.12" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="10.0.13" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="10.0.13" />
+    <PackageReference Include="Microsoft.Extensions.Localization" Version="10.0.13" />
     <PackageReference Include="MudBlazor" Version="9.11.0" />
     <PackageReference Include="MudBlazor.Translations" Version="3.6.0" />
   </ItemGroup>
