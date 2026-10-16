@@ -11,7 +11,7 @@ The live demo runs entirely in your browser. Labs that need a server (HTTP API, 
 
 ## Run locally
 
-Install **.NET 10 SDK 10.0.401** (or a later patch in that SDK feature band). The SDK includes the current .NET runtime. Cloud credentials are optional.
+Install **.NET 10 SDK 10.0.402** (or a later patch in that SDK feature band). The SDK includes the current .NET runtime. Cloud credentials are optional.
 
 ```sh
 git clone https://github.com/jonathanperis/blazor-mudblazor-starter.git
@@ -55,14 +55,14 @@ Each lab includes an objective, prerequisites, an approximate duration, a source
 
 | Package / tool | Version |
 |---|---|
-| SDK | 10.0.401 |
+| SDK | 10.0.402 |
 | Microsoft.ApplicationInsights.AspNetCore | 3.1.2 |
-| Microsoft.AspNetCore.Components.Authorization | 10.0.12 |
-| Microsoft.AspNetCore.Components.Web | 10.0.12 |
-| Microsoft.AspNetCore.Components.WebAssembly | 10.0.12 |
-| Microsoft.EntityFrameworkCore.Sqlite | 10.0.12 |
-| Microsoft.Extensions.Localization | 10.0.12 |
-| Microsoft.Extensions.Logging.Console | 10.0.12 |
+| Microsoft.AspNetCore.Components.Authorization | 10.0.13 |
+| Microsoft.AspNetCore.Components.Web | 10.0.13 |
+| Microsoft.AspNetCore.Components.WebAssembly | 10.0.13 |
+| Microsoft.EntityFrameworkCore.Sqlite | 10.0.13 |
+| Microsoft.Extensions.Localization | 10.0.13 |
+| Microsoft.Extensions.Logging.Console | 10.0.13 |
 | MudBlazor | 9.11.0 |
 | MudBlazor.Translations | 3.6.0 |
 
