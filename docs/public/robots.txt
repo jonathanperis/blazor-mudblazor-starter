@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://blazor-mudblazor-starter.jonathanperis.tech/sitemap-index.xml

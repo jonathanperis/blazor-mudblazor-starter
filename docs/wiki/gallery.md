@@ -1,6 +1,6 @@
 # Component gallery and page samples
 
-The gallery shows MudBlazor 9 components as working examples you can read: every example renders live beside the exact Razor source that produced it. [Browse it in the live demo](https://jonathanperis.github.io/blazor-mudblazor-starter/demo/components), or at `/components` when you run either host.
+The gallery shows MudBlazor 9 components as working examples you can read: every example renders live beside the exact Razor source that produced it. [Browse it in the live demo](https://blazor-mudblazor-starter.jonathanperis.tech/demo/components), or at `/components` when you run either host.
 
 ## How a component page works
 

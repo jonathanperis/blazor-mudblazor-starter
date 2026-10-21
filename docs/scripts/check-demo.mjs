@@ -20,7 +20,7 @@ async function appRoutes(directory = shared) {
   }
   return routes;
 }
-const prefix = '/blazor-mudblazor-starter';
+const prefix = '';
 const types = { '.html': 'text/html', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json', '.wasm': 'application/wasm', '.dat': 'application/octet-stream', '.png': 'image/png', '.ico': 'image/x-icon', '.xml': 'application/xml' };
 
 // Like GitHub Pages: a file, then the same path with .html (prerendered routes), then a folder's index.html.

@@ -10,7 +10,7 @@ from urllib.parse import unquote, urljoin, urlsplit
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs/out"
-BASE = "https://jonathanperis.github.io/blazor-mudblazor-starter/"
+BASE = "https://blazor-mudblazor-starter.jonathanperis.tech/"
 SOURCE = "https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/"
 PRODUCT = "Blazor learning sandbox"
 SOCIAL_IMAGE = BASE + "og-image.png"
@@ -131,9 +131,9 @@ def main():
         require(page.canonical == BASE + (route + "/" if route else ""), f"canonical URL differs in {route or '/'}")
         require(page.metadata.get("og:image") == page.metadata.get("twitter:image") == SOCIAL_IMAGE and page.metadata.get("twitter:card") == "summary_large_image", f"social image metadata differs in {route or '/'}")
         require(page.lang == "en", f"{route or '/'} must declare its language")
-        require(page.sitemap == "/blazor-mudblazor-starter/sitemap-index.xml", f"{route or '/'} must link the sitemap")
+        require(page.sitemap == "/sitemap-index.xml", f"{route or '/'} must link the sitemap")
         if route.startswith("docs"):
-            expected = "/blazor-mudblazor-starter/" + route + "/"
+            expected = "/" + route + "/"
             require(page.current == [expected], f"{route} must mark exactly its own navigation link as current, found {page.current}")
         pages[route] = page
 
@@ -153,7 +153,7 @@ def main():
         page = OUT / "demo" / (f"{route}.html" if route else "index.html")
         require(page.is_file(), f"demo route /{route} has no prerendered page")
         html = page.read_text(encoding="utf-8")
-        require('<base href="/blazor-mudblazor-starter/demo/" />' in html, f"demo base href must match the Pages path in /{route}")
+        require('<base href="/demo/" />' in html, f"demo base href must match the site root in /{route}")
         require(html.count("<h1") == 1 and 'rel="canonical"' in html, f"prerendered /{route} needs one h1 and a canonical link")
         require(f'<meta property="og:image" content="{SOCIAL_IMAGE}" />' in html, f"prerendered /{route} needs the social image")
     for route, page in pages.items():

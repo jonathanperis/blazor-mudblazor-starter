@@ -5,7 +5,7 @@ A Swiss-army-knife learning project for **Blazor and MudBlazor**. Explore workin
 [![Build Check](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/build-check.yml/badge.svg)](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/build-check.yml)
 [![CodeQL](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/codeql.yml/badge.svg)](https://github.com/jonathanperis/blazor-mudblazor-starter/actions/workflows/codeql.yml)
 
-**[Live demo](https://jonathanperis.github.io/blazor-mudblazor-starter/demo/)** · **[Learning guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/)** · Run the full labs locally using the commands below.
+**[Live demo](https://blazor-mudblazor-starter.jonathanperis.tech/demo/)** · **[Learning guide](https://blazor-mudblazor-starter.jonathanperis.tech/docs/)** · Run the full labs locally using the commands below.
 
 The live demo runs entirely in your browser. Labs that need a server (HTTP API, SQLite notebook, sign-in, culture cookie, diagnostics) use labeled browser stand-ins there; run the server app to see the real boundaries. Every demo page is prerendered, so a link opens readable content at once while .NET starts; after the first visit the runtime comes from a service-worker cache and the demo works offline.
 
@@ -24,7 +24,7 @@ Open **http://localhost:5000/labs**. For local TLS, run `dotnet run --project sr
 
 ## Component gallery and page samples
 
-`/components` shows MudBlazor 9 components in working examples, each beside the exact Razor that rendered it, with tables of every parameter combination and playgrounds that write the markup and share their settings as a link. Press Ctrl+K (⌘K) anywhere to search every lab, component, example and sample. `/samples` holds complete pages — dashboard, sign-in, settings, storefront, kanban, inbox and more — composed only from MudBlazor components. See the [gallery guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/gallery/).
+`/components` shows MudBlazor 9 components in working examples, each beside the exact Razor that rendered it, with tables of every parameter combination and playgrounds that write the markup and share their settings as a link. Press Ctrl+K (⌘K) anywhere to search every lab, component, example and sample. `/samples` holds complete pages — dashboard, sign-in, settings, storefront, kanban, inbox and more — composed only from MudBlazor components. See the [gallery guide](https://blazor-mudblazor-starter.jonathanperis.tech/docs/gallery/).
 
 ## Choose a lab
 
@@ -93,7 +93,7 @@ npm run check:demo
 bun audit
 ```
 
-See the [testing guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/testing/) for test boundaries, HTTP smoke checks, and measurement exercises. The [docs maintainer README](docs/README.md) explains authoring, local URLs, and the static-site structure.
+See the [testing guide](https://blazor-mudblazor-starter.jonathanperis.tech/docs/testing/) for test boundaries, HTTP smoke checks, and measurement exercises. The [docs maintainer README](docs/README.md) explains authoring, local URLs, and the static-site structure.
 
 ## Docker
 
@@ -113,7 +113,7 @@ The supported publishing experiment is `--build-arg READY_TO_RUN=true`. `BUILD_C
 - **GitHub Pages:** the release workflow deploys the guide and the live demo that the validation run built and checked.
 - **Application hosting:** Hostinger is the intended target for the server app, but this project's environment is not configured. The release workflow does not deploy the server app.
 
-Follow the [hosting guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/deployment/) for the current delivery boundary and the decisions required before configuring Hostinger.
+Follow the [hosting guide](https://blazor-mudblazor-starter.jonathanperis.tech/docs/deployment/) for the current delivery boundary and the decisions required before configuring Hostinger.
 
 ## Structure
 

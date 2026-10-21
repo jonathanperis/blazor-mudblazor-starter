@@ -1,6 +1,6 @@
 # Documentation site
 
-The [published learning guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/) and [project overview](https://jonathanperis.github.io/blazor-mudblazor-starter/) are an Astro static site deployed to GitHub Pages together with the [WebAssembly live demo](https://jonathanperis.github.io/blazor-mudblazor-starter/demo/) under `/demo/`. The Blazor Server app runs separately; see the [application README](../README.md).
+The [published learning guide](https://blazor-mudblazor-starter.jonathanperis.tech/docs/) and [project overview](https://blazor-mudblazor-starter.jonathanperis.tech/) are an Astro static site deployed to GitHub Pages together with the [WebAssembly live demo](https://blazor-mudblazor-starter.jonathanperis.tech/demo/) under `/demo/`. The Blazor Server app runs separately; see the [application README](../README.md).
 
 ## Prerequisites
 
@@ -19,7 +19,7 @@ Run from this directory (`docs/`):
 | `bun install --frozen-lockfile` | Install the locked dependencies |
 | `npm run dev` | Start the Astro dev server at `http://localhost:4321/` |
 | `npm run build` | Build to `./out/` using Astro 7, Vite 8, and the Rust compiler |
-| `npm run preview` | Serve the built site at `http://localhost:4321/blazor-mudblazor-starter/` |
+| `npm run preview` | Serve the built site at `http://localhost:4321/` |
 | `npm run check:drift` | Verify README/wiki source-backed facts against current code and workflows |
 | `npm run check:types` | Check TypeScript source and configuration with TypeScript 7; does not type-check Astro templates |
 | `npm run check:rendered` | Verify built routes, metadata, links, assets, source references, Markdown, the 404 page, the demo entry point, and sitemap coverage |
@@ -27,7 +27,7 @@ Run from this directory (`docs/`):
 | `npm run brand:render` | Redraw the social image (`public/og-image.png`) and the browser icons in this folder and both hosts' `wwwroot` |
 | `bun audit` | Check the locked dependency tree for known vulnerabilities |
 
-Run `npm run build` before previewing or checking rendered HTML. To include the demo, publish it from the repository root (`dotnet publish src/WebClient.Wasm -c Release -o artifacts/wasm`) and run `python3 ../scripts/prepare-pages-demo.py` after each build; `check:demo` needs a Chromium from `npx playwright install chromium` or `PLAYWRIGHT_CHANNEL=chrome`. Development has no repository path prefix: its guide is at `/docs/`. Production and preview use `/blazor-mudblazor-starter/docs/`. If port 4321 is busy, use the address Astro prints.
+Run `npm run build` before previewing or checking rendered HTML. To include the demo, publish it from the repository root (`dotnet publish src/WebClient.Wasm -c Release -o artifacts/wasm`) and run `python3 ../scripts/prepare-pages-demo.py` after each build; `check:demo` needs a Chromium from `npx playwright install chromium` or `PLAYWRIGHT_CHANNEL=chrome`. Development, preview, and production serve the host root, so the guide is at `/docs/`. If port 4321 is busy, use the address Astro prints.
 
 ## Source map and authoring
 
@@ -50,7 +50,7 @@ Run `npm run build` before previewing or checking rendered HTML. To include the 
 | `out/` | Generated output, including `out/demo/` when prepared; ignored by Git |
 | `../scripts/check-docs-*.py` | Offline source and rendered-output verification |
 
-Add a Markdown topic, its `PAGE_METADATA` entry and its navigation category entry together. Wiki links target **site routes**, such as `../configuration/`, rather than `.md` files; read the published guide when navigating topics from GitHub. Use full GitHub `blob/main/` URLs for implementation source links. See the [authoring guide](https://jonathanperis.github.io/blazor-mudblazor-starter/docs/documentation/) for verification boundaries and dependency maintenance.
+Add a Markdown topic, its `PAGE_METADATA` entry and its navigation category entry together. Wiki links target **site routes**, such as `../configuration/`, rather than `.md` files; read the published guide when navigating topics from GitHub. Use full GitHub `blob/main/` URLs for implementation source links. See the [authoring guide](https://blazor-mudblazor-starter.jonathanperis.tech/docs/documentation/) for verification boundaries and dependency maintenance.
 
 ## Publishing
 

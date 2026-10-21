@@ -20,7 +20,7 @@ bun audit
 
 Bun manages the committed lockfile. `npm run` uses the Node executable on PATH for the Astro CLI; it does not select a runtime version. Optional `PUBLIC_GA_ID` enables analytics in the generated site; omit it for a local-only guide.
 
-`npm run dev` serves the overview at `http://localhost:4321/` and the guide at `/docs/`. After building, `npm run preview` serves the production paths under `http://localhost:4321/blazor-mudblazor-starter/`. Use the actual port printed by Astro if 4321 is busy.
+`npm run dev` serves the overview at `http://localhost:4321/` and the guide at `/docs/`. After building, `npm run preview` serves the same paths. Use the actual port printed by Astro if 4321 is busy.
 
 ## Authoring
 

@@ -2,7 +2,7 @@
 
 ## Try it without installing
 
-Open the [live WebAssembly demo](https://jonathanperis.github.io/blazor-mudblazor-starter/demo/). It runs the same labs in your browser; the API, notebook, sign-in, culture and diagnostics labs use labeled browser stand-ins. Run the server app below for the full experience.
+Open the [live WebAssembly demo](https://blazor-mudblazor-starter.jonathanperis.tech/demo/). It runs the same labs in your browser; the API, notebook, sign-in, culture and diagnostics labs use labeled browser stand-ins. Run the server app below for the full experience.
 
 ## Prerequisites
 

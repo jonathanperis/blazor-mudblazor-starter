@@ -58,7 +58,7 @@ Migrations run at startup for this single-instance learning app. Notebook reset 
 
 ## WebAssembly demo stand-ins
 
-The [static demo](https://jonathanperis.github.io/blazor-mudblazor-starter/demo/) renders the same pages with browser implementations from [`Features/StaticDemo`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient.Shared/Features/StaticDemo/ForecastApiSimulator.cs):
+The [static demo](https://blazor-mudblazor-starter.jonathanperis.tech/demo/) renders the same pages with browser implementations from [`Features/StaticDemo`](https://github.com/jonathanperis/blazor-mudblazor-starter/blob/main/src/WebClient.Shared/Features/StaticDemo/ForecastApiSimulator.cs):
 
 | Lab | Stand-in | What still holds | What only the server shows |
 |---|---|---|---|
