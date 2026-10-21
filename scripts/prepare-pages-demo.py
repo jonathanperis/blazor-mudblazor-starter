@@ -22,7 +22,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--source", default=str(ROOT / "artifacts/wasm/wwwroot"), help="published WebAssembly wwwroot")
     parser.add_argument("--site", default=str(ROOT / "docs/out"), help="built docs site")
-    parser.add_argument("--base", default="/blazor-mudblazor-starter/demo/", help="URL path the demo is served from")
+    parser.add_argument("--base", default="/demo/", help="URL path the demo is served from")
     args = parser.parse_args()
 
     source, site = Path(args.source), Path(args.site)

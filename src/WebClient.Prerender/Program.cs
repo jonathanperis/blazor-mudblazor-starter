@@ -23,7 +23,7 @@ if (args.Length is < 1 or > 2)
     return 2;
 }
 var wwwroot = Path.GetFullPath(args[0]);
-var publicUrl = args.Length == 2 ? args[1] : "https://jonathanperis.github.io/blazor-mudblazor-starter/demo/";
+var publicUrl = args.Length == 2 ? args[1] : "https://blazor-mudblazor-starter.jonathanperis.tech/demo/";
 // Link previews use the guide's social image, published at the site root above the demo.
 var socialImage = new Uri(new Uri(publicUrl), "../og-image.png").AbsoluteUri;
 var indexPath = Path.Join(wwwroot, "index.html");

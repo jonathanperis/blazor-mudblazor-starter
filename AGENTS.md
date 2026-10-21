@@ -33,7 +33,7 @@ In `docs/`, run `bun install --frozen-lockfile`, `npm run check:drift`, `npm run
 
 ## Contracts to preserve
 
-- Shared labs use base-relative links (`labs`, not `/labs`) so they work at `/` and under `/blazor-mudblazor-starter/demo/`. Server-only behavior goes behind a contract (`INotebookStore`, `ForecastApiClient`'s handler, `LearningHost` panels) with a labeled browser stand-in; explain differences in `StaticDemoHost`'s `LabNotes`.
+- Shared labs use base-relative links (`labs`, not `/labs`) so they work at `/` and under `/demo/`. Server-only behavior goes behind a contract (`INotebookStore`, `ForecastApiClient`'s handler, `LearningHost` panels) with a labeled browser stand-in; explain differences in `StaticDemoHost`'s `LabNotes`.
 - Edit dialogs work on a copy; only validated confirmation commits changes.
 - API/CSV/notebook inputs are bounded (50 notes per workspace). Imports return an entire valid dataset or fail without partial mutation; CSV export/import round trips are lossless.
 - Notebook queries/writes include the current workspace and use optimistic concurrency. Create a DbContext per operation.

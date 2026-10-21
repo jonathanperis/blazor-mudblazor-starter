@@ -27,7 +27,7 @@
         <div class="mobile-theme"><MudIconButton Icon="@(Preferences.IsDarkMode ? Icons.Material.Filled.LightMode : Icons.Material.Filled.DarkMode)" Color="Color.Inherit" OnClick="ToggleTheme" aria-label="@(Preferences.IsDarkMode ? "Use light theme" : "Use dark theme")" /></div>
         <MudMenu Icon="@Icons.Material.Filled.MoreVert" AriaLabel="Project links" Color="Color.Inherit">
             <MudMenuItem Href="@LabCatalog.Repository" Target="_blank" rel="noopener noreferrer">GitHub</MudMenuItem>
-            <MudMenuItem Href="https://jonathanperis.github.io/blazor-mudblazor-starter/docs/" Target="_blank" rel="noopener noreferrer">Learning guide</MudMenuItem>
+            <MudMenuItem Href="https://blazor-mudblazor-starter.jonathanperis.tech/docs/" Target="_blank" rel="noopener noreferrer">Learning guide</MudMenuItem>
             @if (!Host.IsStaticDemo)
             {
                 <MudMenuItem Href="healthz" Target="_blank">Liveness</MudMenuItem>

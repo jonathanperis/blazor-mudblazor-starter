@@ -1,15 +1,15 @@
 # Blazor learning sandbox
 
-A hands-on toolbox for learning Blazor and MudBlazor. Every lab is a small working example with source, an explanation, a common mistake, and something to try. The same labs run in two hosts: Blazor Server locally, and a static [WebAssembly live demo](https://jonathanperis.github.io/blazor-mudblazor-starter/demo/) in your browser.
+A hands-on toolbox for learning Blazor and MudBlazor. Every lab is a small working example with source, an explanation, a common mistake, and something to try. The same labs run in two hosts: Blazor Server locally, and a static [WebAssembly live demo](https://blazor-mudblazor-starter.jonathanperis.tech/demo/) in your browser.
 
 ## Start here
 
-1. [Open the live demo](https://jonathanperis.github.io/blazor-mudblazor-starter/demo/) or [run locally](./getting-started/).
+1. [Open the live demo](https://blazor-mudblazor-starter.jonathanperis.tech/demo/) or [run locally](./getting-started/).
 2. [Choose a learning path](./learning-path/).
 3. [Explore the lab reference](./components/).
 4. [Run tests and measurements](./testing/).
 
-[Source repository](https://github.com/jonathanperis/blazor-mudblazor-starter) · [Live WebAssembly demo](https://jonathanperis.github.io/blazor-mudblazor-starter/demo/) · Run `/labs` locally for the Blazor Server host. Hostinger setup is pending; no server deployment is configured.
+[Source repository](https://github.com/jonathanperis/blazor-mudblazor-starter) · [Live WebAssembly demo](https://blazor-mudblazor-starter.jonathanperis.tech/demo/) · Run `/labs` locally for the Blazor Server host. Hostinger setup is pending; no server deployment is configured.
 
 ## How to learn here
 

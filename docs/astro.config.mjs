@@ -2,8 +2,6 @@ import { defineConfig } from 'astro/config';
 import { satteri } from '@astrojs/markdown-satteri';
 import sitemap from '@astrojs/sitemap';
 
-const isProd = process.env.NODE_ENV === 'production';
-
 export default defineConfig({
   integrations: [sitemap()],
   markdown: {
@@ -13,6 +11,9 @@ export default defineConfig({
   },
   output: 'static',
   outDir: 'out',
-  site: 'https://jonathanperis.github.io',
-  base: isProd ? '/blazor-mudblazor-starter' : '',
+  // The custom domain serves this project at the host root. A repository
+  // base path would make every asset 404 once GitHub Pages leaves
+  // jonathanperis.github.io/blazor-mudblazor-starter/.
+  site: 'https://blazor-mudblazor-starter.jonathanperis.tech',
+  base: '',
 });
