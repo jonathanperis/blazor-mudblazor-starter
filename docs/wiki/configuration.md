@@ -7,7 +7,7 @@
 ```json
 {
   "sdk": {
-    "version": "10.0.402",
+    "version": "10.0.403",
     "rollForward": "latestPatch"
   }
 }
