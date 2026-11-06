@@ -14,6 +14,11 @@ RUN dotnet publish "WebClient/WebClient.csproj" --no-restore -c "$BUILD_CONFIGUR
 FROM mcr.microsoft.com/dotnet/aspnet:10.0.14 AS final
 WORKDIR /app
 RUN mkdir -p /app/App_Data && chown "$APP_UID" /app/App_Data
+# Pick up the patched apt (CVE-2026-109518) until the aspnet base image is rebuilt; --ignore-unfixed in the Trivy
+# scan fails on any HIGH finding that already has a fix.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends --only-upgrade apt \
+    && rm -rf /var/lib/apt/lists/*
 # A numeric user lets orchestrators verify runAsNonRoot. The image has no curl or wget for a HEALTHCHECK;
 # probe /healthz (liveness) and /healthz/ready (SQLite readiness) from the orchestrator instead.
 USER $APP_UID
